@@ -1,5 +1,23 @@
 #! /usr/bin/perl -w
 
+#############################################################################
+##
+##  This file is part of CuteFig project
+##
+##  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
+##
+##  This program is free software; you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License version 2
+##  as published by the Free Software Foundation.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##############################################################################
+
+
 my $layoutfile = "layout.tmpl";
 my $menufile = "menu.lst";
 my $tmplfile = $ARGV[0];
