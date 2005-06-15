@@ -1,3 +1,5 @@
+# @version $Id$
+
 QT -= qt3support
 
 TEMPLATE = lib

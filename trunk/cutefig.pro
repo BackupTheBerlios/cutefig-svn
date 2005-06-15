@@ -1,3 +1,7 @@
+# This is the main project file of the CuteFig:
+#
+# @version $Id$
+#
 
 CONFIG+=debug
 
