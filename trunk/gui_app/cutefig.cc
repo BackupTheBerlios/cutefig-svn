@@ -1,0 +1,284 @@
+ 
+/*****************************************************************************
+**
+**  @version $Id$
+**
+**  This file is part of CuteFig
+**
+**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.net
+**
+**  This program is free software; you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License version 2
+**  as published by the Free Software Foundation.
+** 
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  You should have received a copy of the GNU General Public License
+**  along with this program; if not, write to the Free Software
+**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+**
+******************************************************************************/
+
+
+
+#include "fig.h"
+
+#include "cutefig.h"
+#include "centralwidget.h"
+#include "canvasview.h"
+#include "controler.h"
+#include "figure.h"
+#include "ruler.h"
+#include "parser.h"
+#include "reslibinit.h"
+#include "cfigoutput.h"
+#include "xfigoutput.h"
+
+#include "objectmapper.h"
+#include "objecthandler.h"
+#include "actions.h"
+#include "errorreporter.h"
+
+#include <QtGui>
+
+
+//#include "brushdialog.h" //test
+
+int CuteFig::rulerWidth = 30;
+double CuteFig::unit = Fig::cm2pix;
+
+CuteFig::CuteFig( QApplication* app )
+{
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        setAttribute( Qt::WA_DeleteOnClose );
+        setWindowTitle( tr("The CuteFig drawing system") );
+
+        ResLibInit::init();
+
+        figure_ = new Figure( this );
+        controler_ = new Controler( this );
+        controler_->setFigure( figure_ );
+
+        cview_ = new CanvasView( controler_, figure_, this );
+        
+        controler_->addView( cview_ );
+//        connect( cview_, SIGNAL( status( const QString& ) ),
+//                 statusBar(), SLOT( message( const QString& ) ) );
+        
+        CentralWidget* cw = new CentralWidget( cview_, this );
+        setCentralWidget( cw );
+
+        viewport_ = cw->viewport();
+
+        setupObjectMapper();
+        setupActions();
+        
+        int argc = app->argc();
+        char** argv = app->argv();
+        
+        if ( argc > 1) {
+                filename_ = argv[1];
+                load( filename_ );
+        }
+        statusBar()->showMessage("Hello");
+}
+
+void CuteFig::newDoc()
+{
+        figure_->clear();
+        cview_->update();
+}
+
+void CuteFig::choose()
+{
+        QString fn = QFileDialog::getOpenFileName( this, 
+                                                   tr("Choose a file to open"),
+                                                   QString(),
+                                                   "*cig" );
+        if ( !fn.isEmpty() )
+                load( fn );
+        else
+               statusBar()->showMessage( tr("Loading aborted"), 2000 );
+}
+
+/** Loads the file filename. Then it parses its contents into
+ * the figure_. If any errors occour a report is shown. Finally cview_
+ * gets an update message so that the figure is displayed.
+ */
+void CuteFig::load( const QString& fileName )
+{
+        QFile f( fileName );
+        if ( !f.open( QIODevice::ReadOnly ) )
+                return;
+
+        filename_ = fileName;
+        
+        figure_->clear();
+    
+        QTextStream ts( &f );    
+        Parser p( &ts, figure_, this );
+        QString errors = p.parse();
+
+        if ( !errors.isEmpty() ) 
+                ErrorReporter::report( errors );
+
+        cview_->updateFigure();
+}
+
+/** Uses an OutputBackend to store the figure into a file. The
+ * OutputBackand is chosen depending on the filename extension.
+ */
+void CuteFig::save()
+{
+        if ( filename_.isEmpty() ) {
+                saveAs();
+                return;
+        }
+
+        QFile f( filename_ );
+        if ( !f.open( QIODevice::WriteOnly ) ) {
+                statusBar()->showMessage( QString(tr("Could not write to %1"))
+                                          .arg(filename_), 2000 );
+                return;
+        }
+        
+        QTextStream ts( &f );
+        
+        uint slen = filename_.length() - filename_.indexOf('.');
+        QString suffix = filename_.right( slen );
+
+        OutputBackend* b;
+//         if ( suffix == ".fig" )
+//                 b = new XFigOutput( ts );
+//         else
+        b = new CfigOutput( ts, *figure_ );
+                
+        b->processOutput();
+
+        delete b;
+
+        f.close();
+
+        setWindowTitle( tr( "CuteFig: %1" ).arg( filename_ ) );
+
+        controler_->figureSaved();
+        statusBar()->showMessage( tr("File %1 saved").arg( filename_ ), 2000 );
+}
+
+void CuteFig::saveAs()
+{
+        QString fn = QFileDialog::getSaveFileName( this,
+                                                   tr("Choose filename"),
+                                                   QString(),
+                                                   "*.cig" );
+        if ( !fn.isEmpty() ) {
+                filename_ = fn;
+                save();
+        } else {
+                statusBar()->showMessage( tr("Saving aborted"), 2000 );
+        }
+}
+
+void CuteFig::print()
+{
+        QMessageBox::information( this, "Does not work", "No Printing yet" );
+}
+
+/** Asks the obligated areyousure-question before accepting the close
+ * event. This might sometimes be skiped in development versions. :-)
+ */
+void CuteFig::closeEvent( QCloseEvent* ce )
+{
+        ce->accept();
+        return;
+        if ( !controler_->figureChanged() ) {
+                ce->accept();
+                return;
+        }
+        
+        switch( QMessageBox::information( this, "CuteFig",
+                                          tr("The document has been changed "
+                                          "since the last save."),
+                                          tr("Save Now"), 
+                                          tr("Cancel"), tr("Leave Anyway"),
+                                          0, 1 ) ) {
+            case 0:
+                    save();
+                    ce->accept();
+                    break;
+            case 1:
+            default: // just for sanity
+                    ce->ignore();
+                    break;
+            case 2:
+                    ce->accept();
+                    break;
+        }
+}
+
+
+void CuteFig::about()
+{
+        QString s = tr("A vector based drawing program\n" 
+                       "CopyLeft by Johannes Mueller "
+                       "<joh@users.berlios.net>");
+        
+        QMessageBox::about( this, "CuteFig", s );
+}
+
+/** Sets up an AllActions instance and then sets up a menubar entry
+ * and a toolbutton (if possible) for each ActionCollection. Finally
+ * it adds the help menu by foot.
+ */
+void CuteFig::setupActions()
+{
+        AllActions* actions = new AllActions( this );
+
+        foreach ( ActionCollection* ac, actions->actionGroups() ) {
+
+                QMenu* menu = new QMenu( ac->text(), this );
+                QToolBar* toolBar = new QToolBar( ac->text(), this );
+
+                foreach ( QAction* a, ac->actions() ) {
+                        menu->addAction( a );
+                        QToolButton* tb = ac->toolButton( a );
+                        if ( tb ) {
+                                tb->setParent( toolBar );
+                                toolBar->addWidget( tb );
+                        } else if ( !a->icon().isNull() ) 
+                                toolBar->addAction( a );
+                }
+
+                if ( toolBar->actions().isEmpty() )
+                        delete toolBar;
+                else 
+                        addToolBar( toolBar );
+
+                if ( menu->actions().isEmpty() )
+                        delete menu;
+                else
+                        menuBar()->addMenu( menu );
+        }
+
+        menuBar()->addSeparator();
+        
+        QMenu * helpMenu = new QMenu( tr("&Help"), this );
+        menuBar()->addMenu( helpMenu );
+        helpMenu->addAction( "&About", this, SLOT(about()), Qt::Key_F1 );
+        helpMenu->addSeparator();
+//        helpMenu->addAction( QWhatsThis::createAction( this ) );
+}
+
+
+/** All the known DrawObject types are registered.
+ */
+void CuteFig::setupObjectMapper()
+{
+        ObjectMapper& mapper = ObjectMapper::instance();
+        mapper.registerItem( EllipseHandler::instance() );
+        mapper.registerItem( PolylineHandler::instance() );
+        mapper.registerItem( PolygonHandler::instance() );
+}

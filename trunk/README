@@ -1,0 +1,65 @@
+What is it?
+
+The CuteFig project intends to write a vector drawing programme, CuteFig,
+for scientific and technical drawings and diagrams. The motivation of
+initiating CuteFig was inspired by the well known programme xfig and its
+advantages and shortcomings. The goal is to a drawing programme that has all
+the advantages of xfig, but not its shortcomings. 
+
+
+What will it do for me?
+
+Things that CuteFig will have that are inspired by xfig: 
+ * X-Splines 
+ * a simple dataformat that figures can be modified easily by tools like
+   awk/sed and perl 
+ * good interoperability with LaTeX 
+
+Things that CuteFig will have that xfig doesn't: 
+ * color gradients support 
+ * better fonthandling (no statical restricions on the available fonts) 
+ * Unicode support 
+ * better user interface 
+ * plugin architecture to support complex drawing objects and subject related
+   expert extensions such as CAD, crystallography, complex chemical formulas
+   and other things noone thinks off right now. 
+
+
+How is it written?
+
+CuteFig will be written in C++ using the widespread QT-Libraries. 
+
+
+When will it be ready?
+
+In the tradition of many free software projects the CutFig project
+will not speculate on any release date. By now (June 2005) a code
+basis of some 7000 lines exists. The project has now left the state of
+desingn experiments. So quite a lot of coding is coming up. The first
+pre alpha code has just been checked in to the SVN-repositoty of
+BerliOS.de.
+
+
+Where can I get it?
+
+Why do you ask? You do already have the source code. This file is part
+of the source distribution :)
+
+
+How do I install the thing.?
+
+Read INSTALL.
+
+
+How do I find my way through the code?
+
+Get doxygen (e.g http://www.doxygen.org) and build the html version of
+the source code. That's what Doxyfile.srcdoc is there for. Then browse
+through those docs and read the source code along withit. If you have
+questions about the source don't hesitate to ask me. Feedback is
+welcome.
+
+
+Who are you?
+
+I am Johannes Mueller <joh@users.berlios.de>. 

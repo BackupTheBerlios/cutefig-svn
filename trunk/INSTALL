@@ -1,0 +1,26 @@
+The CuteFig is in an early-pre alpha state. So installing it might be
+not easy. As the CuteFig is not meant to be used by end users at this
+point of development I assume that you are familiar with the way free
+software is developed and and installed.
+
+You need to do the following steps:
+
+  * The release candidate 1 of the QT-libs version 4. You can get this
+    from http://www.trolltech.com. Read their installing instructions
+    and install the QT-libs. 
+
+  * As soon as you succeeded to build QT, you should be able to build
+    the CuteFig as well. It follows the build process propagated by
+    the trolls for QT, i.e. it uses qmake to make its Makefiles. So
+    what you need to do is:
+
+    qmake && make
+
+  * Then start the executable gui_app/cutefig, play around with it and
+    tell me about bugs and inconsistencies. Do not bother me with
+    missing features though unless you want to implement them.
+
+
+Good luck
+
+joh
