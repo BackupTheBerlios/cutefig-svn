@@ -24,7 +24,7 @@ HEADERS += fig.h \
            parser.h \
            cfigoutput.h \
            outputbackend.h \
-           xfigoutput.h \
+#           xfigoutput.h \
            progutils.h 
 SOURCES += figure.cc \
            geometry.cc \
@@ -38,6 +38,6 @@ SOURCES += figure.cc \
            reslibinit.cc \
            parser.cc \
            cfigoutput.cc \
-           xfigoutput.cc \
+#           xfigoutput.cc \
            progutils.cc
 

@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.net
+**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -204,7 +204,7 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         }
 
         Pen pen;
-        qDebug() << dsh << dashList_.size();
+//        qDebug() << dsh << dashList_.size();
         if ( (dsh > dashList_.size()-1) || (dsh < -6) ) {
                 parseError( undefinedDashes.arg( dsh ) );
                 dsh = -5;
@@ -214,7 +214,7 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
                 dsh = dashList_[dsh];
         
         pen.setDashes( dsh );
-        qDebug() << dsh;
+//        qDebug() << dsh;
 
         pen.setColor( pc );
         pen.setWidth( lw );

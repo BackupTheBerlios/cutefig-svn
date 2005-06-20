@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.net
+**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -51,7 +51,7 @@ class Figure : public QObject
         Q_OBJECT
 
 public:
-        Figure( QObject * parent );
+        Figure( QObject * parent = 0 );
         ~Figure() {};
 
         void setControler( Controler* c ) { controler_ = c; };
@@ -62,7 +62,7 @@ public:
 
         void sortObjects(); //!< Sorts the objects according to their depth.
 
-        void drawElements( QPainter* p, const ObjectList& backups ) const; 
+        void drawElements( QPainter* p, const ObjectList& backups = ObjectList() ) const; 
         //!< Draws all objects exept o to the QPainter p.
 
         DrawObject* findContainingObject( const QPointF& p, qreal tolerance ) const;

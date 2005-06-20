@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.net
+**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -25,7 +25,7 @@
 #ifndef fig_h
 #define fig_h
 
-#include <string>
+#include <QString>
 
 /** \namespace Fig
  *  \brief contains some global constants and enums
@@ -50,5 +50,15 @@ namespace Fig
                 Special2  = 0x0020
         }; //!< Flags that can be passed to a DrawObject being edited.
 };
+
+namespace Msgs
+{
+        const QString projectName( QT_TR_NOOP("The CuteFig project") );
+        const QString version( QT_TR_NOOP("version 0.01") );
+        const QString majorAuthor("Johannes Mueller");
+        const QString bugAddress("joh@users.berlios.de");
+        const QString bugreportsTo( QString( QT_TR_NOOP("Please report bugs to %1") )
+                                    .arg( bugAddress ) );
+}
 
 #endif

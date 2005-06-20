@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.net
+**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -106,27 +106,24 @@ void Figure::drawElements( QPainter* p, const ObjectList& backups ) const
 
 void Figure::outputObjects( OutputBackend* ob ) const
 {
-        ObjectList::const_iterator it = objectList_.begin();
-        for( ; it != objectList_.end(); ++it )
-                        (*it)->outputToBackend( ob );
+        foreach ( DrawObject* o, objectList_ )
+                o->outputToBackend( ob );
 }
 
 
 void Figure::clear()
 {
-        ObjectList::iterator it = objectList_.begin();
-        for ( ; it != objectList_.end(); ++it )
-                delete *it;
-        
-        objectList_.erase( objectList_.begin(), objectList_.end() );        
+        qDeleteAll( objectList_ );
+        objectList_.clear();
 }
 
 
 QRectF Figure::boundingRect() const
 {
         QRectF r;
-        foreach( DrawObject* o, objectList_ )
+        foreach( DrawObject* o, objectList_ ) 
                 r |= o->boundingRect();
+
         return r;
 }
 

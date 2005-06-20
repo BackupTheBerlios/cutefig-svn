@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.net
+**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -25,7 +25,7 @@
 
 /** \mainpage The CuteFig source documentation
  *  \version 0.1
- *  \author Johannes Mueller <joh@users.berlios.net>
+ *  \author Johannes Mueller <joh@users.berlios.de>
  *
  *  \section intro_sec Introduction
  *

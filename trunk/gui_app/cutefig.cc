@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.net
+**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -224,7 +224,7 @@ void CuteFig::about()
 {
         QString s = tr("A vector based drawing program\n" 
                        "CopyLeft by Johannes Mueller "
-                       "<joh@users.berlios.net>");
+                       "<joh@users.berlios.de>");
         
         QMessageBox::about( this, "CuteFig", s );
 }
