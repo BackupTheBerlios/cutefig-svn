@@ -37,9 +37,9 @@ ErrorReporter::ErrorReporter( const QString& text, QWidget * parent )
         : QDialog( parent, false )
 {
 
-        setCaption( tr("Error parsing file") );
+        setWindowTitle( tr("Error parsing file") );
         
-        QGridLayout* l = new QGridLayout( this, 3,4 );
+        QGridLayout* l = new QGridLayout( this );
         l->setSpacing( 5 );
         
         QLabel* icon = new QLabel( this );
@@ -50,7 +50,7 @@ ErrorReporter::ErrorReporter( const QString& text, QWidget * parent )
 
         QTextEdit* contents = new QTextEdit( text, this );
         contents->setReadOnly( true );
-        contents->setTextFormat( Qt::PlainText );
+//        contents->setTextFormat( Qt::PlainText );
         contents->setMinimumSize( 500,200 );
 
         QPushButton* ok = new QPushButton( tr("Ok"), this );
@@ -58,8 +58,8 @@ ErrorReporter::ErrorReporter( const QString& text, QWidget * parent )
         connect( ok, SIGNAL( clicked() ), this, SLOT( accept() ) );
 
         l->addWidget( icon, 1,0, Qt::AlignTop );
-        l->addMultiCellWidget( message, 0,0, 1,3 );
-        l->addMultiCellWidget( contents, 1,1, 1,3 );
+        l->addWidget( message, 0,0, 1,3 );
+        l->addWidget( contents, 1,1, 1,3 );
         l->addWidget( ok, 2,2 );        
 }
 

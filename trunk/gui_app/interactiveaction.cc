@@ -131,5 +131,5 @@ bool InteractiveAction::wouldHandleSelection( const QPoint& p, const QMatrix* m 
 
 const QString InteractiveAction::completeName() const
 {
-        return tr("%1 %2").arg( commandName() ).arg( tr(selection_.objectname()) );
+        return tr("%1 %2").arg( commandName() ).arg( selection_.objectname() );
 }

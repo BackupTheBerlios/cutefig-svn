@@ -37,7 +37,7 @@ EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,
         : ObjectDialog( o, a, parent )
 {
         qDebug("EllipseDialog::EllipseDialog");
-        setCaption( tr("Ellipse Properties") );
+        setWindowTitle( tr("Ellipse Properties") );
         ellipse_ = (Ellipse*) o;
         setUpAll();
 }
@@ -53,17 +53,28 @@ void EllipseDialog::setUpPrivate()
 //        ProgUtils::prepareLayout( topLayout, true );
 
         QGroupBox* angleGroup = new QGroupBox( tr("&Angle"), page );
+        QGroupBox* stg = new QGroupBox( tr("&Type"), page );
+        QGroupBox* dg = new QGroupBox( tr("Specified &by"), page );
+
+        topLayout->addWidget( angleGroup, 0,0, 1,0  );
+        topLayout->addWidget( stg, 1,0 );
+        topLayout->addWidget( dg, 1,1 );
+        
         QHBoxLayout* angleLayout = new QHBoxLayout( angleGroup );
-        angleSlider = new QSlider( -45,45, 1, 0, Qt::Horizontal, angleGroup );
-        angleSlider->setTickmarks( QSlider::TicksBothSides );
+//        angleGroup->setLayout( angleLayout );
+        
+        angleSlider = new QSlider( Qt::Horizontal, angleGroup );
+        angleSlider->setMinimum( -45 );
+        angleSlider->setMaximum(  45 );
+        angleSlider->setSingleStep( 1 );
+        angleSlider->setTickPosition( QSlider::TicksBothSides );
         angleSlider->setTickInterval( 5 );
         angleLineEdit = new NumberLineEdit( 0, angleGroup );
-        angleLineEdit->setValidator( new QIntValidator( -45,45,
-                                                        angleLineEdit ) );
-        angleLayout->addWidget( angleSlider );
-        angleLayout->addWidget( angleLineEdit );
+        angleLineEdit->setValidator( new QIntValidator( -45,45, angleLineEdit ) );
         
-        QGroupBox* stg = new QGroupBox( tr("&Type"), page );
+        angleLayout->addWidget( angleLineEdit );
+        angleLayout->addWidget( angleSlider );
+        
         QVBoxLayout* stl = new QVBoxLayout( stg );
         subType = new QButtonGroup( this );
         subType->setExclusive( true );
@@ -73,9 +84,7 @@ void EllipseDialog::setUpPrivate()
         subType->addButton( circleButton );
         stl->addWidget( ellipseButton );
         stl->addWidget( circleButton );
-
-
-        QGroupBox* dg = new QGroupBox( tr("Specified &by"), page );
+        
         definition = new QButtonGroup( this );
         definition->setExclusive( true );
         QRadioButton* radiiButton = new QRadioButton( "&Radii", dg );
@@ -86,9 +95,6 @@ void EllipseDialog::setUpPrivate()
         dgl->addWidget( radiiButton );
         dgl->addWidget( diamButton );
 
-        topLayout->addMultiCellWidget( angleGroup, 0,0, 0,1 );
-        topLayout->addWidget( stg, 1,0 );
-        topLayout->addWidget( dg, 1,1 );
 }
 
 void EllipseDialog::setDefaultValues()

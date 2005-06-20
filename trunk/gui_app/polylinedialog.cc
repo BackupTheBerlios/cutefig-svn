@@ -29,6 +29,6 @@ PolylineDialog::PolylineDialog( DrawObject *o, EditdialogAction* a,
                                 QWidget * parent )
         : ObjectDialog( o, a, parent )
 {
-        setCaption( tr("Polyline Properties") );
+        setWindowTitle( tr("Polyline Properties") );
         setUpAll();
 }

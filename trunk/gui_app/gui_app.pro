@@ -5,7 +5,7 @@ CONFIG += thread
 CONFIG += debug
 TEMPLATE = app
 
-QT+=qt3support
+#QT+=qt3support
 
 PRE_TARGETDEPS += ../kernel/libcutefig-core.a 
 
@@ -49,7 +49,7 @@ HEADERS += cutefig.h \
            changecommand.h \
            flagbuttongroup.h \
            colorbutton.h \
-           colortableitem.h \
+#           colortableitem.h \
            stylecombobox.h \
            lineshowwidget.h \
            ruler.h \
@@ -82,7 +82,7 @@ SOURCES += cutefig.cc \
            changecommand.cc \
            flagbuttongroup.cc \
            colorbutton.cc \
-           colortableitem.cc \
+#           colortableitem.cc \
            stylecombobox.cc \
            lineshowwidget.cc \
            ruler.cc \

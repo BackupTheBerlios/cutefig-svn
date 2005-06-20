@@ -75,7 +75,7 @@ void ObjectDialog::setUpGeneral()
 {
         qDebug("ObjectDialog::setUpGeneral");
 
-        QFrame* page = new QFrame( this );
+        QFrame* page = new QFrame();
         tabWidget->addTab( page, "&General" );
 
         QVBoxLayout* topLayout = new QVBoxLayout( page );
@@ -87,8 +87,12 @@ void ObjectDialog::setUpGeneral()
 
         topLayout->addWidget( setUpFillGroup( page ) );
 
-        QHBoxLayout* dlt = new QHBoxLayout( topLayout );
-        depth = new QSpinBox( 0,999,1, page );
+        QHBoxLayout* dlt = new QHBoxLayout( topLayout->widget() );
+        topLayout->addItem( dlt );
+        depth = new QSpinBox( page );
+        depth->setMinimum(0);
+        depth->setMaximum(999);
+        depth->setSingleStep(1);
         QLabel* dlb = new QLabel( tr("&Depth"), page );
         dlb->setBuddy( depth );
         dlt->addWidget( dlb );
@@ -96,9 +100,10 @@ void ObjectDialog::setUpGeneral()
 
         // Comment
 
-        QVBoxLayout* clt = new QVBoxLayout( topLayout );
+        QVBoxLayout* clt = new QVBoxLayout( topLayout->widget() );
+        topLayout->addItem( clt );
         comment = new QTextEdit( page );
-        comment->setTextFormat( Qt::PlainText );
+//        comment->setTextFormat( Qt::PlainText );
         comment->setTabChangesFocus( true );
         QLabel* clb = new QLabel( tr("&Comment"), page );
         clb->setBuddy( comment );
@@ -134,10 +139,10 @@ QGroupBox* ObjectDialog::setUpLineGroup( QWidget* page )
         lineLayout->addWidget( lsl, 2,0 );
         lineLayout->addWidget( lineStyle, 2,1 );
 
-        lineLayout->addItem( new QSpacerItem( 0, 10 ), 0,2 );
+        lineLayout->addItem( new QSpacerItem( 10, 0 ), 0,2 );
 
 
-        QGroupBox* capGroup = new QGroupBox( tr("Ca&p style"), page );
+        QGroupBox* capGroup = new QGroupBox( tr("Ca&p style"), lineLayout->widget() );
         QHBoxLayout* capLayout = new QHBoxLayout( capGroup );
 
         capStyle = new FlagButtonGroup( capGroup );
@@ -158,7 +163,7 @@ QGroupBox* ObjectDialog::setUpLineGroup( QWidget* page )
         capLayout->addWidget( capRound );
         capLayout->addWidget( capSquare );
 
-        lineLayout->addWidget( capGroup, 0,2 );
+        lineLayout->addWidget( capGroup, 0,3 );
 
 
         QGroupBox* joinGroup = new QGroupBox( tr("&Join style") );
@@ -182,11 +187,11 @@ QGroupBox* ObjectDialog::setUpLineGroup( QWidget* page )
         joinLayout->addWidget( joinBevel );
         joinLayout->addWidget( joinRound );
 
-        lineLayout->addWidget( joinGroup, 1,2 );
+        lineLayout->addWidget( joinGroup, 1,3 );
 
 
         lineShow = new LineShowWidget( drawObject_->pen(), 40, lineGroup );
-        lineLayout->addWidget( lineShow, 2,2 );
+        lineLayout->addWidget( lineShow, 2,3 );
 
         return lineGroup;
 }
@@ -199,7 +204,9 @@ QGroupBox* ObjectDialog::setUpFillGroup( QWidget* page )
         ProgUtils::prepareLayout( fillLayout );
 
         fillColor = new ColorButton( Qt::black, fillGroup );
-        fillLayout->addWidget( new QLabel( fillColor,tr("C&olor"),fillGroup ), 0,0 );
+        QLabel* fgLabel = new QLabel( tr("C&olor"),fillGroup );
+        fgLabel->setBuddy( fillColor );
+        fillLayout->addWidget( fgLabel, 0,0 );
         fillLayout->addWidget( fillColor, 0,1 );
 
 //        fillPattern = new BrushButton( fillGroup );
@@ -262,7 +269,7 @@ void ObjectDialog::setDefaultValues()
         fillColor->setColor( drawObject_->fillColor() );
 
         depth->setValue( drawObject_->depth() );
-        comment->setText( drawObject_->comment() );
+        comment->setPlainText( drawObject_->comment() );
 }
 
 

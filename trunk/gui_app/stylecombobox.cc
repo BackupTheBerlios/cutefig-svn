@@ -35,11 +35,11 @@ StyleComboBox::StyleComboBox( QWidget * parent )
         : QComboBox( parent )
 {
         for ( int i = 0; i < 6; ++i ) 
-                insertItem( drawItemQtPen( Qt::PenStyle( i ) ) );
+                addItem( QIcon(drawItemQtPen( Qt::PenStyle( i ) )), QString() );
 
         DashesLib& dl = DashesLib::instance();
         for ( int i = 0; i < dl.size(); ++i )
-                insertItem( drawItemCustomPen( i ) );
+                addItem( drawItemCustomPen( i ), QString() );
 
         connect( this, SIGNAL( activated( int ) ), 
                  this, SLOT( em_activated( int ) ) );

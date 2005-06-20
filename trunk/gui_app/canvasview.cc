@@ -146,7 +146,7 @@ void CanvasView::mouseMoveEvent( QMouseEvent* e )
         vRuler_->setValue( p.y() );
 
         QString s;
-        QTextOStream st( &s );
+        QTextStream st( &s );
         st.setRealNumberPrecision( 2 );
         st.setRealNumberNotation( QTextStream::FixedNotation );
         st << Fig::pix2cm*p.x()/scale_ << " : " << Fig::pix2cm*p.y()/scale_
@@ -417,7 +417,7 @@ void CanvasView::setZoom_private( double z )
 
 void CanvasView::setFixedSize( const QSize &s )
 {
-        buffer_.resize( s );
+        buffer_ = QPixmap( s );
         buffer_.fill( Qt::white );
         resize( s );
 }

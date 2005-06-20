@@ -146,7 +146,7 @@ void Ruler::setLength( int l )
                 resize( l, CuteFig::rulerWidth );
         else
                 resize( CuteFig::rulerWidth, l );
-        buffer_.resize( size() );
+        buffer_ = QPixmap( size() );
         updateRuler();
 }
 

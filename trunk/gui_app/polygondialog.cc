@@ -29,6 +29,6 @@ PolygonDialog::PolygonDialog( DrawObject *o, EditdialogAction* a,
                               QWidget * parent )
         : ObjectDialog( o, a, parent )
 {
-        setCaption( tr("Polygon Properties") );
+        setWindowTitle( tr("Polygon Properties") );
         setUpAll();
 }
