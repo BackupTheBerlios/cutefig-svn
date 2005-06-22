@@ -2,8 +2,7 @@
 
 #message( this is $${_FILE_} )
 
-
-BUILDDIR = /home/joh/devel/cutefig
+include( .builddir.pri )
 
 equals(TEMPLATE,app):DESTDIR = $$BUILDDIR/bin
 

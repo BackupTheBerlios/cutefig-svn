@@ -3,6 +3,8 @@
 # @version $Id$
 #
 
+system( echo BUILDDIR=$PWD > .builddir.pri )
+
 CONFIG+=debug
 
 TEMPLATE = subdirs
