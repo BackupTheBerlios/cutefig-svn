@@ -22,34 +22,34 @@
 **
 ******************************************************************************/
 
-#ifndef exportfilter_h
-#define exportfilter_h
+#ifndef filterlib_h
+#define filterlib_h
 
+#include <QHash>
 #include <QString>
-#include <QSize>
+#include <QStringList>
+#include <QPair>
 
-class Figure;
-class QFile;
+class FilterFactory;
 
-class ExportFilter
+class FilterLib 
 {
 public:
-        ExportFilter( const Figure* f = 0, QFile* file = 0 )
-                : figure_ ( f ), file_( file ) {}
+        static FilterLib& instance() 
+        {
+                static FilterLib inst;
+                return inst;
+        }
 
-        virtual ~ExportFilter() {}
+        QString filterString() const;
+        FilterFactory* getFilterFactory( const QByteArray& format ) const {
+                return filterHash_[format];
+        }
 
-        void setFigure( const Figure* figure ) { figure_ = figure; }
-        void setFile( QFile* file ) { file_ = file; }
-        
-        virtual void exportFigure() = 0;
-//        virtual const QString filterName() const = 0;
-
-// MIME-stuff missing
-protected:
-        const Figure* figure_;
-        QFile* file_;
-
+private:
+        FilterLib();
+        typedef QPair<QByteArray,FilterFactory*> FilterHash_t; 
+        QHash<QByteArray,FilterFactory*> filterHash_;
 };
 
 #endif

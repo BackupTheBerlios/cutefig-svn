@@ -1,16 +1,6 @@
 # @version $Id$
 
-TEMPLATE = lib
-TARGET = exportfilters
-CONFIG += staticlib
-CONFIG += debug
+TEMPLATE = subdirs
 
-PRE_TARGETDEPS += ../kernel/libcutefig-core.a
-INCLUDEPATH += ../kernel 
-DEPENDPATH += ../kernel
-OBJECTS_DIR += pixel
+SUBDIRS = pixel gui_lib
 
-LIBS += -L ../kernel -lcutefig-core
-
-HEADERS += exportfilter.h filterlib.h
-SOURCES += filterlib.cc

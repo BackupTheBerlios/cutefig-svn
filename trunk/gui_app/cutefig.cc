@@ -42,6 +42,8 @@
 #include "actions.h"
 #include "errorreporter.h"
 
+#include "exportgui.h"
+
 #include <QtGui>
 
 
@@ -281,4 +283,9 @@ void CuteFig::setupObjectMapper()
         mapper.registerItem( EllipseHandler::instance() );
         mapper.registerItem( PolylineHandler::instance() );
         mapper.registerItem( PolygonHandler::instance() );
+}
+
+void CuteFig::exportFigure()
+{
+        ExportGUI::instance().exportFigure( figure_ );
 }

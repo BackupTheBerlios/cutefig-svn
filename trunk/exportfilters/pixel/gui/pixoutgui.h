@@ -1,7 +1,6 @@
- 
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: pixoutput.h 8 2005-06-21 06:30:27Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,37 +21,46 @@
 **
 ******************************************************************************/
 
-#ifndef filterlib_h
-#define filterlib_h
+#ifndef pixoutdialog_h
+#define pixoutdialog_h
 
-#include <QHash>
-#include <QString>
-#include <QStringList>
+class PixoutDialog
 
-class ExportFilter;
-
-class FilterFactory
+class PNGFilterFactory : public FilterFactory
 {
 public:
-        virtual ExportFilter* filter() = 0;
+        ExportFilter* filter() { return new PIXOutput("png"); }
 };
 
-class FilterLib 
+class BMPFilterFactory : public FilterFactory
 {
 public:
-        static FilterLib& instance() 
-        {
-                static FilterLib inst;
-                return inst;
-        }
-
-        QStringList filterStringList() const;
-        FilterFactory* getFilter( QByteArray format ) const { return filterHash_[format]; }
-
-private:
-        FilterLib();
-        typedef FilterPair; 
-        QHash<QByteArray,FilterFactory*> filterHash_;
+        ExportFilter* filter() { return new PIXOutput("bmp"); }
 };
+
+class JPGFilterFactory : public FilterFactory
+{
+public:
+        ExportFilter* filter() { return new PIXOutput("jpg"); }
+};
+
+class XPMFilterFactory : public FilterFactory
+{
+public:
+        ExportFilter* filter() { return new PIXOutput("xpm"); }
+};
+
+class XBMFilterFactory : public FilterFactory
+{
+public:
+        ExportFilter* filter() { return new PIXOutput("xbm"); }
+};
+
+class PPMFilterFactory : public FilterFactory
+{
+public:
+        ExportFilter* filter() { return new PIXOutput("ppm"); }
+};
+
 
 #endif

@@ -94,6 +94,9 @@ FileActions::FileActions( CuteFig* parent )
 
         addSeparator();
 
+        QAction* exprt = new QAction( tr("E&xport"), this );
+        connect( exprt, SIGNAL( triggered() ), parent, SLOT( exportFigure() ) );
+        
         QAction* print = new QAction( QIcon(":images/fileprint.png"), tr("&Print"), this );
         print->setShortcut( Qt::CTRL+Qt::Key_P );
         connect( print, SIGNAL( triggered() ), parent, SLOT( print() ) );

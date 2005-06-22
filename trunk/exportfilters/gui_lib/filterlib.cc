@@ -23,10 +23,10 @@
 ******************************************************************************/
 
 #include "filterlib.h"
-#include "pixel/pixoutput.h"
+#include "pixoutput.h"
+#include "pixoutdialog.h"
 
 #include <QApplication>
-#include <QString>
 
 FilterLib::FilterLib()
         : filterHash_()
@@ -41,14 +41,16 @@ FilterLib::FilterLib()
         filterHash_["ppm"] = new PPMFilterFactory;
 }
 
-QStringList FilterLib::filterStringList() const
+QString FilterLib::filterString() const
 {
         QString s;
         s+= qApp->translate("FilterLib", "Exportable formats:", "English Text") + " (";
-        foreach ( FilterHash_t p, filterHash_ )
-                s += "*." << p.first + " ";
+
+        QHash<QByteArray,FilterFactory*>::const_iterator it = filterHash_.begin();
+        for ( ; it != filterHash_.end(); ++it )
+                s += "*." + it.key() + " ";
         s.remove( s.size()-1, 1 );
         s += ")";
 
-        return (QStringList() << s);
+        return s;
 }

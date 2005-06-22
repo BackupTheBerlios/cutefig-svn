@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: pixoutput.h 8 2005-06-21 06:30:27Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,34 +22,17 @@
 **
 ******************************************************************************/
 
-#ifndef exportfilter_h
-#define exportfilter_h
+#ifndef filterfactory_h
+#define filterfactory_h
 
-#include <QString>
-#include <QSize>
+class ExportDialog;
+class ExportFilter;
 
-class Figure;
-class QFile;
-
-class ExportFilter
+class FilterFactory
 {
 public:
-        ExportFilter( const Figure* f = 0, QFile* file = 0 )
-                : figure_ ( f ), file_( file ) {}
-
-        virtual ~ExportFilter() {}
-
-        void setFigure( const Figure* figure ) { figure_ = figure; }
-        void setFile( QFile* file ) { file_ = file; }
-        
-        virtual void exportFigure() = 0;
-//        virtual const QString filterName() const = 0;
-
-// MIME-stuff missing
-protected:
-        const Figure* figure_;
-        QFile* file_;
-
+        virtual ExportFilter* filter() = 0;
+        virtual ExportDialog* dialog( ExportFilter* filter, QWidget* parent=0 ) = 0;
 };
 
 #endif

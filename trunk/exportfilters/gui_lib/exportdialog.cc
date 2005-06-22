@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: pixoutput.h 8 2005-06-21 06:30:27Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,21 +22,31 @@
 **
 ******************************************************************************/
 
-#include "exportgui.h"
+#include "exportdialog.h"
 
-ExportGUI::ExportGUI()
-        : QObject( qApp )
+#include <QPushButton>
+#include <QLayout>
+
+ExportDialog::ExportDialog( QWidget* parent )
+        : QDialog( parent )
 {
+        QVBoxLayout* topLayout = new QVBoxLayout( this );
+
+        mainWidget_ = new QWidget( this );
+        topLayout->addWidget( mainWidget_ );
+
+        QHBoxLayout* bottomLayout = new QHBoxLayout( topLayout->widget() );
+        topLayout->addItem( bottomLayout );
+
+        QPushButton* ok = new QPushButton( tr("Ok"), this );
+        ok->setAutoDefault( true );
+        connect( ok, SIGNAL( clicked() ), this, SLOT( accept() ) );
+        bottomLayout->addWidget( ok );
+
+        bottomLayout->addSpacing( 10 );
         
+        QPushButton* cancel = new QPushButton( tr("Cancel"), this );
+        connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+        bottomLayout->addWidget( cancel );
 }
 
-static ExportGUI::instance()
-{
-        static ExportGui* inst = new ExportGui();
-        return *inst;
-}
-
-void ExportGUI::exportFigure( Figure* f )
-{
-        
-}

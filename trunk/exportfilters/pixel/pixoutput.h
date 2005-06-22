@@ -30,12 +30,16 @@
 #include <QColor>
 #include <QString>
 
+class PixoutDialog;
+
 class PIXOutput : public ExportFilter
 {
 public:
         PIXOutput( QByteArray format );
-        PIXOutput( const Figure* f, QFile* file, QByteArray format = QByteArray() );
+        PIXOutput( const Figure* figure, QFile* file, QByteArray format = QByteArray() );
         ~PIXOutput() {}
+
+        friend class PixoutDialog;
         
         void setFormat( const QByteArray& format ) { format_ = format; }
         void setScale( double s );
@@ -49,7 +53,6 @@ public:
 
         bool error() const { return error_; }
         QString errorString() const { return errorString_; }
-        const QString filterName() const { return "pix"; }
 
 private:
         QByteArray format_;
@@ -61,41 +64,4 @@ private:
         bool error_;
         QString errorString_;
 };
-/*
-class PNGFilterFactory : public FilterFactory
-{
-public:
-        ExportFilter* filter() { return new PIXOutput("png"); }
-};
-
-class BMPFilterFactory : public FilterFactory
-{
-public:
-        ExportFilter* filter() { return new PIXOutput("bmp"); }
-};
-
-class JPGFilterFactory : public FilterFactory
-{
-public:
-        ExportFilter* filter() { return new PIXOutput("jpg"); }
-};
-
-class XPMFilterFactory : public FilterFactory
-{
-public:
-        ExportFilter* filter() { return new PIXOutput("xpm"); }
-};
-
-class XBMFilterFactory : public FilterFactory
-{
-public:
-        ExportFilter* filter() { return new PIXOutput("xbm"); }
-};
-
-class PPMFilterFactory : public FilterFactory
-{
-public:
-        ExportFilter* filter() { return new PIXOutput("ppm"); }
-};
-*/
 #endif

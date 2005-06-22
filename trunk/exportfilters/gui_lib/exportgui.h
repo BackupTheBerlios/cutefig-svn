@@ -32,10 +32,10 @@ class Figure;
 class ExportGUI : public QObject 
 {
         Q_OBJECT
-        ExportGui();
+        ExportGUI();
 public:
-        static ExportGui& instance();
-        ~ExportGui() {}
+        static ExportGUI& instance();
+        ~ExportGUI() {}
 
 public slots:
         void exportFigure( Figure* f );

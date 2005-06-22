@@ -180,6 +180,31 @@ void PixfilterApp::setupFileLists( int optind )
     
 }
 
+int PixfilterApp::openInfile( const QString& filename )
+{
+        infile_.setFileName( filename );
+        if ( !infile_.open( QIODevice::ReadOnly ) ) {
+                cerr << tr("Failed to open %1 for reading:").arg(filename) 
+                     << " " << strerror(errno) << ".\n";
+                return errno;
+        }
+
+        return 0;
+}
+
+int PixfilterApp::openOutfile( const QString& filename )
+{
+        outfile_.setFileName( filename );
+        if ( !outfile_.open( QIODevice::WriteOnly ) ) {
+                cerr << tr("Failed to open %1 for output:").arg(filename) 
+                     << " " << strerror(errno) << ".\n";
+                return errno;
+        }
+        
+        return 0;
+}
+
+
 int PixfilterApp::exec()
 {
         parseResult_ = parseCommandLine();
@@ -195,14 +220,12 @@ int PixfilterApp::exec()
                 return exportFigure();
         }
         
+        int error;
+
         if ( outfileList_.isEmpty() ) {
-                infile_.setFileName( infileList_.first() );
-                if ( !infile_.open( QIODevice::ReadOnly ) ) {
-                        cerr << tr("Failed to open") << " " 
-                             << infileList_.first()
-                             << ", " << infile_.errorString() << "\n";
-                        return infile_.error();
-                }
+                error = openInfile( infileList_.first() );
+                if ( error )
+                        return error;
 
                 outfile_.open( stdout, QIODevice::WriteOnly );
                 return exportFigure();
@@ -210,24 +233,18 @@ int PixfilterApp::exec()
 
         int retVal = 0;
         for ( int i=0; i<infileList_.size(); i++ ) {
-                infile_.setFileName( infileList_[i] );
-                outfile_.setFileName( outfileList_[i] );
+
+                error = openInfile( infileList_[i] );
+                if ( error )
+                        return error;
                 
-                if ( !infile_.open( QIODevice::ReadOnly ) ) {
-                        cerr << tr("Failed to open") << " " << infileList_[i]
-                             << ". " << infile_.errorString() << "\n";
-                        return infile_.error();
-                }
-                if ( !outfile_.open( QIODevice::WriteOnly ) ) {
-                        cerr << tr("Failed to open") << " "
-                             << outfileList_[i] << " for output."
-                             << outfile_.errorString();
-                        return outfile_.error();
-                }
-                
-                int r = exportFigure();
-                if ( r )
-                        retVal = r;
+                error = openOutfile( outfileList_[i] );
+                if ( error )
+                        return error;
+
+                error = exportFigure();
+                if ( error )
+                        retVal = error;
         }
 
         return retVal;

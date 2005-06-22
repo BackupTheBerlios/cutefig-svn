@@ -36,7 +36,6 @@
 ErrorReporter::ErrorReporter( const QString& text, QWidget * parent )
         : QDialog( parent, false )
 {
-
         setWindowTitle( tr("Error parsing file") );
         
         QGridLayout* l = new QGridLayout( this );

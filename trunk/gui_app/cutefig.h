@@ -61,6 +61,7 @@ private slots:
         void load( const QString& fileName ); //!< opens a chosen document
         void save();   
         void saveAs();
+        void exportFigure();
         void print();
 
         void about();  //!< Displays the about box.

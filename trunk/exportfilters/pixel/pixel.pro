@@ -1,45 +1,15 @@
 # @version $Id$
 
-defineReplace(sources) {
-        names = $$ARGS
-        sources = 
-        for( name, names ) {
-                sources += $${name}.cc
-        }
-        return ($$sources)
-}
+TEMPLATE = app
 
-defineReplace(objects) {
-        names = $$ARGS
-        objects = 
-        for( name, names ) {
-                objects += $${name}.o
-        }
-        return ($$objects)
-}
+CUTEFIGROOT = ../..
+EXPORTROOT = ..
 
-TEMPLATE=app
-TARGET=cfig2pixel
+include($$CUTEFIGROOT/cutefig_base.pri)
+include($$EXPORTROOT/export_base.pri)
 
-PRE_TARGETDEPS += ../../kernel/libcutefig-core.a
-INCLUDEPATH += ../ ../../kernel 
-DEPENDPATH += ../ ../../kernel
-
-LIBS += -L ../../kernel -lcutefig-core
+TARGET = cfig2pixel
 
 HEADERS += pixoutput.h pixfilterapp.h
-GENERIC_SOURCEFILES = pixoutput pixfilterapp
-
-CFIG2PNG_SOURCEFILES = cfig2png
-
-SOURCES +=  $$sources($$GENERIC_SOURCEFILES) main.cc
-GENERIC_OBJECTS = $$objects($$GENERIC_SOURCEFILES)
-
-cfig2png.target = cfig2png
-cfig2png.objects = $$GENERIC_OBJECTS $$objects($$CFIG2PNG_SOURCEFILES)
-cfig2png.commands = $$QMAKE_LINK $$QMAKE_LFLAGS -o $$cfig2png.target $$cfig2png.objects $(LIBS)
-cfig2png.depends = $$cfig2png.objects $$sources($$CFIG2PNG_SOURCEFILES) 
-
-QMAKE_EXTRA_UNIX_TARGETS += cfig2png
-PRE_TARGETDEPS += cfig2png
+SOURCES += pixoutput.cc pixfilterapp.cc cfig2pixel.cc
 

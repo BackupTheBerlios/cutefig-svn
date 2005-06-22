@@ -7,17 +7,13 @@ TEMPLATE = app
 
 #QT+=qt3support
 
-PRE_TARGETDEPS += ../kernel/libcutefig-core.a 
+include(../cutefig_base.pri)
 
-INCLUDEPATH += ../kernel
 
-DEPENDPATH += ../kernel 
-
-LIBS += -L../kernel/ -lcutefig-core
-
-CONFIG-=stl rtti exeptions
-
-DEFINES += GUI_APP
+# Exportfilters
+INCLUDEPATH += ../exportfilters/ ../exportfilters/gui_lib
+LIBS += -L../exportfilters/gui_lib -lexportfilters
+PRE_TARGETDEPS += ../exportfilters/gui_lib/libexportfilters.a
 
 RESOURCES = cutefig.qrc
 

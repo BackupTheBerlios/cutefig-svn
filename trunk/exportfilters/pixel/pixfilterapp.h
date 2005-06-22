@@ -64,5 +64,7 @@ protected:
         void printImageFormats();
 
 private:
+        int openInfile( const QString& filename );
+        int openOutfile( const QString& filename );
         void setupUsageString();
 };
