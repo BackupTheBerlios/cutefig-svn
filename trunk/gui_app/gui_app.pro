@@ -9,11 +9,14 @@ TEMPLATE = app
 
 include(../cutefig_base.pri)
 
+# Widgets
+LIBS += -L$$BUILDDIR/widgets/ -lcutefig-widgets
+PRE_TARGETDEPS += $$BUILDDIR/widgets/libcutefig-widgets.a
 
 # Exportfilters
-INCLUDEPATH += ../exportfilters/ ../exportfilters/gui_lib
-LIBS += -L../exportfilters/gui_lib -lexportfilters
-PRE_TARGETDEPS += ../exportfilters/gui_lib/libexportfilters.a
+INCLUDEPATH += $$BUILDDIRexportfilters/ $$BUILDDIR/exportfilters/gui_lib
+LIBS += -L$$BUILDDIR/exportfilters/gui_lib -lexportfilters
+PRE_TARGETDEPS += $$BUILDDIR/exportfilters/gui_lib/libexportfilters.a
 
 RESOURCES = cutefig.qrc
 
@@ -43,8 +46,6 @@ HEADERS += cutefig.h \
            addcommand.h \
            deletecommand.h \
            changecommand.h \
-           flagbuttongroup.h \
-           colorbutton.h \
 #           colortableitem.h \
            stylecombobox.h \
            lineshowwidget.h \
@@ -53,8 +54,7 @@ HEADERS += cutefig.h \
            ellipsedialog.h \
            polylinedialog.h \
            polygondialog.h \
-           numberlineedit.h \
-           errorreporter.h 
+           numberlineedit.h 
 SOURCES += cutefig.cc \
            centralwidget.cc \
            canvasview.cc \
@@ -76,8 +76,6 @@ SOURCES += cutefig.cc \
            addcommand.cc \
            deletecommand.cc \
            changecommand.cc \
-           flagbuttongroup.cc \
-           colorbutton.cc \
 #           colortableitem.cc \
            stylecombobox.cc \
            lineshowwidget.cc \
@@ -87,7 +85,6 @@ SOURCES += cutefig.cc \
            polylinedialog.cc \
            polygondialog.cc \ 
            numberlineedit.cc \
-           errorreporter.cc \
            main.cc
 
 TRANSLATIONS = cutefig_de.ts

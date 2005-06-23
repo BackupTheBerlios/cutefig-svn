@@ -8,7 +8,12 @@ equals(TEMPLATE,app):DESTDIR = $$BUILDDIR/bin
 
 PRE_TARGETDEPS += $$BUILDDIR/kernel/libcutefig-core.a 
 
-INCLUDEPATH += $$BUILDDIR/kernel 
-DEPENDPATH += $$BUILDDIR/kernel 
+EXTRADIRS = kernel widgets
 
-LIBS += -L$$BUILDDIR/kernel/ -lcutefig-core
+for( d, EXTRADIRS ) {
+        INCLUDEPATH += $$BUILDDIR/$${d}
+        DEPENDPATH += $$BUILDDIR/$${d}
+}
+
+
+LIBS += -L$$BUILDDIR/kernel/ -lcutefig-core \

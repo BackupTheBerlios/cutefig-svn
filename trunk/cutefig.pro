@@ -9,7 +9,7 @@ CONFIG+=debug
 
 TEMPLATE = subdirs
 
-SUBDIRS = kernel exportfilters gui_app
+SUBDIRS = kernel exportfilters widgets gui_app
 
 
 DEFINES += QT_COMPAT_WARNINGS
