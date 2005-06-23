@@ -7,5 +7,5 @@ include(../../../cutefig_base.pri)
 
 INCLUDEPATH+=$$EXPORTROOT/gui_lib $$EXPORTROOT/pixel
 
-HEADERS = pixoutgui.h pixoutdialog.h
+HEADERS = pixoutdialog.h
 SOURCES = pixoutdialog.cc

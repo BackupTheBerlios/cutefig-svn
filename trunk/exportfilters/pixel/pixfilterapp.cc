@@ -184,8 +184,8 @@ int PixfilterApp::openInfile( const QString& filename )
 {
         infile_.setFileName( filename );
         if ( !infile_.open( QIODevice::ReadOnly ) ) {
-                cerr << tr("Failed to open %1 for reading:").arg(filename) 
-                     << " " << strerror(errno) << ".\n";
+                cerr << tr("Failed to open %1 for reading: %2.\n")
+                        .arg(filename).arg(strerror(errno));
                 return errno;
         }
 
@@ -196,8 +196,8 @@ int PixfilterApp::openOutfile( const QString& filename )
 {
         outfile_.setFileName( filename );
         if ( !outfile_.open( QIODevice::WriteOnly ) ) {
-                cerr << tr("Failed to open %1 for output:").arg(filename) 
-                     << " " << strerror(errno) << ".\n";
+                cerr << tr("Failed to open %1 for output: %2.\n")
+                        .arg(filename).arg(strerror(errno));
                 return errno;
         }
         

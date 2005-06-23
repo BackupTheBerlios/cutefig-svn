@@ -63,7 +63,7 @@ void ExportGUI::exportFigure( Figure* figure )
         
         while ( !filterFactory ) {
                 filename = QFileDialog::getSaveFileName( 0, tr("File to export to:"),
-                                                                 QString(), fFilter );
+                                                         QString(), fFilter );
 
                 if ( filename.isEmpty() )
                         return;
@@ -76,8 +76,16 @@ void ExportGUI::exportFigure( Figure* figure )
                                                  "%1.\nThe format is not known.")
                                               .arg( QString(format) ),
                                               QMessageBox::Ok, QMessageBox::NoButton );
-        }
+        }        
         
+        ExportFilter* filter = filterFactory->filter();
+        filter->setFigure( figure );
+
+        ExportDialog* dialog = filterFactory->dialog( filter );
+
+        if ( !dialog->exec() )
+                return;
+
         QFile file( filename );
         if ( !file.open( QIODevice::WriteOnly ) ) {
                 QMessageBox::warning( 0, tr("Export failed"),
@@ -86,13 +94,7 @@ void ExportGUI::exportFigure( Figure* figure )
                                       QMessageBox::Ok, QMessageBox::NoButton );
                 return;
         }
-        
-        ExportFilter* filter = filterFactory->filter();
-        filter->setFigure( figure );
+
         filter->setFile( &file );
-
-        ExportDialog* dialog = filterFactory->dialog( filter );
-
-        if ( dialog->exec() )
-                filter->exportFigure();
+        filter->exportFigure();
 }

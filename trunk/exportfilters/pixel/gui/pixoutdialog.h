@@ -28,6 +28,12 @@
 #include "filterfactory.h"
 #include "pixoutput.h"
 
+#include <QSize>
+
+class QSpinBox;
+class QDoubleSpinBox;
+class QCheckBox;
+
 class PixoutDialog : public ExportDialog
 {
         Q_OBJECT
@@ -37,6 +43,20 @@ public:
 
 private:
         PIXOutput* filter_;
+        bool keepAspectRatio_;
+        double aspectRatio_;
+        QSize figSize_;
+
+        QSpinBox *xres, *yres;
+        QDoubleSpinBox *scale;
+        QCheckBox *keepAspect;
+        
+private slots:
+        void setXres( int x );
+        void setYres( int y );
+        void setScale( double s );
+
+        void keepAspectRatio( int keep );
 };
 
 class PixFilterFactory : public FilterFactory
