@@ -237,8 +237,8 @@ void ObjectDialog::resetObject()
                 return;
         }
 
-        drawObject_ = o;
-
+        setDrawObject( o );
+        
         lineShow->disconnect();
 //        fillPattern->disconnect();
         depth->disconnect();
@@ -301,7 +301,8 @@ void ObjectDialog::setUpConnections()
 //                 fillColor, SLOT( setDisabled( bool ) ) );
 
         connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );
-
+        connect( depth, SIGNAL( valueChanged(int) ), this, SLOT( showValue(int) ) );
+        
         connect( depth, SIGNAL( valueChanged( int ) ), action_, SLOT( wObjectHasChanged() ) );
         connect( lineShow, SIGNAL( changed( const Pen& ) ), action_, SLOT( wObjectHasChanged() ) );
 //        connect( fillPattern, SIGNAL( changed() ),
@@ -314,4 +315,10 @@ void ObjectDialog::setUpAll()
         setUpPrivate();
         setDefaultValues();
         setUpConnections();
+}
+
+void ObjectDialog::setDrawObject( DrawObject* o )
+{
+        drawObject_ = o;
+        castDrawObject();
 }

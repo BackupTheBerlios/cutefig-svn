@@ -27,6 +27,7 @@
 
 #include <QColor>
 #include <QVector>
+#include <QRectF>
 
 template<class Resource> class ResLib;
 typedef QVector<double> Dashes;
@@ -60,6 +61,8 @@ public:
 
         void drawPath( const QPainterPath& path, QPainter* painter ) const;
 
+        QRectF pathRect( const QPainterPath& path ) const;
+        
 private:
         qreal lineWidth_;
         QColor color_;

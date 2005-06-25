@@ -72,9 +72,11 @@ private:
         QMatrix rotation_;
 
         QRectF oldRect_;
-        void getReadyForDraw();
-        virtual void doSpecificPreparation();
+        void setupPainterPath();
+        void setupRects();
+        void doSpecificPreparation();
         QPointF* nextPoint();
+        
         void passPointFlag( Fig::PointFlag f );
 
         static const double rad = 180/M_PI;

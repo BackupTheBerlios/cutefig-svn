@@ -89,3 +89,14 @@ void Pen::drawPath( const QPainterPath& path, QPainter* painter ) const
                 painter->fillPath( strokePath, color_ );
         }
 }
+
+QRectF Pen::pathRect( const QPainterPath& path ) const 
+{
+        QPainterPathStroker stroker;
+        stroker.setWidth( lineWidth_ );
+        stroker.setCapStyle( capStyle_ );
+        stroker.setJoinStyle( joinStyle_ );
+        QPainterPath strokePath = stroker.createStroke( path );
+
+        return strokePath.controlPointRect();
+}

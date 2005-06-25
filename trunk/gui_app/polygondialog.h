@@ -37,7 +37,7 @@ public:
 
 protected:
         virtual void setUpPrivate() {};
-        
+        virtual void castDrawObject() {};        
 };
 
 #endif

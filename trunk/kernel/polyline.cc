@@ -71,12 +71,8 @@ QPointF* Polyline::nextPoint()
         return nextPoint_;
 }
 
-void Polyline::getReadyForDraw()
+void Polyline::setupPainterPath()
 {
-        bRect_ = points_.boundingRect();
-        drawRect_ = bRect_.toRect();
-        addSelPointsToDrawRect();
-
         painterPath_ = QPainterPath();
         painterPath_.addPolygon( points_ );
 }

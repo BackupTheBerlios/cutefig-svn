@@ -30,7 +30,7 @@
 class Ellipse;
 
 class QSlider;
-class NumberLineEdit;
+class QSpinBox;
 class QButtonGroup;
 
 class EllipseDialog : public ObjectDialog
@@ -47,9 +47,10 @@ private:
         virtual void setUpPrivate();
         virtual void setDefaultValues();
         virtual void setUpConnections();
-
+        virtual void castDrawObject();
+        
         QSlider* angleSlider;
-        NumberLineEdit* angleLineEdit;
+        QSpinBox* angleSpin;
 
         QButtonGroup* subType;
         QButtonGroup* definition;

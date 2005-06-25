@@ -53,8 +53,7 @@ HEADERS += cutefig.h \
            objectdialog.h \
            ellipsedialog.h \
            polylinedialog.h \
-           polygondialog.h \
-           numberlineedit.h 
+           polygondialog.h 
 SOURCES += cutefig.cc \
            centralwidget.cc \
            canvasview.cc \
@@ -83,8 +82,7 @@ SOURCES += cutefig.cc \
            objectdialog.cc \
            ellipsedialog.cc \
            polylinedialog.cc \
-           polygondialog.cc \ 
-           numberlineedit.cc \
+           polygondialog.cc \
            main.cc
 
 TRANSLATIONS = cutefig_de.ts

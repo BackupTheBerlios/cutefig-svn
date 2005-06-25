@@ -55,7 +55,6 @@ DrawObject::DrawObject( Figure* parent )
 DrawObject::DrawObject( DrawObject* o )
         : QObject( o->parent() ),
           pen_( o->pen_ ),
-          qpen_( o->qpen_ ),
           brush_( o->brush_ ),
           fillColor_( o->fillColor_ ),
           depth_( o->depth_ ),
@@ -69,12 +68,7 @@ void DrawObject::move( const QPointF& d )
 {
         points_.translate( d.x(),d.y() );
         getReadyForDraw();
-}
-
-// void DrawObject::setPenColor( const QColor& pc )
-// {
-//         pen_.setColor( pc );
-// }
+} 
 
 
 void DrawObject::setFillColor( const QColor& c )
@@ -111,14 +105,14 @@ void DrawObject::cursorMove( const QPointF & pos )
 }
 
 
-void DrawObject::addSelPointsToDrawRect()
-{
-        QPolygonF::iterator it;
-        for( it = points_.begin(); it != points_.end(); ++it )
-                drawRect_ =  drawRect_ | selectPointRect( it->toPoint() );
-        drawRect_.setRight( drawRect_.right() + 1 );
-        drawRect_.setBottom( drawRect_.bottom() + 1 );
-}
+// void DrawObject::addSelPointsToDrawRect()
+// {
+//         QPolygonF::iterator it;
+//         for( it = points_.begin(); it != points_.end(); ++it )
+//                 drawRect_ =  drawRect_ | selectPointRect( it->toPoint() );
+//         drawRect_.setRight( drawRect_.right() + 1 );
+//         drawRect_.setBottom( drawRect_.bottom() + 1 );
+// }
 
 
 void DrawObject::draw( QPainter* p )
@@ -143,8 +137,47 @@ void DrawObject::mapMatrix( const QMatrix& m )
 
 bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
 {
+        if ( !bRect_.contains( Geom::centerRect( p, QSizeF( tolerance, tolerance ) ) ) )
+                return false;
+             
         if ( brush_.style() != Qt::NoBrush )
                 return painterPath_.contains( p );
         else
                 return pointHitsOutline( p, tolerance );
+}
+
+// bool DrawObject::pointHitsOutline( const QPointF& p, qreal tolerance ) const
+// {
+//         QRectF r = Geom::centerRect( p, QSizeF( tolerance, tolerance ) );
+        
+//         QPolygonF path = painterPath_.toFillPolygon();
+        
+//         QPolygonF::const_iterator it = points_.begin();
+//         QPointF lp = points_.first();
+//         while ( ++it != points_.end() ) {
+//                 if ( Geom::intersect( QLineF( lp, *it ) , r ) )
+//                         return true;
+//                 lp = *it;
+//         }
+
+//         return false;
+
+// }
+
+void DrawObject::getReadyForDraw()
+{
+        setupPainterPath();
+        setupRects();
+}
+
+void DrawObject::setupRects()
+{
+        cRect_ = painterPath_.controlPointRect();
+        bRect_ = pen_.pathRect( painterPath_ );
+}
+
+void DrawObject::setPen( const Pen& p )
+{
+        pen_ = p;
+        setupRects();
 }

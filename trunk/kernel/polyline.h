@@ -48,7 +48,7 @@ public:
         virtual void outputToBackend( OutputBackend *ob );
         
 protected:
-        virtual void getReadyForDraw();
+        virtual void setupPainterPath();
 
         virtual void passPointFlag( Fig::PointFlag f );
         virtual QPointF* nextPoint();

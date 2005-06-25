@@ -21,9 +21,9 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         
         setWindowTitle( tr("CuteFig: export to a bitmap graphics:") );
         
-        QGridLayout* mainLayout = new QGridLayout( mainWidget_ );
+        QGridLayout* mainLayout = new QGridLayout( topLayout_->widget() );
 
-        QGroupBox* sizeGroup = new QGroupBox();
+        QGroupBox* sizeGroup = new QGroupBox( this );
         QGridLayout* sizeLayout = new QGridLayout( sizeGroup );
 
         xres = new QSpinBox( sizeGroup );
@@ -47,9 +47,9 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         sizeLayout->addWidget( yres, 0, 4 );
 
         scale = new QDoubleSpinBox( sizeGroup );
-        scale->setValue( 100.0 );
         scale->setSuffix(" %");
         scale->setRange( std::numeric_limits<double>::min(), std::numeric_limits<double>::max() );
+        scale->setValue( 100.0 );
         scale->setSingleStep( 10 );
         QLabel* scaleLabel = new QLabel( tr("&Scale"), sizeGroup );
         scaleLabel->setBuddy( scale );
@@ -63,11 +63,15 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         mainLayout->addWidget( sizeGroup, 0,0 );
 
         QHBoxLayout* bgLayout = new QHBoxLayout( mainLayout->widget() );
-        ColorButton* bgColor = new ColorButton( Qt::white, this );
+        QColor bg( Qt::white );
+        bg.setAlpha( 0 );
+        ColorButton* bgColor = new ColorButton( bg, this );
         QLabel* bgLabel = new QLabel( tr("&Background color"), this );
         bgLabel->setBuddy( bgColor );
         bgLayout->addWidget( bgLabel );
         bgLayout->addWidget( bgColor );
+        
+        
 
         mainLayout->addItem( bgLayout, 1,0 );
         
@@ -76,13 +80,11 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         connect( scale, SIGNAL( valueChanged( double ) ), this, SLOT( setScale( double ) ) );
         connect( keepAspect, SIGNAL( stateChanged( int ) ), 
                  this, SLOT( keepAspectRatio( int ) ) );
-        
-}
+        connect( bgColor, SIGNAL( colorChanged(QColor) ), this, SLOT( setBackground(QColor) ) );
 
-// ExportFilter* PNGFilterFactory::filter()
-// {
-//         return new PIXOutput("png");
-// }
+        topLayout_->addItem( mainLayout );
+        setupStandardButtons();
+}
 
 void setValue( QSpinBox* sb, int value )
 {
@@ -103,7 +105,7 @@ void PixoutDialog::setXres( int x )
 {
         if ( keepAspect->isChecked() ) {
                 int y = qRound( x * aspectRatio_ );
-                if ( y < 0 ) {
+                if ( y <= 0 ) {
                         setValue( xres, qRound(yres->value() / aspectRatio_) );
                         return;
                 }
@@ -118,7 +120,7 @@ void PixoutDialog::setYres( int y )
 {
         if ( keepAspect->isChecked() ) {
                 int x = qRound( y / aspectRatio_ );
-                if ( x < 0 ) {
+                if ( x <= 0 ) {
                         setValue( yres, qRound(xres->value() * aspectRatio_) );
                         return;
                 }
@@ -152,4 +154,9 @@ void PixoutDialog::keepAspectRatio( int keep )
 {
         scale->setEnabled( keep );
         keepAspectRatio_ = keep;
+}
+
+void PixoutDialog::setBackground( QColor color )
+{
+        filter_->setBackground( color );
 }

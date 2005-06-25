@@ -42,7 +42,7 @@ public:
         virtual const QString objectname() { return "polygon"; };
 
 private:
-        virtual void getReadyForDraw();
+        virtual void setupPainterPath();
 
         virtual void outputToBackend( OutputBackend* ob );
         

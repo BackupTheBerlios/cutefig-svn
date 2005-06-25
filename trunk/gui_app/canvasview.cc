@@ -246,7 +246,7 @@ void CanvasView::drawSelection( QPainter* p )
 
         QRectF r;
         foreach ( DrawObject* o, controler_->selection().objects() ) {
-                r = o->boundingRect();
+                r = o->controlPointRect();
                 r = scaleMatrix_.mapRect( r );
 
                 foreach ( QPointF pt, Geom::boundingPoints( r ) ) 
@@ -264,8 +264,8 @@ void CanvasView::updateFigure( const Selection& s, bool tentative )
         if ( !tentative ) {
                 QPainter p;
                 p.begin( &buffer_ );
-                p.setRenderHint( QPainter::Antialiasing, true );
                 drawPaper( &p );
+                p.setRenderHint( QPainter::Antialiasing, true );
                 drawGrid( &p );
                 p.setMatrix( scaleMatrix_ );
                 figure_->drawElements( &p, s.backups() );
@@ -339,7 +339,7 @@ inline void CanvasView::drawObjectsPoints( QPainter* p )
 inline void CanvasView::drawPaper( QPainter* p )
 {
         QRect r( offset_.x(), offset_.y(), width()-offset_.x(), height()-offset_.y() );
-        p->fillRect( r, Qt::white ); // makes lineWidth spinbox in ObjecDialog crazy, why?    
+        p->fillRect( r, Qt::white ); // makes spinboxes in ObjectDialog crazy, why?
 }
 
 // draws the grid

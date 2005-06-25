@@ -25,17 +25,13 @@
 
 #include "colorbutton.h"
 
-//Added by the Qt porting tool:
-#include <QResizeEvent>
-
-#include <qcolor.h>
-#include <qcolordialog.h>
-#include <qpixmap.h>
-#include <qpainter.h>
+#include <QColor>
+#include <QColorDialog>
+#include <QPainter>
 
 ColorButton::ColorButton( QWidget * parent )
         : QPushButton( parent ),
-          pixmap_( size() - QSize( 5,5 ) )
+          pixmap_( iconSize() - QSize( 5,5 ) )
 {
         ColorButton( Qt::blue, parent );
 }
@@ -43,7 +39,7 @@ ColorButton::ColorButton( QWidget * parent )
 ColorButton::ColorButton( const QColor &c, 
                           QWidget * parent )
         : QPushButton( parent ),
-          pixmap_( size() - QSize( 5,5 ) )
+          pixmap_( iconSize() )// - QSize( 5,5 ) )
 {
         setColor( c );
         connect( this, SIGNAL( clicked() ), this, SLOT( changeColor() ) );
@@ -71,13 +67,18 @@ void ColorButton::draw()
 {
         QPainter p( &pixmap_ );
         p.setPen( Qt::SolidLine );
+
+        int w = iconSize().width();
+        int h = iconSize().height();
+        int w2 = w / 2;
+        int h2 = h / 2;
+        
+        p.fillRect( 0,0, w2,h2, Qt::darkGray );
+        p.fillRect( w2,h2, w,h, Qt::darkGray );
+        p.fillRect( w2,0, w,h2, Qt::lightGray );
+        p.fillRect( 0,h2, w2,h, Qt::lightGray );
+        
         p.setBrush( color_ ); 
         p.drawRect( 0,0, pixmap_.size().width(), pixmap_.size().height() );
         setIcon( pixmap_ );
-}
-
-void ColorButton::resizeEvent( QResizeEvent* )
-{
-//    pixmap_.resize( size() - QSize( 5,0 ) );
-//    draw();
 }

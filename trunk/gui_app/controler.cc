@@ -295,14 +295,12 @@ void Controler::setToolProperties()
 
 void Controler::updateViewsImediately( bool tentative )
 {
-//        qDebug() << "updateViewsImediately" << tentative;
-        foreach ( ViewBase* v, viewList_ )
+        foreach ( ViewBase* v, viewList_ ) 
                 v->updateFigure( selection_, tentative );
 }
 
 void Controler::updateViews()
 {
-        qDebug() <<"updateViews";
         QApplication::postEvent( this, new QEvent( QEvent::UpdateRequest ) );
 }
 

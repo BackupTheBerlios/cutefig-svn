@@ -64,16 +64,14 @@ public:
         //!< supposed to return the name of the object in english.
 
         virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
-        virtual bool pointHitsOutline( const QPointF&, qreal tolerance ) const = 0;
-
+        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const =0;
+        
         QRectF boundingRect() const { return bRect_; }
         //!< Returns the smallest QRectF that bounds the object.
 
+        QRectF controlPointRect() const { return cRect_; }
+        
         const Pen& pen() const { return pen_; }
-//         QColor penColor() const { return pen_.color(); }
-//         qreal penWidth() const { return pen_.width(); }
-//         Qt::PenCapStyle penCapStyle() const { return pen_.capStyle(); }
-//         Qt::PenJoinStyle penJoinStyle() const { return pen_.joinStyle(); }
 
         QColor fillColor() const { return fillColor_; } 
 
@@ -119,15 +117,15 @@ public:
         }
 
 
-signals:
-        void objectChanged();
-        //!< supposed to be emited when the object changed.
+// signals:
+//         void objectChanged();
+//         //!< supposed to be emited when the object changed.
 
 public slots:
 //         void setPenWidth( qreal pw ) { pen_.setWidth( pw ); }
 //         void setPenColor( const QColor& pc );
 
-        void setPen( const Pen& p ) { pen_ = p; }
+        void setPen( const Pen& p );
 
         void setFillColor( const QColor& c );
         
@@ -140,20 +138,23 @@ protected:
         virtual void passPointFlag( Fig::PointFlag f ) =0;
         //!< supposed to handle the PointFlag appropriately
 
-        virtual void getReadyForDraw() = 0;
+        virtual void setupPainterPath() = 0;
         //!< supposed to do all preparations for the drawing.
-        /*!< Especially bRect_ and dRect_ are to be set. */
+        /*!< Especially bRect_ and cRect_ are to be set. */
 
         virtual void doSpecificPreparation() {};
 
-        void addSelPointsToDrawRect();
+        virtual void getReadyForDraw();
+
+        virtual void setupRects();
+        
+//        void addSelPointsToDrawRect();
         //!< adds the small squares indicationg the points_ to the dRect_.
 
 
         Figure* figure_;
 
         Pen pen_;
-        QPen qpen_;
         QBrush brush_;
         QColor fillColor_;
 
@@ -166,8 +167,7 @@ protected:
         QPointF* currentPoint_;
         QPointF centerPoint_;
 
-        QRectF bRect_;
-        QRect drawRect_;
+        QRectF bRect_, cRect_;
         static unsigned clickTolerance_;
 
 };

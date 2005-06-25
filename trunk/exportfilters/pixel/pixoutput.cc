@@ -29,6 +29,7 @@
 #include <QPainter>
 #include <QImageWriter>
 #include <QFile>
+#include <QPaintEngine>
 
 #include <QDebug>
 
@@ -42,6 +43,7 @@ PIXOutput::PIXOutput( QByteArray format )
           quality_( 100 ),
           gamma_( 1.0 )
 {
+        setBackground( Qt::white );
 }
 
 PIXOutput::PIXOutput( const Figure* figure, QFile* file, QByteArray format )
@@ -50,11 +52,11 @@ PIXOutput::PIXOutput( const Figure* figure, QFile* file, QByteArray format )
                   xres_( 0 ),
                   yres_( 0 ),
                   scale_( 1.0 ),
-                  backgroundColor_( Qt::white ),
+                  backgroundColor_(),
                   quality_( 100 ),
                   gamma_( 1.0 )
 {
-        backgroundColor_.setAlpha( 0 );
+        setBackground( Qt::white );
 }
 
 void PIXOutput::exportFigure()
@@ -87,9 +89,11 @@ void PIXOutput::exportFigure()
         painter.setRenderHint( QPainter::Antialiasing );
         painter.setRenderHint( QPainter::TextAntialiasing );
         painter.setRenderHint( QPainter::SmoothPixmapTransform );
-
+        
+        painter.setCompositionMode( QPainter::CompositionMode_Source );
         painter.fillRect( 0,0, nsz.width(),nsz.height(), backgroundColor_ );
-
+        painter.setCompositionMode( QPainter::CompositionMode_SourceOver );
+        
         painter.scale( double(nsz.width())/sz.width(), double(nsz.height())/sz.height() );
         painter.translate( - figure_->boundingRect().topLeft() );
 
@@ -133,6 +137,8 @@ void PIXOutput::setBackground( const QColor& c )
         }
         else {
                 backgroundColor_ = Qt::white;
-                backgroundColor_.setAlpha( 0 );
         }
+        
+        if ( ! ( format_ == "jpg" || format_ == "jpeg" || format_ == "bmp" ) ) // ugly
+                backgroundColor_.setAlpha( 0 );
 }

@@ -52,9 +52,9 @@ void Polygon::outputToBackend( OutputBackend* ob )
         ob->outputPolygon( this );
 }
 
-void Polygon::getReadyForDraw()
+void Polygon::setupPainterPath()
 {
-        Polyline::getReadyForDraw();
+        Polyline::setupPainterPath();
         painterPath_.lineTo( points_[0] );
 }
 

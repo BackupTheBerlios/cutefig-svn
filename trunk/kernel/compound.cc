@@ -67,10 +67,12 @@ void Compound::outputToBackend( OutputBackend* )
 
 void Compound::getReadyForDraw()
 {
-        bRect_ = QRect();
+        bRect_ = QRectF();
+        cRect_ = QRectF();
         foreach ( DrawObject* o, childObjects_ ) {
                 o->getReadyForDraw();
                 bRect_ |= o->boundingRect();
+                cRect_ != o->controlPointRect();
         }
 }
 

@@ -41,6 +41,8 @@ class QTextEdit;
 class BrushButton;
 class FlagButtonGroup;
 
+#include <QDebug>
+
 class ObjectDialog : public QDialog
 {
         Q_OBJECT
@@ -55,6 +57,8 @@ public slots:
         void resetObject();
         virtual void accept();
 
+        void showValue( int v ) {qDebug() << v;}
+        
 protected:
         DrawObject *drawObject_, *backup_;
         QTabWidget* tabWidget;
@@ -63,12 +67,14 @@ protected:
         virtual void setUpConnections();
         virtual void setDefaultValues();
         virtual void setUpPrivate()= 0;
-
+        virtual void castDrawObject() = 0;
+        
         EditdialogAction* action_;
         
  
 private:
         void setUpGeneral();   
+        void setDrawObject( DrawObject* o );
         
         QGroupBox* setUpLineGroup( QWidget* page );
         QGroupBox* setUpFillGroup( QWidget* page );

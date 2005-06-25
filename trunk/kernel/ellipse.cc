@@ -64,7 +64,7 @@ QPointF* Ellipse::nextPoint()
                 return 0;
 }
 
-void Ellipse::getReadyForDraw()
+void Ellipse::setupPainterPath()
 {
         if ( specByRadii_ )
                 center_ = points_[0];
@@ -96,11 +96,23 @@ void Ellipse::getReadyForDraw()
         QMatrix rottrans = QMatrix();
         rottrans.translate( center_.x(), center_.y() );
         painterPath_ = rottrans.map( rotation_.map(painterPath_) );
+}
 
-        bRect_.moveCenter( center_ );
+void Ellipse::setupRects()
+{
+        double c = cos( angle_ );
+        double s = sin( angle_ );
 
-        drawRect_ = bRect_.toRect();
-        addSelPointsToDrawRect();
+        double wc = w_*c;
+        double ws = w_*s;
+        double hc = h_*c;
+        double hs = h_*s;
+        
+        double w = sqrt( wc*wc + hs*hs );
+        double h = sqrt( ws*ws + hc*hc );
+
+        cRect_ = Geom::centerRect( center_, QSizeF( w,h ) );
+        bRect_ = Geom::centerRect( center_, QSizeF( w+pen_.width(), h+pen_.width() ) );
 }
 
 void Ellipse::doSpecificPreparation()
@@ -137,13 +149,13 @@ bool Ellipse::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 void Ellipse::setSpecByRadii( bool r )
 {
         specByRadii_ = r;
-        emit( objectChanged() );
+//         emit( objectChanged() );
 }
 
 void Ellipse::setIsCircle( bool c )
 {
         circle_ = c;
-        emit( objectChanged() );
+//         emit( objectChanged() );
 }
 
 void Ellipse::passPointFlag( Fig::PointFlag f )

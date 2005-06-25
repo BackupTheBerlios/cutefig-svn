@@ -28,7 +28,6 @@
 #include "controler.h"
 #include "ellipsedialog.h"
 #include "ellipse.h"
-#include "numberlineedit.h"
 #include "progutils.h"
 #include "editdialogaction.h"
 
@@ -38,7 +37,7 @@ EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,
 {
         qDebug("EllipseDialog::EllipseDialog");
         setWindowTitle( tr("Ellipse Properties") );
-        ellipse_ = (Ellipse*) o;
+        castDrawObject();
         setUpAll();
 }
 
@@ -69,10 +68,12 @@ void EllipseDialog::setUpPrivate()
         angleSlider->setSingleStep( 1 );
         angleSlider->setTickPosition( QSlider::TicksBothSides );
         angleSlider->setTickInterval( 5 );
-        angleLineEdit = new NumberLineEdit( 0, angleGroup );
-        angleLineEdit->setValidator( new QIntValidator( -45,45, angleLineEdit ) );
+
+        angleSpin = new QSpinBox( angleGroup );
+        angleSpin->setRange( -45, 45 );
+        angleSpin->setSingleStep( 1 );
         
-        angleLayout->addWidget( angleLineEdit );
+        angleLayout->addWidget( angleSpin );
         angleLayout->addWidget( angleSlider );
         
         QVBoxLayout* stl = new QVBoxLayout( stg );
@@ -108,13 +109,16 @@ void EllipseDialog::setUpConnections()
 {
         qDebug("Ellipse::setupConnections");
         
-        connect( angleSlider, SIGNAL( valueChanged(int) ),
-                 angleLineEdit, SLOT( setValue(int) ) );
-        connect( angleSlider, SIGNAL( valueChanged(int) ),
-                 ellipse_, SLOT( setAngle(int) ) );
-        connect( angleSlider, SIGNAL( valueChanged(int) ),
-                 action_, SLOT( wObjectHasChanged() ) );
+        connect( angleSpin, SIGNAL( valueChanged(int) ), angleSlider, SLOT( setValue(int) ) );
+        connect( angleSlider, SIGNAL( valueChanged(int) ), angleSpin, SLOT( setValue(int) ) );
+        connect( angleSlider, SIGNAL( valueChanged(int) ), ellipse_, SLOT( setAngle(int) ) );
+        connect( angleSlider, SIGNAL( valueChanged(int) ), action_, SLOT( wObjectHasChanged() ) );
 
         ObjectDialog::setUpConnections();
 }
 
+
+void EllipseDialog::castDrawObject()
+{
+        ellipse_ = qobject_cast<Ellipse*>( drawObject_ );
+}

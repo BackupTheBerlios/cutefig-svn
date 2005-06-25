@@ -51,12 +51,9 @@ public slots:
 
 private:
         QColor color_;
+        QPixmap pixmap_;
 
         void draw();
-    
-        void resizeEvent( QResizeEvent* );
-    
-        QPixmap pixmap_;
 };
 
 #endif

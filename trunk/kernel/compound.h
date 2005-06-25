@@ -64,7 +64,10 @@ protected:
         
         virtual void getReadyForDraw();
         virtual void doSpecificPreparation();
-
+        
+        virtual void setupRects() {}
+        virtual void setupPainterPath() {}
+        
 private:
         ObjectList childObjects_;
 };

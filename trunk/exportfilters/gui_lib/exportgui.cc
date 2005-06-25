@@ -73,7 +73,7 @@ void ExportGUI::exportFigure( Figure* figure )
                 if ( !filterFactory )
                         QMessageBox::warning( 0, tr("Unkown format"),
                                               tr("The figure can not be exported to the format"
-                                                 "%1.\nThe format is not known.")
+                                                 " %1.\nThe format is not known.")
                                               .arg( QString(format) ),
                                               QMessageBox::Ok, QMessageBox::NoButton );
         }        

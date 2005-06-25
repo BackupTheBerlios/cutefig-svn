@@ -72,11 +72,13 @@ void CfigOutput::outputGenericData( QString name )
         int dk = p.dashesKey();
         if ( dk >= 0 )
                 dk = dashMap_[dk];
-        
-        QStringList comments = drawObject_->comment().split('\n');
-        foreach ( QString s, comments ) 
-                fileStream_ << "# " << s << '\n';
 
+        if ( !drawObject_->comment().isEmpty() ) {
+                QStringList comments = drawObject_->comment().split('\n');
+                foreach ( QString s, comments ) 
+                        fileStream_ << "# " << s << '\n';
+        }
+        
         fileStream_ << "object " << name << ' ' << drawObject_->points().size() << ' ';
         
         fileStream_ << p.width() << ' ' << dk << ' '
