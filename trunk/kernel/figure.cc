@@ -37,6 +37,7 @@
 
 #include "figure.h"
 #include "drawobject.h"
+#include "compound.h"
 #include "geometry.h" 
 
 #include <QPainter>
@@ -52,53 +53,106 @@ Figure::Figure( QObject *parent ) :
 {
 }
 
+void Figure::takeDrawObjects( const ObjectList& l )
+{
+        objectList_ = l;
+        foreach ( DrawObject* o, l ) {
+                addObjectToDrawingList( o );
+                o->getReadyForDraw();
+                o->doSpecificPreparation();
+        }
+
+        sortObjects();
+}
+
 /**
  *  \param o is the DrawObject that is sorted into the objectList_
  *  \param fin: if true the DrawObject is told to recalculate itself.
  */
-void Figure::addDrawObject( DrawObject* o, bool fin )
-//!++TODO++ find a more efficient algorithm to sort the object in.  
+void Figure::addDrawObject( DrawObject* o )
 {
-        if ( !objectList_.empty() ) {
-                ObjectList::iterator it = objectList_.begin();
-        
-                while( it != objectList_.end() && o->depth() < (*it)->depth() )
-                        ++it;
-
-                objectList_.insert( it, o );
-        } else 
-                objectList_.push_back( o );
-
-        if ( fin ) {
-                o->getReadyForDraw();
-//                o->calculateRegion();
-                o->doSpecificPreparation();
-        }
+        objectList_.push_back( o );
+//         if ( fin ) {
+//                 o->getReadyForDraw();
+//                 o->doSpecificPreparation();
+//         }
+         
+        addObjectToDrawingList( o );
 }
+
+void Figure::addObjectToDrawingList( DrawObject* o )
+{
+        Compound* cpd = qobject_cast<Compound*>( o );
+        if ( cpd )
+                foreach ( DrawObject* co, cpd->childObjects() )
+                        addObjectToDrawingList( co );
+        else 
+                sortIntoDrawingList( o );
+}
+
+/* code stolen from qalgorithms.h. I can't use the qUpperBound() as
+ * containter contains pointers. The template would expand to
+ * something like this:
+ */
+void Figure::sortIntoDrawingList( DrawObject* o )
+{
+        int n = drawingList_.size();
+        int begin = 0;
+        int half, middle;
+
+        while ( n > 0 ) {
+                half = n >> 1;
+                middle = begin + half;
+                if ( DrawObject::isLessThan( drawingList_[middle], o ) ) {
+                        begin = middle + 1;
+                        n -= half + 1;
+                } else {
+                        n = half;
+                }
+        }
+
+        drawingList_.insert( begin, o );
+}
+
 
 void Figure::removeDrawObject( DrawObject* o )
 {
         objectList_.removeAll( o );
+        removeObjectFromDrawingList( o );
+}
+
+void Figure::removeObjectFromDrawingList( DrawObject* o )
+{
+        Compound* cpd = qobject_cast<Compound*>( o );
+        if ( cpd )
+                foreach( DrawObject* co, cpd->childObjects() )
+                        removeObjectFromDrawingList( co );
+        else
+                drawingList_.removeAll( o );
 }
 
 void Figure::sortObjects()
 {
-        qSort( objectList_.begin(), objectList_.end(), DrawObject::isLessThan );
+        qSort( drawingList_.begin(), drawingList_.end(), DrawObject::isLessThan );
 }
 
 DrawObject* Figure::findContainingObject( const QPointF& p, qreal tolerance ) const
 {
-        ObjectList::const_iterator it = objectList_.end();
-        while( it != objectList_.begin() ) 
-                if ( (*--it)->pointHits( p, tolerance ) )
-                        return *it;
+//         ObjectList::const_iterator it = objectList_.end();
+//         while( it != objectList_.begin() ) 
+//                 if ( (*--it)->pointHits( p, tolerance ) )
+//                         return *it;
 
+        foreach ( DrawObject* o, objectList_ ) 
+                if ( o->pointHits( p, tolerance ) )
+                        return o;
+        
         return 0;            
 }
 
 void Figure::drawElements( QPainter* p, const ObjectList& backups ) const
 {
-        foreach ( DrawObject* o, objectList_ )
+        foreach ( DrawObject* o, drawingList_ )
                 if ( !backups.contains( o ) )
                         o->draw( p );
 }
@@ -115,6 +169,9 @@ void Figure::clear()
 {
         qDeleteAll( objectList_ );
         objectList_.clear();
+
+        qDeleteAll( drawingList_ );
+        drawingList_.clear();
 }
 
 
@@ -130,7 +187,7 @@ QRectF Figure::boundingRect() const
 const DashKeyList Figure::dashList() const
 {
         DashKeyList dkl;
-        foreach ( DrawObject* o, objectList_ ) {
+        foreach ( DrawObject* o, drawingList_ ) {
                 int k = o->pen().dashesKey();
                 if ( k >= 0 && !dkl.count( k ) )
                         dkl << k;

@@ -43,13 +43,6 @@ void CfigOutput::outputEllipse( Ellipse* el )
         outputPoints();
 }
 
-void CfigOutput::processOutput()
-{
-        outputDashes();
-        figure_.outputObjects( this );
-}
-
-
 void CfigOutput::outputPolyline( Polyline* pl )
 {
         drawObject_ = pl;
@@ -65,6 +58,22 @@ void CfigOutput::outputPolygon( Polygon* pg )
         fileStream_ << "\n";
         outputPoints();
 }
+
+void CfigOutput::outputCompound( Compound* cd )
+{
+        const ObjectList& objects = cd->childObjects();
+        fileStream_ << "compound_begin\n";
+        foreach ( DrawObject* o, objects ) 
+                o->outputToBackend( this );
+        fileStream_ << "compound_end\n";
+}
+
+void CfigOutput::processOutput()
+{
+        outputDashes();
+        figure_.outputObjects( this );
+}
+
 
 void CfigOutput::outputGenericData( QString name )
 {

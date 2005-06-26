@@ -32,7 +32,7 @@ void ChangeCommand::execute()
         foreach ( DrawObject* o, oldObjects_ )
                 figure_->removeDrawObject( o );
         foreach ( DrawObject* o, objects_ )
-                figure_->addDrawObject( o, true );
+                figure_->addDrawObject( o );
 }
 
 void ChangeCommand::unexecute()
@@ -40,5 +40,5 @@ void ChangeCommand::unexecute()
         foreach ( DrawObject* o, objects_ )
                 figure_->removeDrawObject( o );
         foreach ( DrawObject* o, oldObjects_ )
-                figure_->addDrawObject( o, true );
+                figure_->addDrawObject( o );
 }

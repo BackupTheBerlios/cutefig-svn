@@ -26,10 +26,11 @@
 #define compound_h
 
 #include "drawobject.h"
+#include "typedefs.h"
 
 #include <QList>
 
-typedef QList<DrawObject*> ObjectList;
+
 
 class Compound : public DrawObject
 {

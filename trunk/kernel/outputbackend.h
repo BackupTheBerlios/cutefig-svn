@@ -30,6 +30,7 @@ class DrawObject;
 class Ellipse;
 class Polyline;
 class Polygon;
+class Compound;
 
 class QTextStream;
 
@@ -47,6 +48,8 @@ public:
         virtual void outputPolyline( Polyline* pl ) = 0;
         virtual void outputPolygon( Polygon* pg ) = 0;
 
+        virtual void outputCompound( Compound* cd ) = 0;
+        
         virtual void processOutput() = 0;
 
         QStringList& errorReport() { return errorReport_; };

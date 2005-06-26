@@ -43,6 +43,7 @@ public:
         virtual void outputEllipse( Ellipse* el );
         virtual void outputPolyline( Polyline* pl );
         virtual void outputPolygon( Polygon* pg );
+        virtual void outputCompound( Compound* cd );
         
         virtual void processOutput();
 

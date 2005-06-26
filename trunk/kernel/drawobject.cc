@@ -137,8 +137,8 @@ void DrawObject::mapMatrix( const QMatrix& m )
 
 bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
 {
-        if ( !bRect_.contains( Geom::centerRect( p, QSizeF( tolerance, tolerance ) ) ) )
-                return false;
+//         if ( !bRect_.intersects( Geom::centerRect( p, QSizeF( tolerance, tolerance ) ) ) )
+//                 return false;
              
         if ( brush_.style() != Qt::NoBrush )
                 return painterPath_.contains( p );

@@ -74,23 +74,20 @@ Parser::Parser( QTextStream *ts, Figure *f,
 
 QString Parser::parse()
 {
+        figure_->takeDrawObjects( parseLoop() );
+        return errorReport_;
+}
+
+ObjectList Parser::parseLoop( bool parsingCompound )
+{
         uint npoints = 0;
         uint i = 0;
         
         QPolygonF* pa;
         DrawObject* o = 0;
+        ObjectList olist;
 
         while ( readLine() ) {
-
-                if ( itemType_ == "object" ) {
-                        if ( o ) {
-                                parseError(wrongPointNumber.arg(i).arg(npoints), Discarding);
-                                delete o;
-                        } 
-                        o = parseGenericData( npoints, pa );
-                        i = 0;
-                        continue;
-                }
 
                 if ( itemType_ == "point" ) {
                         if ( !o ) {
@@ -101,17 +98,44 @@ QString Parser::parse()
                         if ( npoints == i ) {
                                 o->setComment( objectComment_ );
                                 objectComment_ = QString();
-                                figure_->addDrawObject( o, true );
+                                olist.push_back( o );
                                 o = 0;
                         }
                         continue;
                 }
+                else if ( o ) {
+                        parseError(wrongPointNumber.arg(i).arg(npoints), Discarding);
+                        delete o;
+                }
 
-                if ( itemType_ == "dashes" ) 
+                if ( itemType_ == "object" ) {
+                        o = parseGenericData( npoints, pa );
+                        i = 0;
+                        continue;
+                }
+
+                if ( itemType_ == "dashes" ) {
                         pushDashes();
-        } 
+                        continue;
+                }
+
+                if ( itemType_ == "compound_begin" ) {
+                        olist.push_back( new Compound( parseLoop( true ), figure_ ) );
+                        continue;
+                }
+
+                if ( itemType_ == "compound_end" ) {
+                        if ( !parsingCompound )
+                                parseError( compound_end_without_compound );
+                        break;
+                }
+
+        }
+
+        if ( itemType_ != "compound_end" && parsingCompound )
+                parseError( fileEndBefireCompoundFinished );
         
-        return errorReport_;
+        return olist;
 }
 
 void Parser::pushDashes()
@@ -303,26 +327,16 @@ Dashes parseDashes( std::istringstream& is )
 }
 
 
-const QString Parser::unknownObject =
-tr("Ignoring unknown object %1");
-const QString Parser::invalidStandardLine =
-tr("Parsing of standard data failed");
-const QString Parser::invalidObjectData =
-tr("Parsing of object specific data failed");
-const QString Parser::wrongPointNumber = 
-tr("Found %1 points while expecting %2.");
-const QString Parser::ignoringPoint =         // not used
-tr("Ignoring superflous point");
-const QString Parser::invalidPenStyle = 
-tr("Invalid pen style: assuming solid line.");
-const QString Parser::invalidJoinStyle = 
-tr("Invalid join style: assuming miter.");
-const QString Parser::invalidCapStyle = 
-tr("Invalid cap style: assuming flat.");
-const QString Parser::invalidPoint =
-tr("Ignoring invalid point");
-const QString Parser::invalidColor = 
-tr("Invalid colour: assuming black.");
-const QString Parser::undefinedDashes =
-tr("Dashtype %1 undefined. Assuming solid line");
-
+const QString Parser::unknownObject = tr("Ignoring unknown object %1");
+const QString Parser::invalidStandardLine = tr("Parsing of standard data failed");
+const QString Parser::invalidObjectData = tr("Parsing of object specific data failed");
+const QString Parser::wrongPointNumber = tr("Found %1 points while expecting %2.");
+const QString Parser::ignoringPoint = tr("Ignoring superflous point"); // not used
+const QString Parser::invalidPenStyle = tr("Invalid pen style: assuming solid line.");
+const QString Parser::invalidJoinStyle = tr("Invalid join style: assuming miter.");
+const QString Parser::invalidCapStyle = tr("Invalid cap style: assuming flat.");
+const QString Parser::invalidPoint = tr("Ignoring invalid point");
+const QString Parser::invalidColor =  tr("Invalid colour: assuming black.");
+const QString Parser::undefinedDashes = tr("Dashtype %1 undefined. Assuming solid line");
+const QString Parser::compound_end_without_compound = tr("Received compound end without compund.");
+const QString Parser::fileEndBefireCompoundFinished = tr("File ended before compound finished.");

@@ -33,11 +33,14 @@
 
 #include <sstream>
 
+#include "typedefs.h"
 #include "pen.h"
 
 class QTextStream;
 class DrawObject;
 class Figure;
+
+
 
 enum ErrorSeverity { Warning, Discarding, Fatal };
 
@@ -54,8 +57,8 @@ public:
         static Dashes parseDashLine( const std::string& s );
         
 private:
+        ObjectList parseLoop( bool parsingCompound = false );
         QPolygonF getPoints( uint n );
-
         bool readLine();
 
         typedef DrawObject* (Parser::*creatorType)();
@@ -102,6 +105,8 @@ private:
         static const QString invalidPoint;
         static const QString invalidColor;
         static const QString undefinedDashes;
+        static const QString compound_end_without_compound;
+        static const QString fileEndBefireCompoundFinished;
 };
 
 #endif

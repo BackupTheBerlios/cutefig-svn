@@ -9,6 +9,7 @@ CONFIG += debug
 
 # Input
 HEADERS += fig.h \
+           typedefs.h \
            geometry.h \
            figure.h \
            drawobject.h \

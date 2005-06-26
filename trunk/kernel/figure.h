@@ -33,6 +33,8 @@
 #include <QList>
 #include <QObject>
 
+#include "typedefs.h"
+
 class DrawObject;
 class OutputBackend;
 class Controler;
@@ -43,8 +45,6 @@ class QPointF;
 class QPoint;
 class QRectF;
 
-typedef QList<DrawObject*> ObjectList;
-typedef QList<int> DashKeyList;
 
 class Figure : public QObject
 {
@@ -57,7 +57,8 @@ public:
         void setControler( Controler* c ) { controler_ = c; };
         double scale() const { return scale_; };
 
-        void addDrawObject( DrawObject* drobj, bool fin=false );
+        void takeDrawObjects( const ObjectList& l );
+        void addDrawObject( DrawObject* drobj );
         void removeDrawObject( DrawObject* drobj );
 
         void sortObjects(); //!< Sorts the objects according to their depth.
@@ -85,7 +86,11 @@ public:
         const ObjectList& objects() { return objectList_; }
 
 private:
-        ObjectList objectList_;
+        void addObjectToDrawingList( DrawObject* o );
+        void removeObjectFromDrawingList( DrawObject* o );
+        void sortIntoDrawingList( DrawObject* o );
+        
+        ObjectList objectList_, drawingList_;
 
         double scale_;
 

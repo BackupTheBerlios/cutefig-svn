@@ -23,6 +23,8 @@
 ******************************************************************************/
 
 #include "compound.h"
+#include "outputbackend.h"
+
 
 Compound::Compound( const ObjectList& l, Figure* parent )
         : DrawObject( parent ),
@@ -60,9 +62,9 @@ void Compound::move( const QPointF& d )
         getReadyForDraw();
 }
 
-void Compound::outputToBackend( OutputBackend* )
+void Compound::outputToBackend( OutputBackend* ob )
 {
-        
+        ob->outputCompound( this );
 }
 
 void Compound::getReadyForDraw()
@@ -72,7 +74,7 @@ void Compound::getReadyForDraw()
         foreach ( DrawObject* o, childObjects_ ) {
                 o->getReadyForDraw();
                 bRect_ |= o->boundingRect();
-                cRect_ != o->controlPointRect();
+                cRect_ |= o->controlPointRect();
         }
 }
 

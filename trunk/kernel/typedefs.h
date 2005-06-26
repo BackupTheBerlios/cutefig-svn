@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: parser.h 8 2005-06-21 06:30:27Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,7 +22,13 @@
 **
 ******************************************************************************/
 
-#include "ellipse.h"
-#include "polyline.h"
-#include "polygon.h"
-#include "compound.h"
+#ifndef typedefs_h
+#define typedefs_h
+
+#include <QList>
+class DrawObject;
+
+typedef QList<DrawObject*> ObjectList;
+typedef QList<int> DashKeyList;
+
+#endif

@@ -54,7 +54,7 @@ public:
         DrawObject( DrawObject* );
         ~DrawObject() {}
 
-        friend void Figure::addDrawObject( DrawObject* , bool );
+        friend void Figure::takeDrawObjects( const ObjectList& );
         friend class Compound;
 
         virtual DrawObject* copy() = 0;
@@ -112,7 +112,7 @@ public:
         //!< supposed to pass all the data to the OubputBackend ob.
         /*!< This is to be done by calling ob->output<DerivedClass>(). */
 
-        static bool isLessThan( DrawObject* o1, DrawObject* o2 ) { 
+        static bool isLessThan( const DrawObject* o1, const DrawObject* o2 ) { 
                 return o1->depth() < o2->depth();
         }
 
