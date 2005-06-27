@@ -139,6 +139,6 @@ void PIXOutput::setBackground( const QColor& c )
                 backgroundColor_ = Qt::white;
         }
         
-        if ( ! ( format_ == "jpg" || format_ == "jpeg" || format_ == "bmp" ) ) // ugly
-                backgroundColor_.setAlpha( 0 );
+        if ( format_ == "jpg" || format_ == "jpeg" || format_ == "bmp" )  // ugly
+                backgroundColor_.setAlpha( 255 );
 }

@@ -93,7 +93,7 @@ private:
         QPen setUpPen( int w, int s, int cs, int js, QColor c );
         void parseError( QString s, ErrorSeverity sev = Warning );
 
-        
+        static const QString unknownItemType;        
         static const QString unknownObject;
         static const QString invalidStandardLine;
         static const QString invalidObjectData;

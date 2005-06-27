@@ -130,6 +130,8 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                         break;
                 }
 
+                parseError( unknownItemType.arg( itemType_ ) );
+
         }
 
         if ( itemType_ != "compound_end" && parsingCompound )
@@ -162,7 +164,7 @@ bool Parser::readLine()
         line_++;
 
         while ( s[0] == '#' ) {
-                s.remove( 0, 2 );
+                s.remove( 0, 1 );
                 objectComment_ += s + '\n';     
                 s = fileStream_->readLine();
                 line_++;
@@ -242,6 +244,10 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
 
         pen.setColor( pc );
         pen.setWidth( lw );
+
+        pen.setCapStyle( (Qt::PenCapStyle) cs );
+        pen.setJoinStyle( (Qt::PenJoinStyle) js );
+        
         o->setPen( pen );
         o->setDepth( depth );
         
@@ -326,7 +332,7 @@ Dashes parseDashes( std::istringstream& is )
         return d;
 }
 
-
+const QString Parser::unknownItemType = tr("Ignoring unknown item %1");
 const QString Parser::unknownObject = tr("Ignoring unknown object %1");
 const QString Parser::invalidStandardLine = tr("Parsing of standard data failed");
 const QString Parser::invalidObjectData = tr("Parsing of object specific data failed");

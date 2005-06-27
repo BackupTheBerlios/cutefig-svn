@@ -27,8 +27,8 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         QGridLayout* sizeLayout = new QGridLayout( sizeGroup );
 
         xres = new QSpinBox( sizeGroup );
-        xres->setValue( figSize_.width() );
         xres->setRange( 0, std::numeric_limits<int>::max() );
+        xres->setValue( figSize_.width() );
         xres->setSingleStep( 1 );
         QLabel* xresLabel = new QLabel( tr("&Width"), sizeGroup );
         xresLabel->setBuddy( xres );
@@ -38,8 +38,8 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         sizeLayout->addItem( new QSpacerItem( 20, 0 ), 0, 2 );
         
         yres = new QSpinBox( sizeGroup );
-        yres->setValue( figSize_.height() );
         yres->setRange( 0, std::numeric_limits<int>::max()  );
+        yres->setValue( figSize_.height() );
         yres->setSingleStep( 1 );
         QLabel* yresLabel = new QLabel( tr("&Height"), sizeGroup );
         yresLabel->setBuddy( yres );

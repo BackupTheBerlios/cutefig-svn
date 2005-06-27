@@ -158,7 +158,7 @@ const QRectF Selection::boundingRect() const
 {
         QRectF r;
         foreach ( DrawObject* o, objects_ )
-                r |= o->boundingRect();
+                r |= o->controlPointRect();
 
         return r;
 }
