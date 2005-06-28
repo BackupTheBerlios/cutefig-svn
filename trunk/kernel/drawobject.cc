@@ -68,6 +68,7 @@ void DrawObject::move( const QPointF& d )
 {
         points_.translate( d.x(),d.y() );
         getReadyForDraw();
+        doSpecificPreparation();
 } 
 
 

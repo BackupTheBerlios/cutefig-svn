@@ -65,7 +65,8 @@ void UngroupAction::handleSelection()
                 qDebug() << "UngroupAction::handleSelection, cast to Compound failed";
                 return;
         }
-        
+
+        cpd->releaseChildren();
         selection_.setListToBeInserted( cpd->childObjects(), false );
         controler_->execAction( new ChangeCommand( selection_ ) );
         selection_.updateBackups();

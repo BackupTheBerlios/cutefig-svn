@@ -67,6 +67,8 @@ public:
         QMainWindow* mainWindow() { return mainWindow_; }
 
         void clearCommandList();
+        void resetFigure();
+        
         void addView( ViewBase* v ) { viewList_.push_back( v ); }
 
         void setEditActionsGroup( EditActions* ea ) { editActionsGroup_ = ea; }

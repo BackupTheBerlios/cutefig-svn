@@ -40,6 +40,8 @@ public:
         Compound( Compound* c );
         ~Compound() {}
 
+        void releaseChildren();
+
         virtual DrawObject* copy() { return new Compound( this ); }
 
         virtual const QString objectname() { return "group"; }

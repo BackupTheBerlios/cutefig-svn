@@ -90,8 +90,7 @@ CuteFig::CuteFig( QApplication* app )
 
 void CuteFig::newDoc()
 {
-        figure_->clear();
-        cview_->update();
+        controler_->resetFigure();
 }
 
 void CuteFig::choose()
@@ -118,8 +117,8 @@ void CuteFig::load( const QString& fileName )
 
         filename_ = fileName;
         
-        figure_->clear();
-    
+        controler_->resetFigure();
+        
         QTextStream ts( &f );    
         Parser p( &ts, figure_, this );
         QString errors = p.parse();

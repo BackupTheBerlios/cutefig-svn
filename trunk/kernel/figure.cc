@@ -170,7 +170,6 @@ void Figure::clear()
         qDeleteAll( objectList_ );
         objectList_.clear();
 
-        qDeleteAll( drawingList_ );
         drawingList_.clear();
 }
 

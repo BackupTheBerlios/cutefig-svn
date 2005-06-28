@@ -25,22 +25,32 @@
 #include "compound.h"
 #include "outputbackend.h"
 
-
 Compound::Compound( const ObjectList& l, Figure* parent )
         : DrawObject( parent ),
           childObjects_( l )
 {
-        qSort( childObjects_.begin(), childObjects_.end(), DrawObject::isLessThan );
+        foreach ( DrawObject* o, l )
+                o->setParent( this );
 }
 
 Compound::Compound( Compound* c )
         : DrawObject( c )
 {
-        foreach ( DrawObject* o, c->childObjects_ )
-                childObjects_.append( o->copy() );
+        foreach ( DrawObject* o, c->childObjects_ ) {
+                DrawObject* newObject = o->copy();
+                newObject->setParent( this );
+                childObjects_.append( newObject );
+        }
 
         getReadyForDraw();
         doSpecificPreparation();
+}
+
+
+void Compound::releaseChildren()
+{
+        foreach ( DrawObject* o, childObjects_ )
+                o->setParent( parent() );
 }
 
 void Compound::draw( QPainter* p )

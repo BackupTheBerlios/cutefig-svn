@@ -218,6 +218,13 @@ void Controler::clearCommandList()
         currentCommand_ = CmdStackIt( commandStack_ );
 }
 
+void Controler::resetFigure()
+{
+        figure_->clear();
+        clearCommandList();
+        selectObject( 0 );
+}
+
 void Controler::undo()
 {
         if ( ! currentCommand_.hasPrevious() ) {
@@ -322,3 +329,4 @@ void Controler::setToolActionsGroup( ToolActions* ta )
         activeToolActions_.append( ta->scale() );
         activeToolActions_.append( ta->move() );
 }
+
