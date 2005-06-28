@@ -97,6 +97,7 @@ private:
         static const QString unknownObject;
         static const QString invalidStandardLine;
         static const QString invalidObjectData;
+        static const QString notEnoughPoints;
         static const QString wrongPointNumber;
         static const QString ignoringPoint;
         static const QString invalidPenStyle;
@@ -104,9 +105,10 @@ private:
         static const QString invalidJoinStyle;
         static const QString invalidPoint;
         static const QString invalidColor;
+        static const QString invalidDashLine;
         static const QString undefinedDashes;
         static const QString compound_end_without_compound;
-        static const QString fileEndBefireCompoundFinished;
+        static const QString fileEndBeforeCompoundFinished;
 };
 
 #endif

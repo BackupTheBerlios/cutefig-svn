@@ -258,10 +258,8 @@ int PixfilterApp::exportFigure()
         QString errors = p.parse();
         infile_.close();
 
-        if ( !errors.isEmpty() ) {
+        if ( !errors.isEmpty() )
                 cerr << errors << "\n";
-                return 1;
-        }
 
         pixout_.exportFigure();
         outfile_.close();

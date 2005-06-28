@@ -63,6 +63,8 @@ public:
         virtual const QString objectname() =0;
         //!< supposed to return the name of the object in english.
 
+        virtual uint minPoints() const { return 2; }
+        
         virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const =0;
         

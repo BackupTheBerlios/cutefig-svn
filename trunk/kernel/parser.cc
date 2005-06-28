@@ -135,7 +135,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
         }
 
         if ( itemType_ != "compound_end" && parsingCompound )
-                parseError( fileEndBefireCompoundFinished );
+                parseError( fileEndBeforeCompoundFinished );
         
         return olist;
 }
@@ -143,7 +143,11 @@ ObjectList Parser::parseLoop( bool parsingCompound )
 void Parser::pushDashes()
 {
         Dashes dsh = parseDashes( stream_ );        
-
+        if ( dsh.size() < 2 ) {
+                parseError( invalidDashLine );
+                return;
+        }
+        
         DashesLib& dl = DashesLib::instance();
         int key = dl.indexOf( dsh );
         if ( key == -1 ) {
@@ -229,6 +233,14 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
                 return 0;
         }
 
+        if ( npoints < o->minPoints() ) {
+                parseError( notEnoughPoints.arg(obType).arg(npoints).arg(o->minPoints()),
+                            Discarding );
+                delete o;
+                npoints = 0;
+                return 0;
+        }
+        
         Pen pen;
 //        qDebug() << dsh << dashList_.size();
         if ( (dsh > dashList_.size()-1) || (dsh < -6) ) {
@@ -304,13 +316,16 @@ void Parser::parseError( QString s, ErrorSeverity sev )
         else 
                 t = tr("Parser error");
         t.append( tr(" in line %1: ").arg( line_ ) );
+        t.append("\n    *** ");
         t.append( s );        
 //        qDebug( t );
-        t.append("\n");
         errorReport_.append( t );
         
-        if ( sev == Discarding )
+        if ( sev == Discarding ) {
+                errorReport_.append(" ");
                 errorReport_.append( tr("Object discarded.") );
+        }
+        errorReport_.append("\n");
 }
 
 Dashes Parser::parseDashLine( const std::string& s )
@@ -322,12 +337,14 @@ Dashes Parser::parseDashLine( const std::string& s )
 Dashes parseDashes( std::istringstream& is )
 {
         Dashes d( 0 );
- 
-        while ( !is.eof() ) {
-                double val;
-                if (is >> val)
+        double val;
+
+        while ( !is.eof() )
+                if ( is >> val && val > 0 )
                         d.push_back( val );
-        }
+//         while ( is >> val )
+//                 if ( val > 0 )
+//                         d.push_back( val );
         
         return d;
 }
@@ -336,6 +353,7 @@ const QString Parser::unknownItemType = tr("Ignoring unknown item %1");
 const QString Parser::unknownObject = tr("Ignoring unknown object %1");
 const QString Parser::invalidStandardLine = tr("Parsing of standard data failed");
 const QString Parser::invalidObjectData = tr("Parsing of object specific data failed");
+const QString Parser::notEnoughPoints = tr("Not enough points for %1. Found %2, need %3.");
 const QString Parser::wrongPointNumber = tr("Found %1 points while expecting %2.");
 const QString Parser::ignoringPoint = tr("Ignoring superflous point"); // not used
 const QString Parser::invalidPenStyle = tr("Invalid pen style: assuming solid line.");
@@ -343,6 +361,7 @@ const QString Parser::invalidJoinStyle = tr("Invalid join style: assuming miter.
 const QString Parser::invalidCapStyle = tr("Invalid cap style: assuming flat.");
 const QString Parser::invalidPoint = tr("Ignoring invalid point");
 const QString Parser::invalidColor =  tr("Invalid colour: assuming black.");
+const QString Parser::invalidDashLine = tr("Parsing of dashline failed");
 const QString Parser::undefinedDashes = tr("Dashtype %1 undefined. Assuming solid line");
 const QString Parser::compound_end_without_compound = tr("Received compound end without compund.");
-const QString Parser::fileEndBefireCompoundFinished = tr("File ended before compound finished.");
+const QString Parser::fileEndBeforeCompoundFinished = tr("File ended before compound finished.");
