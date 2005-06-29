@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id: parser.h 8 2005-06-21 06:30:27Z joh $
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -24,6 +24,9 @@
 
 #ifndef typedefs_h
 #define typedefs_h
+
+/** Some type definitions used by several classes.
+ */
 
 #include <QList>
 class DrawObject;

@@ -22,9 +22,26 @@
 **
 ******************************************************************************/
 
+/** \class Compound
+ *
+ *  A compound has a list of DrawObjects called children. They are
+ *  stored in childObjects_. Those DrawObjects are also the Compound's
+ *  children in the meaning of QObject::children(). The DrawObjects
+ *  are made the Compounds Qt-children when the compound is
+ *  constructed. There is the function releaseChildren() that makes
+ *  the children the children of the compounds parents. This is the
+ *  current solution of the problem that the DrawObjects are to be
+ *  deleted by Figure::clear().
+ */
+
 #include "compound.h"
 #include "outputbackend.h"
 
+#include <QDebug>
+
+/** Creates a Compound object of the DrawObjects in l. Those
+ *  DrawObjects are made the children of the Compund.
+ */
 Compound::Compound( const ObjectList& l, Figure* parent )
         : DrawObject( parent ),
           childObjects_( l )
@@ -46,23 +63,25 @@ Compound::Compound( Compound* c )
         doSpecificPreparation();
 }
 
-
+/** Makes the children children of the Compounds parent. So the
+ *  children are adopted by their grandparent so to speak. This parent
+ *  can either the Figure or, if we deal with nested Compounds,
+ *  another Compound.
+ */
 void Compound::releaseChildren()
 {
         foreach ( DrawObject* o, childObjects_ )
                 o->setParent( parent() );
 }
 
-void Compound::draw( QPainter* p )
+void Compound::draw( QPainter* )
 {
-        foreach ( DrawObject* o, childObjects_ )
-                o->draw( p );
+        qDebug() << "Compound::draw() should not be called...";
 }
 
-void Compound::drawTentative( QPainter* p )
+void Compound::drawTentative( QPainter* )
 {
-        foreach ( DrawObject* o, childObjects_ )
-                o->drawTentative( p );
+        qDebug() << "Compound::drawTentative() should not be called...";
 }
 
 void Compound::move( const QPointF& d )

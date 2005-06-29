@@ -30,7 +30,11 @@
 
 #include <QList>
 
-
+/** \class Compound
+ * 
+ *  \brief Implements a Compound object for Group/Ungroup
+ *  functionality.
+ */
 
 class Compound : public DrawObject
 {

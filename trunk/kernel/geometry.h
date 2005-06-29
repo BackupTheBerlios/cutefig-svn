@@ -24,7 +24,7 @@
 
 
 /** \namespace Geom
- *  \brief Some simple geometrical functions that QT does not have
+ *  \brief Some simple geometrical functions that Qt does not have.
  */
 
 #ifndef geometry_h
@@ -34,12 +34,10 @@
 #include <QRectF>
 #include <QLineF>
 #include <QVector>
-#include <cmath>
 
 namespace Geom
 {
         qreal distance( const QPointF& p1, const QPointF& p2 );
-        //!< returns the distance between two points
 
         QVector<QPointF> boundingPoints( const QRectF& r );
 

@@ -27,6 +27,8 @@
  *  It contains all the basic data of a DrawObject like pen_,
  *  commentString_... 
  *
+ *  Many functions are virtual or even pure virtual as it is the
+ *  subclasses job to implement them.
  */
 
 #include <cmath>
@@ -105,22 +107,8 @@ void DrawObject::cursorMove( const QPointF & pos )
         getReadyForDraw();
 }
 
-
-// void DrawObject::addSelPointsToDrawRect()
-// {
-//         QPolygonF::iterator it;
-//         for( it = points_.begin(); it != points_.end(); ++it )
-//                 drawRect_ =  drawRect_ | selectPointRect( it->toPoint() );
-//         drawRect_.setRight( drawRect_.right() + 1 );
-//         drawRect_.setBottom( drawRect_.bottom() + 1 );
-// }
-
-
 void DrawObject::draw( QPainter* p )
 {
-//         p->setPen( pen_ );
-//         p->setBrush( brush_ );
-//         p->drawPath( painterPath_ );
         pen_.drawPath( painterPath_, p );
 }
 
@@ -146,24 +134,6 @@ bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
         else
                 return pointHitsOutline( p, tolerance );
 }
-
-// bool DrawObject::pointHitsOutline( const QPointF& p, qreal tolerance ) const
-// {
-//         QRectF r = Geom::centerRect( p, QSizeF( tolerance, tolerance ) );
-        
-//         QPolygonF path = painterPath_.toFillPolygon();
-        
-//         QPolygonF::const_iterator it = points_.begin();
-//         QPointF lp = points_.first();
-//         while ( ++it != points_.end() ) {
-//                 if ( Geom::intersect( QLineF( lp, *it ) , r ) )
-//                         return true;
-//                 lp = *it;
-//         }
-
-//         return false;
-
-// }
 
 void DrawObject::getReadyForDraw()
 {

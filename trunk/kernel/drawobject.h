@@ -118,15 +118,7 @@ public:
                 return o1->depth() < o2->depth();
         }
 
-
-// signals:
-//         void objectChanged();
-//         //!< supposed to be emited when the object changed.
-
 public slots:
-//         void setPenWidth( qreal pw ) { pen_.setWidth( pw ); }
-//         void setPenColor( const QColor& pc );
-
         void setPen( const Pen& p );
 
         void setFillColor( const QColor& c );
@@ -150,9 +142,6 @@ protected:
 
         virtual void setupRects();
         
-//        void addSelPointsToDrawRect();
-        //!< adds the small squares indicationg the points_ to the dRect_.
-
 
         Figure* figure_;
 

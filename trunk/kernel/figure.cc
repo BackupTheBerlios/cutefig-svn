@@ -47,12 +47,26 @@
 
 #include <QDebug>
 
+/** \class Figure
+ *  
+ *  A Figure has two ObjectLists: objectList_ and drawingLists_. The
+ *  former contains all the DrawObjects of the figure including
+ *  Compounds. The latter does not contain the Compouds but all
+ *  children and grandchildren of the compounds unless they are
+ *  compounds themselfes. This distinction is necessary because
+ *  without it a Compound would not honor different depths of
+ *  childObjects.
+ */
+
 Figure::Figure( QObject *parent ) :
         QObject( parent ),
         scale_( 1.0 )
 {
 }
 
+/** Takes a list of DrawOjbects and tells them to recalculate. Usually
+ *  called by a Parser.
+ */
 void Figure::takeDrawObjects( const ObjectList& l )
 {
         objectList_ = l;
@@ -65,21 +79,18 @@ void Figure::takeDrawObjects( const ObjectList& l )
         sortObjects();
 }
 
-/**
- *  \param o is the DrawObject that is sorted into the objectList_
- *  \param fin: if true the DrawObject is told to recalculate itself.
+/** Takes a single DrawObject. It is assumed that the DrawObject
+ *  already calculated itself. 
  */
 void Figure::addDrawObject( DrawObject* o )
 {
         objectList_.push_back( o );
-//         if ( fin ) {
-//                 o->getReadyForDraw();
-//                 o->doSpecificPreparation();
-//         }
-         
         addObjectToDrawingList( o );
 }
 
+/** Adds a DrawObject to the drawingList_. If o is a Compound its
+ *  childObjects are inserted recursively.
+ */
 void Figure::addObjectToDrawingList( DrawObject* o )
 {
         Compound* cpd = qobject_cast<Compound*>( o );
@@ -90,9 +101,10 @@ void Figure::addObjectToDrawingList( DrawObject* o )
                 sortIntoDrawingList( o );
 }
 
-/* code stolen from qalgorithms.h. I can't use the qUpperBound() as
- * containter contains pointers. The template would expand to
- * something like this:
+/** Sorts the DrawObject o into the drawingList_ according to it's
+ *  depth. The code is stolen from qalgorithms.h. I can't use the
+ *  qUpperBound() as containter contains pointers. The template would
+ *  expand to something like this:
  */
 void Figure::sortIntoDrawingList( DrawObject* o )
 {
@@ -114,13 +126,17 @@ void Figure::sortIntoDrawingList( DrawObject* o )
         drawingList_.insert( begin, o );
 }
 
-
+/** Removes a DrawObject from the objectList_ and from the drawingList.
+ */
 void Figure::removeDrawObject( DrawObject* o )
 {
         objectList_.removeAll( o );
         removeObjectFromDrawingList( o );
 }
 
+/** Removes a DrawObject from the drawingList_. If it is a Compound
+ *  all its children are removed.
+ */
 void Figure::removeObjectFromDrawingList( DrawObject* o )
 {
         Compound* cpd = qobject_cast<Compound*>( o );
@@ -131,18 +147,19 @@ void Figure::removeObjectFromDrawingList( DrawObject* o )
                 drawingList_.removeAll( o );
 }
 
+/** Sorts the drawingList_. Probably not needed anymore as we have
+ *  addObjectToDrawingList().
+ */
 void Figure::sortObjects()
 {
         qSort( drawingList_.begin(), drawingList_.end(), DrawObject::isLessThan );
 }
 
+/** Returns the object that intersects with the rectangle of the
+ *  center p and the edgelength tolerance.
+ */
 DrawObject* Figure::findContainingObject( const QPointF& p, qreal tolerance ) const
 {
-//         ObjectList::const_iterator it = objectList_.end();
-//         while( it != objectList_.begin() ) 
-//                 if ( (*--it)->pointHits( p, tolerance ) )
-//                         return *it;
-
         foreach ( DrawObject* o, objectList_ ) 
                 if ( o->pointHits( p, tolerance ) )
                         return o;
@@ -150,6 +167,9 @@ DrawObject* Figure::findContainingObject( const QPointF& p, qreal tolerance ) co
         return 0;            
 }
 
+/** Draws all the DrawObjects of the drawingList_ except those listed
+ *  in backups. These are drawn while drawing the Selection.
+ */
 void Figure::drawElements( QPainter* p, const ObjectList& backups ) const
 {
         foreach ( DrawObject* o, drawingList_ )
@@ -157,14 +177,18 @@ void Figure::drawElements( QPainter* p, const ObjectList& backups ) const
                         o->draw( p );
 }
 
-
+/** Outputs the DrawObjects to the OutputBackend ob.
+ */
 void Figure::outputObjects( OutputBackend* ob ) const
 {
         foreach ( DrawObject* o, objectList_ )
                 o->outputToBackend( ob );
 }
 
-
+/** Clears objectList_ and drawingList_. All the DrawObjects in the
+ *  objectList_ are deleted. Compounds delete their childObjects as
+ *  they are their children.
+ */
 void Figure::clear()
 {
         qDeleteAll( objectList_ );
@@ -173,7 +197,9 @@ void Figure::clear()
         drawingList_.clear();
 }
 
-
+/** Returns the smallest rectangle bounding the Figure. Used for
+ *  example by exportfilters.
+ */
 QRectF Figure::boundingRect() const
 {
         QRectF r;
@@ -183,6 +209,10 @@ QRectF Figure::boundingRect() const
         return r;
 }
 
+/** Returns a list of the keys of all Dashes used by the DrawObjects
+ *  in the drawingList_. This is needed for CFigOutput to know which
+ *  Dashes of the DashesLib to export into the cig-file.
+ */
 const DashKeyList Figure::dashList() const
 {
         DashKeyList dkl;

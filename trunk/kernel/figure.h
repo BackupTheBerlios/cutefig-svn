@@ -61,13 +61,11 @@ public:
         void addDrawObject( DrawObject* drobj );
         void removeDrawObject( DrawObject* drobj );
 
-        void sortObjects(); //!< Sorts the objects according to their depth.
+        void sortObjects(); 
 
         void drawElements( QPainter* p, const ObjectList& backups = ObjectList() ) const; 
-        //!< Draws all objects exept o to the QPainter p.
 
         DrawObject* findContainingObject( const QPointF& p, qreal tolerance ) const;
-        //!< Returns a pointer to the first DrawObject that contains p.
 
         void outputObjects( OutputBackend* ob ) const;
         //!< Outputs all objects to the OutputBackend ob
