@@ -28,7 +28,8 @@
 #include "fig.h"
 
 #include <getopt.h>
-#include <stdlib.h>
+#include <cstdlib>
+#include <cerrno>
 
 #include <QImageWriter>
 

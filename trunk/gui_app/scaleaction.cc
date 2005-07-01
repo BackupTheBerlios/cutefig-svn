@@ -28,6 +28,8 @@
 #include "drawobject.h"
 #include "geometry.h"
 
+#include <cmath>
+
 #include <QRect>
 #include <QMatrix>
 
