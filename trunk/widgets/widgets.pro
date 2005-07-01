@@ -4,6 +4,8 @@ TEMPLATE = lib
 CONFIG += staticlib
 TARGET = cutefig-widgets
 
+DESTDIR = .
+
 inlcude(../cutefig_base.pri)
 
 HEADERS = colorbutton.h \

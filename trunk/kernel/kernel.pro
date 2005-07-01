@@ -7,6 +7,8 @@ TARGET = cutefig-core
 CONFIG += staticlib
 CONFIG += debug
 
+DESTDIR = .
+
 # Input
 HEADERS += fig.h \
            typedefs.h \

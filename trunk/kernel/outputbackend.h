@@ -42,7 +42,7 @@ public:
         OutputBackend( QTextStream& ts, const Figure& f ) 
                 : figure_( f ),
                   fileStream_( ts ) {}
-        virtual ~OutputBackend() { };
+        virtual ~OutputBackend() {}
 
         virtual void outputEllipse( Ellipse* el ) = 0;
         virtual void outputPolyline( Polyline* pl ) = 0;
@@ -52,7 +52,7 @@ public:
         
         virtual void processOutput() = 0;
 
-        QStringList& errorReport() { return errorReport_; };
+        QStringList& errorReport() { return errorReport_; }
         
 protected:
         QStringList errorReport_;

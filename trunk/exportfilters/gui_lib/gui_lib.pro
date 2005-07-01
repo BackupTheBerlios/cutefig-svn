@@ -8,6 +8,8 @@ CUTEFIGROOT = ../..
 include($$CUTEFIGROOT/cutefig_base.pri)
 include($$EXPORTROOT/export_base.pri)
 
+DESTDIR = .
+
 TARGET = exportfilters
 CONFIG += staticlib
 CONFIG += debug

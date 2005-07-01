@@ -3,7 +3,7 @@
 # @version $Id$
 #
 
-system( echo BUILDDIR=$PWD > .builddir.pri )
+#system( echo BUILDDIR=$PWD > .builddir.pri )
 
 CONFIG+=debug
 

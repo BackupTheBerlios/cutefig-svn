@@ -1,8 +1,6 @@
 # $Id$
 
-#message( this is $${_FILE_} )
-
-include( .builddir.pri )
+BUILDDIR = $${PWD}
 
 equals(TEMPLATE,app):DESTDIR = $$BUILDDIR/bin
 
