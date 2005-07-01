@@ -6,7 +6,7 @@ TARGET = cutefig-widgets
 
 DESTDIR = .
 
-inlcude(../cutefig_base.pri)
+include(../cutefig_base.pri)
 
 HEADERS = colorbutton.h \
           flagbuttongroup.h \

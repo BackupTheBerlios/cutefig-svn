@@ -27,6 +27,8 @@
 #include "fig.h"
 
 #include "cutefig.h"
+
+#include "cfigoutput.h"
 #include "centralwidget.h"
 #include "canvasview.h"
 #include "controler.h"
@@ -34,8 +36,7 @@
 #include "ruler.h"
 #include "parser.h"
 #include "reslibinit.h"
-#include "cfigoutput.h"
-#include "xfigoutput.h"
+//#include "xfigoutput.h"
 
 #include "objectmapper.h"
 #include "objecthandler.h"

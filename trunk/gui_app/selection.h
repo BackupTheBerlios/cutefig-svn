@@ -49,10 +49,17 @@ class Selection : public QObject
 {
         Q_OBJECT
 public:
-        Selection()
-                : QObject(),
+        Selection( QObject* parent = 0 )
+                : QObject( parent ),
                   objects_(),
                   backups_() {}
+
+        Selection( const Selection& other ) 
+                : QObject( other.parent() ),
+                  objects_( other.objects() ),
+                  backups_( other.backups() ) 
+        {}
+        
 
         ~Selection() {}
 

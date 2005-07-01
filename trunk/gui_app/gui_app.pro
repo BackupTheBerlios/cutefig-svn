@@ -10,13 +10,13 @@ TEMPLATE = app
 include(../cutefig_base.pri)
 
 # Widgets
-LIBS += -L$$BUILDDIR/widgets/ -lcutefig-widgets
-PRE_TARGETDEPS += $$BUILDDIR/widgets/libcutefig-widgets.a
+LIBS += -L$$BUILDDIR/widgets/$$DEBUGRELEASE -lcutefig-widgets
+PRE_TARGETDEPS += $$BUILDDIR/widgets/$$DEBUGRELEASE/libcutefig-widgets.a
 
 # Exportfilters
 INCLUDEPATH += $$BUILDDIRexportfilters/ $$BUILDDIR/exportfilters/gui_lib
-LIBS += -L$$BUILDDIR/exportfilters/gui_lib -lexportfilters
-PRE_TARGETDEPS += $$BUILDDIR/exportfilters/gui_lib/libexportfilters.a
+LIBS += -L$$BUILDDIR/exportfilters/$$DEBUGRELEASE/gui_lib -lexportfilters
+PRE_TARGETDEPS += $$BUILDDIR/exportfilters/gui_lib/$$DEBUGRELEASE/libexportfilters.a
 
 RESOURCES = cutefig.qrc
 

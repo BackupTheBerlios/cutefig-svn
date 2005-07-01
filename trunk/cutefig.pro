@@ -3,10 +3,6 @@
 # @version $Id$
 #
 
-#system( echo BUILDDIR=$PWD > .builddir.pri )
-
-CONFIG+=debug
-
 TEMPLATE = subdirs
 
 SUBDIRS = kernel exportfilters widgets gui_app

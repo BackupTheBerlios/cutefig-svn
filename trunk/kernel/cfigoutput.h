@@ -25,8 +25,8 @@
 #ifndef cfigoutput_h
 #define cfigoutput_h
 
-#include "reslib.h"
 #include "outputbackend.h"
+#include "reslib.h"
 
 #include <QTextStream>
 #include <QObject>

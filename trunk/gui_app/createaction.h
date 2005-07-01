@@ -25,8 +25,8 @@
 #ifndef createaction_h
 #define createaction_h 
 
-#include "interactiveaction.h"
 #include "allobjects.h"
+#include "interactiveaction.h"
 
 /** \class CreateAction
  *  \brief A base class for create actions of DrawObjects
@@ -78,8 +78,7 @@ public:
         }
 
 protected:
-        virtual DrawObject* createObject()
-        { return new Ellipse( controler_->figure() ); }
+        virtual DrawObject* createObject() { return new Ellipse( controler_->figure() ); }
 };
 
 class PolylineCAction : public CreateAction
@@ -95,8 +94,7 @@ public:
         }
 
 protected:
-        virtual DrawObject* createObject()
-        { return new Polyline( controler_->figure() ); }
+        virtual DrawObject* createObject() { return new Polyline( controler_->figure() ); }
 };
 
 class PolygonCAction : public CreateAction
@@ -112,8 +110,7 @@ public:
         }
 
 protected:
-        virtual DrawObject* createObject()
-        { return new Polygon( controler_->figure() ); }
+        virtual DrawObject* createObject() { return new Polygon( controler_->figure() ); }
 };
 
 #endif
