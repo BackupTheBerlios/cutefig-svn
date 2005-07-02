@@ -22,8 +22,6 @@
 **
 ******************************************************************************/
 
-
-
 #include "fig.h"
 
 #include "cutefig.h"
@@ -246,10 +244,10 @@ void CuteFig::setupActions()
 
                 foreach ( QAction* a, ac->actions() ) {
                         menu->addAction( a );
-                        QToolButton* tb = ac->toolButton( a );
-                        if ( tb ) {
-                                tb->setParent( toolBar );
-                                toolBar->addWidget( tb );
+                        QWidget* tbw = ac->toolBarWidget( a );
+                        if ( tbw ) {
+                                tbw->setParent( toolBar );
+                                toolBar->addWidget( tbw );
                         } else if ( !a->icon().isNull() ) 
                                 toolBar->addAction( a );
                 }

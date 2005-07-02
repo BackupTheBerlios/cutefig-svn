@@ -5,9 +5,6 @@ QT -= qt3support
 TEMPLATE = lib
 TARGET = cutefig-core
 CONFIG += staticlib
-CONFIG += debug
-
-DESTDIR = .
 
 # Input
 HEADERS += fig.h \

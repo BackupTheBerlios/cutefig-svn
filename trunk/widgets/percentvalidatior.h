@@ -22,37 +22,26 @@
 **
 ******************************************************************************/
 
-#ifndef ellipsedialog_h
-#define ellipsedialog_h
+#ifndef percentvalidatior_h
+#define percentvalidatior_h
 
-#include "objectdialog.h"
+#include <QIntValidator>
 
-class Ellipse;
+#include <limits>
 
-class QSlider;
-class QSpinBox;
-class QButtonGroup;
-
-class EllipseDialog : public ObjectDialog
+class PercentValidator : public QIntValidator
 {
         Q_OBJECT
 public:
-        EllipseDialog( DrawObject *o, EditdialogAction* a , QWidget * parent =0 );
-        ~EllipseDialog() { };
+        PercentValidator( QObject* parent )
+                : QIntValidator( 1, std::numeric_limits<int>::max(), parent ) {}
+        ~PercentValidator() {}
 
-private:
-        Ellipse* ellipse_;
-
-        virtual void setUpPrivate();
-        virtual void setDefaultValues();
-        virtual void setUpConnections();
-        virtual void castDrawObject();
+        void setBottom( int bottom );
+        void setRange( int min, int max );
         
-        QSlider* angleSlider;
-        QSpinBox* angleSpin;
-
-        QButtonGroup* subType;
-        QButtonGroup* definition;
+        virtual QValidator::State validate( QString& input, int& pos ) const;
+        virtual void fixup( QString& intput );
 };
 
 #endif

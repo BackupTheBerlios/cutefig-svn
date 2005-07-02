@@ -66,6 +66,7 @@ public:
         //!< resizes the Canvas and the QPixmap buffer to s. 
 
         Controler* controler() { return controler_; }
+        CuteFig* mainWindow() { return mainWindow_; }
 
         void setHRuler( Ruler* r ) { hRuler_ = r; }
         void setVRuler( Ruler* r ) { vRuler_ = r; }

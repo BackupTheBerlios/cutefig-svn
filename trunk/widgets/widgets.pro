@@ -10,8 +10,12 @@ include(../cutefig_base.pri)
 
 HEADERS = colorbutton.h \
           flagbuttongroup.h \
-          errorreporter.h
+          errorreporter.h \
+          percentvalidatior.h \
+          zoomcombobox.h
 
 SOURCES = colorbutton.cc \
           flagbuttongroup.cc \
-          errorreporter.cc 
+          errorreporter.cc \
+          percentvalidatior.cc \
+          zoomcombobox.cc

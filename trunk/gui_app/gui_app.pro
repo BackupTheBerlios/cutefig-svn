@@ -2,7 +2,6 @@
 
 TARGET = cutefig
 CONFIG += thread 
-CONFIG += debug
 TEMPLATE = app
 
 #QT+=qt3support

@@ -22,37 +22,32 @@
 **
 ******************************************************************************/
 
-#ifndef ellipsedialog_h
-#define ellipsedialog_h
+#include "percentvalidatior.h"
 
-#include "objectdialog.h"
-
-class Ellipse;
-
-class QSlider;
-class QSpinBox;
-class QButtonGroup;
-
-class EllipseDialog : public ObjectDialog
+void PercentValidator::setBottom( int bottom )
 {
-        Q_OBJECT
-public:
-        EllipseDialog( DrawObject *o, EditdialogAction* a , QWidget * parent =0 );
-        ~EllipseDialog() { };
+        if ( bottom >= 1 )
+                QIntValidator::setBottom( bottom );
+}
 
-private:
-        Ellipse* ellipse_;
+void PercentValidator::setRange( int min, int max )
+{
+        setTop( max );
+        setBottom( min );
+}
 
-        virtual void setUpPrivate();
-        virtual void setDefaultValues();
-        virtual void setUpConnections();
-        virtual void castDrawObject();
+QValidator::State PercentValidator::validate( QString& input, int& pos ) const
+{
+        QString myInput = input.trimmed();
+        if ( myInput.endsWith('%') )
+                myInput.chop( 1 );
         
-        QSlider* angleSlider;
-        QSpinBox* angleSpin;
+        return QIntValidator::validate( myInput, pos );
+}
 
-        QButtonGroup* subType;
-        QButtonGroup* definition;
-};
-
-#endif
+void PercentValidator::fixup( QString& input )
+{
+        int pos;
+        if ( validate( input, pos ) == QValidator::Acceptable && !input.endsWith('%') )
+                input.append('%');
+}

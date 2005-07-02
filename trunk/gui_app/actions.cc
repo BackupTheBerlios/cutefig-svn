@@ -30,6 +30,8 @@
 #include "objecthandler.h"
 #include "objectmapper.h"
 
+#include "zoomcombobox.h"
+
 #include <QObject>
 #include <QApplication>
 #include <QMenu>
@@ -138,7 +140,7 @@ EditActions::EditActions( Controler* parent )
         undoTB->setDefaultAction( undo_ );
         undoTB->setMenu( undoMenu_ );
         undoTB->setPopupMode( QToolButton::DelayedPopup );
-        specialButtons_[undo_] = undoTB;
+        specialWidgets_[undo_] = undoTB;
 
         undoSignalMapper_ = new QSignalMapper( this );
         connect( undoSignalMapper_, SIGNAL( mapped(int) ), parent, SLOT( undo(int) ) );
@@ -156,7 +158,7 @@ EditActions::EditActions( Controler* parent )
         redoTB->setDefaultAction( redo_ );
         redoTB->setMenu( redoMenu_ );
         redoTB->setPopupMode( QToolButton::DelayedPopup );
-        specialButtons_[redo_] = redoTB;
+        specialWidgets_[redo_] = redoTB;
 
 
         addSeparator();
@@ -277,7 +279,8 @@ void EditActions::remapRedoSignals()
 /************************ ViewActions **************************/
 
 ViewActions::ViewActions( CanvasView* parent )
-        : ActionCollection( parent )
+        : ActionCollection( parent ),
+          cview_( parent )
 {
         setText( tr("&View") );
         
@@ -288,7 +291,7 @@ ViewActions::ViewActions( CanvasView* parent )
         QAction* zoomOut = new QAction( QIcon(":images/viewmag-.png"), tr("Zoom &out"), this );
         zoomOut->setShortcut( Qt::Key_Minus );
         connect( zoomOut, SIGNAL( triggered() ), parent, SLOT( zoomOut() ) );
-
+        
         QAction* zoom1 = new QAction( QIcon(":images/viewmag1.png"), tr("O&riginal size"), this );
         zoom1->setShortcut( Qt::Key_1 );
         connect( zoom1, SIGNAL( triggered() ), parent, SLOT( zoomOrig() ) );
@@ -296,8 +299,59 @@ ViewActions::ViewActions( CanvasView* parent )
         QAction* zoomFit = new QAction( QIcon(":images/viewmagfit.png"), tr("Fit canvas"), this );
         zoomFit->setShortcut( Qt::CTRL+Qt::Key_F );
         connect( zoomFit, SIGNAL( triggered() ), parent, SLOT( zoomFit() ) );
+
+        QAction* setZoom = new QAction( tr("&Set zoom"), this );
+        setupZoomMenu();
+        setZoom->setMenu( zoomMenu_ );
+        specialWidgets_[setZoom] = zoomComboBox_;
 }
 
+void ViewActions::setupZoomMenu()
+{
+        zoomComboBox_ = new ZoomComboBox();
+        zoomMenu_ = new QMenu( cview_->mainWindow() );
+
+        zoomLevels_ << 0.25 << 0.33 << 0.5 << 0.67 << 0.75 << 1.0 << 1.5 << 2.0 << 3.0 << 4.0;
+
+        int i = 0;
+        zoomSignalMapper_ = new QSignalMapper( this );
+        foreach ( double z, zoomLevels_ ) {
+                QString zs = QString::number( z*100 ) + " %";
+                zoomComboBox_->addItem( zs, QVariant( z ) );
+                QAction* za = new QAction( zs, zoomMenu_ );
+                za->setCheckable( true );
+                connect( za, SIGNAL( triggered() ), zoomSignalMapper_, SLOT( map() ) );
+                zoomMenu_->addAction( za );
+                zoomSignalMapper_->setMapping( za, i++ );
+        }
+
+        connect( zoomSignalMapper_, SIGNAL( mapped( int ) ), this, SLOT( zoomChanged( int ) ) );
+        connect( zoomComboBox_, SIGNAL( zoomChanged( double ) ), this, SLOT( setZoom(double) ) );
+        connect( cview_, SIGNAL( scaleChanged(double) ), this, SLOT( setZoom(double) ) );        
+}
+
+void ViewActions::zoomChanged( int id )
+{
+        const double& zoom = zoomLevels_[id];
+        setZoom( zoom );
+}
+
+void ViewActions::setZoom( double zoom )
+{
+        if ( sender() != cview_ ) {
+                cview_->blockSignals( true );
+                cview_->setZoom( zoom );
+                cview_->blockSignals( false );
+        }
+
+        if ( sender() != zoomComboBox_ ) 
+                zoomComboBox_->changeZoom( zoom );
+        
+        for ( int i = 0; i < zoomLevels_.size(); i++ ) {
+                QAction* a = (QAction *) zoomSignalMapper_->mapping( i );
+                a->setChecked( zoomLevels_[i] == zoom );
+        }
+}
 
 /************************ CreateActions ************************/
 
@@ -335,5 +389,4 @@ FormatActions::FormatActions( Controler* parent )
         new GroupAction( parent, this );
         new UngroupAction( parent, this );    
 }
-
 

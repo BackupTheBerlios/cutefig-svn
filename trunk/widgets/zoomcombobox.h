@@ -22,37 +22,27 @@
 **
 ******************************************************************************/
 
-#ifndef ellipsedialog_h
-#define ellipsedialog_h
+#ifndef zoomcombobox_h
+#define zoomcombobox_h
 
-#include "objectdialog.h"
+#include <QComboBox>
 
-class Ellipse;
-
-class QSlider;
-class QSpinBox;
-class QButtonGroup;
-
-class EllipseDialog : public ObjectDialog
+class ZoomComboBox : public QComboBox
 {
         Q_OBJECT
 public:
-        EllipseDialog( DrawObject *o, EditdialogAction* a , QWidget * parent =0 );
-        ~EllipseDialog() { };
+        ZoomComboBox( QWidget* parent=0 );
+        ~ZoomComboBox() {}
 
-private:
-        Ellipse* ellipse_;
+signals:
+        void zoomChanged( double );
 
-        virtual void setUpPrivate();
-        virtual void setDefaultValues();
-        virtual void setUpConnections();
-        virtual void castDrawObject();
+public slots:
+        void changeZoom( double value );
         
-        QSlider* angleSlider;
-        QSpinBox* angleSpin;
-
-        QButtonGroup* subType;
-        QButtonGroup* definition;
+private slots:
+        void comboBoxChanged( int id );
+        void textChanged( const QString& text );
 };
 
 #endif

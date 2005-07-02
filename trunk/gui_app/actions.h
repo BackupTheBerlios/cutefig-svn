@@ -27,7 +27,6 @@
 #include <QList>
 #include <QHash>
 
-class QToolButton;
 class QSignalMapper;
 
 class Controler;
@@ -35,6 +34,7 @@ class CuteFig;
 class ActionCollection;
 class CanvasView;
 class InteractiveAction;
+class ZoomComboBox;
 
 typedef QList<ActionCollection*> ActionGroups;
 
@@ -66,8 +66,8 @@ typedef QList<ActionCollection*> ActionGroups;
  *     - the text() attribute, the name of the menu in the menu bar
  *     - the addSeparator() method as suggested in the QT4-docs to 
  *       replace addSeperator() of QActionGroup in QT3
- *     - A QHash to map a certain action to a QToolButton in case the
- *       action wants to setup a special button for the toolBar. This
+ *     - A QHash to map a certain action to a QWidget in case the
+ *       action wants to setup a special widget for the toolBar. This
  *       is done for example by undo and redo.
  */
 
@@ -77,15 +77,15 @@ class ActionCollection : public QActionGroup
 public:
         ActionCollection( QObject* parent ) 
                 : QActionGroup( parent ),
-                  specialButtons_() {}
+                  specialWidgets_() {}
 
         ~ActionCollection() {}
 
         void addSeparator(); //!< adds a seperator to appear in the menu
         const QString text() { return text_; } //!< returns the name to appear on the menu bar.
 
-        QToolButton* toolButton( QAction* action ) { return specialButtons_[action]; }
-        //!< returns a pointer to a special QToolbutton or 0 if the action does not have one.
+        QWidget* toolBarWidget( QAction* action ) { return specialWidgets_[action]; }
+        //!< returns a pointer to a special QWidget or 0 if the action does not have one.
 
         void setAllEnabled( bool enabled = true ); //!< probably not needed
 
@@ -93,7 +93,7 @@ protected:
         void setText( const QString& text ) { text_ = text; } 
         //!< sets the text to appear in the menu bar.
 
-        QHash<QAction*, QToolButton*> specialButtons_;
+        QHash<QAction*, QWidget*> specialWidgets_;
         //!< in this QHash actions can store their special buttons
 
 private:
@@ -143,7 +143,7 @@ public:
  *  \brief All the actions of the "Edit" menu
  *
  *  This class has the special functionality to implement an undo and
- *  redo menu. It therefore sets special QToolButtons to be put into
+ *  redo menu. It therefore sets special widgets to be put into
  *  the specialButtons_ QHash. The QSignalMappers undoSignalMapper_
  *  and redoSignalMapper_ map the menu items to an int that is passed
  *  to the Controler.
@@ -188,6 +188,19 @@ class ViewActions : public ActionCollection
 public:
         ViewActions( CanvasView* parent );
         ~ViewActions() {}
+
+private:
+        void setupZoomMenu();
+        QMenu* zoomMenu_;
+        ZoomComboBox* zoomComboBox_;
+
+        QList<double> zoomLevels_;
+        QSignalMapper* zoomSignalMapper_;
+        CanvasView* cview_;
+        
+private slots:
+        void zoomChanged( int id );
+        void setZoom( double zoom );
 };
 
 /** \class FormatActions
