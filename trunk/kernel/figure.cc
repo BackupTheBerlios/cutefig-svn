@@ -224,3 +224,12 @@ const DashKeyList Figure::dashList() const
         
         return dkl;
 }
+
+const StrokeKeyList Figure::strokeList() const
+{
+        StrokeKeyList skl;
+        foreach ( DrawObject* o, drawingList_ ) 
+                skl << o->fillStroke().key();
+
+        return skl;
+}

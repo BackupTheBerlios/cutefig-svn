@@ -29,9 +29,7 @@
 #include <QVector>
 #include <QRectF>
 
-template<class Resource> class ResLib;
-typedef QVector<double> Dashes;
-typedef ResLib<Dashes> DashesLib;
+#include "typedefs.h"
 
 class QPainterPath;
 class QPainter;

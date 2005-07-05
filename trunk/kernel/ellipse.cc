@@ -139,7 +139,7 @@ bool Ellipse::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 {
         qreal d = Geom::distance( p, fp1_ ) + Geom::distance( p, fp2_ );
         
-        if ( brush_.style() != Qt::NoBrush )
+        if ( fillStroke_ )
                 return d <= rad_d_; 
 
         d -= rad_d_;

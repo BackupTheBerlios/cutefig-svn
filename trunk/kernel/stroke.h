@@ -22,45 +22,50 @@
 **
 ******************************************************************************/
 
-#ifndef cfigoutput_h
-#define cfigoutput_h
+#ifndef stroke_h
+#define stroke_h
 
-#include "outputbackend.h"
-#include "reslib.h"
+class QGradient;
+class QPixmap;
+class QPainterPath;
+class QPainter;
 
-#include <QTextStream>
-#include <QObject>
-#include <QHash>
+class OutputBackend;
 
-class QPolygonF;
+#include <QVariant>
+#include <QString>
+#include <QColor>
 
-class CfigOutput : public OutputBackend
+class Stroke 
 {
 public:
-        CfigOutput( QTextStream& ts, const Figure& f ) : OutputBackend( ts, f ) {}
-        ~CfigOutput() {}
+        enum StrokeType { None = 0, Color, Gradient, Pixmap, Complex };
 
-        virtual void outputEllipse( Ellipse* el );
-        virtual void outputPolyline( Polyline* pl );
-        virtual void outputPolygon( Polygon* pg );
-        virtual void outputCompound( Compound* cd );
+        friend class OutputBackend;
         
-        virtual void processOutput();
+        Stroke();
+        Stroke( const QColor& color );
+        Stroke( const Stroke& other );
 
+        ~Stroke() {}
+
+        void setColor( const QColor& color );
+        void setSetGradient( const QGradient& gradient );
+        void setPixmap( const QPixmap& pixmap );
+
+        void setKey( const QString& key ) { key_ = key; }
+        const QString key() const { return key_; }
+
+        void fillPath( const QPainterPath& path, QPainter* painter ) const;
+
+        operator bool () const { return type_; }
+        
+        
 private:
-        void outputGenericData( QString s );
-        void outputPoints();
-        void outputDashes();
-        void outputStrokes();
+        StrokeType type_;
+        QVariant data_;
 
-        static const char* objectString;
-
-        DrawObject* drawObject_;
-
-        QHash<int,int> dashMap_;
-
-//        ResourceTable dashTable_;
-        
+        QString key_;
 };
 
 #endif

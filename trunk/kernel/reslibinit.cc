@@ -26,7 +26,7 @@
 #include "reslibinit.h"
 
 #include "reslib.h"
-#include "pen.h"
+#include "typedefs.h"
 #include "parser.h"
 
 bool ResLibInit::called_ = false;

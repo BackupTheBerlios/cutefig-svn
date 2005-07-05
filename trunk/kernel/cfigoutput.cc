@@ -71,9 +71,15 @@ void CfigOutput::outputCompound( Compound* cd )
 void CfigOutput::processOutput()
 {
         outputDashes();
+        outputStrokes();
         figure_.outputObjects( this );
 }
 
+QTextStream& operator<< ( QTextStream& ts, const QColor& c )
+{
+        ts << c.name() << ' ' << c.alphaF() << ' ';
+        return ts;
+}
 
 void CfigOutput::outputGenericData( QString name )
 {
@@ -94,9 +100,16 @@ void CfigOutput::outputGenericData( QString name )
                     << (int)p.capStyle() << ' ' << (int)p.joinStyle() << ' '
                     << p.color().name() << ' ' << p.color().alphaF() << ' ';
 
-        fileStream_ << drawObject_->fillColor().name() << ' ' 
-                    << drawObject_->fillColor().alphaF() << ' '
-                    << -1 << ' ' << drawObject_->depth();
+        const Stroke& fs = drawObject_->fillStroke();
+        if ( fs ) 
+                if ( fs.key().isNull() )
+                        fileStream_ << strokeColor( fs );
+                else
+                        fileStream_ << '*' << fs.key() << ' ';
+        else
+                fileStream_ << "% ";
+
+        fileStream_ << drawObject_->depth();
 }
 
 void CfigOutput::outputPoints()
@@ -120,3 +133,22 @@ void CfigOutput::outputDashes()
         }
 }
 
+void CfigOutput::outputStrokes()
+{
+        StrokeLib& sl = StrokeLib::instance();
+
+        foreach ( QString key, figure_.strokeList() ) {
+                Stroke stroke = sl[key];
+                switch ( strokeType( stroke ) ) {
+                    case Stroke::Color: 
+                    {
+                            const QColor& c = strokeColor( stroke );
+                            fileStream_ << "color " << key << ' ' << c.name() << ' ' << c.alphaF()
+                                        << "\n";
+                            break;
+                    }
+                    default:
+                            break;
+                }
+        }                   
+}

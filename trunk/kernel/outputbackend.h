@@ -34,6 +34,8 @@ class Compound;
 
 class QTextStream;
 
+#include "stroke.h"
+
 #include <QStringList>
 
 class OutputBackend
@@ -55,6 +57,9 @@ public:
         QStringList& errorReport() { return errorReport_; }
         
 protected:
+        Stroke::StrokeType strokeType( const Stroke& s ) { return s.type_; }
+        QColor strokeColor( const Stroke& s ) { return s.data_.value<QColor>(); }
+        
         QStringList errorReport_;
         const Figure& figure_;
         QTextStream& fileStream_;

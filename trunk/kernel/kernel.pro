@@ -17,6 +17,7 @@ HEADERS += fig.h \
            polyline.h \
            polygon.h \
            pen.h \
+           stroke.h \
            brush.h \
            brushdata.h \
            reslib.h \
@@ -34,6 +35,7 @@ SOURCES += figure.cc \
            polyline.cc \
            polygon.cc \
            pen.cc \
+           stroke.cc \
            brush.cc \
            reslibinit.cc \
            parser.cc \

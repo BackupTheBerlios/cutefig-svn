@@ -45,7 +45,6 @@ unsigned DrawObject::clickTolerance_ = 10;
 
 DrawObject::DrawObject( Figure* parent )
         : QObject( parent ),
-          brush_( Qt::NoBrush ),
           points_( 1 ),
           currentPoint_( 0 ),
           bRect_( 0,0,0,0 )
@@ -57,8 +56,7 @@ DrawObject::DrawObject( Figure* parent )
 DrawObject::DrawObject( DrawObject* o )
         : QObject( o->parent() ),
           pen_( o->pen_ ),
-          brush_( o->brush_ ),
-          fillColor_( o->fillColor_ ),
+          fillStroke_( o->fillStroke_ ),
           depth_( o->depth_ ),
           commentString_( o->commentString_ ),
           points_( o->points_ )
@@ -71,12 +69,6 @@ void DrawObject::move( const QPointF& d )
         points_.translate( d.x(),d.y() );
         getReadyForDraw();
         doSpecificPreparation();
-} 
-
-
-void DrawObject::setFillColor( const QColor& c )
-{
-        fillColor_ = c;
 }
 
 bool DrawObject::pointSet( const QPointF & pos, Fig::PointFlag f )
@@ -110,6 +102,7 @@ void DrawObject::cursorMove( const QPointF & pos )
 void DrawObject::draw( QPainter* p )
 {
         pen_.drawPath( painterPath_, p );
+        fillStroke_.fillPath( painterPath_, p );
 }
 
 void DrawObject::drawTentative( QPainter *p )
@@ -129,7 +122,7 @@ bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
 //         if ( !bRect_.intersects( Geom::centerRect( p, QSizeF( tolerance, tolerance ) ) ) )
 //                 return false;
              
-        if ( brush_.style() != Qt::NoBrush )
+        if ( fillStroke_ )
                 return painterPath_.contains( p );
         else
                 return pointHitsOutline( p, tolerance );

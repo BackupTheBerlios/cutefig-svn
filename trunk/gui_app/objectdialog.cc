@@ -203,11 +203,11 @@ QGroupBox* ObjectDialog::setUpFillGroup( QWidget* page )
         QGridLayout* fillLayout = new QGridLayout( fillGroup );
         ProgUtils::prepareLayout( fillLayout );
 
-        fillColor = new ColorButton( Qt::black, fillGroup );
-        QLabel* fgLabel = new QLabel( tr("C&olor"),fillGroup );
-        fgLabel->setBuddy( fillColor );
-        fillLayout->addWidget( fgLabel, 0,0 );
-        fillLayout->addWidget( fillColor, 0,1 );
+//         fillColor = new ColorButton( Qt::black, fillGroup );
+//         QLabel* fgLabel = new QLabel( tr("C&olor"),fillGroup );
+//         fgLabel->setBuddy( fillColor );
+//         fillLayout->addWidget( fgLabel, 0,0 );
+//         fillLayout->addWidget( fillColor, 0,1 );
 
 //        fillPattern = new BrushButton( fillGroup );
 //        fillPattern->setFixedHeight( 40 );
@@ -266,7 +266,7 @@ void ObjectDialog::setDefaultValues()
         lineShow->setColor( pen.color() );
         lineShow->setWidth( pen.width() );
 
-        fillColor->setColor( drawObject_->fillColor() );
+//        fillColor->setColor( drawObject_->fillColor() );
 
         depth->setValue( drawObject_->depth() );
         comment->setPlainText( drawObject_->comment() );

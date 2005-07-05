@@ -38,6 +38,7 @@
 
 #include "typedefs.h"
 #include "pen.h"
+#include "stroke.h"
 
 class QTextStream;
 class DrawObject;
@@ -87,7 +88,9 @@ private:
         void parsePoint( QPolygonF& pa, uint &i );
 
         void pushDashes();
-        QList<int> dashList_;
+        void pushColor();
+        
+        DashKeyList dashList_;
         
 //        QBrush parsePattern( int lines );
 

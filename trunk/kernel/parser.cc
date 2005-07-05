@@ -41,7 +41,7 @@
 #include <QColor>
 
 #include <sstream>
-
+#include <cctype>
 #include <QDebug>
 
 /** Puts the next word of the a std::istream into a QString. 
@@ -67,6 +67,37 @@ std::istream &operator>> ( std::istream &is, QColor &c )
         c = QColor( s );
         c.setAlphaF( alpha );
         if ( !c.isValid() )
+                is.setstate( is.rdstate() | std::istream::failbit );
+
+        return is;
+}
+
+std::istream& operator>> ( std::istream &is, Stroke& s )
+{
+        StrokeLib& sl = StrokeLib::instance();
+
+        char c;
+        do 
+                c = is.get();
+        while ( isspace(c) );
+
+        if ( c == '*' ) {
+                QString key;
+                is >> key;
+                s = sl[key];
+                
+                if ( !s )
+                        is.setstate( is.rdstate() | std::istream::failbit );
+        }
+        else if ( c == '%' )
+                s = Stroke();
+        else if ( c == '#' ) {
+                is.putback( c );
+                QColor color;
+                if (is >> color)
+                        s = Stroke( color );
+        }
+        else
                 is.setstate( is.rdstate() | std::istream::failbit );
 
         return is;
@@ -145,6 +176,11 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                         continue;
                 }
 
+                if ( itemType_ == "color" ){
+                        pushColor();
+                        continue;
+                }
+                
                 if ( itemType_ == "compound_begin" ) {
                         olist.push_back( new Compound( parseLoop( true ), figure_ ) );
                         continue;
@@ -175,12 +211,33 @@ void Parser::pushDashes()
         }
         
         DashesLib& dl = DashesLib::instance();
-        int key = dl.indexOf( dsh );
+        int key = dl.key( dsh );
         if ( key == -1 ) {
                 key = dl.size();
                 dl << dsh;
         }
         dashList_ << key;
+}
+
+void Parser::pushColor()
+{
+        QString key;
+        QColor color;
+
+        StrokeLib& sl = StrokeLib::instance();
+        
+        stream_ >> key >> color;
+
+        if ( stream_.fail() ) {
+                parseError( invalidColor );
+                return;
+        }
+                
+        if ( !sl[key] ) {
+                Stroke s( color );
+                s.setKey( key );
+                sl[key] = s;
+        }        
 }
 
 /** Takes the next line of the input file and puts it into the
@@ -191,19 +248,22 @@ void Parser::pushDashes()
 bool Parser::readLine()
 {
         QString s;     
-        s = fileStream_->readLine();
-        
+        s = fileStream_->readLine();//.trimmed();        
         line_++;
 
-        while ( s[0] == '#' ) {
-                s.remove( 0, 1 );
-                objectComment_ += s + '\n';     
+        while ( s[0] == '#' || s.isEmpty() ) {
+                if ( !s.isEmpty() ) {
+                        s.remove( 0, 1 );
+                        objectComment_ += s + '\n';
+                }
                 s = fileStream_->readLine();
+                if ( fileStream_->atEnd() )
+                        return false;
                 line_++;
         } 
        
-        if ( s.isNull() )
-                return false;
+//         if ( s.isNull() )
+//                 return false;
         
         stream_.clear();
         stream_.str( std::string( s.trimmed().toUtf8() ) );
@@ -213,7 +273,7 @@ bool Parser::readLine()
 }
 
 /** Tries to interpret the next two words of sstream_ as to
- * doubles. If that succeeds these values are put intp pa[i].
+ *  doubles. If that succeeds these values are put intp pa[i].
  */
 void Parser::parsePoint( QPolygonF& pa, uint &i )
 {
@@ -233,18 +293,20 @@ void Parser::parsePoint( QPolygonF& pa, uint &i )
 DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
 {
         QString obType;
-        QColor pc, fc;
-        int dsh, cs, js, pattern, depth;
+        QColor pc;
+        Stroke fill;
+        int dsh, cs, js, depth;
         double lw;
 
-        stream_ >> obType >> npoints >> lw >> dsh >> cs >> js >> pc >> fc >> pattern >> depth;
+        stream_ >> obType >> npoints >> lw >> dsh >> cs >> js >> pc >> fill >> depth;
 
+        
         if ( stream_.fail() ) {
                 parseError( invalidStandardLine, Discarding );
                 npoints = 0;
                 return 0;
-        }
-                        
+        }                
+        
         DrawObject *o = createObject( obType );
         if ( !o ) {
                 npoints = 0;
@@ -278,6 +340,7 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         pen.setJoinStyle( (Qt::PenJoinStyle) js );
         
         o->setPen( pen );
+        o->setFillStroke( fill );
         o->setDepth( depth );
         
         pa = &o->points();
@@ -378,3 +441,4 @@ const QString Parser::invalidDashLine = tr("Parsing of dashline failed");
 const QString Parser::undefinedDashes = tr("Dashtype %1 undefined. Assuming solid line");
 const QString Parser::compound_end_without_compound = tr("Received compound end without compund.");
 const QString Parser::fileEndBeforeCompoundFinished = tr("File ended before compound finished.");
+

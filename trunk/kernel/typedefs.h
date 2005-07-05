@@ -28,10 +28,22 @@
 /** Some type definitions used by several classes.
  */
 
-#include <QList>
+template<class T> class QList;
+template<class T> class QVector;
+class QString;
+
 class DrawObject;
+class Stroke;
 
 typedef QList<DrawObject*> ObjectList;
+
+template<typename Key, class Resource> class ResLib;
+
+typedef QVector<double> Dashes;
+typedef ResLib<int, Dashes> DashesLib;
 typedef QList<int> DashKeyList;
+
+typedef QList<QString> StrokeKeyList;
+typedef ResLib<QString,Stroke> StrokeLib;
 
 #endif

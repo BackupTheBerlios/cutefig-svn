@@ -28,6 +28,7 @@
 #include "fig.h"
 #include "figure.h"
 #include "pen.h"
+#include "stroke.h"
 
 #include <QRectF>
 #include <QPolygonF>
@@ -74,9 +75,8 @@ public:
         QRectF controlPointRect() const { return cRect_; }
         
         const Pen& pen() const { return pen_; }
-
-        QColor fillColor() const { return fillColor_; } 
-
+        const Stroke& fillStroke() const { return fillStroke_; }
+        
         int depth() const { return depth_; }
 
         void setComment( const QString& str ) { commentString_ = str; }
@@ -115,13 +115,13 @@ public:
         /*!< This is to be done by calling ob->output<DerivedClass>(). */
 
         static bool isLessThan( const DrawObject* o1, const DrawObject* o2 ) { 
-                return o1->depth() < o2->depth();
+                return o1->depth() > o2->depth();
         }
 
 public slots:
         void setPen( const Pen& p );
-
-        void setFillColor( const QColor& c );
+        void setFillStroke( const Stroke& s ) { fillStroke_ = s; }
+//        void setFillColor( const QColor& c );
         
         void setDepth( int d ) { depth_ = d; }
 
@@ -146,8 +146,7 @@ protected:
         Figure* figure_;
 
         Pen pen_;
-        QBrush brush_;
-        QColor fillColor_;
+        Stroke fillStroke_;
 
         int depth_;
 

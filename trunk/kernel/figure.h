@@ -80,6 +80,7 @@ public:
 //         }; //!< Adds a dash style to the dashList_.
 
         const DashKeyList dashList() const;
+        const StrokeKeyList strokeList() const;
 
         const ObjectList& objects() { return objectList_; }
 
