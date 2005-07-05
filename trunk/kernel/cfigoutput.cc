@@ -91,12 +91,12 @@ void CfigOutput::outputGenericData( QString name )
         fileStream_ << "object " << name << ' ' << drawObject_->points().size() << ' ';
         
         fileStream_ << p.width() << ' ' << dk << ' '
-                     << (int)p.capStyle() << ' ' << (int)p.joinStyle() << ' '
-                     << p.color().name() << ' ' << p.color().alphaF() << ' ';
+                    << (int)p.capStyle() << ' ' << (int)p.joinStyle() << ' '
+                    << p.color().name() << ' ' << p.color().alphaF() << ' ';
 
         fileStream_ << drawObject_->fillColor().name() << ' ' 
-                     << drawObject_->fillColor().alphaF() << ' '
-                     << -1 << ' ' << drawObject_->depth();
+                    << drawObject_->fillColor().alphaF() << ' '
+                    << -1 << ' ' << drawObject_->depth();
 }
 
 void CfigOutput::outputPoints()

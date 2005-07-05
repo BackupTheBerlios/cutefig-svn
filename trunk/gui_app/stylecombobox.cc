@@ -34,8 +34,10 @@
 StyleComboBox::StyleComboBox( QWidget * parent )
         : QComboBox( parent )
 {
-        for ( int i = 0; i < 6; ++i ) 
-                addItem( QIcon(drawItemQtPen( Qt::PenStyle( i ) )), QString() );
+//        for ( int i = 0; i < 6; ++i ) 
+//                addItem( QIcon(drawItemQtPen( Qt::PenStyle( i ) )), QString() );
+        addItem( QIcon( drawItemQtPen(Qt::NoPen) ), QString() );
+        addItem( QIcon( drawItemQtPen(Qt::SolidLine) ), QString() );
 
         DashesLib& dl = DashesLib::instance();
         for ( int i = 0; i < dl.size(); ++i )
@@ -96,15 +98,15 @@ QPixmap StyleComboBox::drawItemCustomPen( int dkey )
 
 void StyleComboBox::em_activated( int i )
 {
-        emit activatedDash( i - 6 );
+        emit activatedDash( i - 2 );
 }
 
 void StyleComboBox::em_highlighted( int i )
 {
-        emit highlightedDash( i - 6 );
+        emit highlightedDash( i - 2 );
 }
 
 void StyleComboBox::setCurrentIndex( int index )
 {
-        QComboBox::setCurrentIndex( index + 6 );
+        QComboBox::setCurrentIndex( index + 2 );
 }

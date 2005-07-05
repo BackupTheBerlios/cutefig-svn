@@ -44,6 +44,13 @@ void ResLibInit::initDashes()
 {
         DashesLib& dl = DashesLib::instance();
         
-        dl << Parser::parseDashLine("3.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0")
-           << Parser::parseDashLine("3.0 3.0 3.0 3.0 1.0 3.0 1.0 3.0");
+        dl << Parser::parseDashLine("1.0 3.0")
+           << Parser::parseDashLine("3.0 3.0")
+           << Parser::parseDashLine("3.0 3.0 1.0 3.0")
+           << Parser::parseDashLine("3.0 3.0 1.0 3.0 1.0 3.0")
+           << Parser::parseDashLine("3.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0")
+           << Parser::parseDashLine("3.0 3.0 3.0 3.0 1.0 3.0")
+           << Parser::parseDashLine("3.0 3.0 3.0 3.0 3.0 3.0 1.0 3.0")
+           << Parser::parseDashLine("3.0 3.0 3.0 3.0 1.0 3.0 1.0 3.0")
+           << Parser::parseDashLine("0.2 3.8");
 }

@@ -261,9 +261,9 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         }
         
         Pen pen;
-        if ( (dsh > dashList_.size()-1) || (dsh < -6) ) {
+        if ( (dsh > dashList_.size()-1) || (dsh < -2) ) {
                 parseError( undefinedDashes.arg( dsh ) );
-                dsh = -5;
+                dsh = -2;
         }
         
         if ( dsh >= 0 )

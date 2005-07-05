@@ -32,8 +32,8 @@
 
 DashesLib& Pen::dashesLib_ = DashesLib::instance();
 
-const int NoPen = -6;
-const int SolidLine = -5;
+const int NoPen = -2;
+const int SolidLine = -1;
 
 
 Pen::Pen() 
@@ -77,7 +77,7 @@ void Pen::drawPath( const QPainterPath& path, QPainter* painter ) const
 {
 
         if ( dashesKey_ < 0 ) {
-                QPen pen( color_, lineWidth_, Qt::PenStyle(dashesKey_+6), capStyle_, joinStyle_ );
+                QPen pen( color_, lineWidth_, Qt::PenStyle(dashesKey_+2), capStyle_, joinStyle_ );
                 painter->strokePath( path, pen );
         } else {
                 QPainterPathStroker stroker;
