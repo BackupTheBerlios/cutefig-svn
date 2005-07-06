@@ -36,6 +36,7 @@
 #include "allobjects.h"
 #include "figure.h"
 #include "reslib.h"
+#include "gradient.h"
 
 #include <QTextStream>
 #include <QColor>
@@ -182,7 +183,9 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                                 parseError( ignoringPoint );
                                 continue;
                         }
-                        parsePoint( *pa, i );
+                        QPointF p = parsePoint();
+                        if ( !p.isNull() )
+                                (*pa)[i++] = p;
                         if ( npoints == i ) {
                                 o->setComment( objectComment_ );
                                 objectComment_ = QString();
@@ -211,6 +214,11 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                         pushColor();
                         continue;
                 }
+
+                if ( itemType_ == "gradient" ) {
+                        pushGradient();
+                        continue;
+                }
                 
                 if ( itemType_ == "compound_begin" ) {
                         olist.push_back( new Compound( parseLoop( true ), figure_ ) );
@@ -228,7 +236,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
         }
 
         if ( itemType_ != "compound_end" && parsingCompound )
-                parseError( fileEndBeforeCompoundFinished );
+                parseError( unexpectedEnd );
         
         return olist;
 }
@@ -271,6 +279,63 @@ void Parser::pushColor()
         }        
 }
 
+void Parser::pushGradient()
+{
+        QString key;
+        std::string type;
+        QColor startColor, endColor;
+        double x1,x2, y1,y2;
+ 
+        Gradient* gradient;
+
+        stream_ >> key >> type >> startColor >> endColor >> x1 >> y1 >> x2 >> y2;
+        if ( stream_.fail() ) qDebug() << "failed";
+        
+        QPointF startPoint( x1,y1 );
+        QPointF endPoint( x2,y2 );
+        
+        if ( type == "radial" ) {
+                double rad;
+                stream_ >> rad;
+                gradient = new RadialGradient( startPoint, endPoint, rad );
+        }
+        else 
+                gradient = new LinearGradient( startPoint, endPoint );
+
+        if ( stream_.fail() ) {
+                parseError( invalidGradientLine );
+                return;
+        }       
+
+        gradient->setColorAt( 0.0, startColor );
+
+        QColor cl;
+        double pos;
+        
+        readLine();
+        
+        while ( itemType_ != "gradend" ) {
+                stream_ >> pos >> cl;
+                if ( stream_.fail() )
+                        parseError( invalidGradStopLine );
+                else
+                        gradient->setColorAt( pos, cl );
+                
+                readLine();
+        }
+
+        gradient->setColorAt( 1.0, endColor );
+
+        StrokeLib& sl = StrokeLib::instance();
+        
+        if ( !sl[key] ) {
+                Stroke stroke;
+                stroke.setGradient( gradient );
+                stroke.setKey( key );
+                sl[key] = stroke;
+        }
+}
+
 /** Takes the next line of the input file and puts it into the
  *  sstream_. Comments are removed and put into objectComment_. The
  *  first word of the input line is put into itemType_ If the
@@ -306,14 +371,17 @@ bool Parser::readLine()
 /** Tries to interpret the next two words of sstream_ as to
  *  doubles. If that succeeds these values are put intp pa[i].
  */
-void Parser::parsePoint( QPolygonF& pa, uint &i )
+QPointF Parser::parsePoint()
 {
         double x,y;
+        QPointF p;
         
         if ( (stream_ >> x >> y) )
-                pa[i++] = QPointF( x,y );
+                p = QPointF( x,y );
         else
                 parseError( invalidPoint );
+
+        return p;
 }
 
 /** Parses the generic line of itemType_ == "object". It creates the
@@ -331,6 +399,8 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
 
         stream_ >> obType >> npoints >> lw >> dsh >> cs >> js >> pc >> fill >> depth;
 
+        qDebug() << fill.key();
+        
         
         if ( stream_.fail() ) {
                 parseError( invalidStandardLine, Discarding );
@@ -471,5 +541,9 @@ const QString Parser::invalidColor =  tr("Invalid colour: assuming black.");
 const QString Parser::invalidDashLine = tr("Parsing of dashline failed");
 const QString Parser::undefinedDashes = tr("Dashtype %1 undefined. Assuming solid line");
 const QString Parser::compound_end_without_compound = tr("Received compound end without compund.");
-const QString Parser::fileEndBeforeCompoundFinished = tr("File ended before compound finished.");
+const QString Parser::unexpectedEnd = tr("Unexpected end of file.");
+const QString Parser::invalidGradientLine = tr("Invalid gradient line.");
+const QString Parser::invalidGradStopLine = tr("Invalid gradient stop line.");
+
+
 

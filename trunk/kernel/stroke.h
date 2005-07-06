@@ -25,7 +25,7 @@
 #ifndef stroke_h
 #define stroke_h
 
-class QGradient;
+class Gradient;
 class QPixmap;
 class QPainterPath;
 class QPainter;
@@ -39,7 +39,7 @@ class OutputBackend;
 class Stroke 
 {
 public:
-        enum StrokeType { None = 0, Color, Gradient, Pixmap, Complex };
+        enum StrokeType { sNone = 0, sColor, sGradient, sPixmap, sComplex };
 
         friend class OutputBackend;
         
@@ -50,7 +50,7 @@ public:
         ~Stroke() {}
 
         void setColor( const QColor& color );
-        void setSetGradient( const QGradient& gradient );
+        void setGradient( Gradient* gradient );
         void setPixmap( const QPixmap& pixmap );
 
         void setKey( const QString& key ) { key_ = key; }
@@ -64,7 +64,9 @@ public:
 private:
         StrokeType type_;
         QVariant data_;
-
+        
+        Gradient* gradient_;
+        
         QString key_;
 };
 

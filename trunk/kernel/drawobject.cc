@@ -101,8 +101,8 @@ void DrawObject::cursorMove( const QPointF & pos )
 
 void DrawObject::draw( QPainter* p )
 {
-        pen_.drawPath( painterPath_, p );
         fillStroke_.fillPath( painterPath_, p );
+        pen_.drawPath( painterPath_, p );
 }
 
 void DrawObject::drawTentative( QPainter *p )

@@ -24,6 +24,7 @@
 
 
 #include "stroke.h"
+#include "gradient.h"
 
 #include <QPainter>
 #include <QPainterPath>
@@ -33,8 +34,9 @@
 #include <QDebug>
 
 Stroke::Stroke()
-        : type_( None ),
+        : type_( sNone ),
           data_( QVariant() ),
+          gradient_( 0 ),
           key_()
 {
 }
@@ -42,47 +44,55 @@ Stroke::Stroke()
 Stroke::Stroke( const Stroke& other )
         : type_( other.type_ ),
           data_( other.data_ ),
+          gradient_( (other.gradient_) ? other.gradient_->copy() : 0 ),
           key_( other.key_ )
-{    
+{
 }
 
 Stroke::Stroke( const QColor& color )
+        : type_( sColor ),
+          data_( QVariant( color ) ),
+          gradient_( 0 ),
+          key_()
 {
-        type_ = Color;
-        data_ = QVariant( color );
 }
 
 void Stroke::setColor( const QColor& color )
 {
-        type_ = Color;
+        type_ = sColor;
         data_ = QVariant( color );
 }
 
-void Stroke::setSetGradient( const QGradient& gradient )
+void Stroke::setGradient( Gradient* gradient )
 {
-        type_ = Gradient;
-        data_.setValue( QBrush( gradient ) );
+        type_ = sGradient;
+        gradient_ = gradient;
 }
 
 void Stroke::setPixmap( const QPixmap& pixmap )
 {
-        type_ = Pixmap;
+        type_ = sPixmap;
         data_.setValue( pixmap );
 }
 
 void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
 {
         switch ( type_ ) {
-            case Color:
+            case sColor:
                     painter->fillPath( path, QBrush( data_.value<QColor>() ) );
                     break;
-            case Gradient:
-                    painter->fillPath( path, data_.value<QBrush>() );
+            case sGradient:
+            {
+                    QRectF r = path.boundingRect();
+                    QGradient* qgrad = gradient_->toQGradient( r );
+                    painter->fillPath( path, *qgrad );
+                    delete qgrad;
                     break;
-            case Pixmap:
+            }
+            case sPixmap:
                     painter->fillPath( path, QBrush( data_.value<QPixmap>() ) );
                     break;
-            case None:
+            case sNone:
             default: break;
         }
 }

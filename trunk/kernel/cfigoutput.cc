@@ -26,6 +26,7 @@
 #include "cfigoutput.h"
 #include "allobjects.h"
 #include "pen.h"
+#include "gradient.h"
 
 #include <QPolygonF>
 #include <QTextStream>
@@ -74,7 +75,6 @@ void CfigOutput::processOutput()
         outputStrokes();
         figure_.outputObjects( this );
 }
-
 void put_colorPart( QTextStream& ts, int v )
 {
         int e = v & 0x0F;
@@ -152,6 +152,43 @@ void CfigOutput::outputDashes()
         }
 }
 
+
+QTextStream& operator<< ( QTextStream& ts, Gradient* grad ) 
+{
+        QGradientStops& stops = grad->colorStops();
+
+        LinearGradient* lg = 0;
+        RadialGradient* rg = 0;
+        
+        if ( grad->type() == Gradient::Linear ) {
+                lg = static_cast<LinearGradient*>( grad );
+                ts << "linear ";
+        }
+        else {
+                rg = static_cast<RadialGradient*>( grad );
+                ts << "radial ";
+        }
+
+        ts << stops.first().second << ' ' << stops.last().second << ' ';
+
+        if ( lg )
+                ts << lg->startPoint().x() << ' ' << lg->startPoint().y()  << ' '
+                   << lg->finalPoint().x() << ' ' << lg->finalPoint().y();
+        else
+                ts << rg->centerPoint().x() << ' ' << rg->centerPoint().y() << ' '
+                   << rg->focalPoint().x() << ' ' << rg->focalPoint().y() << ' '
+                   << rg->radius();
+
+        ts << "\n";
+
+        for ( int i = 1; i < stops.size()-1; i++ )
+                ts << "gradstop " << stops[i].first << ' ' << stops[i].second << "\n";
+
+        ts << "gradend\n";
+
+        return ts;
+}
+
 void CfigOutput::outputStrokes()
 {
         StrokeLib& sl = StrokeLib::instance();
@@ -159,11 +196,16 @@ void CfigOutput::outputStrokes()
         foreach ( QString key, figure_.strokeList() ) {
                 Stroke stroke = sl[key];
                 switch ( strokeType( stroke ) ) {
-                    case Stroke::Color: 
+                    case Stroke::sColor: 
                     {
                             const QColor& c = strokeColor( stroke );
-                            fileStream_ << "color " << key << ' ' << c << ' '
-                                        << "\n";
+                            fileStream_ << "color " << key << ' ' << c << "\n";
+                            break;
+                    }
+                    case Stroke::sGradient: 
+                    {
+                            Gradient* grad = strokeGradient( stroke );
+                            fileStream_ << "gradient " << key << ' ' << grad;
                             break;
                     }
                     default:

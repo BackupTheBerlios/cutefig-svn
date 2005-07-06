@@ -85,10 +85,11 @@ private:
         
         DrawObject *createObject( QString name );
         DrawObject *parseGenericData( uint &npoints, QPolygonF*& pa );
-        void parsePoint( QPolygonF& pa, uint &i );
+        QPointF parsePoint();
 
         void pushDashes();
         void pushColor();
+        void pushGradient();
         
         DashKeyList dashList_;
         
@@ -114,7 +115,9 @@ private:
         static const QString invalidDashLine;
         static const QString undefinedDashes;
         static const QString compound_end_without_compound;
-        static const QString fileEndBeforeCompoundFinished;
+        static const QString unexpectedEnd;
+        static const QString invalidGradientLine;
+        static const QString invalidGradStopLine;
 };
 
 #endif
