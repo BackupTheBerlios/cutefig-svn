@@ -61,6 +61,11 @@ PIXOutput::PIXOutput( const Figure* figure, QFile* file, QByteArray format )
 
 void PIXOutput::exportFigure()
 {
+        if ( figure_->isEmpty() ) {
+//                errorString_ = tr("Figure is empty. Nothing exported.");
+                return;
+        }
+        
         QSize sz = figure_->boundingRect().size().toSize();
         QSize nsz = sz;
 

@@ -75,9 +75,28 @@ void CfigOutput::processOutput()
         figure_.outputObjects( this );
 }
 
+void put_colorPart( QTextStream& ts, int v )
+{
+        int e = v & 0x0F;
+        e += (e>9) ? 'A'-10 : '0';
+        v = v >> 4;
+        v += (v>9) ? 'A'-10 : '0';
+        
+        ts << (char)v << (char)e;
+}
+
+
 QTextStream& operator<< ( QTextStream& ts, const QColor& c )
 {
-        ts << c.name() << ' ' << c.alphaF() << ' ';
+        ts << '#';
+        
+        put_colorPart( ts, c.red() );
+        put_colorPart( ts, c.green() );
+        put_colorPart( ts, c.blue() );
+        
+        if ( c.alpha() != 0xFF )
+                put_colorPart( ts, c.alpha() );
+        
         return ts;
 }
 
@@ -98,18 +117,18 @@ void CfigOutput::outputGenericData( QString name )
         
         fileStream_ << p.width() << ' ' << dk << ' '
                     << (int)p.capStyle() << ' ' << (int)p.joinStyle() << ' '
-                    << p.color().name() << ' ' << p.color().alphaF() << ' ';
+                    << p.color() << ' ';
 
         const Stroke& fs = drawObject_->fillStroke();
         if ( fs ) 
                 if ( fs.key().isNull() )
                         fileStream_ << strokeColor( fs );
                 else
-                        fileStream_ << '*' << fs.key() << ' ';
+                        fileStream_ << '*' << fs.key();
         else
-                fileStream_ << "% ";
+                fileStream_ << '%';
 
-        fileStream_ << drawObject_->depth();
+        fileStream_ << ' ' << drawObject_->depth();
 }
 
 void CfigOutput::outputPoints()
@@ -143,7 +162,7 @@ void CfigOutput::outputStrokes()
                     case Stroke::Color: 
                     {
                             const QColor& c = strokeColor( stroke );
-                            fileStream_ << "color " << key << ' ' << c.name() << ' ' << c.alphaF()
+                            fileStream_ << "color " << key << ' ' << c << ' '
                                         << "\n";
                             break;
                     }

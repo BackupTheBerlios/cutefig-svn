@@ -56,19 +56,50 @@ std::istream &operator>> ( std::istream &is, QString &_s )
         return is;
 }
 
+int get_colorByte( std::istream& is )
+{
+         int v = toupper(is.get()) - '0';
+         if ( v > 9 )
+                 v -= 7;
+         if ( v < 0 || v > 15 )
+                 is.setstate( is.rdstate() | std::istream::failbit );
+         return v;
+}
+
+int get_colorPart( std::istream& is )
+{
+        int v = get_colorByte( is );
+        v = v << 4;
+        v |= get_colorByte( is );
+        return v;
+}
+        
+
 /** Tries to interpret the next word of an std::istream as a
  * QColor. On failure the failbit of the std::istream is set to true.
  */
-std::istream &operator>> ( std::istream &is, QColor &c )
+std::istream &operator>> ( std::istream &is, QColor &color )
 {
-        QString s;
-        double alpha = -1;
-        is >> s >> alpha;
-        c = QColor( s );
-        c.setAlphaF( alpha );
-        if ( !c.isValid() )
+        char c;
+        do 
+                c = is.get();
+        while( isspace( c ) );
+        
+        if ( c != '#' ) {
                 is.setstate( is.rdstate() | std::istream::failbit );
+                return is;
+        }
+        
+        color.setRed( get_colorPart( is ) );
+        color.setGreen( get_colorPart( is ) );
+        color.setBlue( get_colorPart( is ) );
 
+        c = is.peek();
+        if ( !is.eof() ) {
+                if ( !isspace( c ) && c > 0 ) 
+                        color.setAlpha( get_colorPart( is ) );
+        }
+        
         return is;
 }
 

@@ -228,8 +228,9 @@ const DashKeyList Figure::dashList() const
 const StrokeKeyList Figure::strokeList() const
 {
         StrokeKeyList skl;
-        foreach ( DrawObject* o, drawingList_ ) 
-                skl << o->fillStroke().key();
+        foreach ( DrawObject* o, drawingList_ )
+                if ( !skl.contains( o->fillStroke().key() ) ) 
+                        skl << o->fillStroke().key();
 
         return skl;
 }

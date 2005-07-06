@@ -71,6 +71,8 @@ public:
         //!< Outputs all objects to the OutputBackend ob
 
         QRectF boundingRect() const;
+        bool isEmpty() const { return objectList_.isEmpty(); }
+                
 
         void clear();
         //!< Clears the objectList_ and deletes all containing objects.
