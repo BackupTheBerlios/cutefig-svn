@@ -289,7 +289,6 @@ void Parser::pushGradient()
         Gradient* gradient;
 
         stream_ >> key >> type >> startColor >> endColor >> x1 >> y1 >> x2 >> y2;
-        if ( stream_.fail() ) qDebug() << "failed";
         
         QPointF startPoint( x1,y1 );
         QPointF endPoint( x2,y2 );
@@ -398,9 +397,6 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         double lw;
 
         stream_ >> obType >> npoints >> lw >> dsh >> cs >> js >> pc >> fill >> depth;
-
-        qDebug() << fill.key();
-        
         
         if ( stream_.fail() ) {
                 parseError( invalidStandardLine, Discarding );

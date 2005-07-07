@@ -74,7 +74,7 @@ QPointF* Polyline::nextPoint()
 void Polyline::setupPainterPath()
 {
         painterPath_ = QPainterPath();
-        painterPath_.addPolygon( points_ );
+        painterPath_.addPolygon( points_ );        
 }
 
 bool Polyline::pointHitsOutline( const QPointF& p, qreal tolerance ) const 

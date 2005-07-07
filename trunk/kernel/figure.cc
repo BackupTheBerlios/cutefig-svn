@@ -204,7 +204,11 @@ QRectF Figure::boundingRect() const
 {
         QRectF r;
         foreach( DrawObject* o, objectList_ ) 
+                {
                 r |= o->boundingRect();
+                qDebug() << o << o->boundingRect() << r;
+                }
+        
 
         return r;
 }

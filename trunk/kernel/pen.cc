@@ -98,5 +98,5 @@ QRectF Pen::pathRect( const QPainterPath& path ) const
         stroker.setJoinStyle( joinStyle_ );
         QPainterPath strokePath = stroker.createStroke( path );
 
-        return strokePath.controlPointRect();
+        return strokePath.boundingRect();
 }
