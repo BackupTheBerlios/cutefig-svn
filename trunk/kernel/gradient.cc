@@ -25,6 +25,8 @@
 
 #include "gradient.h"
 
+#include <cmath>
+
 #include <QDebug>
 
 void Gradient::ensureRange( qreal& val )

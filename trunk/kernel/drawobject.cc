@@ -34,7 +34,6 @@
 #include <cmath>
 
 #include "drawobject.h"
-#include "brush.h"
 #include "geometry.h"
 
 #include <QPainter>
