@@ -44,6 +44,7 @@ unsigned DrawObject::clickTolerance_ = 10;
 
 DrawObject::DrawObject( Figure* parent )
         : QObject( parent ),
+          stroke_( Qt::black ),
           points_( 1 ),
           currentPoint_( 0 ),
           bRect_( 0,0,0,0 )
@@ -55,7 +56,8 @@ DrawObject::DrawObject( Figure* parent )
 DrawObject::DrawObject( DrawObject* o )
         : QObject( o->parent() ),
           pen_( o->pen_ ),
-          fillStroke_( o->fillStroke_ ),
+          stroke_( o->stroke_ ),
+          fill_( o->fill_ ),
           depth_( o->depth_ ),
           commentString_( o->commentString_ ),
           points_( o->points_ )
@@ -98,13 +100,13 @@ void DrawObject::cursorMove( const QPointF & pos )
         getReadyForDraw();
 }
 
-void DrawObject::draw( QPainter* p )
+void DrawObject::draw( QPainter* p ) const
 {
-        fillStroke_.fillPath( painterPath_, p );
-        pen_.drawPath( painterPath_, p );
+        fill_.fillPath( painterPath_, p );
+        pen_.strikePath( painterPath_, stroke_, p );
 }
 
-void DrawObject::drawTentative( QPainter *p )
+void DrawObject::drawTentative( QPainter *p ) const
 {
         p->drawPath( painterPath_ );
 }
@@ -121,7 +123,7 @@ bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
 //         if ( !bRect_.intersects( Geom::centerRect( p, QSizeF( tolerance, tolerance ) ) ) )
 //                 return false;
              
-        if ( fillStroke_ )
+        if ( fill_ )
                 return painterPath_.contains( p );
         else
                 return pointHitsOutline( p, tolerance );

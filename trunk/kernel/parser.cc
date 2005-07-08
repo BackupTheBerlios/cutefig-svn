@@ -391,12 +391,11 @@ QPointF Parser::parsePoint()
 DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
 {
         QString obType;
-        QColor pc;
-        Stroke fill;
+        Stroke stroke, fill;
         int dsh, cs, js, depth;
         double lw;
 
-        stream_ >> obType >> npoints >> lw >> dsh >> cs >> js >> pc >> fill >> depth;
+        stream_ >> obType >> npoints >> lw >> dsh >> cs >> js >> stroke >> fill >> depth;
         
         if ( stream_.fail() ) {
                 parseError( invalidStandardLine, Discarding );
@@ -430,14 +429,15 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         
         pen.setDashes( dsh );
 
-        pen.setColor( pc );
+//        pen.setColor( pc );
         pen.setWidth( lw );
 
         pen.setCapStyle( (Qt::PenCapStyle) cs );
         pen.setJoinStyle( (Qt::PenJoinStyle) js );
         
         o->setPen( pen );
-        o->setFillStroke( fill );
+        o->setStroke( stroke );
+        o->setFill( fill );
         o->setDepth( depth );
         
         pa = &o->points();

@@ -75,6 +75,7 @@ void CfigOutput::processOutput()
         outputStrokes();
         figure_.outputObjects( this );
 }
+
 void put_colorPart( QTextStream& ts, int v )
 {
         int e = v & 0x0F;
@@ -84,7 +85,6 @@ void put_colorPart( QTextStream& ts, int v )
         
         ts << (char)v << (char)e;
 }
-
 
 QTextStream& operator<< ( QTextStream& ts, const QColor& c )
 {
@@ -97,6 +97,19 @@ QTextStream& operator<< ( QTextStream& ts, const QColor& c )
         if ( c.alpha() != 0xFF )
                 put_colorPart( ts, c.alpha() );
         
+        return ts;
+}
+
+QTextStream& operator<< ( QTextStream& ts, const Stroke& st )
+{
+        if ( st ) 
+                if ( st.key().isNull() )
+                        ts << st.color();
+                else
+                        ts << '*' << st.key();
+        else
+                ts << '%';
+
         return ts;
 }
 
@@ -117,18 +130,8 @@ void CfigOutput::outputGenericData( QString name )
         
         fileStream_ << p.width() << ' ' << dk << ' '
                     << (int)p.capStyle() << ' ' << (int)p.joinStyle() << ' '
-                    << p.color() << ' ';
-
-        const Stroke& fs = drawObject_->fillStroke();
-        if ( fs ) 
-                if ( fs.key().isNull() )
-                        fileStream_ << strokeColor( fs );
-                else
-                        fileStream_ << '*' << fs.key();
-        else
-                fileStream_ << '%';
-
-        fileStream_ << ' ' << drawObject_->depth();
+                    << drawObject_->stroke() << ' ' << drawObject_->fill() << ' '
+                    << drawObject_->depth();
 }
 
 void CfigOutput::outputPoints()
@@ -211,5 +214,5 @@ void CfigOutput::outputStrokes()
                     default:
                             break;
                 }
-        }                   
+        }
 }

@@ -204,11 +204,7 @@ QRectF Figure::boundingRect() const
 {
         QRectF r;
         foreach( DrawObject* o, objectList_ ) 
-                {
                 r |= o->boundingRect();
-                qDebug() << o << o->boundingRect() << r;
-                }
-        
 
         return r;
 }
@@ -232,9 +228,12 @@ const DashKeyList Figure::dashList() const
 const StrokeKeyList Figure::strokeList() const
 {
         StrokeKeyList skl;
-        foreach ( DrawObject* o, drawingList_ )
-                if ( !skl.contains( o->fillStroke().key() ) ) 
-                        skl << o->fillStroke().key();
+        foreach ( DrawObject* o, drawingList_ ) {
+                if ( !skl.contains( o->fill().key() ) ) 
+                        skl << o->fill().key();
+                if ( !skl.contains( o->stroke().key() ) )
+                        skl << o->stroke().key();
+        }
 
         return skl;
 }

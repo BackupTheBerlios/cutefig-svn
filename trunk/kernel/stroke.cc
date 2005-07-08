@@ -75,6 +75,14 @@ void Stroke::setPixmap( const QPixmap& pixmap )
         data_.setValue( pixmap );
 }
 
+QColor Stroke::color() const
+{
+        if ( type_ == sColor )
+                return data_.value<QColor>();
+        else
+                return QColor();
+}
+
 void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
 {
         switch ( type_ ) {
@@ -95,5 +103,30 @@ void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
             case sNone:
             default: break;
         }
+}
+
+
+const QBrush Stroke::brush( const QPainterPath& path ) const
+{
+        QBrush ret;
+        switch ( type_ ) {
+            case sColor:
+                    ret = data_.value<QColor>();
+                    break;
+            case sGradient:
+            {
+                    QRectF r = path.boundingRect();
+                    QGradient* qgrad = gradient_->toQGradient( r );
+                    ret = *qgrad;
+                    break;
+            }
+            case sPixmap:
+                    ret = data_.value<QPixmap>();
+                    break;
+            case sNone:
+            default: break;
+        }
+
+        return ret;
 }
 

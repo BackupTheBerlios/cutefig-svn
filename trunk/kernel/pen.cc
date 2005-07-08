@@ -23,6 +23,7 @@
 ******************************************************************************/
 
 #include "pen.h"
+#include "stroke.h"
 #include "reslib.h"
 
 #include <QPainterPath>
@@ -80,23 +81,39 @@ void Pen::drawPath( const QPainterPath& path, QPainter* painter ) const
                 QPen pen( color_, lineWidth_, Qt::PenStyle(dashesKey_+2), capStyle_, joinStyle_ );
                 painter->strokePath( path, pen );
         } else {
-                QPainterPathStroker stroker;
-                stroker.setWidth( lineWidth_ );
-                stroker.setCapStyle( capStyle_ );
-                stroker.setJoinStyle( joinStyle_ );
-                stroker.setDashPattern( dashes_ );
-                QPainterPath strokePath = stroker.createStroke( path );
+                QPainterPath strokePath;
+                setupPainterPath( strokePath, path );
                 painter->fillPath( strokePath, color_ );
+        }
+}
+
+void Pen::strikePath( const QPainterPath& path, const Stroke& stroke, QPainter* painter ) const
+{
+        if ( dashesKey_ < 0 ) {
+                QPen pen( stroke.brush( path ), lineWidth_, Qt::PenStyle(dashesKey_+2), capStyle_, joinStyle_ );
+                painter->strokePath( path, pen );
+        }
+        else {
+                QPainterPath strokePath;
+                setupPainterPath( strokePath, path );
+                stroke.fillPath( strokePath, painter );
         }
 }
 
 QRectF Pen::pathRect( const QPainterPath& path ) const 
 {
-        QPainterPathStroker stroker;
-        stroker.setWidth( lineWidth_ );
-        stroker.setCapStyle( capStyle_ );
-        stroker.setJoinStyle( joinStyle_ );
-        QPainterPath strokePath = stroker.createStroke( path );
+        QPainterPath strokePath;
+        setupPainterPath( strokePath, path );
 
         return strokePath.boundingRect();
+}
+
+void Pen::setupPainterPath( QPainterPath& strokePath, const QPainterPath& path ) const
+{
+                QPainterPathStroker stroker;
+                stroker.setWidth( lineWidth_ );
+                stroker.setCapStyle( capStyle_ );
+                stroker.setJoinStyle( joinStyle_ );
+                stroker.setDashPattern( dashes_ );
+                strokePath = stroker.createStroke( path );
 }

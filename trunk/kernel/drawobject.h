@@ -75,7 +75,8 @@ public:
         QRectF controlPointRect() const { return cRect_; }
         
         const Pen& pen() const { return pen_; }
-        const Stroke& fillStroke() const { return fillStroke_; }
+        const Stroke& stroke() const { return stroke_; }
+        const Stroke& fill() const { return fill_; }
         
         int depth() const { return depth_; }
 
@@ -90,10 +91,10 @@ public:
         virtual QPointF center() const { return points_.boundingRect().center(); }
         //!< returns the central point of the object.
 
-        virtual void draw( QPainter* p );
+        virtual void draw( QPainter* p ) const;
         //!< supposed to draw the object to the QPainter p.
 
-        virtual void drawTentative( QPainter* p );
+        virtual void drawTentative( QPainter* p ) const;
 
         bool pointSet( const QPointF & pos, Fig::PointFlag f = Fig::Normal ); 
         //!< sets the point just being edited and returns the next point.
@@ -120,7 +121,8 @@ public:
 
 public slots:
         void setPen( const Pen& p );
-        void setFillStroke( const Stroke& s ) { fillStroke_ = s; }
+        void setStroke( const Stroke& s ) { stroke_ = s; }
+        void setFill( const Stroke& s ) { fill_ = s; }
 //        void setFillColor( const QColor& c );
         
         void setDepth( int d ) { depth_ = d; }
@@ -146,7 +148,7 @@ protected:
         Figure* figure_;
 
         Pen pen_;
-        Stroke fillStroke_;
+        Stroke stroke_, fill_;
 
         int depth_;
 

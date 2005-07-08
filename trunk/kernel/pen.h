@@ -34,6 +34,8 @@
 class QPainterPath;
 class QPainter;
 
+class Stroke;
+
 class Pen
 {
 public:
@@ -58,10 +60,13 @@ public:
         int dashesKey() const { return dashesKey_; }
 
         void drawPath( const QPainterPath& path, QPainter* painter ) const;
-
-        QRectF pathRect( const QPainterPath& path ) const;
+        void strikePath( const QPainterPath& path, const Stroke&, QPainter* painter ) const;
         
+        QRectF pathRect( const QPainterPath& path ) const;
+
 private:
+        void setupPainterPath( QPainterPath& strokePath, const QPainterPath& path ) const;
+        
         qreal lineWidth_;
         QColor color_;
 

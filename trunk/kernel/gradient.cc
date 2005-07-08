@@ -68,7 +68,6 @@ QGradient* LinearGradient::toQGradient( const QRectF& rect ) const
                                                   rect.top()  + final_.y()*rect.height());
         gr->setStops( colorStops_ );
 
-        qDebug() << "linearGradient" << gr->start() << gr->finalStop();
         return gr;
 }
 

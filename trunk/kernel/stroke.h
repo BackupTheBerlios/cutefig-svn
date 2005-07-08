@@ -53,11 +53,14 @@ public:
         void setGradient( Gradient* gradient );
         void setPixmap( const QPixmap& pixmap );
 
+        QColor color() const;
+        
         void setKey( const QString& key ) { key_ = key; }
         const QString key() const { return key_; }
 
         void fillPath( const QPainterPath& path, QPainter* painter ) const;
-
+        const QBrush brush( const QPainterPath& path ) const;
+        
         operator bool () const { return type_; }
         
         
