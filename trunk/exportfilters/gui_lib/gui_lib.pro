@@ -12,7 +12,6 @@ DESTDIR = .
 
 TARGET = exportfilters
 CONFIG += staticlib
-CONFIG += debug
 
 SUBDIRS = pixel
 

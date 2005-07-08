@@ -45,7 +45,7 @@ public:
         void setScale( double s );
         void setXres( int x );
         void setYres( int y );
-        void setBackground( const QColor& c );
+        void setBackground( const QColor& c ) { backgroundColor_ = c; }
         void setQuality( int q ) { quality_ = q; }
         void setGamma( double g ) { gamma_ = g; }
 

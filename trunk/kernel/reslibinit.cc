@@ -29,15 +29,14 @@
 #include "typedefs.h"
 #include "parser.h"
 
-bool ResLibInit::called_ = false;
-
 void ResLibInit::init()
 {
-        if ( called_ )
+        static bool called = false;
+        if ( called )
                 return;
         
         initDashes();
-        called_ = true;
+        called = true;
 }
 
 void ResLibInit::initDashes()

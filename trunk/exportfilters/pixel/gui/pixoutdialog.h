@@ -57,6 +57,9 @@ private slots:
         void setScale( double s );
         void keepAspectRatio( int keep );
         void setBackground( QColor color );
+        void setGamma( double g );
+        void setQuality( int q );
+        
 };
 
 class PixFilterFactory : public FilterFactory

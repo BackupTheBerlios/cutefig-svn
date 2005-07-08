@@ -31,7 +31,6 @@ public:
         static void init();
 
 private:
-        static bool called_;
         static void initDashes();
 };
 

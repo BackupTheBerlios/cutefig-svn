@@ -23,7 +23,7 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         
         QGridLayout* mainLayout = new QGridLayout( topLayout_->widget() );
 
-        QGroupBox* sizeGroup = new QGroupBox( this );
+        QGroupBox* sizeGroup = new QGroupBox( tr("Size"), this );
         QGridLayout* sizeLayout = new QGridLayout( sizeGroup );
 
         xres = new QSpinBox( sizeGroup );
@@ -60,8 +60,6 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         keepAspect->setCheckState( Qt::Checked );
         sizeLayout->addWidget( keepAspect, 1,3, 1,2 );
 
-        mainLayout->addWidget( sizeGroup, 0,0 );
-
         QHBoxLayout* bgLayout = new QHBoxLayout( mainLayout->widget() );
         QColor bg( Qt::white );
         bg.setAlpha( 0 );
@@ -71,9 +69,34 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         bgLayout->addWidget( bgLabel );
         bgLayout->addWidget( bgColor );
         
-        
+        QHBoxLayout* gqLayout = new QHBoxLayout( mainLayout->widget() );
 
-        mainLayout->addItem( bgLayout, 1,0 );
+        QDoubleSpinBox* gamma = new QDoubleSpinBox( this );
+        gamma->setRange( 0, 10 );
+        gamma->setSingleStep( 0.1 );
+        gamma->setValue( 1 );
+        QLabel* gammaLabel = new QLabel( tr("&Gamma value"), this );
+        gammaLabel->setBuddy( gamma );
+        gqLayout->addWidget( gammaLabel );
+        gqLayout->addStretch();
+        gqLayout->addWidget( gamma );
+
+        gqLayout->addStretch();
+        
+        QSlider* quality = new QSlider( Qt::Horizontal, this );
+        quality->setRange( 0, 100 );
+        quality->setValue( 100 );
+        QLabel* quLabel = new QLabel( tr("&Quality"), this );
+        quLabel->setBuddy( quality );
+        gqLayout->addWidget( quLabel );
+        gqLayout->addStretch();
+        gqLayout->addWidget( quality );
+
+        mainLayout->addWidget( sizeGroup, 0,0 );
+        mainLayout->setRowMinimumHeight( 1, 6 );
+        mainLayout->addItem( bgLayout, 2,0 );
+        mainLayout->setRowMinimumHeight( 3, 6 );
+        mainLayout->addItem( gqLayout, 4,0 );
         
         connect( xres, SIGNAL( valueChanged( int ) ), this, SLOT( setXres( int ) ) );
         connect( yres, SIGNAL( valueChanged( int ) ), this, SLOT( setYres( int ) ) );
@@ -81,7 +104,8 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         connect( keepAspect, SIGNAL( stateChanged( int ) ), 
                  this, SLOT( keepAspectRatio( int ) ) );
         connect( bgColor, SIGNAL( colorChanged(QColor) ), this, SLOT( setBackground(QColor) ) );
-
+        connect( gamma, SIGNAL( valueChanged(double) ), this, SLOT( setGamma(double) ) );
+        connect( quality, SIGNAL( valueChanged(int) ), this, SLOT( setQuality(int) ) ); 
         topLayout_->addItem( mainLayout );
         setupStandardButtons();
 }
@@ -159,4 +183,14 @@ void PixoutDialog::keepAspectRatio( int keep )
 void PixoutDialog::setBackground( QColor color )
 {
         filter_->setBackground( color );
+}
+
+void PixoutDialog::setGamma( double g )
+{
+        filter_->setGamma( g );
+}
+
+void PixoutDialog::setQuality( int q )
+{
+        filter_->setQuality( q );
 }
