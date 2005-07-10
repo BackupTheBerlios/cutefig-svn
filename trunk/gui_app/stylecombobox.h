@@ -40,19 +40,22 @@ public:
         StyleComboBox( QWidget * parent =0 );
         ~StyleComboBox() { }
 
-        void setCurrentIndex( int index );
+        void setCurrentIndex( const ResourceKey& key );
 
 signals:
-        void activatedDash( int );
-        void highlightedDash( int );
+        void activatedDash( const ResourceKey& );
+        void highlightedDash( const ResourceKey& );
 
 private:        
         QPixmap drawItemQtPen( Qt::PenStyle ps );
-        QPixmap drawItemCustomPen( int dkey );
+        QPixmap drawItemCustomPen( const ResourceKey& key );
+
+        QVector<ResourceKey> keyMap_;
 
 private slots:
         void em_activated( int );
         void em_highlighted( int );
+
 };
 
 #endif

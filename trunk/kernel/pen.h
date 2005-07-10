@@ -30,6 +30,7 @@
 #include <QRectF>
 
 #include "typedefs.h"
+#include "resourcekey.h"
 
 class QPainterPath;
 class QPainter;
@@ -47,19 +48,15 @@ public:
         void setWidth( qreal lw ) { lineWidth_ = lw; }
         qreal width() const { return lineWidth_; }
 
-        void setColor( const QColor& c ) { color_ = c; }
-        QColor color() const { return color_; }
-
         void setCapStyle( Qt::PenCapStyle cs ) { capStyle_ = cs; }
         Qt::PenCapStyle capStyle() const { return capStyle_; }
 
         void setJoinStyle( Qt::PenJoinStyle js ) { joinStyle_ = js; }
         Qt::PenJoinStyle joinStyle() const { return joinStyle_; }
 
-        bool setDashes( int key );
-        int dashesKey() const { return dashesKey_; }
+        bool setDashes( const ResourceKey& key );
+        const ResourceKey& dashesKey() const { return dashesKey_; }
 
-        void drawPath( const QPainterPath& path, QPainter* painter ) const;
         void strikePath( const QPainterPath& path, const Stroke&, QPainter* painter ) const;
         
         QRectF pathRect( const QPainterPath& path ) const;
@@ -68,13 +65,11 @@ private:
         void setupPainterPath( QPainterPath& strokePath, const QPainterPath& path ) const;
         
         qreal lineWidth_;
-        QColor color_;
 
         Qt::PenCapStyle capStyle_;
         Qt::PenJoinStyle joinStyle_;
 
-        int dashesKey_;
-        static DashesLib& dashesLib_;
+        ResourceKey dashesKey_;
         Dashes dashes_;
 };
 

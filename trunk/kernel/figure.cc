@@ -213,21 +213,21 @@ QRectF Figure::boundingRect() const
  *  in the drawingList_. This is needed for CFigOutput to know which
  *  Dashes of the DashesLib to export into the cig-file.
  */
-const DashKeyList Figure::dashList() const
+const ResourceKeyList Figure::dashList() const
 {
-        DashKeyList dkl;
+        ResourceKeyList rkl;
         foreach ( DrawObject* o, drawingList_ ) {
-                int k = o->pen().dashesKey();
-                if ( k >= 0 && !dkl.count( k ) )
-                        dkl << k;
+                ResourceKey k = o->pen().dashesKey();
+                if ( k.isToBeSaved() && !rkl.count( k ) )
+                        rkl << k;
         }
         
-        return dkl;
+        return rkl;
 }
 
-const StrokeKeyList Figure::strokeList() const
+const ResourceKeyList Figure::strokeList() const
 {
-        StrokeKeyList skl;
+        ResourceKeyList skl;
         foreach ( DrawObject* o, drawingList_ ) {
                 if ( !skl.contains( o->fill().key() ) ) 
                         skl << o->fill().key();

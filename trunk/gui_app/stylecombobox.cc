@@ -24,6 +24,7 @@
 
 
 #include "stylecombobox.h"
+#include "stroke.h"
 
 #include <QPixmap>
 #include <QPainter>
@@ -32,16 +33,18 @@
 #include <QDebug>
 
 StyleComboBox::StyleComboBox( QWidget * parent )
-        : QComboBox( parent )
+        : QComboBox( parent ),
+          keyMap_()
 {
-//        for ( int i = 0; i < 6; ++i ) 
-//                addItem( QIcon(drawItemQtPen( Qt::PenStyle( i ) )), QString() );
         addItem( QIcon( drawItemQtPen(Qt::NoPen) ), QString() );
-        addItem( QIcon( drawItemQtPen(Qt::SolidLine) ), QString() );
-
+        keyMap_ << ResourceKey();
+        
         DashesLib& dl = DashesLib::instance();
-        for ( int i = 0; i < dl.size(); ++i )
-                addItem( drawItemCustomPen( i ), QString() );
+
+        foreach ( ResourceKey key, dl.keys() ) {
+                addItem( drawItemCustomPen( key ), QString() );
+                keyMap_ << key;
+        }
 
         connect( this, SIGNAL( activated( int ) ), 
                  this, SLOT( em_activated( int ) ) );
@@ -71,7 +74,7 @@ QPixmap StyleComboBox::drawItemQtPen( Qt::PenStyle ps )
 }
 
 
-QPixmap StyleComboBox::drawItemCustomPen( int dkey )
+QPixmap StyleComboBox::drawItemCustomPen( const ResourceKey& dkey )
 {
         int w = size().width();
         int h = size().height()/2;
@@ -83,13 +86,13 @@ QPixmap StyleComboBox::drawItemCustomPen( int dkey )
         p.fillRect( 0,0, w,h, Qt::white );
         Pen pen;
         pen.setDashes( dkey );
+        
         pen.setWidth( 1.0 );
-        pen.setColor( Qt::black );
 
         p.setRenderHint( QPainter::Antialiasing, false );
         QPainterPath path( QPoint( w/10, h/2 ) );
         path.lineTo( QPoint(w-w/10,h/2) );
-        pen.drawPath( path, &p );
+        pen.strikePath( path, Stroke(Qt::black), &p );
 
         p.end();
     
@@ -98,15 +101,15 @@ QPixmap StyleComboBox::drawItemCustomPen( int dkey )
 
 void StyleComboBox::em_activated( int i )
 {
-        emit activatedDash( i - 2 );
+        emit activatedDash( keyMap_[i] );
 }
 
 void StyleComboBox::em_highlighted( int i )
 {
-        emit highlightedDash( i - 2 );
+        emit highlightedDash( keyMap_[i] );
 }
 
-void StyleComboBox::setCurrentIndex( int index )
+void StyleComboBox::setCurrentIndex( const ResourceKey& key )
 {
-        QComboBox::setCurrentIndex( index + 2 );
+        QComboBox::setCurrentIndex( keyMap_.indexOf( key ) );
 }

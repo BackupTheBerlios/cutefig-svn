@@ -25,6 +25,10 @@
 #ifndef reslibinit_h
 #define reslibinit_h
 
+#include "resourcekey.h"
+
+template<class Resource> class ResLib;
+
 class ResLibInit
 {
 public:
@@ -32,6 +36,14 @@ public:
 
 private:
         static void initDashes();
+
+        template<class Resource>
+        static void insert( ResLib<Resource>& rlib, const QString& key, const Resource& res )
+        {
+                ResourceKey rk( key, ResourceKey::BuiltIn );
+                rlib.insertBuiltIn( rk, res );
+        }
+        
 };
 
 #endif

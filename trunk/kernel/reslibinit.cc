@@ -42,14 +42,14 @@ void ResLibInit::init()
 void ResLibInit::initDashes()
 {
         DashesLib& dl = DashesLib::instance();
-        
-        dl << Parser::parseDashLine("1.0 3.0")
-           << Parser::parseDashLine("3.0 3.0")
-           << Parser::parseDashLine("3.0 3.0 1.0 3.0")
-           << Parser::parseDashLine("3.0 3.0 1.0 3.0 1.0 3.0")
-           << Parser::parseDashLine("3.0 3.0 1.0 3.0 1.0 3.0 1.0 3.0")
-           << Parser::parseDashLine("3.0 3.0 3.0 3.0 1.0 3.0")
-           << Parser::parseDashLine("3.0 3.0 3.0 3.0 3.0 3.0 1.0 3.0")
-           << Parser::parseDashLine("3.0 3.0 3.0 3.0 1.0 3.0 1.0 3.0")
-           << Parser::parseDashLine("0.2 3.8");
+
+        insert( dl, "S",               QVector<double>() );
+        insert( dl, "Dot",             Parser::parseDashLine("1 3") );
+        insert( dl, "Dash",            Parser::parseDashLine("3 3") );
+        insert( dl, "DashDot",         Parser::parseDashLine("3 3 1 3") );
+        insert( dl, "DashDotDot",      Parser::parseDashLine("3 3 1 3 1 3") );
+        insert( dl, "DashDotDotDot",   Parser::parseDashLine("3 3 1 3 1 3 1 3") );
+        insert( dl, "DashDashDot",     Parser::parseDashLine("3 3 3 3 1 3") );
+        insert( dl, "DashDashDashDot", Parser::parseDashLine("3 3 3 3 3 3 1 3") );
+        insert( dl, "DashDashDotDot",  Parser::parseDashLine("3 3 3 3 1 3 1 3") );
 }

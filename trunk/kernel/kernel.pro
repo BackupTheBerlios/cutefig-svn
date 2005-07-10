@@ -19,6 +19,7 @@ HEADERS += fig.h \
            pen.h \
            stroke.h \
            gradient.h \
+           resourcekey.h \
            reslib.h \
            reslibinit.h \
            parser.h \

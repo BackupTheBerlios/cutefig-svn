@@ -116,10 +116,10 @@ public slots:
   
         void newAction( InteractiveAction* a );
         
-        void setPenWidth( const qreal& pw ) { toolPen_.setWidth( pw ); }
-        void setPenColor( const QColor& pc ) { toolPen_.setColor( pc ); }
+//         void setPenWidth( const qreal& pw ) { toolPen_.setWidth( pw ); }
+//         void setPenColor( const QColor& pc ) { toolPen_.setColor( pc ); }
     
-        void setFillColor( const QColor& c ) { toolFillColor_ = c; }
+//         void setFillColor( const QColor& c ) { toolFillColor_ = c; }
 
         void setDepth( int v ) { toolDepth_ = v; }
 

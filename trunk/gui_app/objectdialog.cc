@@ -190,7 +190,7 @@ QGroupBox* ObjectDialog::setUpLineGroup( QWidget* page )
         lineLayout->addWidget( joinGroup, 1,3 );
 
 
-        lineShow = new LineShowWidget( drawObject_->pen(), 40, lineGroup );
+        lineShow = new LineShowWidget( drawObject_->pen(), drawObject_->stroke(), 40, lineGroup );
         lineLayout->addWidget( lineShow, 2,3 );
 
         return lineGroup;
@@ -255,16 +255,16 @@ void ObjectDialog::setDefaultValues()
         const Pen& pen = drawObject_->pen();
 
         lineWidth->setValue( pen.width() );
-        lineColor->setColor( pen.color() );
-        qDebug() << pen.dashesKey();
+//        lineColor->setColor( pen.color() );
+//        qDebug() << pen.dashesKey();
 
         lineStyle->setCurrentIndex( pen.dashesKey() );
 
         capStyle->setState( int( pen.capStyle() ) );
         joinStyle->setState( int( pen.joinStyle() ) );
 
-        lineShow->setColor( pen.color() );
-        lineShow->setWidth( pen.width() );
+        lineShow->setStroke( drawObject_->stroke() );
+        lineShow->setPen( pen );
 
 //        fillColor->setColor( drawObject_->fillColor() );
 
@@ -282,8 +282,9 @@ void ObjectDialog::setUpConnections()
                  drawObject_, SLOT( setPen( const Pen& ) ) );
     
         connect( lineWidth, SIGNAL( valueChanged(double) ), lineShow, SLOT( setWidth(double) ) );
-        connect( lineColor, SIGNAL( colorChanged(QColor) ), lineShow, SLOT( setColor(QColor) ) );
-        connect( lineStyle, SIGNAL( highlightedDash(int) ), lineShow, SLOT( setDashes(int) ) );
+//        connect( lineColor, SIGNAL( colorChanged(QColor) ), lineShow, SLOT( setColor(QColor) ) );
+        connect( lineStyle, SIGNAL( highlightedDash(const ResourceKey&) ),
+                 lineShow, SLOT( setDashes(const ResourceKey&) ) );
         connect( capStyle,  SIGNAL( stateChanged(int) ),    lineShow, SLOT( setCapStyle(int) ) );
         connect( joinStyle, SIGNAL( stateChanged(int) ),    lineShow, SLOT( setJoinStyle(int ) ) );
 
@@ -301,7 +302,6 @@ void ObjectDialog::setUpConnections()
 //                 fillColor, SLOT( setDisabled( bool ) ) );
 
         connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );
-        connect( depth, SIGNAL( valueChanged(int) ), this, SLOT( showValue(int) ) );
         
         connect( depth, SIGNAL( valueChanged( int ) ), action_, SLOT( wObjectHasChanged() ) );
         connect( lineShow, SIGNAL( changed( const Pen& ) ), action_, SLOT( wObjectHasChanged() ) );

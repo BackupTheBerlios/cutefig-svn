@@ -91,7 +91,7 @@ private:
         void pushColor();
         void pushGradient();
         
-        DashKeyList dashList_;
+        ResourceKeyList dashList_;
         
 //        QBrush parsePattern( int lines );
 

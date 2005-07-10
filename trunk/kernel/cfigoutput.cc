@@ -100,15 +100,30 @@ QTextStream& operator<< ( QTextStream& ts, const QColor& c )
         return ts;
 }
 
+QTextStream& operator<< ( QTextStream& ts, const ResourceKey& key )
+{
+        if ( !key.isValid() ) {
+                ts << '%';
+                return ts;
+        }
+        
+        if ( key.isBuiltIn() )
+                ts << '&';
+        else
+                ts << '*';
+
+        ts << key.keyString();
+
+        return ts;
+}
+
 QTextStream& operator<< ( QTextStream& ts, const Stroke& st )
 {
-        if ( st ) 
-                if ( st.key().isNull() )
-                        ts << st.color();
-                else
-                        ts << '*' << st.key();
+        QColor c = st.color();
+        if ( c.isValid() )
+                ts << st.color();
         else
-                ts << '%';
+                ts << st.key();
 
         return ts;
 }
@@ -116,9 +131,6 @@ QTextStream& operator<< ( QTextStream& ts, const Stroke& st )
 void CfigOutput::outputGenericData( QString name )
 {
         const Pen& p = drawObject_->pen();
-        int dk = p.dashesKey();
-        if ( dk >= 0 )
-                dk = dashMap_[dk];
 
         if ( !drawObject_->comment().isEmpty() ) {
                 QStringList comments = drawObject_->comment().split('\n');
@@ -128,7 +140,7 @@ void CfigOutput::outputGenericData( QString name )
         
         fileStream_ << "object " << name << ' ' << drawObject_->points().size() << ' ';
         
-        fileStream_ << p.width() << ' ' << dk << ' '
+        fileStream_ << p.width() << ' ' << p.dashesKey() << ' '
                     << (int)p.capStyle() << ' ' << (int)p.joinStyle() << ' '
                     << drawObject_->stroke() << ' ' << drawObject_->fill() << ' '
                     << drawObject_->depth();
@@ -143,18 +155,16 @@ void CfigOutput::outputPoints()
 void CfigOutput::outputDashes()
 {
         DashesLib& dl = DashesLib::instance();
-        dashMap_ = QHash<int,int>();
 
-        int i = 0;
-        foreach ( int key, figure_.dashList() ) {
-                dashMap_[key] = i++;
-                fileStream_ << "dashes";
-                foreach( double d, dl[key] )
-                        fileStream_ << " " << d;
-                fileStream_ << "\n";
+        foreach ( ResourceKey key, figure_.dashList() ) {
+                if ( !key.isBuiltIn() ) {
+                        fileStream_ << "dashes " << key.keyString();
+                        foreach ( double d, dl[key] )
+                                fileStream_ << ' ' << d;
+                        fileStream_ << "\n";
+                }
         }
 }
-
 
 QTextStream& operator<< ( QTextStream& ts, Gradient* grad ) 
 {
@@ -196,19 +206,19 @@ void CfigOutput::outputStrokes()
 {
         StrokeLib& sl = StrokeLib::instance();
 
-        foreach ( QString key, figure_.strokeList() ) {
+        foreach ( ResourceKey key, figure_.strokeList() ) {
                 Stroke stroke = sl[key];
                 switch ( strokeType( stroke ) ) {
                     case Stroke::sColor: 
                     {
                             const QColor& c = strokeColor( stroke );
-                            fileStream_ << "color " << key << ' ' << c << "\n";
+                            fileStream_ << "color " << key.keyString() << ' ' << c << "\n";
                             break;
                     }
                     case Stroke::sGradient: 
                     {
                             Gradient* grad = strokeGradient( stroke );
-                            fileStream_ << "gradient " << key << ' ' << grad;
+                            fileStream_ << "gradient " << key.keyString() << ' ' << grad;
                             break;
                     }
                     default:

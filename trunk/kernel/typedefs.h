@@ -37,13 +37,14 @@ class Stroke;
 
 typedef QList<DrawObject*> ObjectList;
 
-template<typename Key, class Resource> class ResLib;
+template<class Resource> class ResLib;
 
 typedef QVector<double> Dashes;
-typedef ResLib<int, Dashes> DashesLib;
-typedef QList<int> DashKeyList;
+typedef ResLib<Dashes> DashesLib;
 
-typedef QList<QString> StrokeKeyList;
-typedef ResLib<QString,Stroke> StrokeLib;
+typedef ResLib<Stroke> StrokeLib;
+
+class ResourceKey;
+typedef QList<ResourceKey> ResourceKeyList;
 
 #endif

@@ -25,9 +25,11 @@
 #ifndef lineshowwidget_h
 #define lineshowwidget_h
 
-#include <qwidget.h>
 #include "pen.h"
+#include "stroke.h"
 #include "reslib.h"
+
+#include <QWidget>
 
 class QColor;
 class QSize;
@@ -36,16 +38,16 @@ class LineShowWidget : public QWidget
 {
         Q_OBJECT
 public:
-        LineShowWidget( const Pen &p, 
-                        const int h, 
-                        QWidget * parent =0 );
-
+        LineShowWidget( const Pen &p, const Stroke& st, const int h, QWidget * parent =0 );
         ~LineShowWidget() { };
 
+        void setPen( const Pen& pen );
+        
 public slots:
-        void setColor( QColor c );
+//        void setColor( QColor c );
+        void setStroke( const Stroke& stroke );
         void setWidth( double w );
-        void setDashes( int d );
+        void setDashes( const ResourceKey& key );
         void setFlatCap() { capStyle_ = Qt::FlatCap; myUpdate(); }
         void setSquareCap() { capStyle_ = Qt::SquareCap; myUpdate(); }
         void setRoundCap() { capStyle_ = Qt::RoundCap; myUpdate(); }
@@ -62,6 +64,8 @@ signals:
 
 private:
         Pen pen_;
+        Stroke stroke_;
+        
         int capStyle_, joinStyle_;
 
         void myUpdate();

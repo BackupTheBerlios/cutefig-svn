@@ -28,44 +28,49 @@
 #include <QVector>
 #include <QHash>
 
-template<typename Key, class Resource> class ResLib
+#include "typedefs.h"
+#include "resourcekey.h"
+
+class ResLibInit;
+
+template<class Resource> class ResLib
 {
 public:
-
-        static ResLib<Key, Resource>& instance()
+        friend class ResLibInit;
+        
+        static ResLib<Resource>& instance()
         {
-                static ResLib<Key, Resource> inst;
+                static ResLib<Resource> inst;
                 return inst;
         };
 
-        Resource& operator[]( const Key& key ) { return hash_[key]; }
-        const Key key( const Resource& data ) { return hash_[data]; }
-        
-private:
-        ResLib<Key, Resource>() : hash_( QHash<Key, Resource>() ) {};
-        ResLib<Key, Resource>( const ResLib<Key, Resource>& ) {}
-        QHash<Key, Resource> hash_;
-};
-
-template<class Resource> class ResLib<int, Resource> 
-{
-public:
-        static ResLib<int, Resource>& instance()
+        void insert( const ResourceKey& key, const Resource& data )
         {
-                static ResLib<int, Resource> inst;
-                return inst;
+                if ( !key.isBuiltIn() ) {
+                        hash_[key] = data;
+                        keys_ << key;
+                }
         }
+        
+        const Resource operator[]( const ResourceKey& key ) const { return hash_[key]; }
+        const ResourceKey key( const Resource& data ) const { return hash_[data]; }
+        bool contains( const ResourceKey& key ) const { return hash_.contains( key ); }
 
-        Resource& operator[]( const int& key ) { return vect_[key]; }
-        const int key( const Resource& data ) const { return vect_.indexOf( data ); }
-        const int size() const { return vect_.size(); }
-
-        ResLib<int, Resource>& operator<<( const Resource& data ) { vect_ << data; return *this; }
+        ResourceKeyList keys() const { return keys_; }
         
 private:
-        ResLib<int, Resource>() : vect_( QVector<Resource>() ) {}
-        ResLib<int, Resource>( const ResLib<int, Resource>& ) {}
-        QVector<Resource> vect_;
+        ResLib<Resource>() : hash_() {};
+        ResLib<Resource>( const ResLib<Resource>& ) {}
+        
+        void insertBuiltIn( const ResourceKey& key, const Resource& data )
+        {
+                 hash_[key] = data;
+                 keys_ << key;
+        }
+        
+        QHash<ResourceKey, Resource> hash_;
+        ResourceKeyList keys_;
+        
 };
 
 

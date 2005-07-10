@@ -31,66 +31,43 @@
 
 #include <QDebug>
 
-DashesLib& Pen::dashesLib_ = DashesLib::instance();
-
 const int NoPen = -2;
 const int SolidLine = -1;
 
 
 Pen::Pen() 
         : lineWidth_( 1. ),
-          color_( Qt::black ),
           capStyle_( Qt::FlatCap ),
-          joinStyle_( Qt::MiterJoin ),
-          dashesKey_( SolidLine )
+          joinStyle_( Qt::MiterJoin )
 {
+        setDashes( ResourceKey( "S", ResourceKey::BuiltIn ) );
 }
 
 Pen::Pen( const Pen& p ) 
         : lineWidth_( p.width() ),
-          color_( p.color() ),
           capStyle_( p.capStyle() ),
-          joinStyle_( p.joinStyle() ),
-          dashesKey_( p.dashesKey() ),
-          dashes_( p.dashes_ )
+          joinStyle_( p.joinStyle() )
 {
+        setDashes( p.dashesKey_ );
 }
 
-bool Pen::setDashes( int key )
+bool Pen::setDashes( const ResourceKey& key )
 {
-        if ( key < 0 ) {
-                dashesKey_ = key;
-                return true;
-        }
-
-        if ( key > dashesLib_.size() - 1 ) {
-                dashesKey_ = NoPen;
-                return false;
-        }
-
+        DashesLib& dl = DashesLib::instance();
         dashesKey_ = key;
-        dashes_ = dashesLib_[dashesKey_];
-
+        if ( key.isValid() )
+                dashes_ = dl[dashesKey_];
+        
         return true;
-}
-
-void Pen::drawPath( const QPainterPath& path, QPainter* painter ) const
-{
-
-        if ( dashesKey_ < 0 ) {
-                QPen pen( color_, lineWidth_, Qt::PenStyle(dashesKey_+2), capStyle_, joinStyle_ );
-                painter->strokePath( path, pen );
-        } else {
-                QPainterPath strokePath;
-                setupPainterPath( strokePath, path );
-                painter->fillPath( strokePath, color_ );
-        }
 }
 
 void Pen::strikePath( const QPainterPath& path, const Stroke& stroke, QPainter* painter ) const
 {
-        if ( dashesKey_ < 0 ) {
-                QPen pen( stroke.brush( path ), lineWidth_, Qt::PenStyle(dashesKey_+2), capStyle_, joinStyle_ );
+        if ( !dashesKey_.isValid() )
+                return;
+
+        if ( dashes_.empty() ) {
+                QPen pen( stroke.brush( path ), lineWidth_, Qt::SolidLine, capStyle_, joinStyle_ );
                 painter->strokePath( path, pen );
         }
         else {
@@ -110,10 +87,10 @@ QRectF Pen::pathRect( const QPainterPath& path ) const
 
 void Pen::setupPainterPath( QPainterPath& strokePath, const QPainterPath& path ) const
 {
-                QPainterPathStroker stroker;
-                stroker.setWidth( lineWidth_ );
-                stroker.setCapStyle( capStyle_ );
-                stroker.setJoinStyle( joinStyle_ );
-                stroker.setDashPattern( dashes_ );
-                strokePath = stroker.createStroke( path );
+        QPainterPathStroker stroker;
+        stroker.setWidth( lineWidth_ );
+        stroker.setCapStyle( capStyle_ );
+        stroker.setJoinStyle( joinStyle_ );
+        stroker.setDashPattern( dashes_ );
+        strokePath = stroker.createStroke( path );
 }

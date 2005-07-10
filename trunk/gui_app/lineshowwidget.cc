@@ -31,19 +31,24 @@
 #include <QColor>
 #include <QSize>
 
-LineShowWidget::LineShowWidget( const Pen& pen,
-                                const int h, 
-                                QWidget * parent )
+LineShowWidget::LineShowWidget( const Pen& p, const Stroke& st, const int h, QWidget * parent )
         : QWidget( parent ),
-          pen_( pen )
+          pen_( p ),
+          stroke_( st )
 {
         setFixedHeight( h );
         update();
 }
 
-void LineShowWidget::setColor( QColor c )
+// void LineShowWidget::setColor( QColor c )
+// {
+// //         pen_.setColor( c );
+// //         myUpdate();
+// }
+
+void LineShowWidget::setPen( const Pen& pen )
 {
-        pen_.setColor( c );
+        pen_ = pen;
         myUpdate();
 }
 
@@ -82,14 +87,20 @@ void LineShowWidget::paintEvent( QPaintEvent * )
         p.setRenderHint( QPainter::Antialiasing, true );
         QPainterPath path;
         path.addPolygon( pa );
-        pen_.drawPath( path, &p );
+        pen_.strikePath( path, stroke_, &p );
 
         p.end();
 }
 
-void LineShowWidget::setDashes( int d )
+void LineShowWidget::setDashes( const ResourceKey& key )
 {
-        pen_.setDashes( d );
+        pen_.setDashes( key );
+        myUpdate();
+}
+
+void LineShowWidget::setStroke( const Stroke& stroke )
+{
+        stroke_ = stroke;
         myUpdate();
 }
 

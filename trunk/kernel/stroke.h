@@ -32,8 +32,9 @@ class QPainter;
 
 class OutputBackend;
 
+#include "resourcekey.h"
+
 #include <QVariant>
-#include <QString>
 #include <QColor>
 
 class Stroke 
@@ -55,8 +56,8 @@ public:
 
         QColor color() const;
         
-        void setKey( const QString& key ) { key_ = key; }
-        const QString key() const { return key_; }
+        void setKey( const ResourceKey& key ) { key_ = key; }
+        const ResourceKey& key() const { return key_; }
 
         void fillPath( const QPainterPath& path, QPainter* painter ) const;
         const QBrush brush( const QPainterPath& path ) const;
@@ -70,7 +71,7 @@ private:
         
         Gradient* gradient_;
         
-        QString key_;
+        ResourceKey key_;
 };
 
 #endif
