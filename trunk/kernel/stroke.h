@@ -55,6 +55,7 @@ public:
         void setPixmap( const QPixmap& pixmap );
 
         QColor color() const;
+        bool isHardColor() const { return !key_.isValid() && type_ == sColor; }
         
         void setKey( const ResourceKey& key ) { key_ = key; }
         const ResourceKey& key() const { return key_; }

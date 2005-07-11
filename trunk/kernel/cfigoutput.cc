@@ -119,8 +119,7 @@ QTextStream& operator<< ( QTextStream& ts, const ResourceKey& key )
 
 QTextStream& operator<< ( QTextStream& ts, const Stroke& st )
 {
-        QColor c = st.color();
-        if ( c.isValid() )
+        if ( st.isHardColor() )
                 ts << st.color();
         else
                 ts << st.key();

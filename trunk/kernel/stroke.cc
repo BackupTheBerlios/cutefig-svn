@@ -129,4 +129,3 @@ const QBrush Stroke::brush( const QPainterPath& path ) const
 
         return ret;
 }
-
