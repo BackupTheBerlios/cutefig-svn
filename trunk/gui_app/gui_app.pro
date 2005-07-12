@@ -14,7 +14,7 @@ PRE_TARGETDEPS += $$BUILDDIR/widgets/$$DEBUGRELEASE/libcutefig-widgets.a
 
 # Exportfilters
 INCLUDEPATH += $$BUILDDIRexportfilters/ $$BUILDDIR/exportfilters/gui_lib
-LIBS += -L$$BUILDDIR/exportfilters/$$DEBUGRELEASE/gui_lib -lexportfilters
+LIBS += -L$$BUILDDIR/exportfilters/gui_lib/$$DEBUGRELEASE -lexportfilters
 PRE_TARGETDEPS += $$BUILDDIR/exportfilters/gui_lib/$$DEBUGRELEASE/libexportfilters.a
 
 RESOURCES = cutefig.qrc
