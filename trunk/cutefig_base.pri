@@ -1,8 +1,8 @@
 # $Id$
 
-CONFIG += debug
-
 BUILDDIR = $${PWD}
+
+CONFIG += debug
 
 equals(TEMPLATE,app):DESTDIR = $$BUILDDIR/bin
 

@@ -23,10 +23,10 @@
 ******************************************************************************/
 
 #include "actions.h"
+#include "allactions.h"
 #include "controler.h"
 #include "cutefig.h"
 #include "canvasview.h"
-#include "allactions.h"
 #include "objecthandler.h"
 #include "objectmapper.h"
 

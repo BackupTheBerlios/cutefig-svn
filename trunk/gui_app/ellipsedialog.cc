@@ -22,14 +22,20 @@
 **
 ******************************************************************************/
 
-
-#include <QtGui>
-
 #include "controler.h"
 #include "ellipsedialog.h"
 #include "ellipse.h"
 #include "progutils.h"
 #include "editdialogaction.h"
+
+#include <QLayout>
+#include <QFrame>
+#include <QGroupBox>
+#include <QSlider>
+#include <QSpinBox>
+#include <QRadioButton>
+#include <QLabel>
+#include <QButtonGroup>
 
 EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,
                               QWidget * parent )

@@ -5,7 +5,7 @@ TEMPLATE = app
 CUTEFIGROOT = ../..
 EXPORTROOT = ..
 
-CONFIG += CONSOLE
+CONFIG += console
 
 include($$CUTEFIGROOT/cutefig_base.pri)
 include($$EXPORTROOT/export_base.pri)
