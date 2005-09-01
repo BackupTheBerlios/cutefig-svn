@@ -36,7 +36,8 @@ public:
 
 private:
         static void initDashes();
-
+        static void initGradients();
+        
         template<class Resource>
         static void insert( ResLib<Resource>& rlib, const QString& key, const Resource& res )
         {

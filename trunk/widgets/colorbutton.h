@@ -26,22 +26,18 @@
 #define colorbutton_h
 
 #include <QPushButton>
-#include <QPixmap>
-
-class QColor;
 
 
 class ColorButton : public QPushButton
 {
         Q_OBJECT
 public:
-        ColorButton( QWidget * parent =0 );
-        ColorButton( const QColor &c, QWidget * parent =0 );
-        ~ColorButton() { };
+        ColorButton( const QColor& c, QWidget * parent =0 );
+        ~ColorButton() {}
 
-        void setColor( const QColor &c );
+        void setColor( const QColor& c );
 
-        QColor getColor() const { return color_; };
+        QColor getColor() const { return color_; }
 
 signals:
         void colorChanged( QColor );
@@ -51,9 +47,6 @@ public slots:
 
 private:
         QColor color_;
-        QPixmap pixmap_;
-
-        void draw();
 };
 
 #endif

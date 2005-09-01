@@ -50,11 +50,12 @@
  *  (MVC) approach. The View is the CanvasView class.
  */
 
-#include <qapplication.h>
 #include "cutefig.h"
+#include <QApplication>
 
-int main( int argc, char ** argv ) {
+int main( int argc, char **argv ) {
         QApplication a( argc, argv );
+        Q_INIT_RESOURCE( widgets );
         (new CuteFig( &a ))->show();
         a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
         return a.exec();

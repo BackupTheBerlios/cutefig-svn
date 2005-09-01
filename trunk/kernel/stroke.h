@@ -46,6 +46,7 @@ public:
         
         Stroke();
         Stroke( const QColor& color );
+        Stroke( Gradient* gradient );
         Stroke( const Stroke& other );
 
         ~Stroke() {}
@@ -56,6 +57,10 @@ public:
 
         QColor color() const;
         bool isHardColor() const { return !key_.isValid() && type_ == sColor; }
+
+        Gradient* gradient() const { return gradient_; }
+        
+        StrokeType type() const { return type_; }
         
         void setKey( const ResourceKey& key ) { key_ = key; }
         const ResourceKey& key() const { return key_; }

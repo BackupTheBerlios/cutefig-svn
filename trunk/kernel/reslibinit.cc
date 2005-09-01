@@ -27,6 +27,7 @@
 
 #include "reslib.h"
 #include "typedefs.h"
+#include "gradient.h"
 #include "parser.h"
 
 void ResLibInit::init()
@@ -36,6 +37,7 @@ void ResLibInit::init()
                 return;
         
         initDashes();
+        initGradients();
         called = true;
 }
 
@@ -52,4 +54,28 @@ void ResLibInit::initDashes()
         insert( dl, "DashDashDot",     Parser::parseDashLine("3 3 3 3 1 3") );
         insert( dl, "DashDashDashDot", Parser::parseDashLine("3 3 3 3 3 3 1 3") );
         insert( dl, "DashDashDotDot",  Parser::parseDashLine("3 3 3 3 1 3 1 3") );
+}
+
+void ResLibInit::initGradients()
+{
+        LinearGradient* linGrad = new LinearGradient( QPointF(0,0), QPointF(1,1) );
+        RadialGradient* radGrad = new RadialGradient( QPointF(.5,.5), QPointF(.75,.25), .3 ) ;
+        linGrad->setColorAt( 0, Qt::red );
+        linGrad->setColorAt( 1, Qt::blue );
+
+        radGrad->setColorAt( 0, Qt::red );
+        radGrad->setColorAt( 1, Qt::blue );
+
+        Stroke ls( linGrad );
+        Stroke rs( radGrad );
+
+        const QString lk( "linearBuiltIn" );
+        const QString rk( "radialBuiltIn" );
+        
+//         ls.setKey( lk );
+//         rs.setKey( rk );
+        
+        StrokeLib& sl = StrokeLib::instance();
+        insert( sl, lk, ls );
+        insert( sl, rk, rs );
 }

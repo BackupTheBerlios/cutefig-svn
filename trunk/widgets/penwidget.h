@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: pen.h 35 2005-07-10 20:36:36Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,33 +22,44 @@
 **
 ******************************************************************************/
 
-#include "colorbutton.h"
-#include "strokeiconengines.h"
+#ifndef penwidget_h
+#define penwidget_h
 
-#include <QIcon>
-#include <QColorDialog>
+#include "reslib.h"
 
-ColorButton::ColorButton( const QColor& c, QWidget * parent )
-        : QPushButton( parent )
+#include <QGroupBox>
+
+class Pen;
+
+class QDoubleSpinBox;
+class StyleComboBox;
+class FlagButtonGroup;
+
+class PenWidget : public QGroupBox
 {
-        setColor( c );
-        connect( this, SIGNAL( clicked() ), this, SLOT( changeColor() ) );
-}
+        Q_OBJECT
+public:
+        PenWidget( const QString& title, QWidget* parent = 0 );
+        ~PenWidget() {}
 
-void ColorButton::setColor( const QColor& c )
-{
-        color_ = c;
-        setIcon( QIcon( new ColorIconEngine( color_ ) ) );
-}
+        void setPen( Pen* pen );
+        
+signals:
+        void penChanged();
 
-void ColorButton::changeColor()
-{
-        bool ok;
-        QRgb rgb = QColorDialog::getRgba( color_.rgba(), &ok );
-        if ( ok ) {
-                color_ = QColor( rgb );
-                color_.setAlpha( qAlpha( rgb ) );
-                setColor( color_ );
-                emit( colorChanged( color_ ) );
-        }
-}
+private slots:
+        void changeWidth( double width );
+        void changeDashes( const ResourceKey& key );
+        void changeCap( int key );
+        void changeJoin( int key );
+        
+private:
+        Pen* pen_;
+
+        QDoubleSpinBox* lineWidth;
+        StyleComboBox* lineDashes;
+        FlagButtonGroup *capStyle, *joinStyle;
+};
+
+
+#endif

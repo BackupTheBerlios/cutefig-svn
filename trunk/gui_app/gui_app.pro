@@ -46,7 +46,6 @@ HEADERS += cutefig.h \
            deletecommand.h \
            changecommand.h \
 #           colortableitem.h \
-           stylecombobox.h \
            lineshowwidget.h \
            ruler.h \
            objectdialog.h \
@@ -75,7 +74,6 @@ SOURCES += cutefig.cc \
            deletecommand.cc \
            changecommand.cc \
 #           colortableitem.cc \
-           stylecombobox.cc \
            lineshowwidget.cc \
            ruler.cc \
            objectdialog.cc \

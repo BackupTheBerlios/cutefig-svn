@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: colorbutton.h 16 2005-06-26 22:00:14Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,33 +22,31 @@
 **
 ******************************************************************************/
 
-#include "colorbutton.h"
-#include "strokeiconengines.h"
+#ifndef gradientbutton_h
+#define gradientbutton_h
 
-#include <QIcon>
-#include <QColorDialog>
+#include <QPushButton>
 
-ColorButton::ColorButton( const QColor& c, QWidget * parent )
-        : QPushButton( parent )
+class Gradient;
+
+class GradientButton : public QPushButton
 {
-        setColor( c );
-        connect( this, SIGNAL( clicked() ), this, SLOT( changeColor() ) );
-}
+        Q_OBJECT
+public:
+        GradientButton( const Gradient* gradient, QWidget* parent = 0 );
+        ~GradientButton() {}
 
-void ColorButton::setColor( const QColor& c )
-{
-        color_ = c;
-        setIcon( QIcon( new ColorIconEngine( color_ ) ) );
-}
+        void setGradient( const Gradient* gradient );
+        Gradient* getGradient() const { return gradient_; }
+        
+signals:
+        void gradientChanged( Gradient* );
 
-void ColorButton::changeColor()
-{
-        bool ok;
-        QRgb rgb = QColorDialog::getRgba( color_.rgba(), &ok );
-        if ( ok ) {
-                color_ = QColor( rgb );
-                color_.setAlpha( qAlpha( rgb ) );
-                setColor( color_ );
-                emit( colorChanged( color_ ) );
-        }
-}
+public slots:
+        void changeGradient();
+
+private:
+        Gradient* gradient_;
+};
+
+#endif

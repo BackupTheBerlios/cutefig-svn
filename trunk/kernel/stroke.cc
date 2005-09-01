@@ -57,6 +57,14 @@ Stroke::Stroke( const QColor& color )
 {
 }
 
+Stroke::Stroke( Gradient* gradient )
+        : type_( sGradient ),
+          data_( QVariant() ),
+          gradient_( gradient ),
+          key_()
+{
+}
+
 void Stroke::setColor( const QColor& color )
 {
         type_ = sColor;
@@ -129,3 +137,4 @@ const QBrush Stroke::brush( const QPainterPath& path ) const
 
         return ret;
 }
+

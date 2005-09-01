@@ -28,21 +28,27 @@
 #include <QBrush>
 #include <QSizeF>
 #include <QRectF>
-#include <QMetaType>
+
+class GradientHandler;
 
 class Gradient
 {
 public:
+        friend class GradientHandler;
         enum Type { None=0, Linear, Radial };
 
         Gradient() : colorStops_() {}
         virtual ~Gradient() {}
 
-        Gradient( Gradient* other ) : colorStops_( other->colorStops_ ) {}
-        virtual Gradient* copy() { return 0; }
+        Gradient( const Gradient* other ) : colorStops_( other->colorStops_ ) {}
+        virtual Gradient* copy() const { return 0; }
         
         QGradientStops& colorStops() { return colorStops_; }
+        void setColorStops( const QGradientStops& stops ) { colorStops_ = stops; }
         void setColorAt( qreal pos, const QColor& c );
+
+        virtual QPointF firstPoint() const = 0;
+        virtual QPointF secondPoint() const = 0;
         
         virtual QGradient* toQGradient( const QRectF& ) const { return 0; }
         virtual Type type() const { return None; }
@@ -52,11 +58,11 @@ protected:
         void ensureRange( qreal& val );
 
         QGradientStops colorStops_;
+
+private:
+        virtual QPointF* first() = 0;
+        virtual QPointF* second() = 0;
 };
-
-Q_DECLARE_METATYPE( Gradient )
-
-
         
 class LinearGradient : public Gradient
 {
@@ -64,12 +70,14 @@ public:
         LinearGradient( const QPointF& start, const QPointF& final )
                 : Gradient(), start_( start ), final_( final ) {}
 
-        LinearGradient( LinearGradient* other )
+        LinearGradient( const LinearGradient* other )
                 : Gradient( other ),
                   start_( other->start_ ),
                   final_( other->final_ ) {}
 
-        virtual Gradient* copy() { return new LinearGradient( this ); }
+        ~LinearGradient() {}
+        
+        virtual Gradient* copy() const { return new LinearGradient( this ); }
         
         void setStartPoint( const QPointF& p );
         void setFinalPoint( const QPointF& p );
@@ -77,11 +85,17 @@ public:
         QPointF startPoint() const { return start_; }
         QPointF finalPoint() const { return final_; }
 
+        QPointF firstPoint() const { return start_; }
+        QPointF secondPoint() const { return final_; }
+
         virtual QGradient* toQGradient( const QRectF& rect ) const;
         virtual Type type() const { return Linear; }
         
 private:
         QPointF start_, final_;
+
+        virtual QPointF* first() { return &start_; }
+        virtual QPointF* second() { return &final_; }
 };
 
 class RadialGradient : public Gradient
@@ -90,13 +104,15 @@ public:
         RadialGradient( const QPointF& center, const QPointF& focal, qreal radius )
                 : Gradient(), center_( center ), focal_( focal ), radius_( radius ) {}
 
-        RadialGradient( RadialGradient* other )
+        RadialGradient( const RadialGradient* other )
                 : Gradient( other ),
                   center_( other->center_ ),
                   focal_( other->focal_ ),
                   radius_( other->radius_ ) {}
 
-        virtual Gradient* copy() { return new RadialGradient( this ); }
+        ~RadialGradient() {}
+        
+        virtual Gradient* copy() const { return new RadialGradient( this ); }
         
         void setCenterPoint( const QPointF& p );
         void setFocalPoint( const QPointF& p );
@@ -104,6 +120,10 @@ public:
 
         QPointF centerPoint() const { return center_; }
         QPointF focalPoint() const { return focal_; }
+
+        QPointF firstPoint() const { return center_; }
+        QPointF secondPoint() const { return focal_; }
+
         qreal radius() const { return radius_; }
         
         virtual QGradient* toQGradient( const QRectF& rect ) const;
@@ -112,6 +132,22 @@ public:
 private:
         QPointF center_, focal_;
         qreal radius_;
+
+        virtual QPointF* first() { return &center_; }
+        virtual QPointF* second() { return &focal_; }
+};
+
+
+class GradientHandler
+{
+public:
+        GradientHandler( Gradient* gr ) : gradient_( gr ) {}
+
+        QPointF* first() { return gradient_->first(); }
+        QPointF* second() { return gradient_->second(); }
+
+private:
+        Gradient* gradient_;
 };
 
 #endif

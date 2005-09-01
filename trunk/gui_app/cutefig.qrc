@@ -29,12 +29,5 @@
         <file>images/polygon.png</file>
 	<file>images/group.png</file>
 	<file>images/ungroup.png</file>
-
-	<file>images/cap_flat.png</file>
-	<file>images/cap_round.png</file>
-	<file>images/cap_square.png</file>
-	<file>images/join_miter.png</file>
-	<file>images/join_round.png</file>
-	<file>images/join_bevel.png</file>
     </qresource>
 </RCC>	

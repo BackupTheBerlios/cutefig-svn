@@ -1,0 +1,12 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+	<file>images/cap_flat.png</file>
+	<file>images/cap_round.png</file>
+	<file>images/cap_square.png</file>
+	<file>images/join_miter.png</file>
+	<file>images/join_round.png</file>
+	<file>images/join_bevel.png</file>
+    </qresource>
+</RCC>	
+

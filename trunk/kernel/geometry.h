@@ -1,11 +1,11 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  $Id$
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
+**  Copyright (C) 2004 Johannes Mueller, johmue@users.sourceforge.net
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -24,7 +24,7 @@
 
 
 /** \namespace Geom
- *  \brief Some simple geometrical functions that Qt does not have.
+ *  \brief Some simple geometrical functions that QT does not have
  */
 
 #ifndef geometry_h
@@ -38,6 +38,7 @@
 namespace Geom
 {
         qreal distance( const QPointF& p1, const QPointF& p2 );
+        //!< returns the distance between two points
 
         QVector<QPointF> boundingPoints( const QRectF& r );
 
@@ -46,6 +47,9 @@ namespace Geom
 
         QRect centerRect( const QPoint& center, const QSize& size );
         QRectF centerRect( const QPointF& center, const QSizeF& size );
+
+        qreal scalarProduct( const QPointF& p1, const QPointF& p2 );
+        qreal pabs( const QPointF& p );
 };
 
 

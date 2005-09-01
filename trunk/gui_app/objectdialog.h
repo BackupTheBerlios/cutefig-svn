@@ -25,25 +25,25 @@
 #ifndef objectdialog_h
 #define objectdialog_h
 
-#include <QDialog>
+#include "editdialog.h"
+
 #include <QTabWidget>
 
 class EditdialogAction;
 class DrawObject;
+
 class QGroupBox;
-class QSpinBox;
-class QDoubleSpinBox;
-class ColorButton;
-class StyleComboBox;
-class LineShowWidget;
+
 class QSpinBox;
 class QTextEdit;
-class BrushButton;
-class FlagButtonGroup;
+
+class LineShowWidget;
+class StrokeWidget;
+class PenWidget;
 
 #include <QDebug>
 
-class ObjectDialog : public QDialog
+class ObjectDialog : public EditDialog
 {
         Q_OBJECT
 public:
@@ -54,7 +54,7 @@ public:
         DrawObject* drawObject() const { return drawObject_; };
 
 public slots:
-        void resetObject();
+        virtual void reset();
         virtual void accept();
 
         void showValue( int v ) {qDebug() << v;}
@@ -76,19 +76,15 @@ private:
         void setUpGeneral();   
         void setDrawObject( DrawObject* o );
         
-        QGroupBox* setUpLineGroup( QWidget* page );
-        QGroupBox* setUpFillGroup( QWidget* page );
-       
-        QDoubleSpinBox* lineWidth;
-        ColorButton* lineColor;
-        StyleComboBox* lineStyle;
-        FlagButtonGroup *capStyle, *joinStyle;
+//        QGroupBox* setUpLineGroup( QWidget* page );
+//        QGroupBox* setUpFillGroup( QWidget* page );
+
+        PenWidget* penWidget;
+        StrokeWidget* lineStroke;
+        StrokeWidget* fillStroke;
         LineShowWidget* lineShow;
         QTextEdit* comment;
         QSpinBox* depth;
-
-        ColorButton* fillColor;
-        BrushButton* fillPattern;
 };
 
 #endif

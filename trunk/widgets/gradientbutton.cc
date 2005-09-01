@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: colorbutton.h 16 2005-06-26 22:00:14Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,33 +22,30 @@
 **
 ******************************************************************************/
 
-#include "colorbutton.h"
+#include "gradientbutton.h"
 #include "strokeiconengines.h"
+#include "gradientdialog.h"
+#include "gradient.h"
 
-#include <QIcon>
-#include <QColorDialog>
-
-ColorButton::ColorButton( const QColor& c, QWidget * parent )
-        : QPushButton( parent )
+GradientButton::GradientButton( const Gradient* gradient, QWidget* parent )
+        : QPushButton( parent ),
+          gradient_( 0 )
 {
-        setColor( c );
-        connect( this, SIGNAL( clicked() ), this, SLOT( changeColor() ) );
+        setGradient( gradient );
+        connect( this, SIGNAL( clicked() ), this, SLOT( changeGradient() ) );
 }
 
-void ColorButton::setColor( const QColor& c )
+void GradientButton::setGradient( const Gradient* gradient )
 {
-        color_ = c;
-        setIcon( QIcon( new ColorIconEngine( color_ ) ) );
+        delete gradient_;
+        gradient_ = ( gradient ) ? gradient->copy() : 0;
+        setIcon( QIcon( new GradientIconEngine( gradient_ ) ) );
 }
 
-void ColorButton::changeColor()
+void GradientButton::changeGradient()
 {
-        bool ok;
-        QRgb rgb = QColorDialog::getRgba( color_.rgba(), &ok );
-        if ( ok ) {
-                color_ = QColor( rgb );
-                color_.setAlpha( qAlpha( rgb ) );
-                setColor( color_ );
-                emit( colorChanged( color_ ) );
-        }
+        GradientDialog gdlg( gradient_ );
+
+        if ( gdlg.exec() == QDialog::Accepted )
+                setGradient( gdlg.gradient() );
 }

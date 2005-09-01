@@ -1,11 +1,11 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  $Id$
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
+**  Copyright (C) 2004 Johannes Mueller, johmue@users.sourceforge.net
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -23,24 +23,19 @@
 ******************************************************************************/
 
 #include "geometry.h"
+
 #include <cmath>
 
 #include <QDebug>
 
-/** Returns the distance between two points p1 and p2.
- */
 qreal Geom::distance( const QPointF& p1, const QPointF& p2 )
 {
         qreal xd = p1.x() - p2.x();
         qreal yd = p1.y() - p2.y();
-        return sqrt( xd*xd + yd*yd );
+//        return sqrt( xd*xd + yd*yd );
+        return hypot( xd, yd );
 }
 
-/** Returns a QVector of eight points describing the rectangle
- *  r. These are the four corner points and the four points in the
- *  middle of the edges. If one of the edges has a length of 0, those
- *  are undefined.
- */
 QVector<QPointF> Geom::boundingPoints( const QRectF& r )
 {
         QVector<QPointF> pts;
@@ -62,16 +57,11 @@ QVector<QPointF> Geom::boundingPoints( const QRectF& r )
         return pts;
 }
 
-/** still needed. I don't beleive so.
- */
 bool Geom::isNear( const QPointF& p1, const QPointF& p2 )
 {
         return ( distance( p1, p2 ) < 5 );
 }
 
-/** Returns true if the line l intersects with the rectangle r, false
- *  if not.
- */
 bool Geom::intersect( const QLineF& l, const QRectF& r ) 
 {
         QLineF d1( r.topLeft(), r.bottomRight() );
@@ -80,8 +70,6 @@ bool Geom::intersect( const QLineF& l, const QRectF& r )
                ( l.intersect( d2, 0 ) == QLineF::BoundedIntersection );
 }
 
-/** Returns a rectangle of the size size and the center point center.
- */
 QRect Geom::centerRect( const QPoint& center, const QSize& size )
 {
         QRect r;
@@ -91,8 +79,6 @@ QRect Geom::centerRect( const QPoint& center, const QSize& size )
         return r;
 }
 
-/** The same as above
- */
 QRectF Geom::centerRect( const QPointF& center, const QSizeF& size )
 {
         QRectF r;
@@ -100,4 +86,14 @@ QRectF Geom::centerRect( const QPointF& center, const QSizeF& size )
         r.moveCenter( center );
 
         return r;
+}
+
+qreal Geom::scalarProduct( const QPointF& p1, const QPointF& p2 )
+{
+        return p1.x()*p2.x() + p1.y()*p2.y();
+}
+
+qreal Geom::pabs( const QPointF& p )
+{
+        return hypot( p.x(), p.y() );
 }

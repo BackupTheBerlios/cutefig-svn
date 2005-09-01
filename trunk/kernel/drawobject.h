@@ -75,8 +75,13 @@ public:
         QRectF controlPointRect() const { return cRect_; }
         
         const Pen& pen() const { return pen_; }
+        Pen* p_pen() { return &pen_; }
+        
         const Stroke& stroke() const { return stroke_; }
+        Stroke* p_stroke() { return &stroke_; }
+        
         const Stroke& fill() const { return fill_; }
+        Stroke* p_fill() { return &fill_; }
         
         int depth() const { return depth_; }
 

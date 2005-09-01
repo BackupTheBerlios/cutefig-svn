@@ -31,44 +31,21 @@
 #include "reslib.h"
 #include "objectdialog.h"
 #include "progutils.h"
-#include "colorbutton.h"
-#include "stylecombobox.h"
 #include "lineshowwidget.h"
-#include "flagbuttongroup.h"
-
+#include "penwidget.h"
+#include "strokewidget.h"
 #include "editdialogaction.h"
 
 
-ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a,
-                            QWidget* parent )
-        : QDialog( parent ),
+ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
+        : EditDialog( parent ),
           action_ ( a )
 { 
         qDebug("ObjectDialog::ObjectDialog");
         drawObject_ = o;
 
-        QVBoxLayout* dialogLayout = new QVBoxLayout( this );
-        QHBoxLayout* bottomLayout = new QHBoxLayout();
-
         tabWidget = new QTabWidget( this );
-
-        QPushButton* ok = new QPushButton( tr("&Ok"), this );
-        connect( ok, SIGNAL( clicked() ), this, SLOT( accept() ) );
-        ok->setAutoDefault( true );
-
-        QPushButton* cancel = new QPushButton( tr("Cancel"), this );
-        connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
-
-        QPushButton* reset = new QPushButton( tr("&Reset"), this );
-        connect( reset, SIGNAL( clicked() ), this, SLOT( resetObject() ) );
-        
-        bottomLayout->addWidget( reset );
-        bottomLayout->addStretch();
-        bottomLayout->addWidget( ok );
-        bottomLayout->addWidget( cancel );
-
-        dialogLayout->addWidget( tabWidget );
-        dialogLayout->addLayout( bottomLayout );
+        dialogLayout_->insertWidget( 0, tabWidget );
 } 
 
 void ObjectDialog::setUpGeneral()
@@ -78,17 +55,22 @@ void ObjectDialog::setUpGeneral()
         QFrame* page = new QFrame();
         tabWidget->addTab( page, "&General" );
 
-        QVBoxLayout* topLayout = new QVBoxLayout( page );
+        QGridLayout* layout = new QGridLayout( page );
 //        ProgUtils::prepareLayout( topLayout, false );
     
         // final setup
 
-        topLayout->addWidget( setUpLineGroup( page ) );
+        penWidget = new PenWidget( tr("&Pen"), page );
+        layout->addWidget( penWidget, 0,0 );
 
-        topLayout->addWidget( setUpFillGroup( page ) );
+        lineStroke = new StrokeWidget( tr("&Line stroke"), page );
+        layout->addWidget( lineStroke, 0,1 );
 
-        QHBoxLayout* dlt = new QHBoxLayout( topLayout->widget() );
-        topLayout->addItem( dlt );
+        fillStroke = new StrokeWidget( tr("&Fill"), page );
+        layout->addWidget( fillStroke, 1,0 );
+        
+        QHBoxLayout* dlt = new QHBoxLayout();
+        layout->addItem( dlt, 2,0 );
         depth = new QSpinBox( page );
         depth->setMinimum(0);
         depth->setMaximum(999);
@@ -100,8 +82,8 @@ void ObjectDialog::setUpGeneral()
 
         // Comment
 
-        QVBoxLayout* clt = new QVBoxLayout( topLayout->widget() );
-        topLayout->addItem( clt );
+        QVBoxLayout* clt = new QVBoxLayout();
+        layout->addItem( clt, 2,1 );
         comment = new QTextEdit( page );
 //        comment->setTextFormat( Qt::PlainText );
         comment->setTabChangesFocus( true );
@@ -111,113 +93,6 @@ void ObjectDialog::setUpGeneral()
         clt->addWidget( comment );
 }
 
-QGroupBox* ObjectDialog::setUpLineGroup( QWidget* page )
-{
-        qDebug("ObjectDialog::setUpLineGroup");
-        QGroupBox* lineGroup = new QGroupBox( tr("&Pen"), page );
-        QGridLayout* lineLayout = new QGridLayout( lineGroup );
-
-        lineWidth = new QDoubleSpinBox( lineGroup );
-        lineWidth->setRange( 1.0, 10.0 );
-        lineWidth->setSingleStep( 0.5 );
-
-        QLabel* lwl = new QLabel( tr("&Width"),lineGroup );
-        lwl->setBuddy( lineWidth );
-        lineLayout->addWidget( lwl, 0,0 );
-        lineLayout->addWidget( lineWidth, 0,1 );
-       
-        lineColor = new ColorButton( Qt::black, lineGroup ); 
-        QLabel* lcl = new QLabel( tr("&Color"),lineGroup );
-        lcl->setBuddy( lineColor );
-        lineLayout->addWidget( lcl, 1,0 );
-        lineLayout->addWidget( lineColor, 1,1 );
-             
-   
-        lineStyle = new StyleComboBox( lineGroup );
-        QLabel* lsl = new QLabel( tr("&Style"),lineGroup );
-        lsl->setBuddy( lineStyle );
-        lineLayout->addWidget( lsl, 2,0 );
-        lineLayout->addWidget( lineStyle, 2,1 );
-
-        lineLayout->addItem( new QSpacerItem( 10, 0 ), 0,2 );
-
-
-        QGroupBox* capGroup = new QGroupBox( tr("Ca&p style"), lineLayout->widget() );
-        QHBoxLayout* capLayout = new QHBoxLayout( capGroup );
-
-        capStyle = new FlagButtonGroup( capGroup );
-
-        QRadioButton* capFlat = new QRadioButton( capGroup );
-        QRadioButton* capRound = new QRadioButton( capGroup );
-        QRadioButton* capSquare = new QRadioButton( capGroup );
-
-        capFlat->setIcon( QIcon(":images/cap_flat") );
-        capRound->setIcon( QIcon(":images/cap_round") );
-        capSquare->setIcon( QIcon(":images/cap_square") );
-
-        capStyle->addButton( capFlat, int( Qt::FlatCap ) );
-        capStyle->addButton( capRound, int( Qt::RoundCap ) );
-        capStyle->addButton( capSquare, int( Qt::SquareCap ) );
-
-        capLayout->addWidget( capFlat );
-        capLayout->addWidget( capRound );
-        capLayout->addWidget( capSquare );
-
-        lineLayout->addWidget( capGroup, 0,3 );
-
-
-        QGroupBox* joinGroup = new QGroupBox( tr("&Join style") );
-        QHBoxLayout* joinLayout = new QHBoxLayout( joinGroup );
-
-        joinStyle = new FlagButtonGroup( joinGroup );
-
-        QRadioButton* joinMiter = new QRadioButton( joinGroup );
-        QRadioButton* joinBevel = new QRadioButton( joinGroup );
-        QRadioButton* joinRound = new QRadioButton( joinGroup );
-
-        joinMiter->setIcon( QIcon(":images/join_miter") );
-        joinBevel->setIcon( QIcon(":images/join_bevel") );
-        joinRound->setIcon( QIcon(":images/join_round") );
-
-        joinStyle->addButton( joinMiter, int( Qt::MiterJoin ) );
-        joinStyle->addButton( joinBevel, int( Qt::BevelJoin ) );
-        joinStyle->addButton( joinRound, int( Qt::RoundJoin ) );
-
-        joinLayout->addWidget( joinMiter );
-        joinLayout->addWidget( joinBevel );
-        joinLayout->addWidget( joinRound );
-
-        lineLayout->addWidget( joinGroup, 1,3 );
-
-
-        lineShow = new LineShowWidget( drawObject_->pen(), drawObject_->stroke(), 40, lineGroup );
-        lineLayout->addWidget( lineShow, 2,3 );
-
-        return lineGroup;
-}
-
-QGroupBox* ObjectDialog::setUpFillGroup( QWidget* page )
-{
-        qDebug("ObjectDialog::setUpFillGroup");
-        QGroupBox* fillGroup = new QGroupBox( tr("&Fill"), page );
-        QGridLayout* fillLayout = new QGridLayout( fillGroup );
-        ProgUtils::prepareLayout( fillLayout );
-
-//         fillColor = new ColorButton( Qt::black, fillGroup );
-//         QLabel* fgLabel = new QLabel( tr("C&olor"),fillGroup );
-//         fgLabel->setBuddy( fillColor );
-//         fillLayout->addWidget( fgLabel, 0,0 );
-//         fillLayout->addWidget( fillColor, 0,1 );
-
-//        fillPattern = new BrushButton( fillGroup );
-//        fillPattern->setFixedHeight( 40 );
-//        fillLayout->addWidget( new QLabel( fillPattern, tr("Pa&ttern"),
-//                                           fillGroup ), 1,0 );
-//        fillLayout->addWidget( fillPattern, 1,1 );
-
-        return fillGroup;
-    
-}
 
 void ObjectDialog::accept()
 {
@@ -229,7 +104,7 @@ void ObjectDialog::accept()
         QDialog::accept();
 }
 
-void ObjectDialog::resetObject()
+void ObjectDialog::reset()
 {
         DrawObject* o = action_->restoreWObject();
         if ( !o ) {
@@ -239,7 +114,7 @@ void ObjectDialog::resetObject()
 
         setDrawObject( o );
         
-        lineShow->disconnect();
+//        lineShow->disconnect();
 //        fillPattern->disconnect();
         depth->disconnect();
 
@@ -252,21 +127,9 @@ void ObjectDialog::setDefaultValues()
 { 
         qDebug("ObjectDialog::setDefaultValues");
 
-        const Pen& pen = drawObject_->pen();
-
-        lineWidth->setValue( pen.width() );
-//        lineColor->setColor( pen.color() );
-//        qDebug() << pen.dashesKey();
-
-        lineStyle->setCurrentIndex( pen.dashesKey() );
-
-        capStyle->setState( int( pen.capStyle() ) );
-        joinStyle->setState( int( pen.joinStyle() ) );
-
-        lineShow->setStroke( drawObject_->stroke() );
-        lineShow->setPen( pen );
-
-//        fillColor->setColor( drawObject_->fillColor() );
+        penWidget->setPen( drawObject_->p_pen() );
+        lineStroke->setStroke( drawObject_->p_stroke() );
+        fillStroke->setStroke( drawObject_->p_fill() );
 
         depth->setValue( drawObject_->depth() );
         comment->setPlainText( drawObject_->comment() );
@@ -278,15 +141,15 @@ void ObjectDialog::setUpConnections()
 {
         qDebug("ObjectDialog::setUpConnections");
 
-        connect( lineShow, SIGNAL( changed( const Pen& ) ),
-                 drawObject_, SLOT( setPen( const Pen& ) ) );
+//         connect( lineShow, SIGNAL( changed( const Pen& ) ),
+//                  drawObject_, SLOT( setPen( const Pen& ) ) );
     
-        connect( lineWidth, SIGNAL( valueChanged(double) ), lineShow, SLOT( setWidth(double) ) );
+//        connect( lineWidth, SIGNAL( valueChanged(double) ), lineShow, SLOT( setWidth(double) ) );
 //        connect( lineColor, SIGNAL( colorChanged(QColor) ), lineShow, SLOT( setColor(QColor) ) );
-        connect( lineStyle, SIGNAL( highlightedDash(const ResourceKey&) ),
-                 lineShow, SLOT( setDashes(const ResourceKey&) ) );
-        connect( capStyle,  SIGNAL( stateChanged(int) ),    lineShow, SLOT( setCapStyle(int) ) );
-        connect( joinStyle, SIGNAL( stateChanged(int) ),    lineShow, SLOT( setJoinStyle(int ) ) );
+//      connect( lineStyle, SIGNAL( highlightedDash(const ResourceKey&) ),
+//               lineShow, SLOT( setDashes(const ResourceKey&) ) );
+//      connect( capStyle,  SIGNAL( stateChanged(int) ),    lineShow, SLOT( setCapStyle(int) ) );
+//      connect( joinStyle, SIGNAL( stateChanged(int) ),    lineShow, SLOT( setJoinStyle(int ) ) );
 
 //        connect( fillColor, SIGNAL( colorChanged( QColor ) ),
 //                 fillPattern, SLOT( changeFillColor( QColor ) ) );
@@ -301,10 +164,15 @@ void ObjectDialog::setUpConnections()
 //        connect( fillPattern, SIGNAL( brushIsNoBrush( bool ) ),
 //                 fillColor, SLOT( setDisabled( bool ) ) );
 
+        connect( penWidget, SIGNAL( penChanged() ), action_, SLOT( wObjectHasChanged() ) );
+        connect( lineStroke, SIGNAL( strokeChanged() ), action_, SLOT( wObjectHasChanged() ) );
+        connect( fillStroke, SIGNAL( strokeChanged() ), action_, SLOT( wObjectHasChanged() ) );
+        
         connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );
+
         
         connect( depth, SIGNAL( valueChanged( int ) ), action_, SLOT( wObjectHasChanged() ) );
-        connect( lineShow, SIGNAL( changed( const Pen& ) ), action_, SLOT( wObjectHasChanged() ) );
+//        connect( lineShow, SIGNAL( changed( const Pen& ) ), action_, SLOT( wObjectHasChanged() ) );
 //        connect( fillPattern, SIGNAL( changed() ),
 //                 controler_, SLOT( wObjectHasChanged() ) );
 }

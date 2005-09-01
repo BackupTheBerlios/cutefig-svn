@@ -49,8 +49,12 @@ bool FlagButtonGroup::addButton( QAbstractButton* b, int id )
 
 void FlagButtonGroup::changeState( int id )
 {
-        state_ = id;
-        emit stateChanged( id );
+        QAbstractButton* b = (QAbstractButton*) signalMapper_.mapping( id );
+
+        if ( b->isChecked() ) {
+                state_ = id;
+                emit stateChanged( id );
+        }
 }
 
 void FlagButtonGroup::setState( int state )
