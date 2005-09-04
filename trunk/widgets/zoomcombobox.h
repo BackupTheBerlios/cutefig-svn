@@ -40,9 +40,12 @@ signals:
 public slots:
         void changeZoom( double value );
         
+private:
+        virtual void keyPressEvent( QKeyEvent* ke );
+        void textChanged();
+        
 private slots:
         void comboBoxChanged( int id );
-        void textChanged( const QString& text );
 };
 
 #endif

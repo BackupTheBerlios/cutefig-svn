@@ -25,10 +25,16 @@
 #include "zoomcombobox.h"
 #include "percentvalidatior.h"
 
+#include <QKeyEvent>
+
+#include <QDebug>
+
 ZoomComboBox::ZoomComboBox( QWidget* parent )
         : QComboBox( parent )
 {
         setEditable( true );
+        setInsertPolicy( QComboBox::NoInsert );
+        
         setValidator( new PercentValidator( this ) );
 
         connect( this, SIGNAL( activated( int ) ), this, SLOT( comboBoxChanged( int ) ) );
@@ -51,12 +57,20 @@ void ZoomComboBox::comboBoxChanged( int id )
                 emit zoomChanged( data.toDouble() );
 }
 
-void ZoomComboBox::textChanged( const QString& text )
+void ZoomComboBox::textChanged()
 {
         int pos;
-        QString s = text;
+        QString s = currentText();
         if ( validator()->validate( s, pos ) == QValidator::Acceptable ) {
                 s.chop( 1 );
                 emit zoomChanged( s.toDouble() / 100 );
         }
+}
+
+void ZoomComboBox::keyPressEvent( QKeyEvent* ke )
+{
+        if ( ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter )
+                textChanged();
+
+        QComboBox::keyPressEvent( ke );
 }

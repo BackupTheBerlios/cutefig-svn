@@ -159,7 +159,7 @@ void GradientWidget::initRadialGradient()
 {
         radialGrad_ = static_cast<RadialGradient*>( gradient_ );
         linearGrad_ = 0;
-
+        
         uiHandler_ = radialUIHandler;
 }
 

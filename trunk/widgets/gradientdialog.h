@@ -9,6 +9,7 @@
 
 class Gradient;
 class GradientWidget;
+class FlagButtonGroup;
 class QListWidget;
 class QListWidgetItem;
 
@@ -29,7 +30,7 @@ private slots:
 private:
         Gradient *gradient_, *oldGradient_;
         GradientWidget* gradWidget_;
-
+        FlagButtonGroup* gradType_;
         QListWidget* gradListWgt_;
         
         double radius_;

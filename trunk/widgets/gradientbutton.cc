@@ -26,6 +26,10 @@
 #include "strokeiconengines.h"
 #include "gradientdialog.h"
 #include "gradient.h"
+#include "stroke.h"
+#include "reslib.h"
+
+#include <QDebug>
 
 GradientButton::GradientButton( const Gradient* gradient, QWidget* parent )
         : QPushButton( parent ),
@@ -38,7 +42,13 @@ GradientButton::GradientButton( const Gradient* gradient, QWidget* parent )
 void GradientButton::setGradient( const Gradient* gradient )
 {
         delete gradient_;
-        gradient_ = ( gradient ) ? gradient->copy() : 0;
+        if ( gradient )
+                gradient_ = gradient->copy();
+        else {
+                StrokeLib& sl = StrokeLib::instance();
+                gradient_ = sl[ResourceKey("defaultGradient", ResourceKey::BuiltIn)].gradient();
+        }
+        
         setIcon( QIcon( new GradientIconEngine( gradient_ ) ) );
 }
 
@@ -46,6 +56,8 @@ void GradientButton::changeGradient()
 {
         GradientDialog gdlg( gradient_ );
 
-        if ( gdlg.exec() == QDialog::Accepted )
+        if ( gdlg.exec() == QDialog::Accepted ) {
                 setGradient( gdlg.gradient() );
+                emit gradientChanged( gradient_ );
+        }
 }

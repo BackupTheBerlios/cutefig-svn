@@ -65,5 +65,7 @@ void FlagButtonGroup::setState( int state )
                 return;
 
         state_ = state;
+        b->blockSignals( true );
         b->setChecked( true );
+        b->blockSignals( false );
 }

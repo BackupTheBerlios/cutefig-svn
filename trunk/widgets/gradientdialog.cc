@@ -33,13 +33,13 @@ GradientDialog::GradientDialog( const Gradient* gradient, QWidget* parent )
 
         QVBoxLayout* typeBoxLayout = new QVBoxLayout( typeGroupBox );
 
-        FlagButtonGroup* gradType = new FlagButtonGroup( typeGroupBox );
+        gradType_ = new FlagButtonGroup( typeGroupBox );
         
         QRadioButton* linear = new QRadioButton( tr("&Linear"), typeGroupBox );
         QRadioButton* radial = new QRadioButton( tr("Ra&dial"), typeGroupBox );
 
-        gradType->addButton( linear, int( Gradient::Linear ) );
-        gradType->addButton( radial, int( Gradient::Radial ) );
+        gradType_->addButton( linear, int( Gradient::Linear ) );
+        gradType_->addButton( radial, int( Gradient::Radial ) );
         
         typeBoxLayout->addWidget( linear );
         typeBoxLayout->addWidget( radial );
@@ -50,7 +50,7 @@ GradientDialog::GradientDialog( const Gradient* gradient, QWidget* parent )
                 else
                         radial->setChecked( true );
         
-        connect( gradType, SIGNAL( stateChanged(int) ), this, SLOT( typeChanged(int) ) );
+        connect( gradType_, SIGNAL( stateChanged(int) ), this, SLOT( typeChanged(int) ) );
 
         gradListWgt_ = new QListWidget( this );
         fillGradList();
@@ -91,8 +91,8 @@ void GradientDialog::fillGradList()
         StrokeLib& sl = StrokeLib::instance();
 
         foreach( ResourceKey key, sl.keys() ) {
+                qDebug() << key.keyString() << "builtIn" << key.isBuiltIn() << "valid" << key.isValid();
                 const Stroke& s = sl[key];
-                qDebug() << key.keyString();
                 if ( s.type() == Stroke::sGradient ) {
                         QListWidgetItem* wi = new QListWidgetItem( key.keyString(), gradListWgt_ );
                         wi->setIcon( QIcon( new GradientIconEngine( s.gradient() ) ) );
@@ -105,11 +105,8 @@ void GradientDialog::changeGradientFromList( QListWidgetItem* wi )
 {
         Gradient* gr = StrokeLib::instance()[gradHash_[wi]].gradient();
         gradient_ = gr;
-        
-//         if ( gradient_->type() == Gradient::Linear )
-//                 linear->setChecked( true );
-//         else
-//                 radial->setChecked( true );
+
+        gradType_->setState( gradient_->type() );
 
         gradWidget_->setGradient( gradient_ );
 }

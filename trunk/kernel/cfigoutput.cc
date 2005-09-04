@@ -31,6 +31,8 @@
 #include <QPolygonF>
 #include <QTextStream>
 
+#include <QDebug>
+
 const char* CfigOutput::objectString = "object ";
 
 void CfigOutput::outputEllipse( Ellipse* el )
@@ -102,6 +104,7 @@ QTextStream& operator<< ( QTextStream& ts, const QColor& c )
 
 QTextStream& operator<< ( QTextStream& ts, const ResourceKey& key )
 {
+        qDebug() << key.keyString() << "valid" << key.isValid();
         if ( !key.isValid() ) {
                 ts << '%';
                 return ts;

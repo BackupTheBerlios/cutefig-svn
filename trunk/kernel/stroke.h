@@ -51,6 +51,7 @@ public:
 
         ~Stroke() {}
 
+        void setNone() { type_ = sNone; }
         void setColor( const QColor& color );
         void setGradient( Gradient* gradient );
         void setPixmap( const QPixmap& pixmap );

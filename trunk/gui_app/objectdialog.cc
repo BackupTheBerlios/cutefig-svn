@@ -141,40 +141,13 @@ void ObjectDialog::setUpConnections()
 {
         qDebug("ObjectDialog::setUpConnections");
 
-//         connect( lineShow, SIGNAL( changed( const Pen& ) ),
-//                  drawObject_, SLOT( setPen( const Pen& ) ) );
-    
-//        connect( lineWidth, SIGNAL( valueChanged(double) ), lineShow, SLOT( setWidth(double) ) );
-//        connect( lineColor, SIGNAL( colorChanged(QColor) ), lineShow, SLOT( setColor(QColor) ) );
-//      connect( lineStyle, SIGNAL( highlightedDash(const ResourceKey&) ),
-//               lineShow, SLOT( setDashes(const ResourceKey&) ) );
-//      connect( capStyle,  SIGNAL( stateChanged(int) ),    lineShow, SLOT( setCapStyle(int) ) );
-//      connect( joinStyle, SIGNAL( stateChanged(int) ),    lineShow, SLOT( setJoinStyle(int ) ) );
-
-//        connect( fillColor, SIGNAL( colorChanged( QColor ) ),
-//                 fillPattern, SLOT( changeFillColor( QColor ) ) );
-//        connect( lineColor, SIGNAL( colorChanged( QColor ) ),
-//                 fillPattern, SLOT( changePenColor( QColor ) ) );
-    
-//        connect( fillColor, SIGNAL(colorChanged(QColor)), drawObject_, SLOT(setFillColor(QColor)) );
-
-//        connect( fillPattern, SIGNAL( brushChanged(int) ),
-//                 drawObject_, SLOT( setPattern(int) ) );
-
-//        connect( fillPattern, SIGNAL( brushIsNoBrush( bool ) ),
-//                 fillColor, SLOT( setDisabled( bool ) ) );
-
         connect( penWidget, SIGNAL( penChanged() ), action_, SLOT( wObjectHasChanged() ) );
         connect( lineStroke, SIGNAL( strokeChanged() ), action_, SLOT( wObjectHasChanged() ) );
         connect( fillStroke, SIGNAL( strokeChanged() ), action_, SLOT( wObjectHasChanged() ) );
         
         connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );
-
         
         connect( depth, SIGNAL( valueChanged( int ) ), action_, SLOT( wObjectHasChanged() ) );
-//        connect( lineShow, SIGNAL( changed( const Pen& ) ), action_, SLOT( wObjectHasChanged() ) );
-//        connect( fillPattern, SIGNAL( changed() ),
-//                 controler_, SLOT( wObjectHasChanged() ) );
 }
 
 void ObjectDialog::setUpAll()

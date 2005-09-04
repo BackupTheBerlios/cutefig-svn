@@ -32,6 +32,9 @@
 #include <QLayout>
 #include <QRadioButton>
 
+
+#include <QDebug>
+
 StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         : QGroupBox( title, parent )
 {        
@@ -63,6 +66,7 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
 
         connect( colorButton_, SIGNAL( colorChanged(QColor) ), this, SLOT( setColor() ) );
         connect( gradientButton_, SIGNAL(gradientChanged(Gradient*)), this, SLOT(setGradient()) );
+        connect( strokeType_, SIGNAL( stateChanged(int) ), this, SLOT( changeType(int) ) );
 }
 
 void StrokeWidget::setStroke( Stroke* stroke )
@@ -85,6 +89,8 @@ void StrokeWidget::setStroke( Stroke* stroke )
 void StrokeWidget::changeType( int type )
 {
         switch( Stroke::StrokeType( type ) ) {
+            case Stroke::sNone:
+                    stroke_->setNone(); break;
             case Stroke::sColor:
                     stroke_->setColor( colorButton_->getColor() ); break;
             case Stroke::sGradient:
