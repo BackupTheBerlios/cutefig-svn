@@ -25,12 +25,12 @@
 #ifndef gradientwidget_h
 #define gradientwidget_h
 
+
 #include <QWidget>
 #include <QPixmap>
 #include <QGradient>
 
-#include "gradient.h"
-
+class Gradient;
 class QPainter;
 class AbstractMouseEventHandler;
 class GWMouseEventDispatcher;
@@ -39,11 +39,11 @@ class GradientWidget : public QWidget
 {
         Q_OBJECT
 public:
-        GradientWidget( Gradient* gr, QWidget * parent =0 );
+        GradientWidget( Gradient* gr, QWidget* parent =0 );
         ~GradientWidget();
 
         friend class GWMouseEventDispatcher;
-        
+
         void setGradient( Gradient* gr );
         virtual void update();
 
@@ -55,11 +55,11 @@ protected:
 
         virtual void resizeEvent( QResizeEvent* );
         virtual void contextMenuEvent( QContextMenuEvent* e );
+
+        virtual void changeEvent( QEvent* e );
         
 private:
         Gradient* gradient_;
-        LinearGradient* linearGrad_;
-        RadialGradient* radialGrad_;
         
         void (GradientWidget::*pointSignalX)( double );
         void (GradientWidget::*pointSignalY)( double );
@@ -76,10 +76,12 @@ private:
         QRect clsToRect( double offset );
 
         class UIHandler;
+        class DummyUIHandler;
         class LinearUIHandler;
         class RadialUIHandler;
 
         UIHandler* uiHandler_;
+        DummyUIHandler* dummyUIHandler;
         LinearUIHandler* linearUIHandler;
         RadialUIHandler* radialUIHandler;
 
@@ -95,6 +97,8 @@ private:
         
         void initLinearGradient();
         void initRadialGradient();
+
+        void initUIHandler();
 
         QSize size_;
         static const int handleSize_ = 5;

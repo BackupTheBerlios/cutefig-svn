@@ -29,6 +29,24 @@
 
 #include <QDebug>
 
+Gradient::Gradient( Type type, const QPointF& start, const QPointF& final )
+        : type_( type ),
+          startPoint_( start ),
+          finalPoint_( final ),
+          colorStops_(),
+          radius_( .5 )
+{ 
+}
+
+Gradient::Gradient( const Gradient& other )
+        : type_( other.type_ ),
+          startPoint_( other.startPoint_ ),
+          finalPoint_( other.finalPoint_ ),
+          colorStops_( other.colorStops_ ),
+          radius_( other.radius_ ) 
+{
+}
+
 void Gradient::ensureRange( qreal& val )
 {
         if( val > 1. )
@@ -37,22 +55,17 @@ void Gradient::ensureRange( qreal& val )
                 val = 0;
 }
 
-void Gradient::ensureRange( QPointF& point )
+
+void Gradient::setStartPoint( const QPointF& p )
 {
-        ensureRange( point.rx() );
-        ensureRange( point.ry() );
+        startPoint_ = p;
+        ensureRange( startPoint_ );
 }
 
-void LinearGradient::setStartPoint( const QPointF& p )
+void Gradient::setFinalPoint( const QPointF& p )
 {
-        start_ = p;
-        ensureRange( start_ );
-}
-
-void LinearGradient::setFinalPoint( const QPointF& p )
-{
-        final_ = p;
-        ensureRange( final_ );
+        finalPoint_ = p;
+        ensureRange( finalPoint_ );
 }
 
 void Gradient::setColorAt( qreal pos, const QColor& c )
@@ -60,49 +73,69 @@ void Gradient::setColorAt( qreal pos, const QColor& c )
         colorStops_ << qMakePair( pos, c );
 }
 
-QGradient* LinearGradient::toQGradient( const QRectF& rect ) const
+void Gradient::ensureRange( QPointF& point )
 {
-        QLinearGradient* gr = new QLinearGradient(rect.left() + start_.x()*rect.width(),
-                                                  rect.top()  + start_.y()*rect.height(),
-                                                  rect.left() + final_.x()*rect.width(),
-                                                  rect.top()  + final_.y()*rect.height());
-        gr->setStops( colorStops_ );
+        ensureRange( point.rx() );
+        ensureRange( point.ry() );
+}
+
+
+QGradient* Gradient::toQGradient( const QRectF& rect ) const
+{
+        QGradient* gr = 0;
+        
+        switch ( type_ ) {
+            case Linear:
+                    gr = new QLinearGradient(rect.left() + startPoint_.x()*rect.width(),
+                                             rect.top()  + startPoint_.y()*rect.height(),
+                                             rect.left() + finalPoint_.x()*rect.width(),
+                                             rect.top()  + finalPoint_.y()*rect.height());
+                    break;
+            case Radial: {
+                    qreal rad = sqrt( rect.width()*rect.width() + rect.height()*rect.height() );
+                    rad *= radius_;
+                    gr = new QRadialGradient(rect.left() + startPoint_.x()*rect.width(),
+                                             rect.top()  + startPoint_.y()*rect.height(),
+                                             rad,
+                                             rect.left() + finalPoint_.x()*rect.width(),
+                                             rect.top()  + finalPoint_.y()*rect.height() );
+            }
+                    break;
+            default: break;
+        }
+        
+        if ( gr )
+                gr->setStops( colorStops_ );
 
         return gr;
 }
 
-void RadialGradient::setCenterPoint( const QPointF& p )
-{
-        center_ = p;
-        ensureRange( center_ );
-}
+// void RadialGradient::setCenterPoint( const QPointF& p )
+// {
+//         center_ = p;
+//         ensureRange( center_ );
+// }
 
-void RadialGradient::setFocalPoint( const QPointF& p )
-{
-        focal_ = p;
-        ensureRange( focal_ );
-}
+// void RadialGradient::setFocalPoint( const QPointF& p )
+// {
+//         focal_ = p;
+//         ensureRange( focal_ );
+// }
 
-void RadialGradient::setRadius( qreal r )
-{
-        radius_ = r;
-        ensureRange( radius_ );
-}
+// void RadialGradient::setRadius( qreal r )
+// {
+//         radius_ = r;
+//         ensureRange( radius_ );
+// }
 
-QGradient* RadialGradient::toQGradient( const QRectF& rect ) const
-{
-        qreal rad = sqrt( rect.width()*rect.width() + rect.height()*rect.height() );
-        rad *= radius_;
+// QGradient* RadialGradient::toQGradient( const QRectF& rect ) const
+// {
         
-        QRadialGradient* gr = new QRadialGradient(rect.left() + center_.x()*rect.width(),
-                                                  rect.top()  + center_.y()*rect.height(),
-                                                  rad,
-                                                  rect.left() + focal_.x()*rect.width(),
-                                                  rect.top()  + focal_.y()*rect.height() );
-        
-        gr->setStops( colorStops_ );
+//         gr->setStops( colorStops_ );
 
-        return gr;
-}
+//         return gr;
+// }
+
+
 
 

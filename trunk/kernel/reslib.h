@@ -26,7 +26,7 @@
 #define reslib_h
 
 #include <QVector>
-#include <QHash>
+#include <QMap>
 
 #include "typedefs.h"
 #include "resourcekey.h"
@@ -37,6 +37,7 @@ template<class Resource> class ResLib
 {
 public:
         friend class ResLibInit;
+        friend void ResLib<Stroke>::insertBuiltIn( const ResourceKey&, const Stroke& );
         
         static ResLib<Resource>& instance()
         {
@@ -47,31 +48,43 @@ public:
         void insert( const ResourceKey& key, const Resource& data )
         {
                 if ( !key.isBuiltIn() ) {
-                        hash_[key] = data;
+                        map_[key] = data;
                         keys_ << key;
                 }
         }
-        
-        const Resource operator[]( const ResourceKey& key ) const { return hash_[key]; }
-        const ResourceKey key( const Resource& data ) const { return hash_[data]; }
-        bool contains( const ResourceKey& key ) const { return hash_.contains( key ); }
 
-        ResourceKeyList keys() const { return keys_; }
+
+        bool remove( const ResourceKey& key )
+        {
+                if ( key.isBuiltIn() ) 
+                        return false;
+                return map_.remove( key );
+        }
+        
+        const Resource operator[]( const ResourceKey& key ) const { return map_[key]; }
+        const ResourceKey key( const Resource& data ) const { return map_[data]; }
+        bool contains( const ResourceKey& key ) const { return map_.contains( key ); }
+
+        const ResourceKeyList& keys() const { return keys_; }
+
+//        QList<Resource> resources() const { return map_.values(); }
         
 private:
-        ResLib<Resource>() : hash_() {};
+        ResLib<Resource>() : map_(), keys_() {};
         ResLib<Resource>( const ResLib<Resource>& ) {}
         
         void insertBuiltIn( const ResourceKey& key, const Resource& data )
         {
-                 hash_[key] = data;
+                 map_[key] = data;
                  keys_ << key;
         }
         
-        QHash<ResourceKey, Resource> hash_;
+        QMap<ResourceKey, Resource> map_;
         ResourceKeyList keys_;
         
 };
 
+class Stroke;
+template<> class ResLib<Stroke>;
 
 #endif

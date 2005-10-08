@@ -23,6 +23,7 @@ HEADERS = colorbutton.h \
           errorreporter.h \
           percentvalidatior.h \
           zoomcombobox.h \
+          actionpushbutton.h \
           editdialog.h \
           gradientdialog.h 
 
@@ -39,5 +40,6 @@ SOURCES = colorbutton.cc \
           errorreporter.cc \
           percentvalidatior.cc \
           zoomcombobox.cc \
+          actionpushbutton.cc \
           editdialog.cc \
           gradientdialog.cc

@@ -32,6 +32,7 @@ class ResourceKey;
 
 uint qHash( const ResourceKey& key );
 bool operator== ( const ResourceKey& k1, const ResourceKey& k2 );
+bool operator<  ( const ResourceKey& k1, const ResourceKey& k2 );
 
 class ResourceKey
 {
@@ -40,10 +41,11 @@ public:
 
         friend uint qHash( const ResourceKey& key );
         friend bool operator== ( const ResourceKey& k1, const ResourceKey& k2 );
+        friend bool operator<  ( const ResourceKey& k1, const ResourceKey& k2 );
 
         ResourceKey() : keyString_(), flags_( Invalid ) {}
         ResourceKey( const QString& ks, Flags flags ) : keyString_( ks ), flags_( flags ) {}
-
+        ResourceKey( const ResourceKey& o ) : keyString_( o.keyString_ ), flags_( o.flags_ ) {}
         const QString& keyString() const { return keyString_; }
         
         bool isBuiltIn() const { return flags_ & BuiltIn; }
@@ -59,6 +61,17 @@ private:
 inline bool operator== ( const ResourceKey& k1, const ResourceKey& k2 )
 {
         return k1.keyString_ == k2.keyString_ && k1.flags_ == k2.flags_;
+}
+
+inline bool operator< ( const ResourceKey& k1, const ResourceKey& k2 )
+{
+        if ( k1.flags_ < k2.flags_ )
+                return true;
+
+        if ( k1.flags_ > k2.flags_ )
+                return false;
+
+        return k1.keyString_ < k2.keyString_;
 }
 
 inline uint qHash( const ResourceKey& key )

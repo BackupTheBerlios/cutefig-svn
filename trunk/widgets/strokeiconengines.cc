@@ -24,10 +24,13 @@
 
 #include "strokeiconengines.h"
 #include "gradient.h"
+#include "stroke.h"
 
 #include <QPainter>
 
-void StrokeIconEngine::paint( QPainter* p, const QRect& r, QIcon::Mode mode, QIcon::State )
+#include <QDebug>
+
+void AbstractStrokeIconEngine::paint( QPainter* p, const QRect& r, QIcon::Mode mode, QIcon::State )
 {
         int w = r.width();
         int h = r.height();
@@ -60,6 +63,10 @@ void ColorIconEngine::paintForeground( QPainter* p, const QRect& r )
 
 void GradientIconEngine::paintForeground( QPainter* p, const QRect& r )
 {
-        if ( gradient_ )
-                p->fillRect( r, *gradient_->toQGradient( r ) );
+        p->fillRect( r, *gradient_.toQGradient( r ) );
+}
+
+void StrokeIconEngine::paintForeground( QPainter* p, const QRect& r )
+{        
+        p->fillRect( r, stroke_.brush( r ) );
 }

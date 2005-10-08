@@ -26,6 +26,7 @@
 #include "cfigoutput.h"
 #include "allobjects.h"
 #include "pen.h"
+#include "strokelib.h"
 #include "gradient.h"
 
 #include <QPolygonF>
@@ -168,31 +169,21 @@ void CfigOutput::outputDashes()
         }
 }
 
-QTextStream& operator<< ( QTextStream& ts, Gradient* grad ) 
+QTextStream& operator<< ( QTextStream& ts, const Gradient& grad ) 
 {
-        QGradientStops& stops = grad->colorStops();
-
-        LinearGradient* lg = 0;
-        RadialGradient* rg = 0;
+        const QGradientStops& stops = grad.c_colorStops();
         
-        if ( grad->type() == Gradient::Linear ) {
-                lg = static_cast<LinearGradient*>( grad );
+        if ( grad.type() == Gradient::Linear ) 
                 ts << "linear ";
-        }
-        else {
-                rg = static_cast<RadialGradient*>( grad );
+        else 
                 ts << "radial ";
-        }
 
         ts << stops.first().second << ' ' << stops.last().second << ' ';
 
-        if ( lg )
-                ts << lg->startPoint().x() << ' ' << lg->startPoint().y()  << ' '
-                   << lg->finalPoint().x() << ' ' << lg->finalPoint().y();
-        else
-                ts << rg->centerPoint().x() << ' ' << rg->centerPoint().y() << ' '
-                   << rg->focalPoint().x() << ' ' << rg->focalPoint().y() << ' '
-                   << rg->radius();
+        ts << grad.startPoint().x() << ' ' << grad.startPoint().y()  << ' '
+           << grad.finalPoint().x() << ' ' << grad.finalPoint().y();
+        if ( grad.type() == Gradient::Radial )
+                ts << grad.radius();
 
         ts << "\n";
 
@@ -219,7 +210,7 @@ void CfigOutput::outputStrokes()
                     }
                     case Stroke::sGradient: 
                     {
-                            Gradient* grad = strokeGradient( stroke );
+                            const Gradient& grad = strokeGradient( stroke );
                             fileStream_ << "gradient " << key.keyString() << ' ' << grad;
                             break;
                     }

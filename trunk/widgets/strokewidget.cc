@@ -39,7 +39,7 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         : QGroupBox( title, parent )
 {        
         colorButton_ = new ColorButton( Qt::gray, this );
-        gradientButton_ = new GradientButton( 0, this );
+        gradientButton_ = new GradientButton( Gradient(), this );
 
         QRadioButton* nostrokeRB = new QRadioButton( tr("None"), this );
         QRadioButton* colorRB    = new QRadioButton( tr("Color"), this );

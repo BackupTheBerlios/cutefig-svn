@@ -27,6 +27,7 @@
 
 #include "reslib.h"
 #include "typedefs.h"
+#include "strokelib.h"
 #include "gradient.h"
 #include "parser.h"
 
@@ -58,22 +59,25 @@ void ResLibInit::initDashes()
 
 void ResLibInit::initGradients()
 {
-        LinearGradient* defaultGrad = new LinearGradient( QPointF(0,0), QPointF(1,1) );
-        LinearGradient* linGrad = new LinearGradient( QPointF(0,0), QPointF(1,1) );
-        RadialGradient* radGrad = new RadialGradient( QPointF(.5,.5), QPointF(.75,.25), .3 ) ;
-
-        defaultGrad->setColorAt( 0, Qt::black );
-        defaultGrad->setColorAt( 1, Qt::white );
+        Gradient defaultGrad( Gradient::Linear, QPointF(0,0), QPointF(1,1) );
+        Gradient linGrad( Gradient::Linear, QPointF(0,0), QPointF(1,1) );
+        Gradient radGrad( Gradient::Radial, QPointF(.5,.5), QPointF(.75,.25) ) ;
+        radGrad.setRadius( .3 );
         
-        linGrad->setColorAt( 0, Qt::red );
-        linGrad->setColorAt( 1, Qt::blue );
+        defaultGrad.setColorAt( 0, Qt::black );
+        defaultGrad.setColorAt( 1, Qt::white );
+        
+        linGrad.setColorAt( 0, Qt::red );
+        linGrad.setColorAt( 1, Qt::blue );
 
-        radGrad->setColorAt( 0, Qt::red );
-        radGrad->setColorAt( 1, Qt::blue );
+        radGrad.setColorAt( 0, Qt::red );
+        radGrad.setColorAt( 1, Qt::blue );
 
         
         StrokeLib& sl = StrokeLib::instance();
+        insert( sl, "red", Stroke( Qt::red ) );
         insert( sl, "defaultGradient", Stroke( defaultGrad ) );
         insert( sl, "linearBuiltIn",   Stroke( linGrad ) );
         insert( sl, "radialBuiltIn",   Stroke( radGrad ) );
+
 }

@@ -5,7 +5,7 @@
 #include "strokeiconengines.h"
 
 #include "reslib.h"
-#include "stroke.h"
+#include "strokelib.h"
 
 #include <QLayout>
 #include <QGroupBox>
@@ -16,15 +16,15 @@
 
 #include <QDebug>
 
-GradientDialog::GradientDialog( const Gradient* gradient, QWidget* parent )
+GradientDialog::GradientDialog( const Gradient& gradient, QWidget* parent )
         : EditDialog( parent ),
-          gradient_( ( gradient ) ? gradient->copy() : 0 ),
+          gradient_( gradient ),
           oldGradient_( gradient_ ),
           radius_( 0.2 )
 {        
         QHBoxLayout* mainLayout = new QHBoxLayout();
         
-        gradWidget_ = new GradientWidget( gradient_, this );
+        gradWidget_ = new GradientWidget( &gradient_, this );
         gradWidget_->setMinimumSize( QSize( 300,200 ) );
         mainLayout->addWidget( gradWidget_ );
 
@@ -44,11 +44,13 @@ GradientDialog::GradientDialog( const Gradient* gradient, QWidget* parent )
         typeBoxLayout->addWidget( linear );
         typeBoxLayout->addWidget( radial );
 
-        if ( gradient_ ) 
-                if ( gradient_->type() == Gradient::Linear )
-                        linear->setChecked( true );
-                else
-                        radial->setChecked( true );
+        switch ( gradient_.type() ) {
+            case Gradient::Linear:
+                    linear->setChecked( true ); break;
+            case Gradient::Radial:
+                    radial->setChecked( true ); break;
+            default: break;
+        }
         
         connect( gradType_, SIGNAL( stateChanged(int) ), this, SLOT( typeChanged(int) ) );
 
@@ -63,27 +65,14 @@ GradientDialog::GradientDialog( const Gradient* gradient, QWidget* parent )
 
 void GradientDialog::reset()
 {
-        delete gradient_;
-        gradient_ = oldGradient_->copy();
-        gradWidget_->setGradient( gradient_ );
+        gradient_ = oldGradient_;
+        gradWidget_->setGradient( &gradient_ );
 }
 
 void GradientDialog::typeChanged( int type )
 {
-        Gradient* ng;
-
-        if ( Gradient::Type( type ) == Gradient::Linear ) {
-                ng = new LinearGradient( gradient_->firstPoint(), gradient_->secondPoint() );
-                RadialGradient* rg = static_cast<RadialGradient*>( gradient_ );
-                radius_ = rg->radius();
-        }
-        else
-                ng = new RadialGradient(gradient_->firstPoint(),gradient_->secondPoint(),radius_);
-
-        ng->setColorStops( gradient_->colorStops() );
-        gradWidget_->setGradient( ng );
-        delete gradient_;
-        gradient_ = ng;
+        gradient_.setType( Gradient::Type( type ) );
+        gradWidget_->setGradient( &gradient_ );
 }
 
 void GradientDialog::fillGradList()
@@ -103,10 +92,13 @@ void GradientDialog::fillGradList()
 
 void GradientDialog::changeGradientFromList( QListWidgetItem* wi )
 {
-        Gradient* gr = StrokeLib::instance()[gradHash_[wi]].gradient();
-        gradient_ = gr;
+        const ResourceKey& key = gradHash_[wi];
+        
+        gradient_ = StrokeLib::instance()[key].gradient();
+        
 
-        gradType_->setState( gradient_->type() );
+        gradType_->setState( gradient_.type() );
 
-        gradWidget_->setGradient( gradient_ );
+        gradWidget_->setDisabled( key.isBuiltIn() );
+        gradWidget_->setGradient( &gradient_ );
 }

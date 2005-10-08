@@ -36,7 +36,6 @@
 Stroke::Stroke()
         : type_( sNone ),
           data_( QVariant() ),
-          gradient_( 0 ),
           key_()
 {
 }
@@ -44,7 +43,6 @@ Stroke::Stroke()
 Stroke::Stroke( const Stroke& other )
         : type_( other.type_ ),
           data_( other.data_ ),
-          gradient_( (other.gradient_) ? other.gradient_->copy() : 0 ),
           key_( other.key_ )
 {
 }
@@ -52,17 +50,15 @@ Stroke::Stroke( const Stroke& other )
 Stroke::Stroke( const QColor& color )
         : type_( sColor ),
           data_( QVariant( color ) ),
-          gradient_( 0 ),
           key_()
 {
 }
 
-Stroke::Stroke( Gradient* gradient )
+Stroke::Stroke( const Gradient& gradient )
         : type_( sGradient ),
-          data_( QVariant() ),
-          gradient_( gradient ),
           key_()
 {
+        data_.setValue( gradient );
 }
 
 void Stroke::setColor( const QColor& color )
@@ -71,10 +67,10 @@ void Stroke::setColor( const QColor& color )
         data_ = QVariant( color );
 }
 
-void Stroke::setGradient( Gradient* gradient )
+void Stroke::setGradient( const Gradient& gradient )
 {
         type_ = sGradient;
-        gradient_ = gradient;
+        data_.setValue( gradient );
 }
 
 void Stroke::setPixmap( const QPixmap& pixmap )
@@ -91,6 +87,14 @@ QColor Stroke::color() const
                 return QColor();
 }
 
+Gradient Stroke::gradient() const
+{
+        if ( type_ == sGradient )
+                return data_.value<Gradient>();
+        else
+                return Gradient();
+}
+
 void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
 {
         switch ( type_ ) {
@@ -100,7 +104,7 @@ void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
             case sGradient:
             {
                     QRectF r = path.boundingRect();
-                    QGradient* qgrad = gradient_->toQGradient( r );
+                    QGradient* qgrad = data_.value<Gradient>().toQGradient( r );
                     painter->fillPath( path, *qgrad );
                     delete qgrad;
                     break;
@@ -113,18 +117,17 @@ void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
         }
 }
 
-
-const QBrush Stroke::brush( const QPainterPath& path ) const
+const QBrush Stroke::brush( const QRectF& rect ) const
 {
         QBrush ret;
+        
         switch ( type_ ) {
             case sColor:
                     ret = data_.value<QColor>();
                     break;
             case sGradient:
             {
-                    QRectF r = path.boundingRect();
-                    QGradient* qgrad = gradient_->toQGradient( r );
+                    QGradient* qgrad = data_.value<Gradient>().toQGradient( rect );
                     ret = *qgrad;
                     break;
             }
@@ -135,6 +138,18 @@ const QBrush Stroke::brush( const QPainterPath& path ) const
             default: break;
         }
 
-        return ret;
+        return ret;    
 }
+
+const QBrush Stroke::brush( const QPainterPath& path ) const
+{
+        QRectF r;
+
+        if ( type_ == sGradient )
+                r = path.boundingRect();
+
+        return brush( r );
+}
+
+
 

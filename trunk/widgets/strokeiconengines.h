@@ -27,13 +27,15 @@
 
 #include <QIconEngine>
 
+#include "stroke.h"
+
 class Gradient;
 
-class StrokeIconEngine : public QIconEngine 
+class AbstractStrokeIconEngine : public QIconEngine 
 {
 public:
-        StrokeIconEngine() : QIconEngine() {}
-        ~StrokeIconEngine() {}
+        AbstractStrokeIconEngine() : QIconEngine() {}
+        ~AbstractStrokeIconEngine() {}
 
         virtual void paint( QPainter* p, const QRect& r, QIcon::Mode md, QIcon::State );
 
@@ -41,10 +43,10 @@ protected:
         virtual void paintForeground( QPainter* p, const QRect& rect ) = 0;
 };
 
-class ColorIconEngine : public StrokeIconEngine
+class ColorIconEngine : public AbstractStrokeIconEngine
 {
 public:
-        ColorIconEngine( const QColor& c ) : StrokeIconEngine(), color_( c ) {}
+        ColorIconEngine( const QColor& c ) : AbstractStrokeIconEngine(), color_( c ) {}
         ~ColorIconEngine() {}
 
 protected:
@@ -54,17 +56,30 @@ private:
         const QColor& color_;
 };
 
-class GradientIconEngine : public StrokeIconEngine
+class GradientIconEngine : public AbstractStrokeIconEngine
 {
 public:
-        GradientIconEngine( const Gradient* g ) : StrokeIconEngine(), gradient_( g ) {}
+        GradientIconEngine( const Gradient& g ) : AbstractStrokeIconEngine(), gradient_( g ) {}
         ~GradientIconEngine() {}
 
 protected:
         virtual void paintForeground( QPainter* p, const QRect& r );
         
 private:
-        const Gradient* gradient_;
+        const Gradient& gradient_;
+};
+
+class StrokeIconEngine : public AbstractStrokeIconEngine
+{
+public:
+        StrokeIconEngine( const Stroke& s ) : AbstractStrokeIconEngine(), stroke_( s ) {}
+        ~StrokeIconEngine() {}
+
+protected:
+        virtual void paintForeground( QPainter* p, const QRect& r );
+
+private:
+        Stroke stroke_;
 };
 
 #endif

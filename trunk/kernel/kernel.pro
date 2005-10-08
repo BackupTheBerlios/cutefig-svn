@@ -21,6 +21,7 @@ HEADERS += fig.h \
            gradient.h \
            resourcekey.h \
            reslib.h \
+           strokelib.h \
            reslibinit.h \
            parser.h \
            cfigoutput.h \
@@ -37,6 +38,7 @@ SOURCES += figure.cc \
            pen.cc \
            stroke.cc \
            gradient.cc \
+           strokelib.cc \
            reslibinit.cc \
            parser.cc \
            cfigoutput.cc \

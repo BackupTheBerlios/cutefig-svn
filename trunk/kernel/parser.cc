@@ -36,6 +36,7 @@
 #include "allobjects.h"
 #include "figure.h"
 #include "reslib.h"
+#include "strokelib.h"
 #include "gradient.h"
 
 #include <QTextStream>
@@ -346,7 +347,7 @@ void Parser::pushGradient()
         QColor startColor, endColor;
         double x1,x2, y1,y2;
  
-        Gradient* gradient;
+        Gradient gradient;
 
         stream_ >> keyString >> type >> startColor >> endColor >> x1 >> y1 >> x2 >> y2;
 
@@ -358,17 +359,18 @@ void Parser::pushGradient()
         if ( type == "radial" ) {
                 double rad;
                 stream_ >> rad;
-                gradient = new RadialGradient( startPoint, endPoint, rad );
+                gradient = Gradient( Gradient::Radial, startPoint, endPoint );
+                gradient.setRadius( rad );
         }
         else 
-                gradient = new LinearGradient( startPoint, endPoint );
+                gradient = Gradient( Gradient::Linear, startPoint, endPoint );
 
         if ( stream_.fail() ) {
                 parseError( invalidGradientLine );
                 return;
         }       
 
-        gradient->setColorAt( 0.0, startColor );
+        gradient.setColorAt( 0.0, startColor );
 
         QColor cl;
         double pos;
@@ -380,12 +382,12 @@ void Parser::pushGradient()
                 if ( stream_.fail() )
                         parseError( invalidGradStopLine );
                 else
-                        gradient->setColorAt( pos, cl );
+                        gradient.setColorAt( pos, cl );
                 
                 readLine();
         }
 
-        gradient->setColorAt( 1.0, endColor );
+        gradient.setColorAt( 1.0, endColor );
 
         StrokeLib& sl = StrokeLib::instance();
         

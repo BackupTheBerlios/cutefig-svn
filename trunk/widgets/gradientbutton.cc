@@ -28,26 +28,25 @@
 #include "gradient.h"
 #include "stroke.h"
 #include "reslib.h"
+#include "strokelib.h"
 
 #include <QDebug>
 
-GradientButton::GradientButton( const Gradient* gradient, QWidget* parent )
+GradientButton::GradientButton( const Gradient& gradient, QWidget* parent )
         : QPushButton( parent ),
-          gradient_( 0 )
+          gradient_()
 {
         setGradient( gradient );
         connect( this, SIGNAL( clicked() ), this, SLOT( changeGradient() ) );
 }
 
-void GradientButton::setGradient( const Gradient* gradient )
+void GradientButton::setGradient( const Gradient& gradient )
 {
-        delete gradient_;
-        if ( gradient )
-                gradient_ = gradient->copy();
-        else {
-                StrokeLib& sl = StrokeLib::instance();
-                gradient_ = sl[ResourceKey("defaultGradient", ResourceKey::BuiltIn)].gradient();
-        }
+        gradient_ = gradient;
+//         else {
+//                 StrokeLib& sl = StrokeLib::instance();
+//                 gradient_ = sl[ResourceKey("defaultGradient", ResourceKey::BuiltIn)].gradient();
+//         }
         
         setIcon( QIcon( new GradientIconEngine( gradient_ ) ) );
 }

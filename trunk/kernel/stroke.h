@@ -46,20 +46,20 @@ public:
         
         Stroke();
         Stroke( const QColor& color );
-        Stroke( Gradient* gradient );
+        Stroke( const Gradient& gradient );
         Stroke( const Stroke& other );
 
         ~Stroke() {}
 
         void setNone() { type_ = sNone; }
         void setColor( const QColor& color );
-        void setGradient( Gradient* gradient );
+        void setGradient( const Gradient& gradient );
         void setPixmap( const QPixmap& pixmap );
 
         QColor color() const;
         bool isHardColor() const { return !key_.isValid() && type_ == sColor; }
 
-        Gradient* gradient() const { return gradient_; }
+        Gradient gradient() const;
         
         StrokeType type() const { return type_; }
         
@@ -67,6 +67,8 @@ public:
         const ResourceKey& key() const { return key_; }
 
         void fillPath( const QPainterPath& path, QPainter* painter ) const;
+        
+        const QBrush brush( const QRectF& rect ) const;
         const QBrush brush( const QPainterPath& path ) const;
         
         operator bool () const { return type_; }
@@ -76,7 +78,7 @@ private:
         StrokeType type_;
         QVariant data_;
         
-        Gradient* gradient_;
+//        Gradient* gradient_;
         
         ResourceKey key_;
 };

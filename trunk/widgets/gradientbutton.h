@@ -25,28 +25,28 @@
 #ifndef gradientbutton_h
 #define gradientbutton_h
 
-#include <QPushButton>
+#include "gradient.h"
 
-class Gradient;
+#include <QPushButton>
 
 class GradientButton : public QPushButton
 {
         Q_OBJECT
 public:
-        GradientButton( const Gradient* gradient, QWidget* parent = 0 );
+        GradientButton( const Gradient& gradient, QWidget* parent = 0 );
         ~GradientButton() {}
 
-        void setGradient( const Gradient* gradient );
-        Gradient* getGradient() const { return gradient_; }
+        void setGradient( const Gradient& gradient );
+        Gradient getGradient() const { return gradient_; }
         
 signals:
-        void gradientChanged( Gradient* );
+        void gradientChanged( const Gradient& );
 
 public slots:
         void changeGradient();
 
 private:
-        Gradient* gradient_;
+        Gradient gradient_;
 };
 
 #endif

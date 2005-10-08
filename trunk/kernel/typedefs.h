@@ -34,6 +34,8 @@ class QString;
 
 class DrawObject;
 class Stroke;
+class Gradient;
+class QColor;
 
 typedef QList<DrawObject*> ObjectList;
 
@@ -43,6 +45,8 @@ typedef QVector<double> Dashes;
 typedef ResLib<Dashes> DashesLib;
 
 typedef ResLib<Stroke> StrokeLib;
+typedef ResLib<Gradient> GradLib;
+typedef ResLib<QColor> ColorLib;
 
 class ResourceKey;
 typedef QList<ResourceKey> ResourceKeyList;
