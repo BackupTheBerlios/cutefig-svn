@@ -33,6 +33,8 @@
 #include <QPaintEvent>
 #include <QColorDialog>
 
+#include <cmath>
+
 #include <QDebug>
 
 class GradientWidget::UIHandler

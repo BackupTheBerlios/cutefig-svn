@@ -37,7 +37,7 @@ template<class Resource> class ResLib
 {
 public:
         friend class ResLibInit;
-        friend void ResLib<Stroke>::insertBuiltIn( const ResourceKey&, const Stroke& );
+        friend class ResLib<Stroke>;
         
         static ResLib<Resource>& instance()
         {
