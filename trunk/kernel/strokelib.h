@@ -1,3 +1,27 @@
+ 
+/*****************************************************************************
+**
+**  $Id$
+**
+**  This file is part of CuteFig
+**
+**  Copyright (C) 2004 Johannes Mueller, johmue@users.sourceforge.net
+**
+**  This program is free software; you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License version 2
+**  as published by the Free Software Foundation.
+** 
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  You should have received a copy of the GNU General Public License
+**  along with this program; if not, write to the Free Software
+**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+**
+******************************************************************************/
+
 #ifndef strokelib_h
 #define strokelib_h
 
@@ -25,20 +49,25 @@ public:
                 return inst;
         };
         
-        void insert( const ResourceKey& key, const Stroke& stroke )
+        bool insert( const ResourceKey& key, const Stroke& stroke )
         {
                 if ( key.isBuiltIn() )
-                        return;
+                        return false;
+
+                bool success = false;
                 
                 switch ( stroke.type() ) {
                     case Stroke::sColor:
-                            colorLib.insert( key, stroke.color() ); break;
+                            success = colorLib.insert( key, stroke.color() ); break;
                     case Stroke::sGradient:
-                            gradLib.insert( key, stroke.gradient() ); break;
+                            success = gradLib.insert( key, stroke.gradient() ); break;
                     default: break;
                 }
 
-                keys_ << key;
+                if ( success )
+                        keys_ << key;
+
+                return success;
         }
 
         bool remove( const ResourceKey& key )
@@ -46,21 +75,20 @@ public:
                 if ( key.isBuiltIn() ) 
                         return false;
 
-                int r = colorLib.remove( key );
-                if ( r )
-                        return r;
+                bool success = colorLib.remove( key ) || gradLib.remove( key ); 
 
-                gradLib.remove( key );
+                if ( success )
+                        keys_.removeAll( key );
 
-                return keys_.removeAll( key );
+                return success;
         }
         
         const Stroke operator[]( const ResourceKey& key ) const
         {
                 if ( colorLib.contains( key ) )
-                        return colorLib[key];
+                        return Stroke( key, colorLib[key] );
                 if ( gradLib.contains( key ) )
-                        return gradLib[key];
+                        return Stroke( key, gradLib[key] );
 
                 return Stroke();
         }

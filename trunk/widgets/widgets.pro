@@ -13,9 +13,11 @@ RESOURCES += widgets.qrc
 
 HEADERS = colorbutton.h \
           gradientbutton.h \
+          strokebutton.h \
           strokeiconengines.h \
           mouseeventhandler.h \
           gradientwidget.h \
+          strokedemo.h \
           flagbuttongroup.h \
           stylecombobox.h \
           strokewidget.h \
@@ -25,14 +27,19 @@ HEADERS = colorbutton.h \
           zoomcombobox.h \
           actionpushbutton.h \
           editdialog.h \
-          gradientdialog.h 
+          colordialog.h \
+          gradientdialog.h \
+          strokemodel.h \
+          strokedialog.h \ 
 
 
 SOURCES = colorbutton.cc \
           gradientbutton.cc \
+          strokebutton.cc \
           strokeiconengines.cc \
           mouseeventhandler.cc \
           gradientwidget.cc \
+          strokedemo.cc \
           flagbuttongroup.cc \
           stylecombobox.cc \
           strokewidget.cc \
@@ -42,4 +49,7 @@ SOURCES = colorbutton.cc \
           zoomcombobox.cc \
           actionpushbutton.cc \
           editdialog.cc \
-          gradientdialog.cc
+          colordialog.cc \
+          gradientdialog.cc \
+          strokemodel.cc \
+          strokedialog.cc 

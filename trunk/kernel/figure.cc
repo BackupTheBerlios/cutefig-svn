@@ -228,11 +228,16 @@ const ResourceKeyList Figure::dashList() const
 const ResourceKeyList Figure::strokeList() const
 {
         ResourceKeyList skl;
+        ResourceKey key;
+        
         foreach ( DrawObject* o, drawingList_ ) {
-                if ( !skl.contains( o->fill().key() ) ) 
-                        skl << o->fill().key();
-                if ( !skl.contains( o->stroke().key() ) )
-                        skl << o->stroke().key();
+                key = o->fill().key();
+                if ( key.isToBeSaved() && !skl.contains( key ) ) 
+                        skl << key;
+
+                key = o->stroke().key();
+                if ( key.isToBeSaved() && !skl.contains( key ) )
+                        skl << key;
         }
 
         return skl;

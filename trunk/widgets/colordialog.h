@@ -22,36 +22,18 @@
 **
 ******************************************************************************/
 
-#include "mouseeventhandler.h"
+#ifndef colordialog_h
+#define colordialog_h
 
+#include <QColorDialog>
 
-void AbstractMouseEventHandler::mouseMoveEvent( QMouseEvent* e )
+class ColorDialog : public QColorDialog
 {
-        if ( dragging_ )
-                dispatcher_->drag( e );
-        else
-                dispatcher_->move( e );
+public:
+        static QColor getColor( const QColor& initial = Qt::white, bool* ok = 0,
+                                QWidget* parent = 0 );
+};
 
-}
+        
 
-void ClickMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ ) 
-                dragging_ = dispatcher_->finalClick( e );
-        else 
-                dragging_ = dispatcher_->initialClick( e );
-}
-
-
-void DragMouseEventHandler::mousePressEvent( QMouseEvent* e )
-{
-        dragging_ = dispatcher_->initialClick( e );
-}
-
-
-void DragMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ )
-                dispatcher_->finalClick( e );
-        dragging_ = false;
-}
+#endif

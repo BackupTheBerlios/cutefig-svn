@@ -22,36 +22,33 @@
 **
 ******************************************************************************/
 
-#include "mouseeventhandler.h"
+#ifndef strokebutton_h
+#define strokebutton_h
+
+#include "typedefs.h"
+#include "stroke.h"
+#include <QPushButton>
 
 
-void AbstractMouseEventHandler::mouseMoveEvent( QMouseEvent* e )
+class StrokeButton : public QPushButton 
 {
-        if ( dragging_ )
-                dispatcher_->drag( e );
-        else
-                dispatcher_->move( e );
+        Q_OBJECT
+public:
+        StrokeButton( const Stroke& initial, const ResourceKeyList& keys, QWidget* parent = 0 );
+        ~StrokeButton() {}
 
-}
+        void setStroke( const Stroke& stroke );
+        Stroke getStroke() const { return stroke_; }
 
-void ClickMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ ) 
-                dragging_ = dispatcher_->finalClick( e );
-        else 
-                dragging_ = dispatcher_->initialClick( e );
-}
+signals:
+        void strokeChanged( const ResourceKey& key );
 
+private slots:
+        void changeStroke();
 
-void DragMouseEventHandler::mousePressEvent( QMouseEvent* e )
-{
-        dragging_ = dispatcher_->initialClick( e );
-}
+private:
+        Stroke stroke_;
+        const ResourceKeyList& keys_;
+};
 
-
-void DragMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ )
-                dispatcher_->finalClick( e );
-        dragging_ = false;
-}
+#endif

@@ -22,36 +22,19 @@
 **
 ******************************************************************************/
 
-#include "mouseeventhandler.h"
+#include "colordialog.h"
 
+#include <QDebug>
 
-void AbstractMouseEventHandler::mouseMoveEvent( QMouseEvent* e )
+QColor ColorDialog::getColor( const QColor& initial, bool* ok, QWidget* parent )
 {
-        if ( dragging_ )
-                dispatcher_->drag( e );
-        else
-                dispatcher_->move( e );
-
-}
-
-void ClickMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ ) 
-                dragging_ = dispatcher_->finalClick( e );
-        else 
-                dragging_ = dispatcher_->initialClick( e );
-}
-
-
-void DragMouseEventHandler::mousePressEvent( QMouseEvent* e )
-{
-        dragging_ = dispatcher_->initialClick( e );
-}
-
-
-void DragMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ )
-                dispatcher_->finalClick( e );
-        dragging_ = false;
+        QColor result;
+        
+        QRgb rgb = getRgba( initial.rgba(), ok, parent );
+        if ( !ok || *ok ) {
+                result = QColor( rgb );
+                result.setAlpha( qAlpha( rgb ) );
+        }
+        
+        return result;
 }

@@ -57,6 +57,7 @@ private:
         Flags flags_;
 };
 
+#define BUILTIN_KEY( key ) ResourceKey( key, ResourceKey::BuiltIn )
 
 inline bool operator== ( const ResourceKey& k1, const ResourceKey& k2 )
 {

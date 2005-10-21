@@ -25,9 +25,11 @@
 #include "strokewidget.h"
 
 #include "stroke.h"
+#include "gradient.h"
+#include "reslib.h"
 #include "flagbuttongroup.h"
 #include "colorbutton.h"
-#include "gradientbutton.h"
+#include "strokebutton.h"
 
 #include <QLayout>
 #include <QRadioButton>
@@ -39,7 +41,7 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         : QGroupBox( title, parent )
 {        
         colorButton_ = new ColorButton( Qt::gray, this );
-        gradientButton_ = new GradientButton( Gradient(), this );
+        gradientButton_ = new StrokeButton( Stroke(), GradLib::instance().keys(), this );
 
         QRadioButton* nostrokeRB = new QRadioButton( tr("None"), this );
         QRadioButton* colorRB    = new QRadioButton( tr("Color"), this );
@@ -65,7 +67,8 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         connect( gradientRB, SIGNAL( toggled(bool) ), gradientButton_, SLOT( setEnabled(bool) ) );
 
         connect( colorButton_, SIGNAL( colorChanged(QColor) ), this, SLOT( setColor() ) );
-        connect( gradientButton_, SIGNAL(gradientChanged(Gradient*)), this, SLOT(setGradient()) );
+        connect( gradientButton_, SIGNAL(strokeChanged(const ResourceKey&)),
+                 this, SLOT(setGradient()) );
         connect( strokeType_, SIGNAL( stateChanged(int) ), this, SLOT( changeType(int) ) );
 }
 
@@ -80,7 +83,7 @@ void StrokeWidget::setStroke( Stroke* stroke )
             case Stroke::sColor:
                     colorButton_->setColor( stroke->color() ); break;
             case Stroke::sGradient:
-                    gradientButton_->setGradient( stroke->gradient() ); break;
+                    gradientButton_->setStroke( *stroke ); break;
             default:
                     break;
         }
@@ -94,7 +97,7 @@ void StrokeWidget::changeType( int type )
             case Stroke::sColor:
                     stroke_->setColor( colorButton_->getColor() ); break;
             case Stroke::sGradient:
-                    stroke_->setGradient( gradientButton_->getGradient() ); break;
+                    *stroke_ = gradientButton_->getStroke();
             default:
                     break;
         }
@@ -110,6 +113,7 @@ void StrokeWidget::setColor()
 
 void StrokeWidget::setGradient()
 {
-        stroke_->setGradient( gradientButton_->getGradient() );
+        *stroke_ = gradientButton_->getStroke();
+        qDebug() << stroke_->key().keyString();
         emit strokeChanged();
 }

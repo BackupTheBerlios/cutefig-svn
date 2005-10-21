@@ -22,36 +22,34 @@
 **
 ******************************************************************************/
 
-#include "mouseeventhandler.h"
+#include "strokebutton.h"
+#include "strokedialog.h"
+#include "strokeiconengines.h"
+#include "strokelib.h"
 
+#include <QDebug>
 
-void AbstractMouseEventHandler::mouseMoveEvent( QMouseEvent* e )
+StrokeButton::StrokeButton( const Stroke& initial, const ResourceKeyList& keys, QWidget* parent )
+        : QPushButton( parent ),
+          keys_( keys )
 {
-        if ( dragging_ )
-                dispatcher_->drag( e );
-        else
-                dispatcher_->move( e );
-
+        setStroke( initial );
+        connect( this, SIGNAL( clicked() ), this, SLOT( changeStroke() ) );
 }
 
-void ClickMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
+void StrokeButton::setStroke( const Stroke& stroke )
 {
-        if ( dragging_ ) 
-                dragging_ = dispatcher_->finalClick( e );
-        else 
-                dragging_ = dispatcher_->initialClick( e );
+        stroke_ = stroke;
+        setIcon( QIcon( new StrokeIconEngine( stroke ) ) );
 }
 
-
-void DragMouseEventHandler::mousePressEvent( QMouseEvent* e )
+void StrokeButton::changeStroke()
 {
-        dragging_ = dispatcher_->initialClick( e );
-}
+        bool ok;
+        ResourceKey newKey = StrokeDialog::getStroke( stroke_.key(), &ok, keys_ );
 
-
-void DragMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ )
-                dispatcher_->finalClick( e );
-        dragging_ = false;
+        if ( ok ) {
+                setStroke( StrokeLib::instance()[newKey] );
+                emit strokeChanged( stroke_.key() );
+        }
 }

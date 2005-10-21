@@ -45,12 +45,15 @@ public:
                 return inst;
         };
 
-        void insert( const ResourceKey& key, const Resource& data )
+        bool insert( const ResourceKey& key, const Resource& data )
         {
-                if ( !key.isBuiltIn() ) {
-                        map_[key] = data;
-                        keys_ << key;
-                }
+                if ( key.isBuiltIn() )
+                        return false;
+                
+                map_[key] = data;
+                keys_ << key;
+                        
+                return true;
         }
 
 
@@ -58,6 +61,8 @@ public:
         {
                 if ( key.isBuiltIn() ) 
                         return false;
+
+                keys_.removeAll( key );
                 return map_.remove( key );
         }
         
@@ -75,8 +80,8 @@ private:
         
         void insertBuiltIn( const ResourceKey& key, const Resource& data )
         {
-                 map_[key] = data;
-                 keys_ << key;
+                map_[key] = data;
+                keys_ << key;
         }
         
         QMap<ResourceKey, Resource> map_;

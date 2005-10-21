@@ -144,6 +144,7 @@ GradientWidget::~GradientWidget()
 
 void GradientWidget::setGradient( Gradient* gr )
 {
+        gradient_ = gr;
         if ( gr->type() != Gradient::None ) {
                 GradientHandler grh( *gr );
                 point1_ = grh.start();

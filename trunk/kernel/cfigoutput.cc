@@ -200,6 +200,7 @@ void CfigOutput::outputStrokes()
         StrokeLib& sl = StrokeLib::instance();
 
         foreach ( ResourceKey key, figure_.strokeList() ) {
+                
                 Stroke stroke = sl[key];
                 switch ( strokeType( stroke ) ) {
                     case Stroke::sColor: 

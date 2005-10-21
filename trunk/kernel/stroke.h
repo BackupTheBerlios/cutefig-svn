@@ -45,8 +45,9 @@ public:
         friend class OutputBackend;
         
         Stroke();
-        Stroke( const QColor& color );
-        Stroke( const Gradient& gradient );
+        explicit Stroke( const QColor& color );
+        Stroke( const ResourceKey& key, const QColor& color );
+        Stroke( const ResourceKey& key, const Gradient& gradient );
         Stroke( const Stroke& other );
 
         ~Stroke() {}

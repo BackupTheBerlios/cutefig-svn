@@ -54,11 +54,24 @@ Stroke::Stroke( const QColor& color )
 {
 }
 
-Stroke::Stroke( const Gradient& gradient )
-        : type_( sGradient ),
+Stroke::Stroke( const ResourceKey& key, const QColor& color )
+        : type_( sColor ),
+          data_( QVariant( color ) ),
           key_()
 {
-        data_.setValue( gradient );
+        if ( key.isValid() )
+                key_ = key;
+}
+
+Stroke::Stroke( const ResourceKey& key, const Gradient& gradient )
+        : type_(),
+          key_()
+{
+        if ( key.isValid() ) {
+                key_ = key;
+                type_ = sGradient;
+                data_.setValue( gradient );
+        }
 }
 
 void Stroke::setColor( const QColor& color )
@@ -69,14 +82,20 @@ void Stroke::setColor( const QColor& color )
 
 void Stroke::setGradient( const Gradient& gradient )
 {
-        type_ = sGradient;
-        data_.setValue( gradient );
+        if ( key_.isValid() ) {
+                type_ = sGradient;
+                data_.setValue( gradient );
+        } else
+                qDebug() << "*** Bug *** Stroke::setGradient() without key...";
 }
 
 void Stroke::setPixmap( const QPixmap& pixmap )
 {
-        type_ = sPixmap;
-        data_.setValue( pixmap );
+        if ( key_.isValid() ) {
+                type_ = sPixmap;
+                data_.setValue( pixmap );
+        } else
+                qDebug() << "*** Bug *** Stroke::setPixmap() without key...";
 }
 
 QColor Stroke::color() const
@@ -150,6 +169,7 @@ const QBrush Stroke::brush( const QPainterPath& path ) const
 
         return brush( r );
 }
+
 
 
 

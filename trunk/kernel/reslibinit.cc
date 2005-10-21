@@ -75,9 +75,10 @@ void ResLibInit::initGradients()
 
         
         StrokeLib& sl = StrokeLib::instance();
-        insert( sl, "red", Stroke( Qt::red ) );
-        insert( sl, "defaultGradient", Stroke( defaultGrad ) );
-        insert( sl, "linearBuiltIn",   Stroke( linGrad ) );
-        insert( sl, "radialBuiltIn",   Stroke( radGrad ) );
+        
+        insert( sl, "red", Stroke( BUILTIN_KEY( "red" ), Qt::red ) );
+        insert( sl, "defaultGradient", Stroke( BUILTIN_KEY("defaultGradient"), defaultGrad ) );
+        insert( sl, "linearBuiltIn",   Stroke( BUILTIN_KEY("linearBuiltIn"),   linGrad ) );
+        insert( sl, "radialBuiltIn",   Stroke( BUILTIN_KEY("radialBuiltIn"),   radGrad ) );
 
 }

@@ -22,36 +22,26 @@
 **
 ******************************************************************************/
 
-#include "mouseeventhandler.h"
+#ifndef strokedemo_h
+#define strokedemo_h
 
+#include "stroke.h"
 
-void AbstractMouseEventHandler::mouseMoveEvent( QMouseEvent* e )
+#include <QFrame>
+
+class StrokeDemo : public QFrame
 {
-        if ( dragging_ )
-                dispatcher_->drag( e );
-        else
-                dispatcher_->move( e );
+        Q_OBJECT
+public:
+        StrokeDemo( const Stroke& stroke, QWidget* parent = 0 );
+        ~StrokeDemo() {}
 
-}
+        void setStroke( const Stroke& stroke );
 
-void ClickMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ ) 
-                dragging_ = dispatcher_->finalClick( e );
-        else 
-                dragging_ = dispatcher_->initialClick( e );
-}
+private:
+        virtual void paintEvent( QPaintEvent* e );
 
+        Stroke stroke_;
+};      
 
-void DragMouseEventHandler::mousePressEvent( QMouseEvent* e )
-{
-        dragging_ = dispatcher_->initialClick( e );
-}
-
-
-void DragMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ )
-                dispatcher_->finalClick( e );
-        dragging_ = false;
-}
+#endif

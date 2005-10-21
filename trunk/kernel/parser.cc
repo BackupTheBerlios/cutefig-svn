@@ -392,9 +392,7 @@ void Parser::pushGradient()
         StrokeLib& sl = StrokeLib::instance();
         
         if ( !sl.contains( key ) ) {
-                Stroke stroke;
-                stroke.setGradient( gradient );
-                stroke.setKey( key );
+                Stroke stroke( key, gradient );
                 sl.insert( key, stroke );
         }
 }
