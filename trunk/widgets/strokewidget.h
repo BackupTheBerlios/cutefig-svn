@@ -27,8 +27,11 @@
 
 #include <QGroupBox>
 
-class ColorButton;
-class StrokeButton;
+template<class Resource> class ResourceButton;
+class Gradient;
+class QColor;
+
+
 class FlagButtonGroup;
 
 class Stroke;
@@ -54,8 +57,8 @@ private:
         Stroke* stroke_;
 
         FlagButtonGroup* strokeType_;
-        ColorButton* colorButton_;
-        StrokeButton* gradientButton_;
+        ResourceButton<QColor>* colorButton_;
+        ResourceButton<Gradient>* gradientButton_;
 };
 
 #endif

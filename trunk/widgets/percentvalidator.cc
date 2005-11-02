@@ -22,7 +22,7 @@
 **
 ******************************************************************************/
 
-#include "percentvalidatior.h"
+#include "percentvalidator.h"
 
 #include <QDebug>
 
@@ -40,7 +40,7 @@ void PercentValidator::setRange( int min, int max )
 
 QValidator::State PercentValidator::validate( QString& input, int& pos ) const
 {
-        qDebug() << "valiudate";
+        qDebug() << "validate";
         
         QString myInput = input.trimmed();
         if ( myInput.endsWith('%') )

@@ -31,11 +31,16 @@
 #include <QMetaType>
 
 class GradientHandler;
+class Gradient;
 
+int qHash( const Gradient& grad );
+        
 class Gradient
 {
 public:
         friend class GradientHandler;
+        friend int qHash( const Gradient& grad );
+        
         enum Type { None=0, Linear, Radial };
 
         Gradient() : type_( None ) {}
@@ -45,7 +50,7 @@ public:
         Gradient( const Gradient& other ); 
         
         QGradientStops& colorStops() { return colorStops_; }
-        const QGradientStops& c_colorStops() const { return colorStops_; }
+        const QGradientStops& colorStops() const { return colorStops_; }
         void setColorStops( const QGradientStops& stops ) { colorStops_ = stops; }
         void setColorAt( qreal pos, const QColor& c );
 
@@ -74,8 +79,12 @@ private:
         qreal radius_;
 };
 
-Q_DECLARE_METATYPE(Gradient)
+Q_DECLARE_METATYPE(Gradient);
 
+#include <QDebug>
+QDebug operator<< ( QDebug, const Gradient& gr );
+
+        
 // class LinearGradient : public Gradient
 // {
 // public:

@@ -27,6 +27,8 @@
 
 #include <cmath>
 
+#include <QHash>
+
 #include <QDebug>
 
 Gradient::Gradient( Type type, const QPointF& start, const QPointF& final )
@@ -92,7 +94,7 @@ QGradient* Gradient::toQGradient( const QRectF& rect ) const
                                              rect.top()  + finalPoint_.y()*rect.height());
                     break;
             case Radial: {
-                    qreal rad = sqrt( rect.width()*rect.width() + rect.height()*rect.height() );
+                    qreal rad = hypot( rect.width(), rect.height() );
                     rad *= radius_;
                     gr = new QRadialGradient(rect.left() + startPoint_.x()*rect.width(),
                                              rect.top()  + startPoint_.y()*rect.height(),
@@ -109,6 +111,17 @@ QGradient* Gradient::toQGradient( const QRectF& rect ) const
 
         return gr;
 }
+
+int qHash( const Gradient& g )
+{
+        QByteArray data;
+        QDataStream ds( &data, QIODevice::WriteOnly );
+
+        ds << g.type() << g.radius() << g.startPoint() << g.finalPoint() << g.colorStops();
+
+        return qHash( data );
+}
+
 
 // void RadialGradient::setCenterPoint( const QPointF& p )
 // {
@@ -139,3 +152,18 @@ QGradient* Gradient::toQGradient( const QRectF& rect ) const
 
 
 
+QDebug operator<<(QDebug dbg, const Gradient& g)
+{
+        dbg.nospace() << "Gradient: ";
+        
+        switch ( g.type() ) {
+            case Gradient::None: dbg.nospace() << "None "; break;
+            case Gradient::Linear: dbg.nospace() << "Linear "; break;
+            case Gradient::Radial: dbg.nospace() << "Radial "; break;
+            default: break;
+        }
+
+        dbg.nospace() << g.startPoint() << g.finalPoint();
+
+        return dbg.space();
+}

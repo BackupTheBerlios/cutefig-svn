@@ -23,7 +23,7 @@
 ******************************************************************************/
 
 #include "zoomcombobox.h"
-#include "percentvalidatior.h"
+#include "percentvalidator.h"
 
 #include <QKeyEvent>
 

@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: colorbutton.h 16 2005-06-26 22:00:14Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,33 +22,39 @@
 **
 ******************************************************************************/
 
-#include "colorbutton.h"
-#include "strokeiconengines.h"
+#ifndef resourceiconengine_h
+#define resourceiconengine_h
 
-#include <QIcon>
-#include <QColorDialog>
+#include <QIconEngine>
+#include <QDebug>
 
-ColorButton::ColorButton( const QColor& c, QWidget * parent )
-        : QPushButton( parent )
+class AbstractResourceIconEngine : public QIconEngine 
 {
-        setColor( c );
-        connect( this, SIGNAL( clicked() ), this, SLOT( changeColor() ) );
-}
+public:
+        AbstractResourceIconEngine() : QIconEngine() {}
+        ~AbstractResourceIconEngine() {}
 
-void ColorButton::setColor( const QColor& c )
-{
-        color_ = c;
-        setIcon( QIcon( new ColorIconEngine( color_ ) ) );
-}
+        virtual void paint( QPainter* p, const QRect& r, QIcon::Mode md, QIcon::State );
 
-void ColorButton::changeColor()
+protected:
+        virtual void paintForeground( QPainter* p, const QRect& rect ) = 0;
+};
+
+template<class Resource> class ResourceIconEngine : public AbstractResourceIconEngine 
 {
-        bool ok;
-        QRgb rgb = QColorDialog::getRgba( color_.rgba(), &ok );
-        if ( ok ) {
-                color_ = QColor( rgb );
-                color_.setAlpha( qAlpha( rgb ) );
-                setColor( color_ );
-                emit( colorChanged( color_ ) );
-        }
-}
+public:
+        ResourceIconEngine<Resource>( const Resource& res )
+                : AbstractResourceIconEngine(),
+                  resource_( res )
+        {}
+        
+        ~ResourceIconEngine() {}
+
+
+protected:
+        void paintForeground( QPainter* p, const QRect& rect );
+
+        const Resource& resource_;
+};
+
+#endif

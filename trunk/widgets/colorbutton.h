@@ -25,28 +25,10 @@
 #ifndef colorbutton_h
 #define colorbutton_h
 
-#include <QPushButton>
+#include "resourcebutton.h"
+class QColor;
 
+typedef ResourceButton<QColor> ColorButton;
 
-class ColorButton : public QPushButton
-{
-        Q_OBJECT
-public:
-        ColorButton( const QColor& c, QWidget * parent =0 );
-        ~ColorButton() {}
-
-        void setColor( const QColor& c );
-
-        QColor getColor() const { return color_; }
-
-signals:
-        void colorChanged( QColor );
-
-public slots:
-        void changeColor();
-
-private:
-        QColor color_;
-};
 
 #endif

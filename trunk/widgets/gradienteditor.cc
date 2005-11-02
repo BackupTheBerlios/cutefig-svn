@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2004 Johannes Mueller, johmue@users.sourceforge.net
+**  Copyright (C) 2004 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -22,10 +22,9 @@
 **
 ******************************************************************************/
 
-#include "gradientdialog.h"
+#include "gradienteditor.h"
 #include "gradientwidget.h"
 #include "flagbuttongroup.h"
-#include "strokeiconengines.h"
 
 #include "reslib.h"
 #include "strokelib.h"
@@ -39,19 +38,24 @@
 
 #include <QDebug>
 
-GradientDialog::GradientDialog( const Gradient& gradient, QWidget* parent )
-        : EditDialog( parent ),
-          gradient_( gradient ),
-          oldGradient_( gradient_ )
+template<> ResourceEditor* ResourceDialog<Gradient>::createEditor()
+{
+        return new GradientEditor( editee_, this, dialogLayout_, parent() );
+}
+
+GradientEditor::GradientEditor( Gradient& gradient,  EditDialog* dlg, QVBoxLayout* layout,
+                                QObject* parent )
+        : ResourceEditor( dlg, layout, parent ),
+          gradient_( gradient )
 //          radius_( 0.2 )
 {        
         QHBoxLayout* mainLayout = new QHBoxLayout();
         
-        gradWidget_ = new GradientWidget( &gradient_, this );
+        gradWidget_ = new GradientWidget( &gradient_, dlg );
         gradWidget_->setMinimumSize( QSize( 300,200 ) );
         mainLayout->addWidget( gradWidget_ );
 
-        QGroupBox* typeGroupBox = new QGroupBox( tr("Gradient &type"), this );
+        QGroupBox* typeGroupBox = new QGroupBox( tr("Gradient &type"), dlg );
         mainLayout->addWidget( typeGroupBox );
 
         QVBoxLayout* typeBoxLayout = new QVBoxLayout( typeGroupBox );
@@ -75,7 +79,7 @@ GradientDialog::GradientDialog( const Gradient& gradient, QWidget* parent )
             default: break;
         }
         
-        connect( gradType_, SIGNAL( stateChanged(int) ), this, SLOT( typeChanged(int) ) );
+        connect( gradType_, SIGNAL( stateChanged(int) ), dlg, SLOT( typeChanged(int) ) );
 
 //         gradListWgt_ = new QListWidget( this );
 //         fillGradList();
@@ -83,22 +87,21 @@ GradientDialog::GradientDialog( const Gradient& gradient, QWidget* parent )
 //                  this, SLOT( changeGradientFromList(QListWidgetItem*) ) );
 //         mainLayout->addWidget( gradListWgt_ );
         
-        dialogLayout_->insertLayout( 0, mainLayout );
+        layout_->insertLayout( 0, mainLayout );
 }
 
-void GradientDialog::reset()
+void GradientEditor::updateData()
 {
-        gradient_ = oldGradient_;
-        gradWidget_->setGradient( &gradient_ );
+        gradWidget_->update();
 }
 
-void GradientDialog::typeChanged( int type )
+void GradientEditor::typeChanged( int type )
 {
         gradient_.setType( Gradient::Type( type ) );
         gradWidget_->setGradient( &gradient_ );
 }
 
-// void GradientDialog::fillGradList()
+// void GradientEditor::fillGradList()
 // {
 //         StrokeLib& sl = StrokeLib::instance();
 
@@ -113,7 +116,7 @@ void GradientDialog::typeChanged( int type )
 //         }
 // }
 
-// void GradientDialog::changeGradientFromList( QListWidgetItem* wi )
+// void GradientEditor::changeGradientFromList( QListWidgetItem* wi )
 // {
 //         const ResourceKey& key = gradHash_[wi];
         
@@ -126,17 +129,17 @@ void GradientDialog::typeChanged( int type )
 //         gradWidget_->setGradient( &gradient_ );
 // }
 
-Gradient GradientDialog::getGradient( const Gradient& initial, bool *ok, QWidget* parent )
-{
-        GradientDialog dlg( initial, parent );
+// Gradient GradientEditor::getGradient( const Gradient& initial, bool *ok, QWidget* parent )
+// {
+//         GradientEditor dlg( initial, parent );
 
-        bool accepted = ( dlg.exec() == QDialog::Accepted );
-        if ( ok )
-                *ok = accepted;
+//         bool accepted = ( dlg.exec() == QDialog::Accepted );
+//         if ( ok )
+//                 *ok = accepted;
 
-        Gradient result;
-        if ( accepted )
-                result = dlg.gradient();
+//         Gradient result;
+//         if ( accepted )
+//                 result = dlg.gradient();
 
-        return result;
-}
+//         return result;
+// }

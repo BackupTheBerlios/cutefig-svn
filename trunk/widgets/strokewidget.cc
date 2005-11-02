@@ -28,8 +28,7 @@
 #include "gradient.h"
 #include "reslib.h"
 #include "flagbuttongroup.h"
-#include "colorbutton.h"
-#include "strokebutton.h"
+#include "resourcebutton.h"
 
 #include <QLayout>
 #include <QRadioButton>
@@ -40,8 +39,8 @@
 StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         : QGroupBox( title, parent )
 {        
-        colorButton_ = new ColorButton( Qt::gray, this );
-        gradientButton_ = new StrokeButton( Stroke(), GradLib::instance().keys(), this );
+        colorButton_ = new ResourceButton<QColor>( Qt::transparent, this );
+        gradientButton_ = new ResourceButton<Gradient>( Gradient(), this );
 
         QRadioButton* nostrokeRB = new QRadioButton( tr("None"), this );
         QRadioButton* colorRB    = new QRadioButton( tr("Color"), this );
@@ -66,9 +65,8 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         connect( colorRB,    SIGNAL( toggled(bool) ), colorButton_,    SLOT( setEnabled(bool) ) );
         connect( gradientRB, SIGNAL( toggled(bool) ), gradientButton_, SLOT( setEnabled(bool) ) );
 
-        connect( colorButton_, SIGNAL( colorChanged(QColor) ), this, SLOT( setColor() ) );
-        connect( gradientButton_, SIGNAL(strokeChanged(const ResourceKey&)),
-                 this, SLOT(setGradient()) );
+        connect( colorButton_, SIGNAL( resourceChanged() ), this, SLOT( setColor() ) );
+        connect( gradientButton_, SIGNAL(resourceChanged()), this, SLOT(setGradient()) );
         connect( strokeType_, SIGNAL( stateChanged(int) ), this, SLOT( changeType(int) ) );
 }
 
@@ -81,9 +79,9 @@ void StrokeWidget::setStroke( Stroke* stroke )
 
         switch( stroke->type() ) {
             case Stroke::sColor:
-                    colorButton_->setColor( stroke->color() ); break;
+                    colorButton_->setResource( stroke->color() ); break;
             case Stroke::sGradient:
-                    gradientButton_->setStroke( *stroke ); break;
+                    gradientButton_->setResource( stroke->gradient() ); break;
             default:
                     break;
         }
@@ -95,9 +93,11 @@ void StrokeWidget::changeType( int type )
             case Stroke::sNone:
                     stroke_->setNone(); break;
             case Stroke::sColor:
-                    stroke_->setColor( colorButton_->getColor() ); break;
+                    stroke_->setColor( colorButton_->getResource() ); break;
             case Stroke::sGradient:
-                    *stroke_ = gradientButton_->getStroke();
+//                    Gradient gr = gradientButton_->getResource();
+//                    if ( gr.type() != Gradient::None )
+//                            stroke_->setGradient( gradientButton_->getResource() );
             default:
                     break;
         }
@@ -107,13 +107,12 @@ void StrokeWidget::changeType( int type )
 
 void StrokeWidget::setColor()
 {
-        stroke_->setColor( colorButton_->getColor() );
+        stroke_->setColor( colorButton_->getResource() );
         emit strokeChanged();
 }
 
 void StrokeWidget::setGradient()
 {
-        *stroke_ = gradientButton_->getStroke();
-        qDebug() << stroke_->key().keyString();
+        *stroke_ = Stroke( gradientButton_->key(), gradientButton_->getResource() );
         emit strokeChanged();
 }

@@ -73,5 +73,7 @@ private:
         Dashes dashes_;
 };
 
+int qHash( const Dashes& dashes );
+
 #endif
 

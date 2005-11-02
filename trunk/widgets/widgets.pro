@@ -11,10 +11,9 @@ include(../cutefig_base.pri)
 
 RESOURCES += widgets.qrc
 
-HEADERS = colorbutton.h \
-          gradientbutton.h \
-          strokebutton.h \
-          strokeiconengines.h \
+HEADERS = resourcebutton.h \
+          colorbutton.h \
+          resourceiconengine.h \
           mouseeventhandler.h \
           gradientwidget.h \
           strokedemo.h \
@@ -23,20 +22,18 @@ HEADERS = colorbutton.h \
           strokewidget.h \
           penwidget.h \
           errorreporter.h \
-          percentvalidatior.h \
+          percentvalidator.h \
           zoomcombobox.h \
           actionpushbutton.h \
           editdialog.h \
           colordialog.h \
-          gradientdialog.h \
-          strokemodel.h \
-          strokedialog.h \ 
+          resourcedialog.h \
+          gradienteditor.h \
+          resourcemodel.h \
+          reslibeditor.h
 
 
-SOURCES = colorbutton.cc \
-          gradientbutton.cc \
-          strokebutton.cc \
-          strokeiconengines.cc \
+SOURCES = resourceiconengine.cc \
           mouseeventhandler.cc \
           gradientwidget.cc \
           strokedemo.cc \
@@ -45,11 +42,10 @@ SOURCES = colorbutton.cc \
           strokewidget.cc \
           penwidget.cc \
           errorreporter.cc \
-          percentvalidatior.cc \
+          percentvalidator.cc \
           zoomcombobox.cc \
           actionpushbutton.cc \
           editdialog.cc \
           colordialog.cc \
-          gradientdialog.cc \
-          strokemodel.cc \
-          strokedialog.cc 
+          gradienteditor.cc \
+          reslibeditor.cc

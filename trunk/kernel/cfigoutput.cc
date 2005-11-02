@@ -171,7 +171,7 @@ void CfigOutput::outputDashes()
 
 QTextStream& operator<< ( QTextStream& ts, const Gradient& grad ) 
 {
-        const QGradientStops& stops = grad.c_colorStops();
+        const QGradientStops& stops = grad.colorStops();
         
         if ( grad.type() == Gradient::Linear ) 
                 ts << "linear ";

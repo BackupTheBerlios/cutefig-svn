@@ -22,15 +22,17 @@
 **
 ******************************************************************************/
 
-#include "strokeiconengines.h"
-#include "gradient.h"
+#include "resourceiconengine.h"
 #include "stroke.h"
+#include "gradient.h"
+#include "resource.h"
 
 #include <QPainter>
 
 #include <QDebug>
 
-void AbstractStrokeIconEngine::paint( QPainter* p, const QRect& r, QIcon::Mode mode, QIcon::State )
+void AbstractResourceIconEngine::paint( QPainter* p, const QRect& r,
+                                        QIcon::Mode mode, QIcon::State )
 {
         int w = r.width();
         int h = r.height();
@@ -56,17 +58,19 @@ void AbstractStrokeIconEngine::paint( QPainter* p, const QRect& r, QIcon::Mode m
                 paintForeground( p, r );
 }
 
-void ColorIconEngine::paintForeground( QPainter* p, const QRect& r )
+template<> void ResourceIconEngine<QColor>::paintForeground( QPainter* p, const QRect& r )
 {
-        p->fillRect( r, color_ );
+        p->fillRect( r, resource_ );
 }
 
-void GradientIconEngine::paintForeground( QPainter* p, const QRect& r )
+template<> void ResourceIconEngine<Gradient>::paintForeground( QPainter* p, const QRect& r )
 {
-        p->fillRect( r, *gradient_.toQGradient( r ) );
+        QGradient* qg = resource_.toQGradient( r );
+        if ( qg )
+                p->fillRect( r, *qg );
 }
 
-void StrokeIconEngine::paintForeground( QPainter* p, const QRect& r )
-{        
-        p->fillRect( r, stroke_.brush( r ) );
+template<> void ResourceIconEngine<Stroke>::paintForeground( QPainter* p, const QRect& r )
+{
+        p->fillRect( r, resource_.brush( r ) );
 }

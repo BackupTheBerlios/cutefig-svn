@@ -31,13 +31,18 @@
 #include "typedefs.h"
 #include "resourcekey.h"
 
+template<typename Resource> class ResLib;
+#include "strokelib.h"
+
 class ResLibInit;
 
 template<class Resource> class ResLib
 {
 public:
         friend class ResLibInit;
-        friend class ResLib<Stroke>;
+        friend void ResLib<Stroke>::insertBuiltIn( const ResourceKey&, const Stroke& );
+//        friend class ResLib<Stroke>;
+        
         
         static ResLib<Resource>& instance()
         {
@@ -51,6 +56,12 @@ public:
                         return false;
                 
                 map_[key] = data;
+
+                int hashsum = qHash( data );
+                
+                if ( hashsum )
+                        hashSums_[key] = hashsum;
+                
                 keys_ << key;
                         
                 return true;
@@ -63,21 +74,57 @@ public:
                         return false;
 
                 keys_.removeAll( key );
+                hashSums_.remove( key );
                 return map_.remove( key );
         }
         
         const Resource operator[]( const ResourceKey& key ) const { return map_[key]; }
+        Resource& operator[]( const ResourceKey& key ) { return map_[key]; }
         const ResourceKey key( const Resource& data ) const { return map_[data]; }
         bool contains( const ResourceKey& key ) const { return map_.contains( key ); }
 
         const ResourceKeyList& keys() const { return keys_; }
 
+        int hashSum( const ResourceKey& key, bool* found = 0 ) const
+        {
+                bool f = false;
+                int result = 0;
+                
+                if ( map_.contains( key ) ) {
+                        if ( hashSums_.contains( key ) )
+                                result = hashSums_[key];
+                        f = true;
+                }
+
+                if ( found )
+                        *found = f;
+
+                return result;
+        }
+
+        int recalcHashSum( const ResourceKey& key, bool* found = 0 ) const
+        {
+                bool f = false;
+                int newsum = 0;
+                
+                if ( map_.contains( key ) ) {
+                        newsum = qHash( map_[key] );
+                        f = true;
+                }
+
+                if ( found )
+                        *found = f;
+
+                return newsum;
+        }
+        
+        
 //        QList<Resource> resources() const { return map_.values(); }
         
 private:
         ResLib<Resource>() : map_(), keys_() {};
         ResLib<Resource>( const ResLib<Resource>& ) {}
-        
+
         void insertBuiltIn( const ResourceKey& key, const Resource& data )
         {
                 map_[key] = data;
@@ -85,11 +132,11 @@ private:
         }
         
         QMap<ResourceKey, Resource> map_;
+        QHash<ResourceKey, int> hashSums_;
+        
         ResourceKeyList keys_;
         
 };
 
-class Stroke;
-template<> class ResLib<Stroke>;
 
 #endif

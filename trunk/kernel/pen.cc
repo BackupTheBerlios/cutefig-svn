@@ -94,3 +94,14 @@ void Pen::setupPainterPath( QPainterPath& strokePath, const QPainterPath& path )
         stroker.setDashPattern( dashes_ );
         strokePath = stroker.createStroke( path );
 }
+
+
+int qHash( const Dashes& dashes )
+{
+        QByteArray data;
+        QDataStream ds( &data, QIODevice::WriteOnly );
+        
+        ds << dashes;
+
+        return qHash( data );
+}

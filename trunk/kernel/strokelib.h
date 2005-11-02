@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2004 Johannes Mueller, johmue@users.sourceforge.net
+**  Copyright (C) 2004 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -32,10 +32,11 @@
 
 #include <QColor>
 
-// template<> class ResLib<QColor> 
-// {
-//         friend class ResLib<Stroke>;
-// };
+
+inline int qHash( const QColor& ) 
+{
+        return 0;
+}
 
 
 template<> class ResLib<Stroke> 
@@ -43,57 +44,14 @@ template<> class ResLib<Stroke>
 public:
         friend class ResLibInit;
 
-        static ResLib<Stroke>& instance()
-        {
-                static ResLib<Stroke> inst;
-                return inst;
-        };
+        static ResLib<Stroke>& instance();
         
-        bool insert( const ResourceKey& key, const Stroke& stroke )
-        {
-                if ( key.isBuiltIn() )
-                        return false;
-
-                bool success = false;
-                
-                switch ( stroke.type() ) {
-                    case Stroke::sColor:
-                            success = colorLib.insert( key, stroke.color() ); break;
-                    case Stroke::sGradient:
-                            success = gradLib.insert( key, stroke.gradient() ); break;
-                    default: break;
-                }
-
-                if ( success )
-                        keys_ << key;
-
-                return success;
-        }
-
-        bool remove( const ResourceKey& key )
-        {
-                if ( key.isBuiltIn() ) 
-                        return false;
-
-                bool success = colorLib.remove( key ) || gradLib.remove( key ); 
-
-                if ( success )
-                        keys_.removeAll( key );
-
-                return success;
-        }
         
-        const Stroke operator[]( const ResourceKey& key ) const
-        {
-                if ( colorLib.contains( key ) )
-                        return Stroke( key, colorLib[key] );
-                if ( gradLib.contains( key ) )
-                        return Stroke( key, gradLib[key] );
-
-                return Stroke();
-        }
+        bool insert( const ResourceKey& key, const Stroke& stroke );
+        bool remove( const ResourceKey& key );
         
-//        const ResourceKey key( const Resource& data ) const { return map_[data]; }
+        const Stroke operator[]( const ResourceKey& key ) const;
+        
         bool contains( const ResourceKey& key ) const
         {
                 return keys_.contains( key );
@@ -107,25 +65,14 @@ private:
         ResLib<Stroke>() : keys_() {}
         ResLib<Stroke>( const ResLib<Stroke>& ) {}
         
-        void insertBuiltIn( const ResourceKey& key, const Stroke& data )
-        {
-                switch ( data.type() ) {
-                    case Stroke::sColor:
-                            colorLib.insertBuiltIn( key, data.color() ); break;
-                    case Stroke::sGradient:
-                            gradLib.insertBuiltIn( key, data.gradient() ); break;
-                    default: break;
-                }
-
-                keys_ << key;
-       }
+        void insertBuiltIn( const ResourceKey& key, const Stroke& data );
         
-//        QMap<ResourceKey, Resource> map_;
         ResourceKeyList keys_;
         
         static ColorLib& colorLib;
         static GradLib& gradLib;
-};
 
+        template<typename Resource> friend class ResLib;
+};
 
 #endif

@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2004 Johannes Mueller, johmue@users.sourceforge.net
+**  Copyright (C) 2004 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -28,7 +28,7 @@
 #include "actionpushbutton.h"
 #include "strokedemo.h"
 #include "colordialog.h"
-#include "gradientdialog.h"
+#include "resourcedialog.h"
 
 #include <QAction>
 #include <QLayout>
@@ -164,7 +164,7 @@ void StrokeDialog::editStroke()
             }
             case Stroke::sGradient: 
             {
-                    Gradient g = GradientDialog::getGradient( stroke.gradient(), &ok );
+                    Gradient g = ResourceDialog<Gradient>::editData( stroke.gradient(), &ok );
                     if ( ok ) 
                             stroke.setGradient( g );
                     break;
