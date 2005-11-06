@@ -43,6 +43,8 @@
  *
  *  \section desing_sec Design issues
  *
+ *  \ref resource_system
+ *  
  *  \ref action_system
  *  \subsection mvc_sec Model-View-Controler
  *

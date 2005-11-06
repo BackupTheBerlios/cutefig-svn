@@ -85,11 +85,11 @@ private:
         
         DrawObject *createObject( QString name );
         DrawObject *parseGenericData( uint &npoints, QPolygonF*& pa );
-        QPointF parsePoint();
 
-        void pushDashes();
-        void pushColor();
-        void pushGradient();
+        QPointF parsePoint();
+        void parseResource();
+        void parseStroke( Stroke& stroke );
+        void parsePen( Pen& pen );
         
         ResourceKeyList dashList_;
         
@@ -100,7 +100,8 @@ private:
         QPen setUpPen( int w, int s, int cs, int js, QColor c );
         void parseError( QString s, ErrorSeverity sev = Warning );
 
-        static const QString unknownItemType;        
+        static const QString unknownItemType;
+        static const QString unknownResourceType;
         static const QString unknownObject;
         static const QString invalidStandardLine;
         static const QString invalidObjectData;

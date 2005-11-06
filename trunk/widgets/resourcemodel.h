@@ -107,20 +107,13 @@ bool ResourceModel<Resource>::setData( const QModelIndex& index, const QVariant&
 {
         ResourceKey newKey( value.toString(), ResourceKey::InLib );
 
-//        qDebug() << "setData()" << newKey.keyString();
         if ( resourceLib_.contains( newKey ) )
                 return false;
 
-//        qDebug() << "still here";
         int i = index.row();
         
         ResourceKey oldKey = keyList_.at( i );
         Resource resource = resourceLib_[oldKey];
-        
-//         if ( !resourceLib_.insert( newKey, resource ) )
-//                 qDebug() << "Insert failed" << newKey.keyString();
-//         if ( !resourceLib_.remove( oldKey ) )
-//                 qDebug() << "Remove failed" << oldKey.keyString();
 
         return true;
 }
@@ -136,7 +129,6 @@ bool ResourceModel<Resource>::insertRows( int position, int rows, const QModelIn
 template<typename Resource>
 bool ResourceModel<Resource>::removeRows( int position, int rows, const QModelIndex& parent )
 {
-//        qDebug() << "removeRows" << position;
         beginRemoveRows( parent, position, position+rows-1 );
         endRemoveRows();
         return true;

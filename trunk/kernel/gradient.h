@@ -33,13 +33,13 @@
 class GradientHandler;
 class Gradient;
 
-int qHash( const Gradient& grad );
+unsigned int qHash( const Gradient& grad );
         
 class Gradient
 {
 public:
         friend class GradientHandler;
-        friend int qHash( const Gradient& grad );
+        friend unsigned int qHash( const Gradient& grad );
         
         enum Type { None=0, Linear, Radial };
 
@@ -78,6 +78,8 @@ private:
         QGradientStops colorStops_;
         qreal radius_;
 };
+
+unsigned int qHash( const Gradient& grad );
 
 Q_DECLARE_METATYPE(Gradient);
 

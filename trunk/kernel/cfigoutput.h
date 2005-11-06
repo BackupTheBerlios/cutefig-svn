@@ -50,8 +50,9 @@ public:
 private:
         void outputGenericData( QString s );
         void outputPoints();
-        void outputDashes();
-        void outputStrokes();
+        void outputResources();
+//         void outputDashes();
+//         void outputStrokes();
 
         static const char* objectString;
 

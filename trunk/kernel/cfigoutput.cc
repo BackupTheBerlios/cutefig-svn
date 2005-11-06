@@ -25,9 +25,8 @@
 
 #include "cfigoutput.h"
 #include "allobjects.h"
-#include "pen.h"
-#include "strokelib.h"
-#include "gradient.h"
+#include "resourceio.h"
+#include "streamops.h"
 
 #include <QPolygonF>
 #include <QTextStream>
@@ -74,38 +73,13 @@ void CfigOutput::outputCompound( Compound* cd )
 
 void CfigOutput::processOutput()
 {
-        outputDashes();
-        outputStrokes();
+        outputResources();
         figure_.outputObjects( this );
 }
 
-void put_colorPart( QTextStream& ts, int v )
-{
-        int e = v & 0x0F;
-        e += (e>9) ? 'A'-10 : '0';
-        v = v >> 4;
-        v += (v>9) ? 'A'-10 : '0';
-        
-        ts << (char)v << (char)e;
-}
-
-QTextStream& operator<< ( QTextStream& ts, const QColor& c )
-{
-        ts << '#';
-        
-        put_colorPart( ts, c.red() );
-        put_colorPart( ts, c.green() );
-        put_colorPart( ts, c.blue() );
-        
-        if ( c.alpha() != 0xFF )
-                put_colorPart( ts, c.alpha() );
-        
-        return ts;
-}
 
 QTextStream& operator<< ( QTextStream& ts, const ResourceKey& key )
 {
-        qDebug() << key.keyString() << "valid" << key.isValid();
         if ( !key.isValid() ) {
                 ts << '%';
                 return ts;
@@ -155,68 +129,13 @@ void CfigOutput::outputPoints()
                 fileStream_ << "point " << p.x() << ' ' << p.y() << "\n";
 }
 
-void CfigOutput::outputDashes()
+void CfigOutput::outputResources()
 {
-        DashesLib& dl = DashesLib::instance();
+        ResourceSet rs = figure_.usedResources();
 
-        foreach ( ResourceKey key, figure_.dashList() ) {
-                if ( !key.isBuiltIn() ) {
-                        fileStream_ << "dashes " << key.keyString();
-                        foreach ( double d, dl[key] )
-                                fileStream_ << ' ' << d;
-                        fileStream_ << "\n";
-                }
-        }
-}
-
-QTextStream& operator<< ( QTextStream& ts, const Gradient& grad ) 
-{
-        const QGradientStops& stops = grad.colorStops();
-        
-        if ( grad.type() == Gradient::Linear ) 
-                ts << "linear ";
-        else 
-                ts << "radial ";
-
-        ts << stops.first().second << ' ' << stops.last().second << ' ';
-
-        ts << grad.startPoint().x() << ' ' << grad.startPoint().y()  << ' '
-           << grad.finalPoint().x() << ' ' << grad.finalPoint().y();
-        if ( grad.type() == Gradient::Radial )
-                ts << grad.radius();
-
-        ts << "\n";
-
-        for ( int i = 1; i < stops.size()-1; i++ )
-                ts << "gradstop " << stops[i].first << ' ' << stops[i].second << "\n";
-
-        ts << "gradend\n";
-
-        return ts;
-}
-
-void CfigOutput::outputStrokes()
-{
-        StrokeLib& sl = StrokeLib::instance();
-
-        foreach ( ResourceKey key, figure_.strokeList() ) {
-                
-                Stroke stroke = sl[key];
-                switch ( strokeType( stroke ) ) {
-                    case Stroke::sColor: 
-                    {
-                            const QColor& c = strokeColor( stroke );
-                            fileStream_ << "color " << key.keyString() << ' ' << c << "\n";
-                            break;
-                    }
-                    case Stroke::sGradient: 
-                    {
-                            const Gradient& grad = strokeGradient( stroke );
-                            fileStream_ << "gradient " << key.keyString() << ' ' << grad;
-                            break;
-                    }
-                    default:
-                            break;
-                }
+        for ( ResourceSet::const_iterator it = rs.begin() ; it != rs.end() ; ++it ) {
+                ResourceIO* rIO = ResourceIOFactory::getResourceIO( it.key() );
+                foreach ( const ResourceKey& key, it.value() )
+                        rIO->outputResource( key, fileStream_ );
         }
 }

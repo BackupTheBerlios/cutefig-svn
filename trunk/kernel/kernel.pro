@@ -23,6 +23,8 @@ HEADERS += fig.h \
            reslib.h \
            strokelib.h \
            reslibinit.h \
+           resourceio.h \
+           streamops.h \
            parser.h \
            cfigoutput.h \
            outputbackend.h \
@@ -40,6 +42,9 @@ SOURCES += figure.cc \
            gradient.cc \
            strokelib.cc \
            reslibinit.cc \
+           resourceio.cc \
+           stdresio.cc \
+           streamops.cc \
            parser.cc \
            cfigoutput.cc \
 #           xfigoutput.cc \

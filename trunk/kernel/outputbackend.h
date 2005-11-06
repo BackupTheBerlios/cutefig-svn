@@ -44,7 +44,8 @@ class OutputBackend
 public:
         OutputBackend( QTextStream& ts, const Figure& f ) 
                 : figure_( f ),
-                  fileStream_( ts ) {}
+                  fileStream_( ts ),
+                  errorReport_() {}
         virtual ~OutputBackend() {}
 
         virtual void outputEllipse( Ellipse* el ) = 0;
@@ -62,10 +63,9 @@ protected:
         QColor strokeColor( const Stroke& s ) { return s.data_.value<QColor>(); }
         Gradient strokeGradient( const Stroke& s ) { return s.data_.value<Gradient>(); }
         
-        QStringList errorReport_;
         const Figure& figure_;
         QTextStream& fileStream_;
-        
+        QStringList errorReport_;        
 };
 
 #endif

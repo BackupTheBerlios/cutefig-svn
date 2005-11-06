@@ -1,11 +1,11 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  $Id$
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
+**  Copyright (C) 2004 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -22,35 +22,19 @@
 **
 ******************************************************************************/
 
-#ifndef typedefs_h
-#define typedefs_h
+#include "resourceio.h"
 
-/** Some type definitions used by several classes.
- */
 
-template<class T> class QList;
-template<class T> class QVector;
-template<class Key, class Value> class QHash;
-class QString;
+ResourceIO* ResourceIOFactory::getResourceIO( const QString& keyWord )
+{
+        ResourceIOFactory* f = rIOFHash_[keyWord];
 
-class DrawObject;
-class Stroke;
-class Gradient;
-class QColor;
+        if ( !f )
+                return 0;
+        
+        ResourceIO* rio = f->newResourceIO();
+        rio->keyWord_ = keyWord;
+        return rio;
+}
 
-typedef QList<DrawObject*> ObjectList;
 
-template<class Resource> class ResLib;
-
-typedef QVector<double> Dashes;
-typedef ResLib<Dashes> DashesLib;
-
-typedef ResLib<Stroke> StrokeLib;
-typedef ResLib<Gradient> GradLib;
-typedef ResLib<QColor> ColorLib;
-
-class ResourceKey;
-typedef QList<ResourceKey> ResourceKeyList;
-typedef QHash<QString,ResourceKeyList> ResourceSet;
-
-#endif

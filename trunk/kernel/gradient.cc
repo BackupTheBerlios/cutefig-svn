@@ -112,7 +112,7 @@ QGradient* Gradient::toQGradient( const QRectF& rect ) const
         return gr;
 }
 
-int qHash( const Gradient& g )
+unsigned int qHash( const Gradient& g )
 {
         QByteArray data;
         QDataStream ds( &data, QIODevice::WriteOnly );
@@ -167,3 +167,4 @@ QDebug operator<<(QDebug dbg, const Gradient& g)
 
         return dbg.space();
 }
+

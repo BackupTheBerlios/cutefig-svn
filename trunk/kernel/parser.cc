@@ -38,6 +38,8 @@
 #include "reslib.h"
 #include "strokelib.h"
 #include "gradient.h"
+#include "resourceio.h"
+#include "streamops.h"
 
 #include <QTextStream>
 #include <QColor>
@@ -45,145 +47,6 @@
 #include <sstream>
 #include <cctype>
 #include <QDebug>
-
-/** Puts the next word of the a std::istream into a QString. 
- *
- */
-std::istream &operator>> ( std::istream &is, QString &_s ) 
-{
-        std::string s;
-        is >> s;
-        _s = QString::fromUtf8( s.c_str() );
-        
-        return is;
-}
-
-int get_colorByte( std::istream& is )
-{
-         int v = toupper(is.get()) - '0';
-         if ( v > 9 )
-                 v -= 7;
-         if ( v < 0 || v > 15 )
-                 is.setstate( is.rdstate() | std::istream::failbit );
-         return v;
-}
-
-int get_colorPart( std::istream& is )
-{
-        int v = get_colorByte( is );
-        v = v << 4;
-        v |= get_colorByte( is );
-        return v;
-}
-        
-
-/** Tries to interpret the next word of an std::istream as a
- * QColor. On failure the failbit of the std::istream is set to true.
- */
-std::istream &operator>> ( std::istream &is, QColor &color )
-{
-        char c;
-        do 
-                c = is.get();
-        while( isspace( c ) );
-        
-        if ( c != '#' ) {
-                is.setstate( is.rdstate() | std::istream::failbit );
-                return is;
-        }
-        
-        color.setRed( get_colorPart( is ) );
-        color.setGreen( get_colorPart( is ) );
-        color.setBlue( get_colorPart( is ) );
-
-        c = is.peek();
-        if ( !is.eof() ) {
-                if ( !isspace( c ) && c > 0 ) 
-                        color.setAlpha( get_colorPart( is ) );
-        }
-        
-        return is;
-}
-
-std::istream& operator>> ( std::istream &is, ResourceKey& key )
-{
-        char c;
-        do
-                c = is.get();
-        while ( isspace(c) );
-
-        if ( c == '%' ) {
-                key = ResourceKey();
-                return is;
-        }
-                
-        QString keyString;
-        is >> keyString;
-        
-        switch ( c ) {
-            case '&':
-                    key = ResourceKey( keyString, ResourceKey::BuiltIn );
-                    break;
-            case '*':
-                    key = ResourceKey( keyString, ResourceKey::InFig );
-                    break;
-            default:
-                    is.setstate( is.rdstate() | std::istream::failbit );
-                    key = ResourceKey();
-        }
-        
-        return is;
-}                        
-
-std::istream& operator>> ( std::istream &is, Stroke& s )
-{
-        StrokeLib& sl = StrokeLib::instance();
-
-        char c;
-        do 
-                c = is.get();
-        while ( isspace(c) );
-
-        is.putback( c );
-        
-        if ( c == '#' ) {
-                QColor color;
-                if (is >> color)
-                        s = Stroke( color );
-        }
-        else {
-                ResourceKey key;
-                if (is >> key) {
-                        if ( !key.isValid() ) {
-                                s = Stroke();
-                        }
-                        else if ( !sl.contains( key ) ) 
-                                is.setstate( is.rdstate() | std::istream::failbit );
-                        else 
-                                s = sl[key];
-                }
-        }
-                
-        return is;
-}
-
-std::istream& operator>> ( std::istream &is, Pen& pen )
-{
-        double lw;
-        ResourceKey dashKey;
-        int cs, js;
-        
-        is >> lw >> dashKey >> cs >> js;
-
-        if ( !is.fail() ) {
-                pen.setWidth( lw );
-                pen.setCapStyle( (Qt::PenCapStyle) cs );
-                pen.setJoinStyle( (Qt::PenJoinStyle) js );
-                pen.setDashes( dashKey );
-        }
-
-        return is;
-}
 
         
 
@@ -257,20 +120,20 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                         continue;
                 }
 
-                if ( itemType_ == "dashes" ) {
-                        pushDashes();
-                        continue;
-                }
+//                 if ( itemType_ == "dashes" ) {
+//                         pushDashes();
+//                         continue;
+//                 }
 
-                if ( itemType_ == "color" ){
-                        pushColor();
-                        continue;
-                }
+//                 if ( itemType_ == "color" ){
+//                         pushColor();
+//                         continue;
+//                 }
 
-                if ( itemType_ == "gradient" ) {
-                        pushGradient();
-                        continue;
-                }
+//                 if ( itemType_ == "gradient" ) {
+//                         pushGradient();
+//                         continue;
+//                 }
                 
                 if ( itemType_ == "compound_begin" ) {
                         olist.push_back( new Compound( parseLoop( true ), figure_ ) );
@@ -283,6 +146,11 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                         break;
                 }
 
+                if ( itemType_ == "resource" ) {
+                        parseResource();
+                        continue;
+                }
+                
                 parseError( unknownItemType.arg( itemType_ ) );
 
         }
@@ -293,107 +161,60 @@ ObjectList Parser::parseLoop( bool parsingCompound )
         return olist;
 }
 
-void Parser::pushDashes()
+
+void Parser::parseResource()
 {
-        QString keyString;
-        stream_ >> keyString;
-        
-        ResourceKey key( keyString, ResourceKey::InFig );
+        QString keyWord;
+        stream_ >> keyWord;
 
-        DashesLib& dl = DashesLib::instance();
-
-        if ( dl.contains( key ) ) {
-                parseError( "Message Missing" );
-                return;
-        }
+        ResourceIO* resIO = ResourceIOFactory::getResourceIO( keyWord );
         
-        Dashes dsh = parseDashes( stream_ );        
-        if ( dsh.size() < 2 ) {
-                parseError( invalidDashLine );
+        if ( !resIO ) {
+                parseError( unknownResourceType.arg( keyWord ) );
                 return;
         }
 
-        dl.insert( key, dsh );
-        dashList_ << key;
-}
+        QString rks;
+        stream_ >> rks;
 
-void Parser::pushColor()
-{
-        QString keyString;
+        bool rKeyFound;
+        int hashsum = resIO->hashSum( ResourceKey::inLib( rks ), &rKeyFound );
         
-        QColor color;
-
-        stream_ >> keyString >> color;
-
-        ResourceKey key( keyString, ResourceKey::InFig );
-
-        if ( stream_.fail() ) {
-                parseError( invalidColor );
-                return;
-        }
-
-        StrokeLib& sl = StrokeLib::instance();        
-        if ( !sl.contains( key ) ) {
-                Stroke s( color );
-                s.setKey( key );
-                sl.insert( key, s );
-        }        
-}
-
-void Parser::pushGradient()
-{
-        QString keyString;
-        std::string type;
-        QColor startColor, endColor;
-        double x1,x2, y1,y2;
- 
-        Gradient gradient;
-
-        stream_ >> keyString >> type >> startColor >> endColor >> x1 >> y1 >> x2 >> y2;
-
-        ResourceKey key( keyString, ResourceKey::InFig );
         
-        QPointF startPoint( x1,y1 );
-        QPointF endPoint( x2,y2 );
+        bool parseit = true;
         
-        if ( type == "radial" ) {
-                double rad;
-                stream_ >> rad;
-                gradient = Gradient( Gradient::Radial, startPoint, endPoint );
-                gradient.setRadius( rad );
-        }
-        else 
-                gradient = Gradient( Gradient::Linear, startPoint, endPoint );
+        int savedHashsum;
+        stream_ >> savedHashsum;
 
-        if ( stream_.fail() ) {
-                parseError( invalidGradientLine );
-                return;
-        }       
+        if ( hashsum ) {
 
-        gradient.setColorAt( 0.0, startColor );
+                if ( hashsum == savedHashsum ) {
+                        QString s;
+                        do {
+                                *fileStream_ >> s;
+                                fileStream_->readLine();
+                        } while ( s != "resource_end" );
+                        
+                        parseit = false;
+                }
+        }//  else if ( !rKeyFound )
+//                 stream_ >> savedHashsum;
 
-        QColor cl;
-        double pos;
-        
-        readLine();
-        
-        while ( itemType_ != "gradend" ) {
-                stream_ >> pos >> cl;
-                if ( stream_.fail() )
-                        parseError( invalidGradStopLine );
-                else
-                        gradient.setColorAt( pos, cl );
+        if ( parseit ) {
+                if ( resIO->parseResource( QString(), stream_ ) ) {
+                        readLine();
+                        while ( itemType_ != "resource_end" && !resIO->failed() ) {
+                                resIO->parseResource( itemType_, stream_ );
+                                readLine();
+                        } 
+                }
+
+                resIO->postProcessResource();
                 
-                readLine();
-        }
-
-        gradient.setColorAt( 1.0, endColor );
-
-        StrokeLib& sl = StrokeLib::instance();
-        
-        if ( !sl.contains( key ) ) {
-                Stroke stroke( key, gradient );
-                sl.insert( key, stroke );
+                if ( resIO->failed() )
+                        parseError( resIO->errorString() );
+                else
+                        resIO->pushResource( ResourceKey::inFig( rks ) );
         }
 }
 
@@ -442,6 +263,86 @@ QPointF Parser::parsePoint()
         return p;
 }
 
+std::istream& operator>> ( std::istream &is, ResourceKey& key )
+{
+        char c;
+        do
+                c = is.get();
+        while ( isspace(c) );
+
+        if ( c == '%' ) {
+                key = ResourceKey();
+                return is;
+        }
+                
+        QString keyString;
+        is >> keyString;
+        
+        switch ( c ) {
+            case '&':
+                    key = ResourceKey::builtIn( keyString );
+                    break;
+            case '*':
+                    key = ResourceKey::inFig( keyString );
+                    break;
+            default:
+                    is.setstate( is.rdstate() | std::istream::failbit );
+                    key = ResourceKey();
+        }
+        
+        return is;
+}
+
+void Parser::parseStroke( Stroke& s )
+{
+        StrokeLib& sl = StrokeLib::instance();
+
+        char c;
+        do 
+                c = stream_.get();
+        while ( isspace(c) );
+
+        stream_.putback( c );
+        
+        if ( c == '#' ) {
+                QColor color;
+                if (stream_ >> color)
+                        s = Stroke( color );
+        }
+        else {
+                ResourceKey key;
+                if (stream_ >> key) {
+                        if ( !key.isValid() ) {
+                                s = Stroke();
+                        }
+                        else if ( !sl.contains( key ) )
+                                parseError( tr("Unknown stroke key: %1").arg( key.keyString() ) );
+                        else 
+                                s = sl[key];
+                }
+        }
+}
+
+std::istream& operator>>( std::istream& is, Pen& pen )
+{
+        double lw;
+        ResourceKey dashKey;
+        int cs, js;
+        
+        is >> lw >> dashKey >> cs >> js;
+
+        if ( !is.fail() ) {
+                pen.setWidth( lw );
+                pen.setCapStyle( (Qt::PenCapStyle) cs );
+                pen.setJoinStyle( (Qt::PenJoinStyle) js );
+                pen.setDashes( dashKey );
+        }
+
+        return is;
+}
+
+ 
+
 /** Parses the generic line of itemType_ == "object". It creates the
  *  DrawObject and sets its genereic data. Finally it returns a poiter
  *  to that DrawObject. If an error occurs the DrawObject is deleted
@@ -465,9 +366,9 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         if ( !( stream_ >> pen ) ) 
                 parseError( tr("Invalid pen.") );
 
-        if ( !( stream_ >> stroke >> fill ) )
-                parseError( tr("Invalid strokes.") );
-
+        parseStroke( stroke );
+        parseStroke( fill );
+        
         if ( !( stream_ >> depth ) ) {
                 parseError( tr("Invalid depth, assuming 50") );
                 depth = 50;
@@ -576,6 +477,7 @@ Dashes parseDashes( std::istringstream& is )
 }
 
 const QString Parser::unknownItemType = tr("Ignoring unknown item %1");
+const QString Parser::unknownResourceType = tr("Unknown resource type %1");
 const QString Parser::unknownObject = tr("Ignoring unknown object %1");
 const QString Parser::invalidStandardLine = tr("Parsing of standard data failed");
 const QString Parser::invalidObjectData = tr("Parsing of object specific data failed");

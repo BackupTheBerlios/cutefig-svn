@@ -161,7 +161,6 @@ void ReslibEditor<Resource>::deleteResource()
         
         resourceLib.remove( resourceKey_ );
         
-        qDebug() << "Jere";
         if ( ind > keys_.count() )
                 ind--;
         

@@ -31,52 +31,54 @@
 #include "typedefs.h"
 #include "resourcekey.h"
 
+#include <QDebug>
+
+// The following two lines are an ugly hack to make the thing compile
+// using g++-3.3. The will be dropped as soon as Gentoo Linux switches
+// to g++-4.0 :)
 template<typename Resource> class ResLib;
 #include "strokelib.h"
 
 class ResLibInit;
 
+/** \class ResLib<Resource>
+ *
+ * \brief stores resources of the type Resource
+ *
+ * Resouces of a certain type T are accessible by the
+ * ResLib<T>. Speaking of "the" ResLib<T> means that there is only one
+ * instance of a ResLib for every type which is accessible by the
+ * static method ResLib::instance(). The singularity is enforced by
+ * the Singleton design pattern defined in the Book "Design Patterns"
+ * by the GoF.
+ *
+ * For a general overview of the resource system see \ref resource_system.
+ */
+
 template<class Resource> class ResLib
 {
 public:
         friend class ResLibInit;
+        //!< fills the ResLib with the builtin resources on application startup.
         friend void ResLib<Stroke>::insertBuiltIn( const ResourceKey&, const Stroke& );
 //        friend class ResLib<Stroke>;
         
-        
-        static ResLib<Resource>& instance()
+        //! returns the instance of the ResLib.
+        static ResLib<Resource>& instance() 
         {
                 static ResLib<Resource> inst;
                 return inst;
         };
 
-        bool insert( const ResourceKey& key, const Resource& data )
-        {
-                if ( key.isBuiltIn() )
-                        return false;
-                
-                map_[key] = data;
+        //! Inserts data into the ResLib with the key
+        bool insert( const ResourceKey& key, const Resource& data );
+        //! Removes the resource represented by key.
+        bool remove( const ResourceKey& key );
 
-                int hashsum = qHash( data );
-                
-                if ( hashsum )
-                        hashSums_[key] = hashsum;
-                
-                keys_ << key;
-                        
-                return true;
-        }
-
-
-        bool remove( const ResourceKey& key )
-        {
-                if ( key.isBuiltIn() ) 
-                        return false;
-
-                keys_.removeAll( key );
-                hashSums_.remove( key );
-                return map_.remove( key );
-        }
+        //! Returns the hash sum of the resource represented by key.
+        int hashSum( const ResourceKey& key, bool* found = 0 ) const;
+        //! Recalculates the hash sum represented by key.
+        int recalcHashSum( const ResourceKey& key, bool* found = 0 ) const;
         
         const Resource operator[]( const ResourceKey& key ) const { return map_[key]; }
         Resource& operator[]( const ResourceKey& key ) { return map_[key]; }
@@ -85,58 +87,104 @@ public:
 
         const ResourceKeyList& keys() const { return keys_; }
 
-        int hashSum( const ResourceKey& key, bool* found = 0 ) const
-        {
-                bool f = false;
-                int result = 0;
-                
-                if ( map_.contains( key ) ) {
-                        if ( hashSums_.contains( key ) )
-                                result = hashSums_[key];
-                        f = true;
-                }
-
-                if ( found )
-                        *found = f;
-
-                return result;
-        }
-
-        int recalcHashSum( const ResourceKey& key, bool* found = 0 ) const
-        {
-                bool f = false;
-                int newsum = 0;
-                
-                if ( map_.contains( key ) ) {
-                        newsum = qHash( map_[key] );
-                        f = true;
-                }
-
-                if ( found )
-                        *found = f;
-
-                return newsum;
-        }
-        
         
 //        QList<Resource> resources() const { return map_.values(); }
         
 private:
-        ResLib<Resource>() : map_(), keys_() {};
-        ResLib<Resource>( const ResLib<Resource>& ) {}
+        ResLib<Resource>() : map_(), keys_() {}; //!< Private to enforce singularity.
+        ResLib<Resource>( const ResLib<Resource>& ) {} //! just to avoid copying the instance
 
         void insertBuiltIn( const ResourceKey& key, const Resource& data )
+        //!<< inserts a builtIn resource. It is accessible by friends. 
         {
                 map_[key] = data;
                 keys_ << key;
         }
         
-        QMap<ResourceKey, Resource> map_;
-        QHash<ResourceKey, int> hashSums_;
+        QMap<ResourceKey, Resource> map_; //!< resolves a ResourceKey to a Resource
+        QHash<ResourceKey, int> hashSums_; //!< resolves a ResourceKey to the hash sum
         
         ResourceKeyList keys_;
+        //!< The ResourceKeys are stored seperately as the list has to be given out as a reference.
         
 };
 
+
+/** It therefore first checks whether the resource is not
+ *  builtIn. Also the hash sum is calculated.
+ */
+template<typename Resource>
+bool ResLib<Resource>::insert( const ResourceKey& key, const Resource& data )
+{
+        if ( key.isBuiltIn() )
+                return false;
+
+        map_[key] = data;
+
+        int hashsum = qHash( data );
+                
+        if ( hashsum )
+                hashSums_[key] = hashsum;
+                
+        keys_ << key;
+                        
+        return true;
+}
+
+/** It therefore first checks whether the resource is not
+ *  builtIn. 
+ */
+template<typename Resource>
+bool ResLib<Resource>::remove( const ResourceKey& key )
+{
+        if ( key.isBuiltIn() ) 
+                return false;
+
+        keys_.removeAll( key );
+        hashSums_.remove( key );
+        return map_.remove( key );
+}
+
+/** If found is nonnull it is used to tell whether the resource has
+ * been found in the lib or not.
+ */
+template<typename Resource>
+int ResLib<Resource>::hashSum( const ResourceKey& key, bool* found ) const
+{
+        bool f = false;
+        int result = 0;
+                
+        if ( map_.contains( key ) ) {
+                if ( hashSums_.contains( key ) )
+                        result = hashSums_[key];
+                f = true;
+        }
+
+        if ( found )
+                *found = f;
+
+        return result;
+}
+
+/** If found is nonnull it is used to tell whether the resource has
+ * been found in the lib or not.
+ */
+template<typename Resource>
+int ResLib<Resource>::recalcHashSum( const ResourceKey& key, bool* found ) const
+{
+        bool f = false;
+        int newsum = 0;
+                
+        if ( map_.contains( key ) ) {
+                newsum = qHash( map_[key] );
+                f = true;
+        }
+
+        if ( found )
+                *found = f;
+
+        return newsum;
+}
+        
 
 #endif

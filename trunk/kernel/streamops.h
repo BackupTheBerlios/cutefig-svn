@@ -1,11 +1,11 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  $Id$
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
+**  Copyright (C) 2004 Johannes Mueller, joh@users.berlios.de
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
@@ -22,35 +22,22 @@
 **
 ******************************************************************************/
 
-#ifndef typedefs_h
-#define typedefs_h
+#ifndef streamops_h
+#define streamops_h
 
-/** Some type definitions used by several classes.
- */
+#include <istream>
 
-template<class T> class QList;
-template<class T> class QVector;
-template<class Key, class Value> class QHash;
+class QTextStream;
 class QString;
-
-class DrawObject;
-class Stroke;
-class Gradient;
 class QColor;
-
-typedef QList<DrawObject*> ObjectList;
-
-template<class Resource> class ResLib;
-
-typedef QVector<double> Dashes;
-typedef ResLib<Dashes> DashesLib;
-
-typedef ResLib<Stroke> StrokeLib;
-typedef ResLib<Gradient> GradLib;
-typedef ResLib<QColor> ColorLib;
-
 class ResourceKey;
-typedef QList<ResourceKey> ResourceKeyList;
-typedef QHash<QString,ResourceKeyList> ResourceSet;
+class Stroke;
+class Pen;
+
+std::istream& operator>> ( std::istream&, QString& );
+std::istream& operator>> ( std::istream&, QColor& );
+
+QTextStream& operator<< ( QTextStream&, const QColor& ); 
+
 
 #endif

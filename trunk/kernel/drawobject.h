@@ -116,6 +116,8 @@ public:
         QRect selectPointRect( QPoint p ) const 
         { return QRect( p.x()-4, p.y()-4, 8,8 ); }
 
+        const ResourceSet usedResources() const;
+        
         virtual void outputToBackend( OutputBackend* ob ) = 0;
         //!< supposed to pass all the data to the OubputBackend ob.
         /*!< This is to be done by calling ob->output<DerivedClass>(). */
@@ -143,12 +145,13 @@ protected:
         //!< supposed to do all preparations for the drawing.
         /*!< Especially bRect_ and cRect_ are to be set. */
 
-        virtual void doSpecificPreparation() {};
+        virtual void doSpecificPreparation() {}
 
         virtual void getReadyForDraw();
 
         virtual void setupRects();
-        
+
+        virtual void addSpecificResources( ResourceSet& ) const {}
 
         Figure* figure_;
 

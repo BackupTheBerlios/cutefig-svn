@@ -146,3 +146,22 @@ void DrawObject::setPen( const Pen& p )
         pen_ = p;
         setupRects();
 }
+
+const ResourceSet DrawObject::usedResources() const
+{
+        ResourceSet rs;
+
+        QString ts = stroke_.typeString();
+        if ( !ts.isNull() )
+                rs[ts] << stroke_.key();
+
+        ts = fill_.typeString();
+        if ( !ts.isNull() )
+                rs[ts] << fill_.key();
+
+        rs["dashes"] << pen_.dashesKey();
+        
+        addSpecificResources( rs );
+        
+        return rs;
+}

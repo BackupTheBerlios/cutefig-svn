@@ -22,23 +22,6 @@
 **
 ******************************************************************************/
 
-#include <QAction>
-#include <QActionGroup>
-#include <QList>
-#include <QHash>
-
-class QSignalMapper;
-
-class Controler;
-class CuteFig;
-class ActionCollection;
-class CanvasView;
-class InteractiveAction;
-class ZoomComboBox;
-
-typedef QList<ActionCollection*> ActionGroups;
-
-
 /** \page action_system The action system
  *
  * Almost all the user interaction is initiated by actions. An action
@@ -55,6 +38,27 @@ typedef QList<ActionCollection*> ActionGroups;
  * creates the menus for the menubar and toolbars for the main window.
  *
  */
+
+#ifndef actions_h
+#define actions_h
+
+
+#include <QAction>
+#include <QActionGroup>
+#include <QList>
+#include <QHash>
+
+class QSignalMapper;
+
+class Controler;
+class CuteFig;
+class ActionCollection;
+class CanvasView;
+class InteractiveAction;
+class ZoomComboBox;
+
+typedef QList<ActionCollection*> ActionGroups;
+
 /** \class ActionCollection 
  *
  * \brief Actions belonging semantically * together are put into one
@@ -250,3 +254,5 @@ public:
         ~CreateActions() {}
 };
 
+
+#endif

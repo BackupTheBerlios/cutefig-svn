@@ -68,6 +68,11 @@ bool ResLib<Stroke>::remove( const ResourceKey& key )
         return success;
 }
 
+bool ResLib<Stroke>::contains( const ResourceKey& key ) const
+{
+        return colorLib.contains( key ) || gradLib.contains( key );
+}
+
 const Stroke ResLib<Stroke>::operator[]( const ResourceKey& key ) const
 {
         if ( colorLib.contains( key ) )

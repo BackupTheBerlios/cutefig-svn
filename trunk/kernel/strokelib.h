@@ -52,11 +52,8 @@ public:
         
         const Stroke operator[]( const ResourceKey& key ) const;
         
-        bool contains( const ResourceKey& key ) const
-        {
-                return keys_.contains( key );
-        }               
-
+        bool contains( const ResourceKey& key ) const;
+        
         const ResourceKeyList& keys() const { return keys_; }
 
 //        QList<Resource> resources() const { return map_.values(); }

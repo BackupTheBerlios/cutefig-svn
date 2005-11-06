@@ -81,8 +81,10 @@ public:
 //                 dashList_.push_back( key );
 //         }; //!< Adds a dash style to the dashList_.
 
-        const ResourceKeyList dashList() const;
-        const ResourceKeyList strokeList() const;
+        const ResourceSet usedResources() const;
+        
+//         const ResourceKeyList dashList() const;
+//         const ResourceKeyList strokeList() const;
 
         const ObjectList& objects() { return objectList_; }
 

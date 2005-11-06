@@ -213,32 +213,52 @@ QRectF Figure::boundingRect() const
  *  in the drawingList_. This is needed for CFigOutput to know which
  *  Dashes of the DashesLib to export into the cig-file.
  */
-const ResourceKeyList Figure::dashList() const
-{
-        ResourceKeyList rkl;
-        foreach ( DrawObject* o, drawingList_ ) {
-                ResourceKey k = o->pen().dashesKey();
-                if ( k.isToBeSaved() && !rkl.count( k ) )
-                        rkl << k;
-        }
+// const ResourceKeyList Figure::dashList() const
+// {
+//         ResourceKeyList rkl;
+//         foreach ( DrawObject* o, drawingList_ ) {
+//                 ResourceKey k = o->pen().dashesKey();
+//                 if ( k.isToBeSaved() && !rkl.count( k ) )
+//                         rkl << k;
+//         }
         
-        return rkl;
+//         return rkl;
+// }
+
+// const ResourceKeyList Figure::strokeList() const
+// {
+//         ResourceKeyList skl;
+//         ResourceKey key;
+        
+//         foreach ( DrawObject* o, drawingList_ ) {
+//                 key = o->fill().key();
+//                 if ( key.isToBeSaved() && !skl.contains( key ) ) 
+//                         skl << key;
+
+//                 key = o->stroke().key();
+//                 if ( key.isToBeSaved() && !skl.contains( key ) )
+//                         skl << key;
+//         }
+
+//         return skl;
+// }
+
+const ResourceSet Figure::usedResources() const
+{
+        ResourceSet resSet;
+
+        foreach ( DrawObject* o, drawingList_ ) {
+                ResourceSet rs = o->usedResources();
+
+                for ( ResourceSet::const_iterator it = rs.begin(); it != rs.end(); ++it ) {
+                        ResourceKeyList& rkl = resSet[it.key()];
+
+                        foreach ( const ResourceKey& key, it.value() )
+                                if ( key.isToBeSaved() && !rkl.contains( key ) )
+                                        rkl << key;
+                }
+        }
+
+        return resSet;
 }
 
-const ResourceKeyList Figure::strokeList() const
-{
-        ResourceKeyList skl;
-        ResourceKey key;
-        
-        foreach ( DrawObject* o, drawingList_ ) {
-                key = o->fill().key();
-                if ( key.isToBeSaved() && !skl.contains( key ) ) 
-                        skl << key;
-
-                key = o->stroke().key();
-                if ( key.isToBeSaved() && !skl.contains( key ) )
-                        skl << key;
-        }
-
-        return skl;
-}

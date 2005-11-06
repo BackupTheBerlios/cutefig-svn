@@ -170,6 +170,14 @@ const QBrush Stroke::brush( const QPainterPath& path ) const
         return brush( r );
 }
 
+const QString Stroke::typeString() const
+{
+        switch ( type_ ) {
+            case sColor:    return "color";
+            case sGradient: return "gradient";
+                    
+            default: break;
+        }
 
-
-
+        return QString();
+}

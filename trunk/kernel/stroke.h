@@ -74,6 +74,7 @@ public:
         
         operator bool () const { return type_; }
         
+        const QString typeString() const;
         
 private:
         StrokeType type_;
