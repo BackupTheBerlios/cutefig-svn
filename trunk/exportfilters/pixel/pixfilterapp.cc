@@ -24,7 +24,7 @@
 
 #include "pixfilterapp.h"
 #include "figure.h"
-#include "reslibinit.h"
+#include "initialiser.h"
 #include "parser.h"
 #include "fig.h"
 
@@ -216,7 +216,7 @@ int PixfilterApp::exec()
 
         pixout_.setFormat( format_ );
 
-        ResLibInit::init();
+        Initialiser::go();
         
         if ( infileList_.isEmpty() ) {
                 infile_.open( stdin, QIODevice::ReadOnly );

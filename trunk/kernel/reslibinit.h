@@ -32,14 +32,19 @@ template<class Resource> class ResLib;
 class ResLibInit
 {
 public:
-        static void init();
+        static void init() 
+        {
+                static ResLibInit r;
+        }
 
 private:
-        static void initDashes();
-        static void initGradients();
+        ResLibInit();
+        ResLibInit( const ResLibInit& ) {}
+        void initDashes();
+        void initGradients();
         
         template<class Resource>
-        static void insert( ResLib<Resource>& rlib, const QString& key, const Resource& res )
+        void insert( ResLib<Resource>& rlib, const QString& key, const Resource& res )
         {
                 ResourceKey rk( key, ResourceKey::BuiltIn );
                 rlib.insertBuiltIn( rk, res );

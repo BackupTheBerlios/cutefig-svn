@@ -16,15 +16,18 @@ HEADERS += fig.h \
            ellipse.h \
            polyline.h \
            polygon.h \
+           drawobjectio.h \
            pen.h \
            stroke.h \
            gradient.h \
            resourcekey.h \
            reslib.h \
            strokelib.h \
+           initialiser.h \
            reslibinit.h \
-           resourceio.h \
            streamops.h \
+           stdresio.h \
+           resourceio.h \
            parser.h \
            cfigoutput.h \
            outputbackend.h \
@@ -37,10 +40,12 @@ SOURCES += figure.cc \
            ellipse.cc \
            polyline.cc \
            polygon.cc \
+           drawobjectio.cc \
            pen.cc \
            stroke.cc \
            gradient.cc \
            strokelib.cc \
+           initialiser.cc \
            reslibinit.cc \
            resourceio.cc \
            stdresio.cc \

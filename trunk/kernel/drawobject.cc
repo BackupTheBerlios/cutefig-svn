@@ -165,3 +165,4 @@ const ResourceSet DrawObject::usedResources() const
         
         return rs;
 }
+

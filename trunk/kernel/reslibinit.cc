@@ -30,16 +30,12 @@
 #include "strokelib.h"
 #include "gradient.h"
 #include "parser.h"
+#include "stdresio.h"
 
-void ResLibInit::init()
-{
-        static bool called = false;
-        if ( called )
-                return;
-        
+ResLibInit::ResLibInit()
+{        
         initDashes();
         initGradients();
-        called = true;
 }
 
 void ResLibInit::initDashes()

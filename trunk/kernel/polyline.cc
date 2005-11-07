@@ -96,3 +96,5 @@ void Polyline::outputToBackend( OutputBackend* ob )
 {
         ob->outputPolyline( this );
 }
+
+

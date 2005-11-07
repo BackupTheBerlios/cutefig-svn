@@ -56,4 +56,19 @@ protected:
         QPointF *nextPoint_;
 };
 
+
+// Factory
+
+#include "dobjectfactory.h"
+
+class PolylineFactory : public DrawObjectFactory
+{
+public:
+        PolylineFactory() : DrawObjectFactory("polyline") {}
+        virtual DrawObject* parseObject( std::istream&, Figure* fig ) 
+        {
+                return new Polyline( fig );
+        }
+};
+
 #endif

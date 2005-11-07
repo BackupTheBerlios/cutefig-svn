@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -22,21 +22,45 @@
 **
 ******************************************************************************/
 
+#ifndef stdresio_h
+#define stdresio_h
+
 #include "resourceio.h"
+#include "reslib.h"
+#include "typedefs.h"
 
 
-QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
+#include <istream>
 
-ResourceIO* ResourceIOFactory::getResourceIO( const QString& keyWord )
+
+#include <QColor>
+class ColorIOFactory : public ResourceIOFactory 
 {
-        ResourceIOFactory* f = rIOFHash_[keyWord];
-
-        if ( !f )
-                return 0;
-        
-        ResourceIO* rio = f->newResourceIO();
-        rio->keyWord_ = keyWord;
-        return rio;
-}
+public:
+        ColorIOFactory() : ResourceIOFactory("color") {}
+        virtual ResourceIO* newResourceIO() { return new TResourceIO<QColor>(); }
+};
 
 
+
+#include "gradient.h"
+class GradientIOFactory : public ResourceIOFactory 
+{
+public:
+        GradientIOFactory() : ResourceIOFactory("gradient") {}
+        virtual ResourceIO* newResourceIO() { return new TResourceIO<Gradient>(); }
+};
+
+
+
+#include "pen.h"
+#include <QVector>
+class DashesIOFactory : public ResourceIOFactory
+{
+public:
+        DashesIOFactory() : ResourceIOFactory("dashes") {}
+        virtual ResourceIO* newResourceIO() { return new TResourceIO<Dashes>(); }
+};
+
+
+#endif

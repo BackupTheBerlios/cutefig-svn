@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -22,21 +22,19 @@
 **
 ******************************************************************************/
 
-#include "resourceio.h"
+#include "dobjectfactory.h"
 
+QHash<QString, DrawObjectFactory*> DrawObjectFactory::dFHash_;
 
-QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
-
-ResourceIO* ResourceIOFactory::getResourceIO( const QString& keyWord )
+DrawObject* DrawObjectFactory::getDrawObject( const QString& keyWord,
+                                              std::istream& is, Figure* fig )
 {
-        ResourceIOFactory* f = rIOFHash_[keyWord];
+        DrawObjectFactory* f = dFHash_[keyWord];
 
-        if ( !f )
-                return 0;
+        DrawObject* o = 0;
+
+        if ( f )
+                o = f->parseObject( is, fig );
         
-        ResourceIO* rio = f->newResourceIO();
-        rio->keyWord_ = keyWord;
-        return rio;
+        return o;
 }
-
-

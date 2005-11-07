@@ -66,3 +66,6 @@ bool Polygon::pointHitsOutline( const QPointF& p, qreal tolerance ) const
         QRectF r = Geom::centerRect( p, QSizeF( tolerance, tolerance ) );
         return Geom::intersect( QLineF( points_.first(), points_.last() ), r );
 }
+
+
+

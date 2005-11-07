@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -22,21 +22,23 @@
 **
 ******************************************************************************/
 
-#include "resourceio.h"
+#include "initialiser.h"
+#include "allobjects.h"
+#include "reslibinit.h"
+#include "stdresio.h"
 
+#include <QDebug>
 
-QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
-
-ResourceIO* ResourceIOFactory::getResourceIO( const QString& keyWord )
+Initialiser::Initialiser()
 {
-        ResourceIOFactory* f = rIOFHash_[keyWord];
+        qDebug() << "Initialising";
+        ResLibInit::init();
 
-        if ( !f )
-                return 0;
+        static EllipseFactory elf;
+        static PolylineFactory plf;
+        static PolygonFactory pgf;
         
-        ResourceIO* rio = f->newResourceIO();
-        rio->keyWord_ = keyWord;
-        return rio;
+        static ColorIOFactory ciof;
+        static GradientIOFactory giof;
+        static DashesIOFactory diof;
 }
-
-

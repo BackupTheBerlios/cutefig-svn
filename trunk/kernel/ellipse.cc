@@ -184,3 +184,26 @@ void Ellipse::setAngleNew( double a )
 {
         angle_ = a/rad;
 }
+
+
+///
+
+
+DrawObject* EllipseFactory::parseObject( std::istream& is, Figure* fig )
+{
+        int circle, byRadius;
+        double angle;
+
+        is >> circle >> byRadius >> angle;
+        
+        if ( is.fail() )
+                return 0;
+        
+        Ellipse *e = new Ellipse( fig );
+        e->setIsCircle( circle );
+        e->setSpecByRadii( byRadius );
+        e->setAngleNew( angle );
+        
+        return e;
+}
+

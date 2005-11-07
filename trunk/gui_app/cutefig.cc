@@ -33,7 +33,7 @@
 #include "figure.h"
 #include "ruler.h"
 #include "parser.h"
-#include "reslibinit.h"
+#include "initialiser.h"
 //#include "xfigoutput.h"
 
 #include "objectmapper.h"
@@ -57,8 +57,8 @@ CuteFig::CuteFig( QApplication* app )
         setAttribute( Qt::WA_DeleteOnClose );
         setWindowTitle( tr("The CuteFig drawing system") );
 
-        ResLibInit::init();
-
+        Initialiser::go();
+        
         figure_ = new Figure( this );
         controler_ = new Controler( this );
         controler_->setFigure( figure_ );

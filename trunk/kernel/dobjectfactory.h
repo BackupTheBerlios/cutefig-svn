@@ -22,45 +22,54 @@
 **
 ******************************************************************************/
 
-#ifndef polygon_h
-#define polygon_h
+#ifndef dobjectfactory_h
+#define dobjectfactory_h
 
-#include "polyline.h"
+#include <QHash>
+#include <QString>
 
-class Polygon : public Polyline
-{
-        Q_OBJECT
-public:
-        Polygon( Figure * parent =0 );
-        ~Polygon() { };
+#include <istream>
+class DrawObjectIO;
+class DrawObject;
+class Figure;
 
-        Polygon( Polygon * o );
-        virtual DrawObject * copy();
-
-        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
-
-        virtual const QString objectname() { return "polygon"; };
-
-private:
-        virtual void setupPainterPath();
-
-        virtual void outputToBackend( OutputBackend* ob );
-        
-};
-
-// Factory
-
-#include "dobjectfactory.h"
-
-class PolygonFactory : public DrawObjectFactory
+class DrawObjectFactory
 {
 public:
-        PolygonFactory() : DrawObjectFactory("polygon") {}
-        virtual DrawObject* parseObject( std::istream&, Figure* fig ) 
+        static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* fig );
+
+        virtual ~DrawObjectFactory() {}
+
+protected:
+        DrawObjectFactory( const QString& kw )
         {
-                return new Polygon( fig );
+                dFHash_[kw] = this;
         }
+
+        //        virtual DrawObject newDrawObjectIO() = 0;
+        virtual DrawObject* parseObject( std::istream& is, Figure* fig ) = 0;
+        
+private:
+        DrawObjectFactory( const DrawObjectFactory& ) {}
+
+        static QHash<QString, DrawObjectFactory*> dFHash_;
 };
+
+
+class DrawObjectIO
+{
+public:
+        virtual ~DrawObjectIO() {}
+
+        virtual DrawObject* parseDrawObject( std::istream& is, Figure* fig ) = 0;
+
+protected:
+        DrawObjectIO() {}
+private:
+        DrawObjectIO( const DrawObjectIO& ) {}
+};
+
+
 
 
 #endif

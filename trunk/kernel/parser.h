@@ -65,8 +65,8 @@ private:
         QPolygonF getPoints( uint n );
         bool readLine();
 
-        typedef DrawObject* (Parser::*creatorType)();
-        QHash<QString, creatorType> registeredTypes_;
+//         typedef DrawObject* (Parser::*creatorType)();
+//         QHash<QString, creatorType> registeredTypes_;
         
         QTextStream *fileStream_;
         std::istringstream stream_;
@@ -79,11 +79,11 @@ private:
 
         QString objectComment_;
 
-        DrawObject *createEllipse();
-        DrawObject *createPolyline();
-        DrawObject *createPolygon();
+//         DrawObject *createEllipse();
+//         DrawObject *createPolyline();
+//         DrawObject *createPolygon();
         
-        DrawObject *createObject( QString name );
+//        DrawObject *createObject( QString name );
         DrawObject *parseGenericData( uint &npoints, QPolygonF*& pa );
 
         QPointF parsePoint();

@@ -83,7 +83,7 @@ protected:
 private:
         ResourceIOFactory( const ResourceIOFactory& ) {}
         
-        static QHash<QString,ResourceIOFactory*> rIOFHash_;
+        static QHash<QString,ResourceIOFactory*> rIOFHash_;        
 };
 
 /** \class ResourceIO

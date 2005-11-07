@@ -58,11 +58,11 @@ public:
         friend void Figure::takeDrawObjects( const ObjectList& );
         friend class Compound;
 
+        //! supposed to make a deep copy and return a pointer to it.
         virtual DrawObject* copy() = 0;
-        //!< supposed to make a deep copy and return a pointer to it.
-
+        
+        //! supposed to return the name of the object in english.
         virtual const QString objectname() =0;
-        //!< supposed to return the name of the object in english.
 
         virtual uint minPoints() const { return 2; }
         

@@ -22,17 +22,11 @@
 **
 ******************************************************************************/
 
-#include "resourceio.h"
-#include "typedefs.h"
-#include "reslib.h"
+#include "stdresio.h"
 #include "streamops.h"
 #include "gradient.h"
 
-#include <istream>
-
 #include <QDebug>
-
-QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
 
 
 // QColor
@@ -53,14 +47,6 @@ void TResourceIO<QColor>::outputResourceBody( QTextStream& stream)
         stream << resource_ << " ";
 }
 
-class ColorIOFactory : public ResourceIOFactory 
-{
-public:
-        ColorIOFactory() : ResourceIOFactory("color") {}
-        virtual ResourceIO* newResourceIO() { return new TResourceIO<QColor>(); }
-};
-        
-static ColorIOFactory cio;
 
 
 // Gradient
@@ -156,19 +142,8 @@ void TResourceIO<Gradient>::outputResourceBody( QTextStream& ts )
                 ts << "gradstop " << stops[i].first << ' ' << stops[i].second << "\n";
 }
 
-
-class GradientIOFactory : public ResourceIOFactory 
-{
-public:
-        GradientIOFactory() : ResourceIOFactory("gradient") {}
-        virtual ResourceIO* newResourceIO() { return new TResourceIO<Gradient>(); }
-};
         
-static GradientIOFactory gio;
-
-
 // Dashes
-#include "pen.h"
 
 template<>
 bool TResourceIO<Dashes>::parseResource( const QString&, std::istream& is ) 
@@ -188,11 +163,3 @@ void TResourceIO<Dashes>::outputResourceBody( QTextStream& ts )
                 ts << d << ' ';
 }
 
-class DashIOFactory : public ResourceIOFactory
-{
-public:
-        DashIOFactory() : ResourceIOFactory("dashes") {}
-        virtual ResourceIO* newResourceIO() { return new TResourceIO<Dashes>(); }
-};
-
-static DashIOFactory dio;

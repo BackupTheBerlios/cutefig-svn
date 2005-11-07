@@ -82,5 +82,13 @@ private:
         static const double rad = 180/M_PI;
 };
 
+#include "dobjectfactory.h"
+
+class EllipseFactory : public DrawObjectFactory
+{
+public:
+        EllipseFactory() : DrawObjectFactory("ellipse") {}
+        virtual DrawObject* parseObject( std::istream& is, Figure* fig );
+};
 
 #endif

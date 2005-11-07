@@ -33,12 +33,14 @@
  */
  
 #include "parser.h"
-#include "allobjects.h"
 #include "figure.h"
-#include "reslib.h"
+// #include "reslib.h"
 #include "strokelib.h"
-#include "gradient.h"
+// #include "gradient.h"
 #include "resourceio.h"
+#include "dobjectfactory.h"
+#include "drawobject.h"
+#include "compound.h"
 #include "streamops.h"
 
 #include <QTextStream>
@@ -60,9 +62,6 @@ Parser::Parser( QTextStream *ts, Figure *f,
           figure_( f ),
           errorReport_( QString() )
 {
-        registeredTypes_.insert( "ellipse", &Parser::createEllipse );
-        registeredTypes_.insert( "polyline", &Parser::createPolyline );
-        registeredTypes_.insert( "polygon", &Parser::createPolygon );
 }
 
 
@@ -119,21 +118,6 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                         i = 0;
                         continue;
                 }
-
-//                 if ( itemType_ == "dashes" ) {
-//                         pushDashes();
-//                         continue;
-//                 }
-
-//                 if ( itemType_ == "color" ){
-//                         pushColor();
-//                         continue;
-//                 }
-
-//                 if ( itemType_ == "gradient" ) {
-//                         pushGradient();
-//                         continue;
-//                 }
                 
                 if ( itemType_ == "compound_begin" ) {
                         olist.push_back( new Compound( parseLoop( true ), figure_ ) );
@@ -197,8 +181,7 @@ void Parser::parseResource()
                         
                         parseit = false;
                 }
-        }//  else if ( !rKeyFound )
-//                 stream_ >> savedHashsum;
+        }
 
         if ( parseit ) {
                 if ( resIO->parseResource( QString(), stream_ ) ) {
@@ -373,8 +356,8 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
                 parseError( tr("Invalid depth, assuming 50") );
                 depth = 50;
         }
-        
-        DrawObject *o = createObject( obType );
+
+        DrawObject* o = DrawObjectFactory::getDrawObject( obType, stream_, figure_ );
         if ( !o ) {
                 npoints = 0;
                 parseError( invalidObjectData, Discarding );
@@ -399,45 +382,6 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         
         return o;
 }               
-
-DrawObject * Parser::createObject( QString type )
-{
-        creatorType c = registeredTypes_[type];
-        if ( c )
-                return (this->*c)();
-
-        parseError( unknownObject.arg( type ) );
-        return 0;
-}
-
-DrawObject * Parser::createEllipse()
-{
-        int circle, byRadius;
-        float angle;
-
-        stream_ >> circle >> byRadius >> angle;
-        
-        if ( stream_.fail() )
-                return 0;
-        
-        Ellipse *e = new Ellipse( figure_ );
-        e->setIsCircle( circle );
-        e->setSpecByRadii( byRadius );
-        e->setAngleNew( angle );
-        
-        return e;
-}
-
-DrawObject * Parser::createPolyline()
-{
-        return new Polyline( figure_ );
-}
-
-DrawObject * Parser::createPolygon()
-{
-        return new Polygon( figure_ );
-}
-
 
 void Parser::parseError( QString s, ErrorSeverity sev )
 {
