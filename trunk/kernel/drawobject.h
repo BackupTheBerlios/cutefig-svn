@@ -116,7 +116,7 @@ public:
         QRect selectPointRect( QPoint p ) const 
         { return QRect( p.x()-4, p.y()-4, 8,8 ); }
 
-        const ResourceSet usedResources() const;
+        virtual const ResourceSet usedResources() const;
         
         virtual void outputToBackend( OutputBackend* ob ) = 0;
         //!< supposed to pass all the data to the OubputBackend ob.

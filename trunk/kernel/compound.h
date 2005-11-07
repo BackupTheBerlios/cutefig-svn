@@ -61,6 +61,7 @@ public:
         virtual void move( const QPointF& d );
         virtual void mapMatrix( const QMatrix& m );
 
+        virtual const ResourceSet usedResources() const;
         virtual void outputToBackend( OutputBackend* ob );
 
         const ObjectList& childObjects() { return childObjects_; }

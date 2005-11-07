@@ -115,10 +115,24 @@ void Compound::doSpecificPreparation()
 
 void Compound::mapMatrix( const QMatrix& m )
 {
-        foreach ( DrawObject* o, childObjects_ ) {
+        foreach ( DrawObject* o, childObjects_ ) 
                 o->mapMatrix( m );
-        }
+        
         doSpecificPreparation();
+}
+
+const ResourceSet Compound::usedResources() const
+{
+        ResourceSet rs;
+        
+        foreach ( DrawObject* o, childObjects_ ) {
+                ResourceSet lrs = o->usedResources();
+                
+                for ( ResourceSet::const_iterator it = lrs.begin(); it != lrs.end(); ++it )
+                        rs[it.key()] << it.value();
+        }
+        
+        return rs;
 }
 
 QPointF Compound::center() const
