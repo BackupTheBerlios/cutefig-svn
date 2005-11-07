@@ -16,7 +16,7 @@ HEADERS += fig.h \
            ellipse.h \
            polyline.h \
            polygon.h \
-           drawobjectio.h \
+           dobjectfactory.h \
            pen.h \
            stroke.h \
            gradient.h \
@@ -40,7 +40,7 @@ SOURCES += figure.cc \
            ellipse.cc \
            polyline.cc \
            polygon.cc \
-           drawobjectio.cc \
+           dobjectfactory.cc \
            pen.cc \
            stroke.cc \
            gradient.cc \
