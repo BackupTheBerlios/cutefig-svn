@@ -5,7 +5,7 @@
 **
 **  This file is part of CuteFig
 **
-**  Copyright (C) 2004 Johannes Mueller, johmue@users.sourceforge.net
+**  Copyright (C) 2005 Johannes Mueller, johmue@users.sourceforge.net
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 2
