@@ -25,18 +25,17 @@
 #ifndef resourceio_h
 #define resourceio_h
 
+#include "resourcekey.h"
 
 #include <QString>
 #include <QHash>
+#include <QTextStream>
 
 #include <sstream>
 
-class ResourceKey;
 class ResourceIO;
 
 template<typename Resource> class ResLib;
-
-class QTextStream;
 
 /** \class ResourceIOFactory
  * \brief Used to lookup a suitable ResourceIO for a given Resource.
