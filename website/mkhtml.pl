@@ -2,7 +2,7 @@
 
 #############################################################################
 ##
-##  This file is part of CuteFig project
+##  This file is part of the CuteFig project
 ##
 ##  Copyright (C) 2005 Johannes Mueller, joh@users.berlios.de
 ##
@@ -35,7 +35,6 @@ close MENU;
 select STDERR;
 $currenttmpl = $tmplfile;
 $currenttmpl =~ s/\.tmpl//;
-print "$currenttmpl\n";
 my @menu = parsemenufile( 1, 0 );
 pop @menu;
 
@@ -45,10 +44,16 @@ my $template = HTML::Template->new( filename => $layoutfile );
 $template->param(menuloop => \@menu );
 
 my $content;
+my $versionstring;
+
 while (<>) {
 	next if /^#/;
 	if ( /^\@([a-z]*): (.*)/ ) {
-		$template->param( $1 => $2 );
+		if ( $1 eq "version" ) {
+			$versionstring = $2;
+		} else {
+			$template->param( $1 => $2 );
+		}
 	} else {
 		$content .= $_;
 	}
@@ -73,16 +78,13 @@ sub parsemenufile {
 	my $tmpl = pop @fields;
 	$newlevel = @fields;
 	while( $newlevel >= $level) {
-		print "$level $newlevel $index $menustrings[$index]\n";
 		my $nextlevel = 0;
 		if (@menustrings gt $index+1) {
 			my @nextarray = split ':', $menustrings[$index+1];
 
-			print "splitting $menustrings[$index+1]\n";
 			$nextlevel = @nextarray - 1;
 		}
 
-		print "$nextlevel\n";
 
 		my @submenu;
 		my $entryfound;
@@ -101,7 +103,6 @@ sub parsemenufile {
 			$entry.="&nbsp;&nbsp;";
 		}
 		$entry .= "--&nbsp;" if $newlevel > 1;
-		print "$tmpl $currenttmpl\n";
 		if ( $tmpl eq $currenttmpl ) {
 			$entry .= "<b>";
 			$endtag = "</b>";
@@ -112,14 +113,12 @@ sub parsemenufile {
 		}
 		$entry .= pop @fields;
 		$entry .= $endtag;
-		print "$entry\n";
 
 		my %menuentry;
 		$menuentry{entry} = $entry;
 
 		push @menuarray, \%menuentry;
 		push @menuarray, @submenu if $entryfound || $tmpl eq $currenttmpl;
-		print "end $index $newlevel $level $nextlevel\n";
 
 		if (@menustrings > $index) {
 			@fields = split ':', $menustrings[$index];
@@ -129,7 +128,6 @@ sub parsemenufile {
 			$newlevel = 0;
 		}
 	}
-	print "return\n";
 	return (@menuarray, $activeentryfound);
 }
 
@@ -139,9 +137,11 @@ sub timestamp {
 	@months = ("January","February","March","April","May","June","July",
 		   "August","September","October","November","December");
 
-	my $st = stat($tmplfile);
-	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime $st->ctime;
+#	my $st = stat($tmplfile);
+#	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime $st->ctime;
+	my ($id, $filename, $revision, $date, $time, $author) = split ' ', $versionstring;
+	my ($year, $mon, $mday) = split '-', $date;
 
-	my $ret = sprintf("%s %2d. %4d", $months[$mon], $mday, $year+1900);
+	my $ret = sprintf("%s %2d. %4d by %s", $months[$mon-1], $mday, $year, $author);
 	return $ret;
 }
