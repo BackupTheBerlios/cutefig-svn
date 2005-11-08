@@ -49,8 +49,6 @@ bool ResLib<Stroke>::insert( const ResourceKey& key, const Stroke& stroke )
             default: break;
         }
 
-        if ( success )
-                keys_ << key;
 
         return success;
 }
@@ -60,12 +58,8 @@ bool ResLib<Stroke>::remove( const ResourceKey& key )
         if ( key.isBuiltIn() ) 
                 return false;
 
-        bool success = colorLib.remove( key ) || gradLib.remove( key ); 
+        return colorLib.remove( key ) || gradLib.remove( key ); 
 
-        if ( success )
-                keys_.removeAll( key );
-
-        return success;
 }
 
 bool ResLib<Stroke>::contains( const ResourceKey& key ) const
@@ -92,7 +86,29 @@ void ResLib<Stroke>::insertBuiltIn( const ResourceKey& key, const Stroke& data )
                     gradLib.insertBuiltIn( key, data.gradient() ); break;
             default: break;
         }
-
-        keys_ << key;
 }
+
+int ResLib<Stroke>::count() const
+{
+        return colorLib.count() + gradLib.count();
+}
+
+ResourceKey ResLib<Stroke>::at( int i ) const 
+{
+        int c = colorLib.count();
+        if ( i < c )
+                return colorLib.at( i );
+
+        i -= c;
+        //c = gradLib.count();
         
+        return gradLib.at( i );
+}
+
+int ResLib<Stroke>::indexOf( const ResourceKey& key ) const 
+{
+        if ( colorLib.contains( key ) )
+                return colorLib.indexOf( key );
+
+        return colorLib.count() + gradLib.indexOf( key );
+}

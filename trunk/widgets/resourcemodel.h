@@ -54,14 +54,12 @@ public:
         
 private:
         ResLib<Resource>& resourceLib_;
-        const ResourceKeyList& keyList_;
 };
 
 template<typename Resource>
 ResourceModel<Resource>::ResourceModel( QObject* parent )
         : QAbstractListModel( parent ),
-          resourceLib_( ResLib<Resource>::instance() ),
-          keyList_( resourceLib_.keys() )
+          resourceLib_( ResLib<Resource>::instance() )
 {
 }
 
@@ -71,7 +69,8 @@ QVariant ResourceModel<Resource>::data( const QModelIndex& index, int role ) con
         QVariant data;
 
         int i = index.row();
-        const ResourceKey& k = keyList_.at(i);
+        const ResourceKey k = resourceLib_.at(i);
+        
         switch ( role ) {
             case Qt::DisplayRole:
             case Qt::EditRole:
@@ -95,7 +94,7 @@ Qt::ItemFlags ResourceModel<Resource>::flags( const QModelIndex& index ) const
         
         flags |= Qt::ItemIsUserCheckable;
 
-        if ( !keyList_.at( index.row() ).isBuiltIn() )
+        if ( !resourceLib_.at( index.row() ).isBuiltIn() )
                 flags |= Qt::ItemIsEditable;
         return flags;
 }
@@ -112,7 +111,7 @@ bool ResourceModel<Resource>::setData( const QModelIndex& index, const QVariant&
 
         int i = index.row();
         
-        ResourceKey oldKey = keyList_.at( i );
+        ResourceKey oldKey = resourceLib_.at( i );
         Resource resource = resourceLib_[oldKey];
 
         return true;
@@ -138,7 +137,7 @@ bool ResourceModel<Resource>::removeRows( int position, int rows, const QModelIn
 template<typename Resource>
 inline int ResourceModel<Resource>::rowCount( const QModelIndex& ) const
 {
-        return keyList_.count() ;
+        return resourceLib_.count() ;
 }
 
 

@@ -81,11 +81,6 @@ GradientEditor::GradientEditor( Gradient& gradient,  EditDialog* dlg, QVBoxLayou
         
         connect( gradType_, SIGNAL( stateChanged(int) ), dlg, SLOT( typeChanged(int) ) );
 
-//         gradListWgt_ = new QListWidget( this );
-//         fillGradList();
-//         connect( gradListWgt_, SIGNAL( itemActivated(QListWidgetItem*) ),
-//                  this, SLOT( changeGradientFromList(QListWidgetItem*) ) );
-//         mainLayout->addWidget( gradListWgt_ );
         
         layout_->insertLayout( 0, mainLayout );
 }
@@ -101,45 +96,3 @@ void GradientEditor::typeChanged( int type )
         gradWidget_->setGradient( &gradient_ );
 }
 
-// void GradientEditor::fillGradList()
-// {
-//         StrokeLib& sl = StrokeLib::instance();
-
-//         foreach( ResourceKey key, sl.keys() ) {
-//                 qDebug() << key.keyString() << "builtIn" << key.isBuiltIn() << "valid" << key.isValid();
-//                 const Stroke& s = sl[key];
-//                 if ( s.type() == Stroke::sGradient ) {
-//                         QListWidgetItem* wi = new QListWidgetItem( key.keyString(), gradListWgt_ );
-//                         wi->setIcon( QIcon( new GradientIconEngine( s.gradient() ) ) );
-//                         gradHash_[wi] = key;
-//                 }
-//         }
-// }
-
-// void GradientEditor::changeGradientFromList( QListWidgetItem* wi )
-// {
-//         const ResourceKey& key = gradHash_[wi];
-        
-//         gradient_ = StrokeLib::instance()[key].gradient();
-        
-
-//         gradType_->setState( gradient_.type() );
-
-//         gradWidget_->setDisabled( key.isBuiltIn() );
-//         gradWidget_->setGradient( &gradient_ );
-// }
-
-// Gradient GradientEditor::getGradient( const Gradient& initial, bool *ok, QWidget* parent )
-// {
-//         GradientEditor dlg( initial, parent );
-
-//         bool accepted = ( dlg.exec() == QDialog::Accepted );
-//         if ( ok )
-//                 *ok = accepted;
-
-//         Gradient result;
-//         if ( accepted )
-//                 result = dlg.gradient();
-
-//         return result;
-// }

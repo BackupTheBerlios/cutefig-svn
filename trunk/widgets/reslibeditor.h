@@ -83,8 +83,7 @@ template<typename Resource> class ReslibEditor : public AbstractReslibEditor
 public:
         ReslibEditor( const ResourceKey& initial, QWidget* parent = 0 )
                 : AbstractReslibEditor( initial, parent ),
-                  resourceLib( ResLib<Resource>::instance() ),
-                  keys_( resourceLib.keys() )
+                  resLib_( ResLib<Resource>::instance() )
         {
                 setupModel();
                 init();
@@ -104,8 +103,7 @@ private:
 
         virtual void setResource( const ResourceKey& );
 
-        ResLib<Resource>& resourceLib;
-        const ResourceKeyList& keys_;
+        ResLib<Resource>& resLib_;
 
         void setupModel();
 };
@@ -117,15 +115,15 @@ void ReslibEditor<Resource>::setupModel()
         resourceModel_ = new ResourceModel<Resource>( this );
         selectedResource_ = new QItemSelectionModel( resourceModel_ );
 
-        if ( keys_.contains( resourceKey_ ) )
-                selectedResource_->select( resourceModel_->index( keys_.indexOf( resourceKey_ ) ),
+        if ( resLib_.contains( resourceKey_ ) )
+                selectedResource_->select( resourceModel_->index( resLib_.indexOf( resourceKey_ ) ),
                                            QItemSelectionModel::ClearAndSelect );
 }
 
 template<typename Resource>        
 void ReslibEditor<Resource>::resourceChanged( const QModelIndex& index, const QModelIndex& )
 {
-        setResource( keys_.at( index.row() ) );
+        setResource( resLib_.at( index.row() ) );
 }
 
 
@@ -137,16 +135,16 @@ void ReslibEditor<Resource>::copyResource()
 
         ResourceKey newKey( keyString, ResourceKey::InFig );
 
-        if ( resourceLib.contains( newKey ) ) {
+        if ( resLib_.contains( newKey ) ) {
                 QMessageBox::warning( this, tr("Resource not copied!"),
                                       tr("A resource with the name %1 already exists.\n"
                                          "Rename it first and copy again.").arg( keyString ) );
                 return;
         }
 
-        resourceLib.insert( newKey, resourceLib[resourceKey_] );
+        resLib_.insert( newKey, resLib_[resourceKey_] );
         setResource( resourceKey_ );
-        int ind = keys_.indexOf( newKey );
+        int ind = resLib_.indexOf( newKey );
         selectedResource_->select( resourceModel_->index( ind ), QItemSelectionModel::ClearAndSelect );
         resourceModel_->insertRow( ind );
 }
@@ -155,13 +153,13 @@ void ReslibEditor<Resource>::copyResource()
 template<typename Resource>        
 void ReslibEditor<Resource>::deleteResource()
 { 
-        int ind = keys_.indexOf( resourceKey_ );
+        int ind = resLib_.indexOf( resourceKey_ );
         
         resourceModel_->removeRow( ind );
         
-        resourceLib.remove( resourceKey_ );
+        resLib_.remove( resourceKey_ );
         
-        if ( ind > keys_.count() )
+        if ( ind > resLib_.count() )
                 ind--;
         
         selectedResource_->select( resourceModel_->index( ind ), QItemSelectionModel::ClearAndSelect );
@@ -170,11 +168,11 @@ void ReslibEditor<Resource>::deleteResource()
 template<typename Resource>        
 void ReslibEditor<Resource>::editResource()
 {
-        Resource resource = resourceLib[resourceKey_];
+        Resource resource = resLib_[resourceKey_];
 
         if ( ResourceDialog<Resource>::execute( resource ) == QDialog::Accepted  ) {
-                resourceLib.remove( resourceKey_ );
-                resourceLib.insert( resourceKey_, resource );
+                resLib_.remove( resourceKey_ );
+                resLib_.insert( resourceKey_, resource );
         }
 }
 
@@ -193,10 +191,10 @@ void ReslibEditor<Resource>::setResource( const ResourceKey& key )
 
         deleteResourceAction_->setEnabled( !dontTouch );
         editResourceAction_->setEnabled( !dontTouch );
-        selectedResource_->select( resourceModel_->index( keys_.indexOf( resourceKey_ ) ),
+        selectedResource_->select( resourceModel_->index( resLib_.indexOf( resourceKey_ ) ),
                                  QItemSelectionModel::ClearAndSelect );
 
-//        resourceDemo_->setResource( resourceLib[key] );
+//        resourceDemo_->setResource( resLib_[key] );
 }
 
 template<typename Resource>        

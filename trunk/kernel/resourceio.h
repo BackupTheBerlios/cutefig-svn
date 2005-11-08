@@ -75,6 +75,8 @@ public:
 protected:
         ResourceIOFactory( const QString& kw )
         {
+                qDebug() << kw;
+                
                 rIOFHash_[kw] = this;
         }
 

@@ -26,7 +26,7 @@
 #define reslib_h
 
 #include <QVector>
-#include <QMap>
+#include <QHash>
 
 #include "typedefs.h"
 #include "resourcekey.h"
@@ -80,35 +80,37 @@ public:
         //! Recalculates the hash sum represented by key.
         int recalcHashSum( const ResourceKey& key, bool* found = 0 ) const;
         
-        const Resource operator[]( const ResourceKey& key ) const { return map_[key]; }
-        Resource& operator[]( const ResourceKey& key ) { return map_[key]; }
-        const ResourceKey key( const Resource& data ) const { return map_[data]; }
-        bool contains( const ResourceKey& key ) const { return map_.contains( key ); }
+        const Resource operator[]( const ResourceKey& key ) const { return hash_[key]; }
+        Resource& operator[]( const ResourceKey& key ) { return hash_[key]; }
+        const ResourceKey key( const Resource& data ) const { return hash_[data]; }
 
-        const ResourceKeyList& keys() const { return keys_; }
+        bool contains( const ResourceKey& key ) const { return hash_.contains( key ); }
+
+        int count() const { return hash_.count(); }
+        ResourceKey at( int i ) const { return hash_.keys().at ( i ); }
+        int indexOf( const ResourceKey& key ) const { return hash_.keys().indexOf( key ); }
+
+        const ResourceKeyList keys() const { return hash_.keys(); }
 
         
-//        QList<Resource> resources() const { return map_.values(); }
+//        QList<Resource> resources() const { return hash_.values(); }
         
 private:
-        ResLib<Resource>() : map_(), keys_() {}; //!< Private to enforce singularity.
+        ResLib<Resource>() : hash_() {}; //!< Private to enforce singularity.
         ResLib<Resource>( const ResLib<Resource>& ) {} //! just to avoid copying the instance
 
         void insertBuiltIn( const ResourceKey& key, const Resource& data )
         //!<< inserts a builtIn resource. It is accessible by friends. 
         {
-                map_[key] = data;
-                keys_ << key;
+                hash_[key] = data;
         }
         
-        QMap<ResourceKey, Resource> map_; //!< resolves a ResourceKey to a Resource
-        QHash<ResourceKey, int> hashSums_; //!< resolves a ResourceKey to the hash sum
-        
-        ResourceKeyList keys_;
-        //!< The ResourceKeys are stored seperately as the list has to be given out as a reference.
-        
+        QHash<ResourceKey, Resource> hash_; //!< resolves a ResourceKey to a Resource
+        QHash<ResourceKey, int> hashSums_; //!< resolves a ResourceKey to the hash sum        
 };
 
+
+template<> class ResLib<Stroke>;
 
 /** It therefore first checks whether the resource is not
  *  builtIn. Also the hash sum is calculated.
@@ -119,14 +121,12 @@ bool ResLib<Resource>::insert( const ResourceKey& key, const Resource& data )
         if ( key.isBuiltIn() )
                 return false;
 
-        map_[key] = data;
+        hash_[key] = data;
 
         int hashsum = qHash( data );
                 
         if ( hashsum )
                 hashSums_[key] = hashsum;
-                
-        keys_ << key;
                         
         return true;
 }
@@ -140,9 +140,8 @@ bool ResLib<Resource>::remove( const ResourceKey& key )
         if ( key.isBuiltIn() ) 
                 return false;
 
-        keys_.removeAll( key );
         hashSums_.remove( key );
-        return map_.remove( key );
+        return hash_.remove( key );
 }
 
 /** If found is nonnull it is used to tell whether the resource has
@@ -154,7 +153,7 @@ int ResLib<Resource>::hashSum( const ResourceKey& key, bool* found ) const
         bool f = false;
         int result = 0;
                 
-        if ( map_.contains( key ) ) {
+        if ( hash_.contains( key ) ) {
                 if ( hashSums_.contains( key ) )
                         result = hashSums_[key];
                 f = true;
@@ -175,8 +174,8 @@ int ResLib<Resource>::recalcHashSum( const ResourceKey& key, bool* found ) const
         bool f = false;
         int newsum = 0;
                 
-        if ( map_.contains( key ) ) {
-                newsum = qHash( map_[key] );
+        if ( hash_.contains( key ) ) {
+                newsum = qHash( hash_[key] );
                 f = true;
         }
 

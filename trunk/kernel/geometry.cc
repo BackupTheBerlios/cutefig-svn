@@ -53,7 +53,7 @@ QVector<QPointF> Geom::boundingPoints( const QRectF& r )
                     << QPointF( mid, r.bottom() );
         } else
                 pts << QPointF() << QPointF() << QPointF() << QPointF();
-        
+         
         return pts;
 }
 

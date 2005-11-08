@@ -24,6 +24,7 @@
 
 #include "resourceio.h"
 
+//QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
 
 QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
 

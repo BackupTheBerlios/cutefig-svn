@@ -54,17 +54,18 @@ public:
         
         bool contains( const ResourceKey& key ) const;
         
-        const ResourceKeyList& keys() const { return keys_; }
+//        const ResourceKeyList& keys() const { return keys_; }
 
 //        QList<Resource> resources() const { return map_.values(); }
-        
+        int count() const; 
+        ResourceKey at( int i ) const;
+        int indexOf( const ResourceKey& key ) const;
+
 private:
-        ResLib<Stroke>() : keys_() {}
+        ResLib<Stroke>() {}
         ResLib<Stroke>( const ResLib<Stroke>& ) {}
         
         void insertBuiltIn( const ResourceKey& key, const Stroke& data );
-        
-        ResourceKeyList keys_;
         
         static ColorLib& colorLib;
         static GradLib& gradLib;
