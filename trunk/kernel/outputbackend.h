@@ -32,17 +32,19 @@ class Polyline;
 class Polygon;
 class Compound;
 
-class QTextStream;
+//class QTextStream;
+
 
 #include "stroke.h"
 #include "gradient.h"
 
+#include <ostream>
 #include <QStringList>
 
 class OutputBackend
 {
 public:
-        OutputBackend( QTextStream& ts, const Figure& f ) 
+        OutputBackend( std::ostream& ts, const Figure& f ) 
                 : figure_( f ),
                   fileStream_( ts ),
                   errorReport_() {}
@@ -64,7 +66,7 @@ protected:
         Gradient strokeGradient( const Stroke& s ) { return s.data_.value<Gradient>(); }
         
         const Figure& figure_;
-        QTextStream& fileStream_;
+        std::ostream& fileStream_;
         QStringList errorReport_;        
 };
 

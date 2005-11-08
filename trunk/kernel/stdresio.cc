@@ -42,7 +42,7 @@ bool TResourceIO<QColor>::parseResource( const QString&, std::istream& is )
 }
 
 template<>
-void TResourceIO<QColor>::outputResourceBody( QTextStream& stream)
+void TResourceIO<QColor>::outputResourceBody( std::ostream& stream)
 {
         stream << resource_ << " ";
 }
@@ -120,7 +120,7 @@ void TResourceIO<Gradient>::postProcessResource()
 
                 
 template<>
-void TResourceIO<Gradient>::outputResourceBody( QTextStream& ts )
+void TResourceIO<Gradient>::outputResourceBody( std::ostream& ts )
 {
         const QGradientStops& stops = resource_.colorStops();
         
@@ -157,7 +157,7 @@ bool TResourceIO<Dashes>::parseResource( const QString&, std::istream& is )
 }
 
 template<>
-void TResourceIO<Dashes>::outputResourceBody( QTextStream& ts )
+void TResourceIO<Dashes>::outputResourceBody( std::ostream& ts )
 {
         foreach ( double d, resource_ )
                 ts << d << ' ';

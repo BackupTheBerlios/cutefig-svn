@@ -114,6 +114,11 @@ bool ResourceModel<Resource>::setData( const QModelIndex& index, const QVariant&
         ResourceKey oldKey = resourceLib_.at( i );
         Resource resource = resourceLib_[oldKey];
 
+        resourceLib_.remove( oldKey );
+        resourceLib_[newKey] = resource;
+
+        emit dataChanged(index, index);
+
         return true;
 }
 

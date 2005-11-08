@@ -28,7 +28,7 @@
 #include "outputbackend.h"
 #include "reslib.h"
 
-#include <QTextStream>
+#include <ostream>
 #include <QObject>
 #include <QHash>
 
@@ -37,7 +37,7 @@ class QPolygonF;
 class CfigOutput : public OutputBackend
 {
 public:
-        CfigOutput( QTextStream& ts, const Figure& f ) : OutputBackend( ts, f ) {}
+        CfigOutput( std::ostream& ts, const Figure& f ) : OutputBackend( ts, f ) {}
         ~CfigOutput() {}
 
         virtual void outputEllipse( Ellipse* el );

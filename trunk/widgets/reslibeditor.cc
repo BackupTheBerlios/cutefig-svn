@@ -42,6 +42,9 @@ void AbstractReslibEditor::init()
 {
         connect( selectedResource_, SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
                  this, SLOT( resourceChanged( const QModelIndex&, const QModelIndex& ) ) );
+
+        connect( resourceModel_, SIGNAL( dataChanged( const QModelIndex&, const QModelIndex& ) ),
+                 this, SLOT( resourceChanged( const QModelIndex&, const QModelIndex& ) ) );
         
         copyResourceAction_ = new QAction( tr("&Copy"), this );
 //        copyResourceAction_->setShortcutContext( Qt::ApplicationShortcut );
@@ -71,11 +74,8 @@ void AbstractReslibEditor::init()
         ActionPushButton* editResourceButton = new ActionPushButton( editResourceAction_, this );
         editButtonLayout->addWidget( editResourceButton );
 
-        ActionPushButton* deleteResourceButton = new ActionPushButton( deleteResourceAction_, this );
+        ActionPushButton* deleteResourceButton = new ActionPushButton(deleteResourceAction_, this);
         editButtonLayout->addWidget( deleteResourceButton );
-
-
-        qDebug() << editResourceAction_->text() << editResourceButton->text();
 
         mainLayout->addLayout( editButtonLayout );
 

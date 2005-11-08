@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id: gradientwidget.cc,v 1.3 2004/11/01 22:38:41 mueller Exp $
+**  $Id$
 **
 **  This file is part of CuteFig
 **
@@ -331,18 +331,22 @@ void GradientWidget::mouseMoveEvent( QMouseEvent* e )
 bool GradientWidget::initialClick( QMouseEvent* e )
 {
         const QPoint& p = e->pos();
-        if ( rect1_.contains( p ) ) {
-                movedPoint_ = point1_;
-                moveInAction_ = true;
-                return true;
+
+        if ( ! ( e->modifiers() & Qt::AltModifier ) ) {
+
+                if ( rect1_.contains( p ) ) {
+                        movedPoint_ = point1_;
+                        moveInAction_ = true;
+                        return true;
+                }
+        
+                if ( rect2_.contains( p ) ) {
+                        movedPoint_ = point2_;
+                        moveInAction_ = true;
+                        return true;
+                }
         }
         
-        if ( rect2_.contains( p ) ) {
-                movedPoint_ = point2_;
-                moveInAction_ = true;
-                return true;
-        }
-
         if ( e->modifiers() & Qt::ControlModifier ) {
                 bool ok;
                 QRgb rgb = QColorDialog::getRgba( Qt::black, &ok );
@@ -432,7 +436,7 @@ void GradientWidget::move( QMouseEvent* e )
         if ( findColorStopUnderMouse( p ) )
                 setCursor( QCursor( Qt::CrossCursor ) );
 
-        if ( rect1_.contains( p ) || rect2_.contains( p ) ) 
+        if ( !(e->modifiers() & Qt::AltModifier) && (rect1_.contains( p ) || rect2_.contains( p )) ) 
                 setCursor( Qt::SizeAllCursor );
 
         RadialUIHandler* rh = dynamic_cast<RadialUIHandler*>( uiHandler_ );

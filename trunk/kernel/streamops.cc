@@ -30,8 +30,9 @@
 
 #include <QString>
 #include <QColor>
-#include <QTextStream>
+#include <QUrl>
 
+#include <iostream>
 #include <sstream>
 
 /** Puts the next word of the a std::istream into a QString. 
@@ -41,7 +42,7 @@ std::istream &operator>> ( std::istream &is, QString &_s )
 {
         std::string s;
         is >> s;
-        _s = QString::fromUtf8( s.c_str() );
+        _s = QUrl::fromPercentEncoding( s.c_str() );
         
         return is;
 }
@@ -95,7 +96,15 @@ std::istream &operator>> ( std::istream &is, QColor &color )
 
 //// output
 
-void put_colorPart( QTextStream& ts, int v )
+std::ostream& operator<< ( std::ostream& ts, const QString& s )
+{
+        ts << QUrl::toPercentEncoding( s ).data();
+
+        return ts;
+}
+
+
+void put_colorPart( std::ostream& ts, int v )
 {
         int e = v & 0x0F;
         e += (e>9) ? 'A'-10 : '0';
@@ -105,7 +114,7 @@ void put_colorPart( QTextStream& ts, int v )
         ts << (char)v << (char)e;
 }
 
-QTextStream& operator<< ( QTextStream& ts, const QColor& c )
+std::ostream& operator<< ( std::ostream& ts, const QColor& c )
 {
         ts << '#';
         
@@ -118,3 +127,4 @@ QTextStream& operator<< ( QTextStream& ts, const QColor& c )
         
         return ts;
 }
+

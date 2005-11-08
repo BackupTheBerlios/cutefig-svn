@@ -45,6 +45,7 @@
 
 #include <QtGui>
 
+#include <fstream>
 
 //#include "brushdialog.h" //test
 
@@ -138,15 +139,14 @@ void CuteFig::save()
                 return;
         }
 
-        QFile f( filename_ );
-        if ( !f.open( QIODevice::WriteOnly ) ) {
+
+        std::ofstream ts( filename_.toLocal8Bit().constData() );
+        if ( !ts ) {
                 statusBar()->showMessage( QString(tr("Could not write to %1"))
                                           .arg(filename_), 2000 );
                 return;
         }
-        
-        QTextStream ts( &f );
-        
+
         uint slen = filename_.length() - filename_.indexOf('.');
         QString suffix = filename_.right( slen );
 
@@ -160,7 +160,7 @@ void CuteFig::save()
 
         delete b;
 
-        f.close();
+        ts.close();
 
         setWindowTitle( tr( "CuteFig: %1" ).arg( filename_ ) );
 

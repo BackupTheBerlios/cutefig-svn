@@ -29,7 +29,8 @@
 #include "streamops.h"
 
 #include <QPolygonF>
-#include <QTextStream>
+#include <ostream>
+#include <iomanip>
 
 #include <QDebug>
 
@@ -39,7 +40,7 @@ void CfigOutput::outputEllipse( Ellipse* el )
 {
         drawObject_ = el;
         outputGenericData( "ellipse" );
-        fileStream_.setRealNumberPrecision( 3 );
+        fileStream_ << std::setprecision( 3 );
         fileStream_ << ' ' << el->isCircle() << ' ' 
                     << el->isSpecifiedByRadii() << ' ' << el->angle()
                     << "\n";
@@ -78,7 +79,7 @@ void CfigOutput::processOutput()
 }
 
 
-QTextStream& operator<< ( QTextStream& ts, const ResourceKey& key )
+std::ostream& operator<< ( std::ostream& ts, const ResourceKey& key )
 {
         if ( !key.isValid() ) {
                 ts << '%';
@@ -95,7 +96,7 @@ QTextStream& operator<< ( QTextStream& ts, const ResourceKey& key )
         return ts;
 }
 
-QTextStream& operator<< ( QTextStream& ts, const Stroke& st )
+std::ostream& operator<< ( std::ostream& ts, const Stroke& st )
 {
         if ( st.isHardColor() )
                 ts << st.color();

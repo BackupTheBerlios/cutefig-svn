@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id: colorbutton.h 16 2005-06-26 22:00:14Z joh $
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -40,7 +40,7 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         : QGroupBox( title, parent )
 {        
         colorButton_ = new ResourceButton<QColor>( Qt::transparent, this );
-        gradientButton_ = new ResourceButton<Gradient>( Gradient(), this );
+        gradientButton_ = new ResourceButton<Gradient>( ResourceKey(), this );
 
         QRadioButton* nostrokeRB = new QRadioButton( tr("None"), this );
         QRadioButton* colorRB    = new QRadioButton( tr("Color"), this );
@@ -81,7 +81,7 @@ void StrokeWidget::setStroke( Stroke* stroke )
             case Stroke::sColor:
                     colorButton_->setResource( stroke->color() ); break;
             case Stroke::sGradient:
-                    gradientButton_->setResource( stroke->gradient() ); break;
+                    gradientButton_->setResource( stroke->key() ); break;
             default:
                     break;
         }

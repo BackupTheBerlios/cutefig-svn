@@ -25,7 +25,7 @@
 #ifndef streamops_h
 #define streamops_h
 
-#include <istream>
+#include <iostream>
 
 class QTextStream;
 class QString;
@@ -37,7 +37,8 @@ class Pen;
 std::istream& operator>> ( std::istream&, QString& );
 std::istream& operator>> ( std::istream&, QColor& );
 
-QTextStream& operator<< ( QTextStream&, const QColor& ); 
+std::ostream& operator<< ( std::ostream&, const QString& );
+std::ostream& operator<< ( std::ostream&, const QColor& );
 
 
 #endif

@@ -45,7 +45,8 @@ class AbstractReslibEditor : public EditDialog
 public:
         AbstractReslibEditor( const ResourceKey& initial, QWidget* parent=0 )
                 : EditDialog( parent ),
-                  oldResourceKey_( initial )
+                  oldResourceKey_( initial ),
+                  resourceKey_( initial )
         {}
         
         ~AbstractReslibEditor() {}
@@ -58,7 +59,8 @@ protected:
 
 private slots:
         virtual void resourceChanged( const QModelIndex& index, const QModelIndex& prev ) = 0;
-        virtual void selectionChanged( const QModelIndex& index ) = 0;
+        virtual void modelChanged() = 0;
+//        virtual void selectionChanged( const QModelIndex& index ) = 0;
         virtual void copyResource() = 0;
         virtual void deleteResource() = 0;
         virtual void editResource() = 0;
@@ -96,7 +98,7 @@ public:
 
 private:
         virtual void resourceChanged( const QModelIndex& index, const QModelIndex& prev );
-        virtual void selectionChanged( const QModelIndex& index );
+        virtual void modelChanged();
         virtual void copyResource();
         virtual void deleteResource();
         virtual void editResource();
@@ -116,7 +118,7 @@ void ReslibEditor<Resource>::setupModel()
         selectedResource_ = new QItemSelectionModel( resourceModel_ );
 
         if ( resLib_.contains( resourceKey_ ) )
-                selectedResource_->select( resourceModel_->index( resLib_.indexOf( resourceKey_ ) ),
+                selectedResource_->select( resourceModel_->index( resLib_.indexOf(resourceKey_) ),
                                            QItemSelectionModel::ClearAndSelect );
 }
 
@@ -124,6 +126,12 @@ template<typename Resource>
 void ReslibEditor<Resource>::resourceChanged( const QModelIndex& index, const QModelIndex& )
 {
         setResource( resLib_.at( index.row() ) );
+}
+
+template<typename Resource>
+void ReslibEditor<Resource>::modelChanged()
+{
+        setResource( resLib_.at( selectedResource_->currentIndex().row() ) );
 }
 
 
@@ -162,7 +170,8 @@ void ReslibEditor<Resource>::deleteResource()
         if ( ind > resLib_.count() )
                 ind--;
         
-        selectedResource_->select( resourceModel_->index( ind ), QItemSelectionModel::ClearAndSelect );
+        selectedResource_->select( resourceModel_->index( ind ),
+                                   QItemSelectionModel::ClearAndSelect );
 }
 
 template<typename Resource>        
@@ -177,18 +186,13 @@ void ReslibEditor<Resource>::editResource()
 }
 
 template<typename Resource>        
-void ReslibEditor<Resource>::selectionChanged( const QModelIndex& index )
-{
-    
-}
-
-template<typename Resource>        
 void ReslibEditor<Resource>::setResource( const ResourceKey& key )
 {
         resourceKey_ = key;
 
         bool dontTouch = !key.isValid() || key.isBuiltIn();
 
+        copyResourceAction_->setEnabled( key.isValid() );
         deleteResourceAction_->setEnabled( !dontTouch );
         editResourceAction_->setEnabled( !dontTouch );
         selectedResource_->select( resourceModel_->index( resLib_.indexOf( resourceKey_ ) ),
@@ -211,6 +215,8 @@ ResourceKey ReslibEditor<Resource>::getResource( const ResourceKey& initial, boo
         if ( accepted )
                 result = dlg.resourceKey();
 
+        qDebug() << result;
+        
         return result;
 }
 

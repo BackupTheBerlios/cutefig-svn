@@ -26,7 +26,7 @@
 #define reslib_h
 
 #include <QVector>
-#include <QHash>
+#include <QMap>
 
 #include "typedefs.h"
 #include "resourcekey.h"
@@ -80,32 +80,32 @@ public:
         //! Recalculates the hash sum represented by key.
         int recalcHashSum( const ResourceKey& key, bool* found = 0 ) const;
         
-        const Resource operator[]( const ResourceKey& key ) const { return hash_[key]; }
-        Resource& operator[]( const ResourceKey& key ) { return hash_[key]; }
-        const ResourceKey key( const Resource& data ) const { return hash_[data]; }
+        const Resource operator[]( const ResourceKey& key ) const { return map_[key]; }
+        Resource& operator[]( const ResourceKey& key ) { return map_[key]; }
+        const ResourceKey key( const Resource& data ) const { return map_[data]; }
 
-        bool contains( const ResourceKey& key ) const { return hash_.contains( key ); }
+        bool contains( const ResourceKey& key ) const { return map_.contains( key ); }
 
-        int count() const { return hash_.count(); }
-        ResourceKey at( int i ) const { return hash_.keys().at ( i ); }
-        int indexOf( const ResourceKey& key ) const { return hash_.keys().indexOf( key ); }
+        int count() const { return map_.count(); }
+        ResourceKey at( int i ) const { return map_.keys().at ( i ); }
+        int indexOf( const ResourceKey& key ) const { return map_.keys().indexOf( key ); }
 
-        const ResourceKeyList keys() const { return hash_.keys(); }
+        const ResourceKeyList keys() const { return map_.keys(); }
 
         
-//        QList<Resource> resources() const { return hash_.values(); }
+//        QList<Resource> resources() const { return map_.values(); }
         
 private:
-        ResLib<Resource>() : hash_() {}; //!< Private to enforce singularity.
+        ResLib<Resource>() : map_() {}; //!< Private to enforce singularity.
         ResLib<Resource>( const ResLib<Resource>& ) {} //! just to avoid copying the instance
 
         void insertBuiltIn( const ResourceKey& key, const Resource& data )
         //!<< inserts a builtIn resource. It is accessible by friends. 
         {
-                hash_[key] = data;
+                map_[key] = data;
         }
         
-        QHash<ResourceKey, Resource> hash_; //!< resolves a ResourceKey to a Resource
+        QMap<ResourceKey, Resource> map_; //!< resolves a ResourceKey to a Resource
         QHash<ResourceKey, int> hashSums_; //!< resolves a ResourceKey to the hash sum        
 };
 
@@ -121,7 +121,7 @@ bool ResLib<Resource>::insert( const ResourceKey& key, const Resource& data )
         if ( key.isBuiltIn() )
                 return false;
 
-        hash_[key] = data;
+        map_[key] = data;
 
         int hashsum = qHash( data );
                 
@@ -141,7 +141,7 @@ bool ResLib<Resource>::remove( const ResourceKey& key )
                 return false;
 
         hashSums_.remove( key );
-        return hash_.remove( key );
+        return map_.remove( key );
 }
 
 /** If found is nonnull it is used to tell whether the resource has
@@ -153,7 +153,7 @@ int ResLib<Resource>::hashSum( const ResourceKey& key, bool* found ) const
         bool f = false;
         int result = 0;
                 
-        if ( hash_.contains( key ) ) {
+        if ( map_.contains( key ) ) {
                 if ( hashSums_.contains( key ) )
                         result = hashSums_[key];
                 f = true;
@@ -174,8 +174,8 @@ int ResLib<Resource>::recalcHashSum( const ResourceKey& key, bool* found ) const
         bool f = false;
         int newsum = 0;
                 
-        if ( hash_.contains( key ) ) {
-                newsum = qHash( hash_[key] );
+        if ( map_.contains( key ) ) {
+                newsum = qHash( map_[key] );
                 f = true;
         }
 

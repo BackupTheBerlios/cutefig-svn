@@ -87,7 +87,7 @@ protected:
                 editor_ = createEditor();
         }
 
-        ResourceEditor* createEditor() {return 0;};
+        ResourceEditor* createEditor();
         
         Resource& editee_;
         Resource oldData_;

@@ -51,6 +51,7 @@ public slots:
 
 protected:
         ResourceKey key_;
+        bool definedByKey_;
 };
 
 
@@ -63,6 +64,7 @@ public:
         ~ResourceButton() {}
 
         void setResource( const Resource& resource );
+        void setResource( const ResourceKey& key );
         Resource getResource() const { return resource_; }
 
         virtual void changeResource();
@@ -80,6 +82,7 @@ ResourceButton<Resource>::ResourceButton( const Resource& resource, QWidget* par
 {
         setIcon( QIcon( new ResourceIconEngine<Resource>( resource_ ) ) );
         connect( this, SIGNAL( clicked() ), this, SLOT( changeResource() ) );
+        definedByKey_ = false;
 }
 
 template<class Resource>
@@ -90,12 +93,24 @@ ResourceButton<Resource>::ResourceButton( const ResourceKey& key, QWidget* paren
 {
         setIcon( QIcon( new ResourceIconEngine<Resource>( resource_ ) ) );
         connect( this, SIGNAL( clicked() ), this, SLOT( changeResource() ) );
+        definedByKey_ = true;
 }
 
 template<class Resource>
 void ResourceButton<Resource>::setResource( const Resource& resource )
 {
         resource_ = resource;
+        key_ = ResourceKey();
+        definedByKey_ = false;
+        setIcon( QIcon( new ResourceIconEngine<Resource>( resource_ ) ) );
+}
+
+template<class Resource>
+void ResourceButton<Resource>::setResource( const ResourceKey& key ) 
+{
+        key_ = key;
+        resource_ = resourceLib_[key];
+        definedByKey_ = true;
         setIcon( QIcon( new ResourceIconEngine<Resource>( resource_ ) ) );
 }
 
@@ -104,13 +119,19 @@ template<class Resource>
 void ResourceButton<Resource>::changeResource()
 {
         bool ok;
-
-        ResourceKey newkey = ReslibEditor<Resource>::getResource( key_, &ok, this );
         
-        if ( ok ) {
-                key_ = newkey;
-                setResource( resourceLib_[newkey] );
-                emit resourceChanged();
+        if ( definedByKey_ ) { 
+                ResourceKey newkey = ReslibEditor<Resource>::getResource( key_, &ok, this );
+                if ( ok ) {
+                        setResource( newkey );
+                        emit resourceChanged();
+                }
+        } else {
+                Resource newRes = ResourceDialog<Resource>::editData( resource_, &ok, this );
+                if ( ok ) {
+                        setResource( newRes );
+                        emit resourceChanged();
+                }
         }
 }
 

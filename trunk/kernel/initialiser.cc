@@ -31,7 +31,6 @@
 
 Initialiser::Initialiser()
 {
-        qDebug() << "Initialising";
         ResLibInit::init();
 
         static EllipseFactory elf;

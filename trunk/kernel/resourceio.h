@@ -26,12 +26,12 @@
 #define resourceio_h
 
 #include "resourcekey.h"
+#include "streamops.h"
 
 #include <QString>
 #include <QHash>
 #include <QTextStream>
 
-#include <sstream>
 
 class ResourceIO;
 
@@ -75,8 +75,6 @@ public:
 protected:
         ResourceIOFactory( const QString& kw )
         {
-                qDebug() << kw;
-                
                 rIOFHash_[kw] = this;
         }
 
@@ -113,7 +111,7 @@ public:
         virtual bool parseResource( const QString& itemType, std::istream& is ) = 0;
         virtual void postProcessResource() = 0;
         virtual void pushResource( const ResourceKey& key ) const = 0;
-        virtual void outputResource( const ResourceKey& key, QTextStream& stream ) = 0;
+        virtual void outputResource( const ResourceKey& key, std::ostream& stream ) = 0;
         
         bool failed() const { return failed_; }
         QString errorString() const { return errorString_; }
@@ -184,7 +182,7 @@ public:
         virtual void postProcessResource() {}
 
         //! \b Needs to be specialised
-        void outputResource( const ResourceKey& key, QTextStream& stream );
+        void outputResource( const ResourceKey& key, std::ostream& stream );
 
         //! adds the resource to the resourceLib after having successfully parsed it.
         void pushResource( const ResourceKey& key ) const 
@@ -194,7 +192,7 @@ public:
 
 protected:
         //! \b Needs to be specislised by all types
-        virtual void outputResourceBody( QTextStream& ) {}
+        virtual void outputResourceBody( std::ostream& ) {}
         
 private:
         ResLib<Resource>& resourceLib_;
@@ -203,7 +201,7 @@ private:
 };
 
 template<typename Resource>
-void TResourceIO<Resource>::outputResource( const ResourceKey& key, QTextStream& stream )
+void TResourceIO<Resource>::outputResource( const ResourceKey& key, std::ostream& stream )
 {
         resource_ = resourceLib_[key];
         
