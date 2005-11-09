@@ -54,10 +54,9 @@ void TResourceIO<QColor>::outputResourceBody( std::ostream& stream)
 void createGradient( std::istream& is, Gradient& gradient ) 
 {
         QString type;
-        QColor startColor, endColor;
         double x1,x2, y1,y2;
 
-        is >> type >> startColor >> endColor >> x1 >> y1 >> x2 >> y2;
+        is >> type >> x1 >> y1 >> x2 >> y2;
 
         QPointF startPoint( x1,y1 );
         QPointF endPoint( x2,y2 );
@@ -70,9 +69,6 @@ void createGradient( std::istream& is, Gradient& gradient )
         }
         else 
                 gradient = Gradient( Gradient::Linear, startPoint, endPoint );
-
-        gradient.setColorAt( 0.0, startColor );
-        gradient.setColorAt( 1.0, endColor );
 }
 
 
@@ -107,19 +103,6 @@ bool TResourceIO<Gradient>::parseResource( const QString& itemtype, std::istream
 }
 
 template<>
-void TResourceIO<Gradient>::postProcessResource() 
-{
-        QGradientStops& stops = resource_.colorStops();
-        
-        if ( stops.size() > 2 ) {
-                QGradientStop h = stops[1];
-                stops[1] = stops.last();
-                stops.last() = h;
-        }
-}
-
-                
-template<>
 void TResourceIO<Gradient>::outputResourceBody( std::ostream& ts )
 {
         const QGradientStops& stops = resource_.colorStops();
@@ -129,8 +112,6 @@ void TResourceIO<Gradient>::outputResourceBody( std::ostream& ts )
         else 
                 ts << "radial ";
 
-        ts << stops.first().second << ' ' << stops.last().second << ' ';
-
         ts << resource_.startPoint().x() << ' ' << resource_.startPoint().y()  << ' '
            << resource_.finalPoint().x() << ' ' << resource_.finalPoint().y();
         if ( resource_.type() == Gradient::Radial )
@@ -138,8 +119,8 @@ void TResourceIO<Gradient>::outputResourceBody( std::ostream& ts )
 
         ts << "\n";
 
-        for ( int i = 1; i < stops.size()-1; i++ )
-                ts << "gradstop " << stops[i].first << ' ' << stops[i].second << "\n";
+        foreach ( QGradientStop s, stops )
+                ts << "gradstop " << s.first << ' ' << s.second << "\n";        
 }
 
         
