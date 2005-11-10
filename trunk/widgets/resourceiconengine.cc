@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id: colorbutton.h 16 2005-06-26 22:00:14Z joh $
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -25,7 +25,6 @@
 #include "resourceiconengine.h"
 #include "stroke.h"
 #include "gradient.h"
-#include "resource.h"
 
 #include <QPainter>
 

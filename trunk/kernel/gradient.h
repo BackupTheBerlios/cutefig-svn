@@ -44,10 +44,10 @@ public:
         enum Type { None=0, Linear, Radial };
 
         Gradient() : type_( None ) {}
+        Gradient( const Gradient& other );          
         Gradient( Type type, const QPointF& start, const QPointF& stop );
-        ~Gradient() {}
 
-        Gradient( const Gradient& other ); 
+        ~Gradient() {}
         
         QGradientStops& colorStops() { return colorStops_; }
         const QGradientStops& colorStops() const { return colorStops_; }

@@ -112,10 +112,8 @@ bool ResourceModel<Resource>::setData( const QModelIndex& index, const QVariant&
         int i = index.row();
         
         ResourceKey oldKey = resourceLib_.at( i );
-        Resource resource = resourceLib_[oldKey];
 
-        resourceLib_.remove( oldKey );
-        resourceLib_[newKey] = resource;
+        resourceLib_.changeKeyName( oldKey, newKey );
 
         emit dataChanged(index, index);
 
@@ -142,7 +140,7 @@ bool ResourceModel<Resource>::removeRows( int position, int rows, const QModelIn
 template<typename Resource>
 inline int ResourceModel<Resource>::rowCount( const QModelIndex& ) const
 {
-        return resourceLib_.count() ;
+        return resourceLib_.count();
 }
 
 

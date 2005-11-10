@@ -25,6 +25,7 @@
 
 #include "stroke.h"
 #include "gradient.h"
+#include "resourceuser.h"
 
 #include <QPainter>
 #include <QPainterPath>
@@ -35,73 +36,187 @@
 
 Stroke::Stroke()
         : type_( sNone ),
-          data_( QVariant() ),
+          color_( 0 ),
+          gradient_( 0 ),
+          pixmap_( 0 ),
           key_()
-{
-}
+{}
 
 Stroke::Stroke( const Stroke& other )
         : type_( other.type_ ),
-          data_( other.data_ ),
+          color_( other.color_ ? new ResourceUser<QColor>( *other.color_ ) : 0 ),
+          gradient_( other.gradient_ ? new ResourceUser<Gradient>( *other.gradient_ ) : 0 ),
+          pixmap_( other.pixmap_ ? new ResourceUser<QPixmap>( *other.pixmap_ ) : 0  ),
           key_( other.key_ )
 {
+        qDebug() << "Stroke::other" << this << &other;
+        if ( gradient_ )
+                qDebug() << gradient_->key() << key_;
 }
 
 Stroke::Stroke( const QColor& color )
         : type_( sColor ),
-          data_( QVariant( color ) ),
+          color_( new ResourceUser<QColor>( color ) ),
+          gradient_( 0 ),
+          pixmap_( 0 ),
           key_()
+{}
+
+Stroke& Stroke::operator=( const Stroke& other )
 {
+        type_ = other.type_;
+        color_ = other.color_ ? new ResourceUser<QColor>( *other.color_ ) : 0;
+        gradient_ = other.gradient_ ? new ResourceUser<Gradient>( *other.gradient_ ) : 0;
+        pixmap_ = other.pixmap_ ? new ResourceUser<QPixmap>( *other.pixmap_ ) : 0;
+        key_ = other.key_;
+
+        return *this;
 }
 
-Stroke::Stroke( const ResourceKey& key, const QColor& color )
-        : type_( sColor ),
-          data_( QVariant( color ) ),
-          key_()
+
+Stroke::~Stroke()
 {
-        if ( key.isValid() )
-                key_ = key;
+        if ( color_ )
+                delete color_;
+        
+        if ( gradient_ ) 
+                delete gradient_;        
+
+        if ( pixmap_ ) 
+                delete pixmap_;
 }
 
-Stroke::Stroke( const ResourceKey& key, const Gradient& gradient )
-        : type_(),
-          key_()
-{
-        if ( key.isValid() ) {
-                key_ = key;
-                type_ = sGradient;
-                data_.setValue( gradient );
-        }
-}
+// Stroke::Stroke( const ResourceKey& key, const QColor& color )
+//         : type_( sColor ),
+//           color_( new ResourceUser<QColor>( color ) ),
+//           gradient_( 0 ),
+//           key_()
+// {
+//         if ( key.isValid() )
+//                 key_ = key;
+// }
+
+// Stroke::Stroke( const ResourceKey& key, const Gradient& gradient )
+//         : type_(),
+//           key_()
+// {
+//         if ( key.isValid() ) {
+//                 key_ = key;
+//                 type_ = sGradient;
+//                 data_.setValue( gradient );
+//         }
+// }
 
 void Stroke::setColor( const QColor& color )
 {
         type_ = sColor;
-        data_ = QVariant( color );
+
+        if ( gradient_ ) {
+                delete gradient_;        
+                gradient_ = 0;
+        }
+
+        if ( pixmap_ ) {
+                delete pixmap_;
+                pixmap_ = 0;
+        }
+        
+        if ( !color_ )
+                color_ = new ResourceUser<QColor>();
+        
+        color_->setResource( color );
 }
 
-void Stroke::setGradient( const Gradient& gradient )
+// void Stroke::setGradient( const Gradient& gradient )
+// {
+//         qDebug() << "*** Bug *** Stroke::setGradient() without key...";
+
+//         type_ = sGradient;
+
+//         if ( color_ ) {
+//                 delete color_;
+//                 color_ = 0;
+//         }
+
+//         if ( pixmap_ ) {
+//                 delete pixmap_;
+//                 pixmap_ = 0;
+//         }
+        
+//         if ( !gradient_ )
+//                 gradient_ = new ResourceUser<Gradient>();
+        
+//         gradient_->setResource( gradient );
+// }
+
+void Stroke::setColor( const ResourceKey& key )
 {
-        if ( key_.isValid() ) {
-                type_ = sGradient;
-                data_.setValue( gradient );
-        } else
-                qDebug() << "*** Bug *** Stroke::setGradient() without key...";
+        type_ = sColor;
+        
+        if ( gradient_ ) {
+                delete gradient_;
+                gradient_ = 0;
+        }
+
+        if ( pixmap_ ) {
+                delete pixmap_;        
+                pixmap_ = 0;
+        }
+
+        if ( !color_ )
+                color_ = new ResourceUser<QColor>();
+
+        color_->setResource( key );
+        key_ = key;
+}
+
+void Stroke::setGradient( const ResourceKey& key )
+{
+        type_ = sGradient;
+        
+        if ( color_ ) {
+                delete color_;
+                color_ = 0;
+        }
+
+        if ( pixmap_ ) {
+                delete pixmap_;        
+                pixmap_ = 0;
+        }
+
+        if ( !gradient_ )
+                gradient_ = new ResourceUser<Gradient>();
+
+        gradient_->setResource( key );
+        key_ = key;
 }
 
 void Stroke::setPixmap( const QPixmap& pixmap )
 {
-        if ( key_.isValid() ) {
-                type_ = sPixmap;
-                data_.setValue( pixmap );
-        } else
-                qDebug() << "*** Bug *** Stroke::setPixmap() without key...";
+        qDebug() << "*** Bug *** Stroke::setPixmap() without key...";
+
+        type_ = sPixmap;
+        
+        if ( color_ ) {
+                delete color_;
+                color_ = 0;
+        }
+
+        if ( gradient_ ) {
+                delete gradient_;        
+                gradient_ = 0;
+        }
+        
+        if ( !pixmap_ )
+                pixmap_ = new ResourceUser<QPixmap>();
+        
+        pixmap_->setResource( pixmap );
 }
 
 QColor Stroke::color() const
 {
         if ( type_ == sColor )
-                return data_.value<QColor>();
+                return color_->data();
         else
                 return QColor();
 }
@@ -109,7 +224,7 @@ QColor Stroke::color() const
 Gradient Stroke::gradient() const
 {
         if ( type_ == sGradient )
-                return data_.value<Gradient>();
+                return gradient_->data();
         else
                 return Gradient();
 }
@@ -118,18 +233,19 @@ void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
 {
         switch ( type_ ) {
             case sColor:
-                    painter->fillPath( path, QBrush( data_.value<QColor>() ) );
+                    painter->fillPath( path, QBrush( color_->data() ) );
                     break;
             case sGradient:
             {
                     QRectF r = path.boundingRect();
-                    QGradient* qgrad = data_.value<Gradient>().toQGradient( r );
-                    painter->fillPath( path, *qgrad );
+                    QGradient* qgrad = gradient_->data().toQGradient( r );
+                    if ( qgrad )
+                            painter->fillPath( path, *qgrad );
                     delete qgrad;
                     break;
             }
             case sPixmap:
-                    painter->fillPath( path, QBrush( data_.value<QPixmap>() ) );
+                    painter->fillPath( path, QBrush( pixmap_->data() ) );
                     break;
             case sNone:
             default: break;
@@ -142,16 +258,16 @@ const QBrush Stroke::brush( const QRectF& rect ) const
         
         switch ( type_ ) {
             case sColor:
-                    ret = data_.value<QColor>();
+                    ret = color_->data();
                     break;
             case sGradient:
             {
-                    QGradient* qgrad = data_.value<Gradient>().toQGradient( rect );
+                    QGradient* qgrad = gradient_->data().toQGradient( rect );
                     ret = *qgrad;
                     break;
             }
             case sPixmap:
-                    ret = data_.value<QPixmap>();
+                    ret = pixmap_->data();
                     break;
             case sNone:
             default: break;
@@ -177,7 +293,20 @@ const QString Stroke::typeString() const
             case sGradient: return "gradient";
                     
             default: break;
-        }
+        } 
 
         return QString();
+}
+
+
+void Stroke::addUsedResource( ResourceSet& rs ) const
+{
+        if ( color_ ) {
+                rs["color"] << color_->key();
+                return;
+        }
+        if ( gradient_ ) {
+                rs["gradient"] << gradient_->key();
+                return;
+        }
 }

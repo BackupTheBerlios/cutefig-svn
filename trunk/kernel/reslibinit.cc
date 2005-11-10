@@ -27,7 +27,7 @@
 
 #include "reslib.h"
 #include "typedefs.h"
-#include "strokelib.h"
+//#include "strokelib.h"
 #include "gradient.h"
 #include "parser.h"
 #include "stdresio.h"
@@ -69,14 +69,12 @@ void ResLibInit::initGradients()
         radGrad.setColorAt( 0, Qt::red );
         radGrad.setColorAt( 1, Qt::blue );
 
+
+        ColorLib& cl = ColorLib::instance();
+        GradLib& gl = GradLib::instance();
         
-        StrokeLib& sl = StrokeLib::instance();
-        
-        insert( sl, "red", Stroke( ResourceKey::builtIn( "red" ), Qt::red ) );
-        insert( sl, "defaultGradient",
-                Stroke( ResourceKey::builtIn("defaultGradient"), defaultGrad ) );
-        insert( sl, "linearBuiltIn",
-                Stroke( ResourceKey::builtIn("linearBuiltIn"),   linGrad ) );
-        insert( sl, "radialBuiltIn",
-                Stroke( ResourceKey::builtIn("radialBuiltIn"),   radGrad ) );
+//        insert<QColor>( cl, "red", Qt::red );
+        insert( gl, "defaultGradient", defaultGrad );
+        insert( gl, "linearBuiltIn",   linGrad );
+        insert( gl, "radialBuiltIn",   radGrad );
 }

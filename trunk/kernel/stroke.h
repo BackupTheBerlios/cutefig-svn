@@ -25,17 +25,22 @@
 #ifndef stroke_h
 #define stroke_h
 
+#include "resourcekey.h"
+#include "resourceuser.h"
+#include "gradient.h"
+
+#include <QColor>
+#include <QBrush>
+
 class Gradient;
 class QPixmap;
 class QPainterPath;
 class QPainter;
+class QRectF;
 
 class OutputBackend;
 
-#include "resourcekey.h"
-
-#include <QVariant>
-#include <QColor>
+//template<typename Resource> class ResourceUser;
 
 class Stroke 
 {
@@ -46,17 +51,24 @@ public:
         
         Stroke();
         explicit Stroke( const QColor& color );
-        Stroke( const ResourceKey& key, const QColor& color );
-        Stroke( const ResourceKey& key, const Gradient& gradient );
+
+//         static Stroke colorStroke( const ResourceKey& key );
+//         static Stroke gradientStroke( const ResourceKey& key );
+        
+//        Stroke( const ResourceKey& key, const QColor& color );
+//        Stroke( const ResourceKey& key, const Gradient& gradient );
         Stroke( const Stroke& other );
 
-        ~Stroke() {}
-
+        ~Stroke();
+        
         void setNone() { type_ = sNone; }
         void setColor( const QColor& color );
-        void setGradient( const Gradient& gradient );
+//        void setGradient( const Gradient& gradient );
         void setPixmap( const QPixmap& pixmap );
 
+        void setColor( const ResourceKey& key );
+        void setGradient( const ResourceKey& key );
+        
         QColor color() const;
         bool isHardColor() const { return !key_.isValid() && type_ == sColor; }
 
@@ -64,7 +76,7 @@ public:
         
         StrokeType type() const { return type_; }
         
-        void setKey( const ResourceKey& key ) { key_ = key; }
+//        void setKey( const ResourceKey& key );
         const ResourceKey& key() const { return key_; }
 
         void fillPath( const QPainterPath& path, QPainter* painter ) const;
@@ -75,14 +87,49 @@ public:
         operator bool () const { return type_; }
         
         const QString typeString() const;
-        
+
+        void addUsedResource( ResourceSet& rs ) const;
+
+        Stroke& operator= ( const Stroke& other );
+                
 private:
         StrokeType type_;
-        QVariant data_;
+//        QVariant data_;
+
+        ResourceUser<QColor>* color_;
+        ResourceUser<Gradient>* gradient_;
+        ResourceUser<QPixmap>* pixmap_;
         
 //        Gradient* gradient_;
         
         ResourceKey key_;
 };
+
+// inline Stroke Stroke::colorStroke( const ResourceKey& key ) 
+// {
+//         Stroke s;
+//         s.type_ = sColor;
+//         s.color_ = new ResourceUser<QColor>();
+//         s.color_->setResource( key );
+//         s.key_ = key;
+        
+//         return s;
+// }
+
+// inline Stroke Stroke::gradientStroke( const ResourceKey& key ) 
+// {
+//         Stroke s;
+//         s.type_ = sGradient;
+//         s.gradient_ = new ResourceUser<Gradient>();
+//         s.gradient_->setResource( key );
+//         s.key_ = key;
+        
+//         return s;
+// }
+
+inline int qHash( const QColor& ) 
+{
+        return 0;
+}
 
 #endif

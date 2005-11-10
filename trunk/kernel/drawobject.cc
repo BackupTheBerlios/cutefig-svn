@@ -151,14 +151,17 @@ const ResourceSet DrawObject::usedResources() const
 {
         ResourceSet rs;
 
-        QString ts = stroke_.typeString();
-        if ( !ts.isNull() )
-                rs[ts] << stroke_.key();
+//         QString ts = stroke_.typeString();
+//         if ( !ts.isNull() )
+//                 rs[ts] << stroke_.key();
 
-        ts = fill_.typeString();
-        if ( !ts.isNull() )
-                rs[ts] << fill_.key();
+//         ts = fill_.typeString();
+//         if ( !ts.isNull() )
+//                 rs[ts] << fill_.key();
 
+        stroke_.addUsedResource( rs );
+        fill_.addUsedResource( rs );
+        
         rs["dashes"] << pen_.dashesKey();
         
         addSpecificResources( rs );

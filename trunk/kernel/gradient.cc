@@ -105,7 +105,7 @@ QGradient* Gradient::toQGradient( const QRectF& rect ) const
                     break;
             default: break;
         }
-        
+
         if ( gr )
                 gr->setStops( colorStops_ );
 

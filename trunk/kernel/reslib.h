@@ -30,16 +30,17 @@
 
 #include "typedefs.h"
 #include "resourcekey.h"
-
+#include "resourceuser.h"
 #include <QDebug>
 
 // The following two lines are an ugly hack to make the thing compile
 // using g++-3.3. The will be dropped as soon as Gentoo Linux switches
 // to g++-4.0 :)
-template<typename Resource> class ResLib;
-#include "strokelib.h"
+// template<typename Resource> class ResLib;
+// #include "strokelib.h"
 
 class ResLibInit;
+template<typename Resource> class ResourceUser;
 
 /** \class ResLib<Resource>
  *
@@ -57,6 +58,8 @@ class ResLibInit;
 
 template<class Resource> class ResLib
 {
+        typedef ResourceUser<Resource> User;
+        
 public:
         friend class ResLibInit;
         //!< fills the ResLib with the builtin resources on application startup.
@@ -80,18 +83,26 @@ public:
         //! Recalculates the hash sum represented by key.
         int recalcHashSum( const ResourceKey& key, bool* found = 0 ) const;
         
-        const Resource operator[]( const ResourceKey& key ) const { return map_[key]; }
-        Resource& operator[]( const ResourceKey& key ) { return map_[key]; }
-        const ResourceKey key( const Resource& data ) const { return map_[data]; }
+        const Resource& operator[]( const ResourceKey& key );
+        
+        void setResource( const ResourceKey& key, const Resource& resource );
+        
+//        const ResourceKey key( const Resource& data ) const { return map_[data]; }
 
         bool contains( const ResourceKey& key ) const { return map_.contains( key ); }
 
+        bool isBeingUsed( const ResourceKey& key ) const { return !map_[key].users.isEmpty(); }
+        
         int count() const { return map_.count(); }
         ResourceKey at( int i ) const { return map_.keys().at ( i ); }
         int indexOf( const ResourceKey& key ) const { return map_.keys().indexOf( key ); }
 
+        void changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey );
+        
         const ResourceKeyList keys() const { return map_.keys(); }
 
+        const Resource* assignResource( const ResourceKey& key, User* u );
+        void unassignResource( const ResourceKey& key, User* u );
         
 //        QList<Resource> resources() const { return map_.values(); }
         
@@ -104,13 +115,20 @@ private:
         {
                 map_[key] = data;
         }
+
+        class ResourceData;
+
+        static Resource dummyResource_;
         
-        QMap<ResourceKey, Resource> map_; //!< resolves a ResourceKey to a Resource
-        QHash<ResourceKey, int> hashSums_; //!< resolves a ResourceKey to the hash sum        
+        QMap<ResourceKey, ResourceData> map_; //!< resolves a ResourceKey to a Resource
+//        QHash<ResourceKey, int> hashSums_; //!< resolves a ResourceKey to the hash sum        
 };
 
 
 template<> class ResLib<Stroke>;
+
+template<typename Resource>
+Resource ResLib<Resource>::dummyResource_ = Resource();
 
 /** It therefore first checks whether the resource is not
  *  builtIn. Also the hash sum is calculated.
@@ -118,15 +136,10 @@ template<> class ResLib<Stroke>;
 template<typename Resource>
 bool ResLib<Resource>::insert( const ResourceKey& key, const Resource& data )
 {
-        if ( key.isBuiltIn() )
+        if ( key.isBuiltIn() || contains( key ) )
                 return false;
 
         map_[key] = data;
-
-        int hashsum = qHash( data );
-                
-        if ( hashsum )
-                hashSums_[key] = hashsum;
                         
         return true;
 }
@@ -137,10 +150,9 @@ bool ResLib<Resource>::insert( const ResourceKey& key, const Resource& data )
 template<typename Resource>
 bool ResLib<Resource>::remove( const ResourceKey& key )
 {
-        if ( key.isBuiltIn() ) 
+        if ( key.isBuiltIn() || !isBeingUsed( key ) ) 
                 return false;
 
-        hashSums_.remove( key );
         return map_.remove( key );
 }
 
@@ -154,8 +166,7 @@ int ResLib<Resource>::hashSum( const ResourceKey& key, bool* found ) const
         int result = 0;
                 
         if ( map_.contains( key ) ) {
-                if ( hashSums_.contains( key ) )
-                        result = hashSums_[key];
+                result = map_[key].hashSum();
                 f = true;
         }
 
@@ -184,6 +195,84 @@ int ResLib<Resource>::recalcHashSum( const ResourceKey& key, bool* found ) const
 
         return newsum;
 }
+
+template<typename Resource>
+const Resource& ResLib<Resource>::operator[]( const ResourceKey& key )
+{
+        if ( map_.contains( key ) )
+                return map_[key].data();
+        else {
+                return dummyResource_;
+        }
+}
+
+template<typename Resource>
+void ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey )
+{
+        if ( !contains( oldKey ) || contains( newKey ) )
+                return;
+
+        ResourceData& d = map_[oldKey];
+        foreach ( User* u, d.users )
+                u->nameChanged( newKey );
+
+        map_.remove( oldKey );
+        map_[newKey] = d;
+}
+
+
+template<typename Resource>
+const Resource* ResLib<Resource>::assignResource( const ResourceKey& key, User* u )
+{
+        if ( !contains( key ) )
+                return 0;
         
+        ResourceData& d = map_[key];
+        if ( !d.users.contains( u ) )
+                d.users << u;
+        
+        return &d.data();
+}
+
+template<typename Resource>
+void ResLib<Resource>::unassignResource( const ResourceKey& key, User* u ) 
+{
+        if ( !contains( key ) )
+                return;
+
+        map_[key].users.removeAll( u );
+}
+
+
+template<typename Resource>
+class ResLib<Resource>::ResourceData
+{
+public:
+        ResourceData()  : users(), data_(), hashSum_() {}
+        ResourceData( const Resource& d ) : users(), data_(), hashSum_()
+        {
+                setData( d );
+        }
+
+        const Resource& data() const { return data_; }
+
+        unsigned int hashSum() const { return hashSum_; }
+        
+        QList<User*> users;
+
+private:
+        void setData( const Resource& d );
+        Resource data_;
+        unsigned int hashSum_;
+};
+
+template<typename Resource>
+void ResLib<Resource>::ResourceData::setData( const Resource& d ) 
+{
+        data_ = d;
+        hashSum_ = qHash( d );
+}
+
+
 
 #endif

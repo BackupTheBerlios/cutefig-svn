@@ -101,7 +101,7 @@ std::ostream& operator<< ( std::ostream& ts, const Stroke& st )
         if ( st.isHardColor() )
                 ts << st.color();
         else
-                ts << st.key();
+                ts << st.typeString() << ' ' << st.key();
 
         return ts;
 }

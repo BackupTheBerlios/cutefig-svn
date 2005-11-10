@@ -31,6 +31,7 @@
 
 #include "typedefs.h"
 #include "resourcekey.h"
+#include "resourceuser.h"
 
 class QPainterPath;
 class QPainter;
@@ -54,8 +55,8 @@ public:
         void setJoinStyle( Qt::PenJoinStyle js ) { joinStyle_ = js; }
         Qt::PenJoinStyle joinStyle() const { return joinStyle_; }
 
-        bool setDashes( const ResourceKey& key );
-        const ResourceKey& dashesKey() const { return dashesKey_; }
+        void setDashes( const ResourceKey& key );
+        const ResourceKey& dashesKey() const { return dashes_.key(); }
 
         void strikePath( const QPainterPath& path, const Stroke&, QPainter* painter ) const;
         
@@ -69,8 +70,7 @@ private:
         Qt::PenCapStyle capStyle_;
         Qt::PenJoinStyle joinStyle_;
 
-        ResourceKey dashesKey_;
-        Dashes dashes_;
+        ResourceUser<Dashes> dashes_;
 };
 
 int qHash( const Dashes& dashes );

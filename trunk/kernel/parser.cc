@@ -34,8 +34,8 @@
  
 #include "parser.h"
 #include "figure.h"
-// #include "reslib.h"
-#include "strokelib.h"
+#include "reslib.h"
+//#include "strokelib.h"
 // #include "gradient.h"
 #include "resourceio.h"
 #include "dobjectfactory.h"
@@ -278,8 +278,8 @@ std::istream& operator>> ( std::istream &is, ResourceKey& key )
 
 void Parser::parseStroke( Stroke& s )
 {
-        StrokeLib& sl = StrokeLib::instance();
-
+        qDebug() << "parseStroke";
+        
         char c;
         do 
                 c = stream_.get();
@@ -293,15 +293,18 @@ void Parser::parseStroke( Stroke& s )
                         s = Stroke( color );
         }
         else {
+                QString kw;
                 ResourceKey key;
-                if (stream_ >> key) {
-                        if ( !key.isValid() ) {
-                                s = Stroke();
+                
+                s = Stroke();
+                if ( (stream_ >> kw >> key) && key.isValid() ) {
+                        
+                        if ( kw == "color" ) {
+                                s.setColor( key );
+                                return;
                         }
-                        else if ( !sl.contains( key ) )
-                                parseError( tr("Unknown stroke key: %1").arg( key.keyString() ) );
-                        else 
-                                s = sl[key];
+                        if ( kw == "gradient" )
+                                s.setGradient( key );
                 }
         }
 }
@@ -374,7 +377,10 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         
         o->setPen( pen );
         o->setStroke( stroke );
+        qDebug() << "settingFill";
+        
         o->setFill( fill );
+        qDebug() << "fill set" << o->fill().key() <<o->p_fill();
         o->setDepth( depth );
         
         pa = &o->points();

@@ -70,7 +70,7 @@ public:
         virtual void changeResource();
         
 private:
-        const ResLib<Resource>& resourceLib_;
+        ResLib<Resource>& resourceLib_;
         Resource resource_;
 };
 
@@ -109,6 +109,7 @@ template<class Resource>
 void ResourceButton<Resource>::setResource( const ResourceKey& key ) 
 {
         key_ = key;
+        qDebug () << "setResource" << key;
         resource_ = resourceLib_[key];
         definedByKey_ = true;
         setIcon( QIcon( new ResourceIconEngine<Resource>( resource_ ) ) );
@@ -123,9 +124,12 @@ void ResourceButton<Resource>::changeResource()
         if ( definedByKey_ ) { 
                 ResourceKey newkey = ReslibEditor<Resource>::getResource( key_, &ok, this );
                 if ( ok ) {
+                        qDebug() << "ok, setting Key" << newkey;
                         setResource( newkey );
                         emit resourceChanged();
                 }
+                else qDebug() << "not ok";
+                
         } else {
                 Resource newRes = ResourceDialog<Resource>::editData( resource_, &ok, this );
                 if ( ok ) {

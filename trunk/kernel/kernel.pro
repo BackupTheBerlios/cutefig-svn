@@ -21,8 +21,8 @@ HEADERS += fig.h \
            stroke.h \
            gradient.h \
            resourcekey.h \
+           resourceuser.h \
            reslib.h \
-           strokelib.h \
            initialiser.h \
            reslibinit.h \
            streamops.h \
@@ -44,7 +44,6 @@ SOURCES += figure.cc \
            pen.cc \
            stroke.cc \
            gradient.cc \
-           strokelib.cc \
            initialiser.cc \
            reslibinit.cc \
            resourceio.cc \

@@ -94,10 +94,8 @@ void StrokeWidget::changeType( int type )
                     stroke_->setNone(); break;
             case Stroke::sColor:
                     stroke_->setColor( colorButton_->getResource() ); break;
-            case Stroke::sGradient:
-//                    Gradient gr = gradientButton_->getResource();
-//                    if ( gr.type() != Gradient::None )
-//                            stroke_->setGradient( gradientButton_->getResource() );
+            case Stroke::sGradient: 
+                    setGradient(); break;
             default:
                     break;
         }
@@ -113,6 +111,7 @@ void StrokeWidget::setColor()
 
 void StrokeWidget::setGradient()
 {
-        *stroke_ = Stroke( gradientButton_->key(), gradientButton_->getResource() );
+        qDebug() << "setGradient" << gradientButton_->key();
+        stroke_->setGradient( gradientButton_->key() );
         emit strokeChanged();
 }
