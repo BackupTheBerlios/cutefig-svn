@@ -119,14 +119,12 @@ void ResourceUser<Resource>::setResource( const Resource& data )
 template<typename Resource>
 void ResourceUser<Resource>::setResource( const ResourceKey& key )
 {
-        qDebug() << "setResource" << key;
         const Resource* r = resLib_.assignResource( key, this );
 
         if ( r ) {
                 unassignResource();
                 key_ = key;
                 p_data_ = r;
-                qDebug() << "received";
         }
 }
 

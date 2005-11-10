@@ -97,7 +97,7 @@ public:
         ResourceKey at( int i ) const { return map_.keys().at ( i ); }
         int indexOf( const ResourceKey& key ) const { return map_.keys().indexOf( key ); }
 
-        void changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey );
+        bool changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey );
         
         const ResourceKeyList keys() const { return map_.keys(); }
 
@@ -207,17 +207,27 @@ const Resource& ResLib<Resource>::operator[]( const ResourceKey& key )
 }
 
 template<typename Resource>
-void ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey )
+void ResLib<Resource>::setResource( const ResourceKey& key, const Resource& res ) 
+{
+        if ( map_.contains( key ) )
+                map_[key].setData( res );
+}
+
+
+template<typename Resource>
+bool ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey )
 {
         if ( !contains( oldKey ) || contains( newKey ) )
-                return;
+                return false;
 
-        ResourceData& d = map_[oldKey];
+        ResourceData d = map_[oldKey];
         foreach ( User* u, d.users )
                 u->nameChanged( newKey );
 
         map_.remove( oldKey );
         map_[newKey] = d;
+
+        return true;
 }
 
 
@@ -226,10 +236,12 @@ const Resource* ResLib<Resource>::assignResource( const ResourceKey& key, User* 
 {
         if ( !contains( key ) )
                 return 0;
-        
+
+        qDebug() << "assign" << key << u << map_[key].users.size();;
         ResourceData& d = map_[key];
         if ( !d.users.contains( u ) )
                 d.users << u;
+        qDebug() << "done" << map_[key].users.size();
         
         return &d.data();
 }
@@ -240,7 +252,9 @@ void ResLib<Resource>::unassignResource( const ResourceKey& key, User* u )
         if ( !contains( key ) )
                 return;
 
+        qDebug() << "unassign" << key << u << map_[key].users.size();
         map_[key].users.removeAll( u );
+        qDebug() << "done" << map_[key].users.size();
 }
 
 
@@ -260,8 +274,9 @@ public:
         
         QList<User*> users;
 
-private:
         void setData( const Resource& d );
+
+private:
         Resource data_;
         unsigned int hashSum_;
 };

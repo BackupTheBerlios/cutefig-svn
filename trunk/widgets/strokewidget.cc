@@ -111,7 +111,6 @@ void StrokeWidget::setColor()
 
 void StrokeWidget::setGradient()
 {
-        qDebug() << "setGradient" << gradientButton_->key();
         stroke_->setGradient( gradientButton_->key() );
         emit strokeChanged();
 }

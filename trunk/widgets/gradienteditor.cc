@@ -27,7 +27,6 @@
 #include "flagbuttongroup.h"
 
 #include "reslib.h"
-#include "strokelib.h"
 
 #include <QLayout>
 #include <QGroupBox>

@@ -179,10 +179,8 @@ void ReslibEditor<Resource>::editResource()
 {
         Resource resource = resLib_[resourceKey_];
 
-        if ( ResourceDialog<Resource>::execute( resource ) == QDialog::Accepted  ) {
-                resLib_.remove( resourceKey_ );
-                resLib_.insert( resourceKey_, resource );
-        }
+        if ( ResourceDialog<Resource>::execute( resource ) == QDialog::Accepted  ) 
+                resLib_.setResource( resourceKey_, resource );
 }
 
 template<typename Resource>        

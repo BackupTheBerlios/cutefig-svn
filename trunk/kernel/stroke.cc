@@ -49,9 +49,6 @@ Stroke::Stroke( const Stroke& other )
           pixmap_( other.pixmap_ ? new ResourceUser<QPixmap>( *other.pixmap_ ) : 0  ),
           key_( other.key_ )
 {
-        qDebug() << "Stroke::other" << this << &other;
-        if ( gradient_ )
-                qDebug() << gradient_->key() << key_;
 }
 
 Stroke::Stroke( const QColor& color )
@@ -65,8 +62,20 @@ Stroke::Stroke( const QColor& color )
 Stroke& Stroke::operator=( const Stroke& other )
 {
         type_ = other.type_;
+
+        if ( color_ )
+                delete color_;
+        
         color_ = other.color_ ? new ResourceUser<QColor>( *other.color_ ) : 0;
+
+        if ( gradient_ )
+                delete gradient_;
+        
         gradient_ = other.gradient_ ? new ResourceUser<Gradient>( *other.gradient_ ) : 0;
+
+        if ( pixmap_ )
+                delete pixmap_;
+        
         pixmap_ = other.pixmap_ ? new ResourceUser<QPixmap>( *other.pixmap_ ) : 0;
         key_ = other.key_;
 
@@ -184,8 +193,12 @@ void Stroke::setGradient( const ResourceKey& key )
                 pixmap_ = 0;
         }
 
-        if ( !gradient_ )
-                gradient_ = new ResourceUser<Gradient>();
+        if ( gradient_ ) {
+                delete gradient_;
+                gradient_ = 0;
+        }
+                        
+        gradient_ = new ResourceUser<Gradient>();
 
         gradient_->setResource( key );
         key_ = key;

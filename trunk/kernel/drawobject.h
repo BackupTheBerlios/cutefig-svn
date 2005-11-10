@@ -131,7 +131,7 @@ public:
 public slots:
         void setPen( const Pen& p );
         void setStroke( const Stroke& s ) { stroke_ = s; }
-        void setFill( const Stroke& s ) { qDebug() << "setting"; fill_ = s; qDebug() << &fill_ << &s << fill_.key() << s.key();  }
+        void setFill( const Stroke& s ) { fill_ = s; }
 //        void setFillColor( const QColor& c );
         
         void setDepth( int d ) { depth_ = d; }

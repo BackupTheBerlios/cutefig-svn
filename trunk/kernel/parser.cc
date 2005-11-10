@@ -377,10 +377,7 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
         
         o->setPen( pen );
         o->setStroke( stroke );
-        qDebug() << "settingFill";
-        
         o->setFill( fill );
-        qDebug() << "fill set" << o->fill().key() <<o->p_fill();
         o->setDepth( depth );
         
         pa = &o->points();

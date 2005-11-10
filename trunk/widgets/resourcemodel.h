@@ -104,16 +104,13 @@ Qt::ItemFlags ResourceModel<Resource>::flags( const QModelIndex& index ) const
 template<typename Resource>
 bool ResourceModel<Resource>::setData( const QModelIndex& index, const QVariant& value, int )
 {
-        ResourceKey newKey( value.toString(), ResourceKey::InLib );
-
-        if ( resourceLib_.contains( newKey ) )
-                return false;
-
         int i = index.row();
-        
-        ResourceKey oldKey = resourceLib_.at( i );
 
-        resourceLib_.changeKeyName( oldKey, newKey );
+        ResourceKey oldKey = resourceLib_.at( i );
+        ResourceKey newKey = ResourceKey::newName( value.toString(), oldKey );
+        
+        if ( !resourceLib_.changeKeyName( oldKey, newKey ) )
+                return false;
 
         emit dataChanged(index, index);
 

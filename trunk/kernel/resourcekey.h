@@ -138,6 +138,7 @@ public:
         ResourceKey() : keyString_(), flags_( Invalid ) {}
         ResourceKey( const QString& ks, Flags flags ) : keyString_( ks ), flags_( flags ) {}
         ResourceKey( const ResourceKey& o ) : keyString_( o.keyString_ ), flags_( o.flags_ ) {}
+        
         const QString& keyString() const { return keyString_; }
         
         bool isBuiltIn() const { return flags_ & BuiltIn; }
@@ -148,6 +149,9 @@ public:
         static ResourceKey inFig( const QString& ks ) { return ResourceKey( ks, InFig ); }
         static ResourceKey inLib( const QString& ks ) { return ResourceKey( ks, InLib ); }
 
+        static ResourceKey newName( const QString& ks, const ResourceKey& other )
+        { return ResourceKey( ks, other.flags_ ); }
+        
         friend QDebug operator<< ( QDebug, const ResourceKey& );
         
 private:
