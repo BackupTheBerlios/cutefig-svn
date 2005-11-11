@@ -25,7 +25,7 @@
 #include "initialiser.h"
 #include "allobjects.h"
 #include "reslibinit.h"
-#include "stdresio.h"
+#include "resourceio.h"
 
 #include <QDebug>
 
@@ -36,8 +36,8 @@ Initialiser::Initialiser()
         static EllipseFactory elf;
         static PolylineFactory plf;
         static PolygonFactory pgf;
-        
-        static ColorIOFactory ciof;
-        static GradientIOFactory giof;
-        static DashesIOFactory diof;
+
+        static TResourceIOFactory<QColor> ciof;
+        static TResourceIOFactory<Gradient> giof;
+        static TResourceIOFactory<Dashes> diof;
 }

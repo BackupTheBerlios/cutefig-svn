@@ -147,7 +147,7 @@ void DrawObject::setPen( const Pen& p )
         setupRects();
 }
 
-const ResourceSet DrawObject::usedResources() const
+const ResourceSet DrawObject::usedResources()
 {
         ResourceSet rs;
 
@@ -159,13 +159,40 @@ const ResourceSet DrawObject::usedResources() const
 //         if ( !ts.isNull() )
 //                 rs[ts] << fill_.key();
 
-        stroke_.addUsedResource( rs );
-        fill_.addUsedResource( rs );
+//         stroke_.addUsedResource( rs );
+//         fill_.addUsedResource( rs );
         
-        rs["dashes"] << pen_.dashesKey();
+//         rs["dashes"] << pen_.dashesKey();
         
-        addSpecificResources( rs );
+//         addSpecificResources( rs );
+
+        foreach ( AbstractResourceUser* aru, resourceUsers() )
+                if ( aru )
+                        rs[aru->resourceName()] << aru->key();
         
         return rs;
 }
 
+
+void DrawObject::releaseResources()
+{
+        foreach ( AbstractResourceUser* aru, resourceUsers() )
+                if ( aru )
+                        aru->releaseResource();
+}
+
+void DrawObject::reclaimResources()
+{
+        foreach ( AbstractResourceUser* aru, resourceUsers() )
+                if ( aru )
+                        aru->reclaimResource();
+}
+
+QList<AbstractResourceUser*> DrawObject::resourceUsers() 
+{
+        QList<AbstractResourceUser*> rul;
+
+        rul << stroke_.resourceUser() << fill_.resourceUser() << pen_.resourceUser();
+
+        return rul;
+}

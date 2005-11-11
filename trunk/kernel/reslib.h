@@ -28,9 +28,15 @@
 #include <QVector>
 #include <QMap>
 
+namespace Res
+{
+        template<typename Resource> const QString resourceName();
+}
+
 #include "typedefs.h"
 #include "resourcekey.h"
 #include "resourceuser.h"
+
 #include <QDebug>
 
 // The following two lines are an ugly hack to make the thing compile
@@ -40,7 +46,26 @@
 // #include "strokelib.h"
 
 class ResLibInit;
-template<typename Resource> class ResourceUser;
+//template<typename Resource> class ResourceUser;
+
+
+
+
+class AbstractResourceUser;
+
+class AbstractResLib
+{
+public:
+        virtual ~AbstractResLib() {}
+        
+        virtual void unassignResource( const ResourceKey& key, AbstractResourceUser* u ) = 0;
+
+protected:
+        AbstractResLib() {}
+
+private:
+        AbstractResLib( const AbstractResLib& ) {}
+};
 
 /** \class ResLib<Resource>
  *
@@ -56,9 +81,8 @@ template<typename Resource> class ResourceUser;
  * For a general overview of the resource system see \ref resource_system.
  */
 
-template<class Resource> class ResLib
+template<class Resource> class ResLib : public AbstractResLib
 {
-        typedef ResourceUser<Resource> User;
         
 public:
         friend class ResLibInit;
@@ -72,7 +96,7 @@ public:
                 static ResLib<Resource> inst;
                 return inst;
         };
-
+        
         //! Inserts data into the ResLib with the key
         bool insert( const ResourceKey& key, const Resource& data );
         //! Removes the resource represented by key.
@@ -101,8 +125,8 @@ public:
         
         const ResourceKeyList keys() const { return map_.keys(); }
 
-        const Resource* assignResource( const ResourceKey& key, User* u );
-        void unassignResource( const ResourceKey& key, User* u );
+        const Resource* assignResource( const ResourceKey& key, AbstractResourceUser* u );
+        void unassignResource( const ResourceKey& key, AbstractResourceUser* u );
         
 //        QList<Resource> resources() const { return map_.values(); }
         
@@ -150,7 +174,7 @@ bool ResLib<Resource>::insert( const ResourceKey& key, const Resource& data )
 template<typename Resource>
 bool ResLib<Resource>::remove( const ResourceKey& key )
 {
-        if ( key.isBuiltIn() || !isBeingUsed( key ) ) 
+        if ( key.isBuiltIn() || isBeingUsed( key ) ) 
                 return false;
 
         return map_.remove( key );
@@ -221,7 +245,7 @@ bool ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceK
                 return false;
 
         ResourceData d = map_[oldKey];
-        foreach ( User* u, d.users )
+        foreach ( AbstractResourceUser* u, d.users )
                 u->nameChanged( newKey );
 
         map_.remove( oldKey );
@@ -232,29 +256,25 @@ bool ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceK
 
 
 template<typename Resource>
-const Resource* ResLib<Resource>::assignResource( const ResourceKey& key, User* u )
+const Resource* ResLib<Resource>::assignResource( const ResourceKey& key, AbstractResourceUser* u )
 {
         if ( !contains( key ) )
                 return 0;
 
-        qDebug() << "assign" << key << u << map_[key].users.size();;
         ResourceData& d = map_[key];
         if ( !d.users.contains( u ) )
                 d.users << u;
-        qDebug() << "done" << map_[key].users.size();
         
         return &d.data();
 }
 
 template<typename Resource>
-void ResLib<Resource>::unassignResource( const ResourceKey& key, User* u ) 
+void ResLib<Resource>::unassignResource( const ResourceKey& key, AbstractResourceUser* u ) 
 {
         if ( !contains( key ) )
                 return;
 
-        qDebug() << "unassign" << key << u << map_[key].users.size();
         map_[key].users.removeAll( u );
-        qDebug() << "done" << map_[key].users.size();
 }
 
 
@@ -272,7 +292,7 @@ public:
 
         unsigned int hashSum() const { return hashSum_; }
         
-        QList<User*> users;
+        QList<AbstractResourceUser*> users;
 
         void setData( const Resource& d );
 
@@ -288,6 +308,11 @@ void ResLib<Resource>::ResourceData::setData( const Resource& d )
         hashSum_ = qHash( d );
 }
 
+class QPixmap;
 
+template<> inline const QString Res::resourceName<QColor>() { return "color"; }
+template<> inline const QString Res::resourceName<Gradient>() { return "gradient"; }
+template<> inline const QString Res::resourceName<Dashes>() { return "dashes"; }
+template<> inline const QString Res::resourceName<QPixmap>() { return "pixmap"; }
 
 #endif

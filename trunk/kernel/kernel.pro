@@ -26,7 +26,6 @@ HEADERS += fig.h \
            initialiser.h \
            reslibinit.h \
            streamops.h \
-           stdresio.h \
            resourceio.h \
            parser.h \
            cfigoutput.h \

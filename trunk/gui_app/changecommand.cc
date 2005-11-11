@@ -26,7 +26,6 @@
 #include "changecommand.h"
 #include "figure.h"
 
-
 void ChangeCommand::execute()
 {
         foreach ( DrawObject* o, oldObjects_ )

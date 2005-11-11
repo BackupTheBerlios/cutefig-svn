@@ -63,7 +63,7 @@ bool Selection::select( DrawObject* o )
         return true;
 }
 
-/** To be called if a new object is createt, e.g by a CreateAction. In
+/** To be called if a new object is created, e.g by a CreateAction. In
  * this case the backups_ are empty because it doesn't make sense to
  * copy a DrawObject, that is not yet in the Figure.
  */

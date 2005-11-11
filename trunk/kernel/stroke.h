@@ -88,7 +88,7 @@ public:
         
         const QString typeString() const;
 
-        void addUsedResource( ResourceSet& rs ) const;
+        AbstractResourceUser* resourceUser() const { return resourceUser_; }
 
         Stroke& operator= ( const Stroke& other );
                 
@@ -96,10 +96,9 @@ private:
         StrokeType type_;
 //        QVariant data_;
 
-        ResourceUser<QColor>* color_;
-        ResourceUser<Gradient>* gradient_;
-        ResourceUser<QPixmap>* pixmap_;
-        
+
+        AbstractResourceUser* resourceUser_;
+
 //        Gradient* gradient_;
         
         ResourceKey key_;
@@ -131,5 +130,11 @@ inline int qHash( const QColor& )
 {
         return 0;
 }
+
+inline int qHash( const QPixmap& ) 
+{
+        return 0;
+}
+
 
 #endif

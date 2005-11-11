@@ -41,3 +41,15 @@ ResourceIO* ResourceIOFactory::getResourceIO( const QString& keyWord )
 }
 
 
+AbstractResLib* ResourceIOFactory::getResLibInstance( const QString& keyWord )
+{
+        ResourceIOFactory* f = rIOFHash_[keyWord];
+
+
+        if ( !f )
+                return 0;
+
+        return f->resLibInstance();
+}
+ 
+

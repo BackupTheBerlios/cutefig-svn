@@ -84,6 +84,7 @@ void Figure::takeDrawObjects( const ObjectList& l )
  */
 void Figure::addDrawObject( DrawObject* o )
 {
+        o->reclaimResources();
         objectList_.push_back( o );
         addObjectToDrawingList( o );
 }
@@ -130,6 +131,7 @@ void Figure::sortIntoDrawingList( DrawObject* o )
  */
 void Figure::removeDrawObject( DrawObject* o )
 {
+        o->releaseResources();
         objectList_.removeAll( o );
         removeObjectFromDrawingList( o );
 }

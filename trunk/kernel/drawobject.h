@@ -48,6 +48,7 @@ class ObjectDialog;
 class OutputBackend;
 class CanvasView;
 class Compound;
+class AbstractResourceUser;
 
 class DrawObject : public QObject
 {
@@ -118,7 +119,9 @@ public:
         QRect selectPointRect( QPoint p ) const 
         { return QRect( p.x()-4, p.y()-4, 8,8 ); }
 
-        virtual const ResourceSet usedResources() const;
+        virtual const ResourceSet usedResources();
+        virtual void releaseResources();
+        virtual void reclaimResources();
         
         virtual void outputToBackend( OutputBackend* ob ) = 0;
         //!< supposed to pass all the data to the OubputBackend ob.
@@ -153,7 +156,10 @@ protected:
 
         virtual void setupRects();
 
-        virtual void addSpecificResources( ResourceSet& ) const {}
+        virtual void addSpecificResources( ResourceSet& ) {}
+
+        virtual QList<AbstractResourceUser*> resourceUsers();
+
 
         Figure* figure_;
 

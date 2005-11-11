@@ -25,12 +25,10 @@
 
 #include "reslibinit.h"
 
-#include "reslib.h"
 #include "typedefs.h"
-//#include "strokelib.h"
 #include "gradient.h"
 #include "parser.h"
-#include "stdresio.h"
+#include "reslib.h"
 
 ResLibInit::ResLibInit()
 {        

@@ -62,6 +62,8 @@ public:
         
         QRectF pathRect( const QPainterPath& path ) const;
 
+        AbstractResourceUser* resourceUser() { return &dashes_; }
+        
 private:
         void setupPainterPath( QPainterPath& strokePath, const QPainterPath& path ) const;
         

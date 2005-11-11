@@ -46,7 +46,8 @@ public:
         AbstractReslibEditor( const ResourceKey& initial, QWidget* parent=0 )
                 : EditDialog( parent ),
                   oldResourceKey_( initial ),
-                  resourceKey_( initial )
+                  resourceKey_( initial ),
+                  previousResourceKey_( initial )
         {}
         
         ~AbstractReslibEditor() {}
@@ -77,7 +78,7 @@ protected:
 
 //         ResourceDemo* resourceDemo_;
         
-        ResourceKey oldResourceKey_, resourceKey_;
+        ResourceKey oldResourceKey_, resourceKey_, previousResourceKey_;
 };
 
 template<typename Resource> class ReslibEditor : public AbstractReslibEditor
@@ -123,9 +124,13 @@ void ReslibEditor<Resource>::setupModel()
 }
 
 template<typename Resource>        
-void ReslibEditor<Resource>::resourceChanged( const QModelIndex& index, const QModelIndex& )
+void ReslibEditor<Resource>::resourceChanged( const QModelIndex& index, const QModelIndex& prev )
 {
         setResource( resLib_.at( index.row() ) );
+
+        int p = prev.row();
+        if ( p >=0 && p <= resLib_.count() )
+                previousResourceKey_ = resLib_.at( prev.row() );
 }
 
 template<typename Resource>
@@ -160,18 +165,20 @@ void ReslibEditor<Resource>::copyResource()
 
 template<typename Resource>        
 void ReslibEditor<Resource>::deleteResource()
-{ 
+{
         int ind = resLib_.indexOf( resourceKey_ );
         
         resourceModel_->removeRow( ind );
         
         resLib_.remove( resourceKey_ );
+
+//         if ( ind > resLib_.count() )
+//                 ind--;
+
+        setResource( previousResourceKey_ );
         
-        if ( ind > resLib_.count() )
-                ind--;
-        
-        selectedResource_->select( resourceModel_->index( ind ),
-                                   QItemSelectionModel::ClearAndSelect );
+//         selectedResource_->select( resourceModel_->index( previousSelection_ ),
+//                                    QItemSelectionModel::ClearAndSelect );
 }
 
 template<typename Resource>        
@@ -213,8 +220,6 @@ ResourceKey ReslibEditor<Resource>::getResource( const ResourceKey& initial, boo
         if ( accepted )
                 result = dlg.resourceKey();
 
-        qDebug() << result;
-        
         return result;
 }
 

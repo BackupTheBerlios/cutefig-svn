@@ -42,7 +42,7 @@ void DeleteCommand::execute()
 
 void DeleteCommand::unexecute()
 {
-        foreach ( DrawObject* o, actualObjects_ )
+        foreach ( DrawObject* o, actualObjects_ ) 
                 figure_->addDrawObject( o );
 }
 

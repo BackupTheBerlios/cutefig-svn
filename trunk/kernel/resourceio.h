@@ -27,6 +27,7 @@
 
 #include "resourcekey.h"
 #include "streamops.h"
+#include "reslib.h"
 
 #include <QString>
 #include <QHash>
@@ -69,22 +70,28 @@ class ResourceIOFactory
 {
 public:
         static ResourceIO* getResourceIO( const QString& keyWord );
-
+        static AbstractResLib* getResLibInstance( const QString& keyWord );
+        
         virtual ~ResourceIOFactory() {}
         
 protected:
-        ResourceIOFactory( const QString& kw )
+        ResourceIOFactory( const QString& kw, AbstractResLib& rl )
+                : resLib_( &rl )
         {
                 rIOFHash_[kw] = this;
         }
 
         virtual ResourceIO* newResourceIO() = 0;
 
+
 private:
         ResourceIOFactory( const ResourceIOFactory& ) {}
-        
+        AbstractResLib* resLibInstance() { return resLib_; }
+
+        AbstractResLib* resLib_;
         static QHash<QString,ResourceIOFactory*> rIOFHash_;        
 };
+
 
 /** \class ResourceIO
  *
@@ -199,6 +206,17 @@ private:
 
         Resource resource_;
 };
+
+template<typename Resource> class TResourceIOFactory : public ResourceIOFactory
+{
+public:
+        TResourceIOFactory<Resource>()
+                : ResourceIOFactory( Res::resourceName<Resource>(), ResLib<Resource>::instance() )
+        {}
+        
+        virtual ResourceIO* newResourceIO() { return new TResourceIO<Resource>(); }
+};
+
 
 template<typename Resource>
 void TResourceIO<Resource>::outputResource( const ResourceKey& key, std::ostream& stream )

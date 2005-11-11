@@ -22,9 +22,15 @@
 **
 ******************************************************************************/
 
-#include "stdresio.h"
 #include "streamops.h"
 #include "gradient.h"
+#include "resourceio.h"
+#include "reslib.h"
+#include "typedefs.h"
+
+#include <QColor>
+
+#include <istream>
 
 #include <QDebug>
 

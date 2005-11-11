@@ -30,42 +30,67 @@
 
 #include <QDebug>
 
-template<typename Resource> class ResourceUser
+class AbstractResourceUser
+{
+public:
+        AbstractResourceUser() : key_() {}
+        AbstractResourceUser( const  AbstractResourceUser& o ) : key_( o.key_ ) {}
+
+        virtual ~AbstractResourceUser() {}
+
+        virtual AbstractResourceUser* clone() const = 0;
+        
+        const ResourceKey& key() const { return key_; }
+        void nameChanged( const ResourceKey& newKey ) { key_ = newKey; }
+
+        virtual void releaseResource() = 0;
+        virtual void reclaimResource() = 0;
+
+        virtual const QString resourceName() const = 0;
+        
+protected:
+        ResourceKey key_;
+};
+
+
+template<typename Resource> class ResourceUser : public AbstractResourceUser
 {
 public:
         ResourceUser<Resource>()
-                : data_(),
-                  p_data_( 0 ),
-                  key_()
+                : AbstractResourceUser(),
+                  data_(),
+                  p_data_( 0 )
         {}
 
         ResourceUser<Resource>( const Resource& r )
-                : data_( r ),
-                  p_data_( 0 ),
-                  key_()
+                : AbstractResourceUser(),
+                  data_( r ),
+                  p_data_( 0 )
         {}
         
         ResourceUser<Resource>( const ResourceUser<Resource>& other );
 
         ~ResourceUser();
 
+        AbstractResourceUser* clone() const { return new ResourceUser<Resource>( *this ); }
+        
         const Resource& data() const;
 //        Resource& data();
-
-        const ResourceKey& key() const { return key_; }
         
         void setResource( const Resource& data );
         void setResource( const ResourceKey& resource );
 
-        void nameChanged( const ResourceKey& newKey ) { key_ = newKey; }
+        void releaseResource();
+        void reclaimResource();
+
+        const QString resourceName() const { return Res::resourceName<Resource>(); }
         
 private:
         void unassignResource();
+
         Resource data_;
         const Resource* p_data_;
         
-        ResourceKey key_;
-
         static ResLib<Resource>& resLib_;
 };
 
@@ -75,9 +100,9 @@ ResLib<Resource>& ResourceUser<Resource>::resLib_ = ResLib<Resource>::instance()
 
 template<typename Resource>
 ResourceUser<Resource>::ResourceUser<Resource>( const ResourceUser<Resource>& other )
-        : data_( other.data_ ),
-          p_data_( other.p_data_ ),
-          key_( other.key_ )
+        : AbstractResourceUser( other ),
+          data_( other.data_ ),
+          p_data_( other.p_data_ )
 {
         if ( key_.isValid() )
                 resLib_.assignResource( key_, this );
@@ -127,6 +152,26 @@ void ResourceUser<Resource>::setResource( const ResourceKey& key )
                 p_data_ = r;
         }
 }
+
+template<typename Resource>
+void ResourceUser<Resource>::releaseResource()
+{
+        if ( !key_.isValid() )
+                return;
+
+        data_ = *p_data_;
+        unassignResource();
+}
+
+template<typename Resource>
+void ResourceUser<Resource>::reclaimResource()
+{
+        if ( !key_.isValid() )
+                return;
+
+        resLib_.insert( key_, data_ );
+        p_data_ = resLib_.assignResource( key_, this );
+}       
 
 template<typename Resource>
 void ResourceUser<Resource>::unassignResource()

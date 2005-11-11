@@ -278,8 +278,6 @@ std::istream& operator>> ( std::istream &is, ResourceKey& key )
 
 void Parser::parseStroke( Stroke& s )
 {
-        qDebug() << "parseStroke";
-        
         char c;
         do 
                 c = stream_.get();
