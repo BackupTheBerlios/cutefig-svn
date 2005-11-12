@@ -135,6 +135,18 @@ const ResourceSet Compound::usedResources() const
         return rs;
 }
 
+void Compound::releaseResources()
+{
+        foreach ( DrawObject* o, childObjects_ ) 
+                o->releaseResources();
+}
+        
+void Compound::reclaimResources()
+{
+        foreach ( DrawObject* o, childObjects_ )
+                o->reclaimResources();
+}
+
 QPointF Compound::center() const
 {
         return bRect_.center();
@@ -157,4 +169,5 @@ bool Compound::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 
         return false;    
 }
+
 

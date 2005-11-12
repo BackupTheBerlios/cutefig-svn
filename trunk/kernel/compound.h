@@ -62,6 +62,9 @@ public:
         virtual void mapMatrix( const QMatrix& m );
 
         virtual const ResourceSet usedResources() const;
+        virtual void releaseResources();
+        virtual void reclaimResources();
+
         virtual void outputToBackend( OutputBackend* ob );
 
         const ObjectList& childObjects() { return childObjects_; }
