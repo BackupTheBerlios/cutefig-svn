@@ -34,6 +34,9 @@ class QSpinBox;
 class QDoubleSpinBox;
 class QCheckBox;
 
+template<typename Resource> class ResourceButton;
+typedef ResourceButton<QColor> ColorButton;
+
 class PixoutDialog : public ExportDialog
 {
         Q_OBJECT
@@ -50,13 +53,14 @@ private:
         QSpinBox *xres, *yres;
         QDoubleSpinBox *scale;
         QCheckBox *keepAspect;
+        ColorButton* bgColor;
         
 private slots:
         void setXres( int x );
         void setYres( int y );
         void setScale( double s );
         void keepAspectRatio( int keep );
-        void setBackground( QColor color );
+        void changeBackground();
         void setGamma( double g );
         void setQuality( int q );
         

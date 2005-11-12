@@ -86,7 +86,7 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         QHBoxLayout* bgLayout = new QHBoxLayout( mainLayout->widget() );
         QColor bg( Qt::white );
         bg.setAlpha( 0 );
-        ColorButton* bgColor = new ColorButton( bg, this );
+        bgColor = new ColorButton( bg, this );
         QLabel* bgLabel = new QLabel( tr("&Background color"), this );
         bgLabel->setBuddy( bgColor );
         bgLayout->addWidget( bgLabel );
@@ -126,7 +126,7 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         connect( scale, SIGNAL( valueChanged( double ) ), this, SLOT( setScale( double ) ) );
         connect( keepAspect, SIGNAL( stateChanged( int ) ), 
                  this, SLOT( keepAspectRatio( int ) ) );
-        connect( bgColor, SIGNAL( colorChanged(QColor) ), this, SLOT( setBackground(QColor) ) );
+        connect( bgColor, SIGNAL( resourceChanged() ), this, SLOT( changeBackground() ) );
         connect( gamma, SIGNAL( valueChanged(double) ), this, SLOT( setGamma(double) ) );
         connect( quality, SIGNAL( valueChanged(int) ), this, SLOT( setQuality(int) ) ); 
         topLayout_->addItem( mainLayout );
@@ -203,9 +203,9 @@ void PixoutDialog::keepAspectRatio( int keep )
         keepAspectRatio_ = keep;
 }
 
-void PixoutDialog::setBackground( QColor color )
+void PixoutDialog::changeBackground()
 {
-        filter_->setBackground( color );
+        filter_->setBackground( bgColor->getResource() );
 }
 
 void PixoutDialog::setGamma( double g )
