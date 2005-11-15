@@ -88,10 +88,16 @@ public:
         const QPolygonF objectsPoints();
 
         bool hasAction() const { return editAction_; }
-        bool willAcceptAction( const QPoint& p, const QMatrix* m ) const;
-        bool wouldAcceptAction( const QPoint&, const QMatrix* m ) const;
+        bool willAcceptClick( const QPoint& p, const QMatrix* m ) const;
+        bool wouldAcceptClick( const QPoint&, const QMatrix* m ) const;
+
+        bool willAcceptKeyStroke() const;
+        
         void callActionMove( const QPoint& p, const QMatrix* m );
         const QCursor callActionClick( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
+
+        bool callActionKeyStroke( const QKeyEvent* ke );
+        
         void cancelAction();
         void execAction( Command* cmd );
         

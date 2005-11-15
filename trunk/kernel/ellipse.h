@@ -37,19 +37,19 @@ class Ellipse : public DrawObject
 public:
         Ellipse( Figure* parent=0 );
         Ellipse( Ellipse *o );
-        ~Ellipse() {};
+        ~Ellipse() {}
 
         virtual DrawObject* copy();
 
-        virtual const QString objectname() { return "ellipse"; };
+        virtual const QString objectname() { return "ellipse"; }
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
-        double angle() const { return angle_ * rad; };
-        QPointF center() const { return center_; };
+        double angle() const { return angle_ * rad; }
+        QPointF center() const { return center_; }
 
-        bool isCircle() const { return circle_; };
-        bool isSpecifiedByRadii() const { return specByRadii_; };
+        bool isCircle() const { return circle_; }
+        bool isSpecifiedByRadii() const { return specByRadii_; }
 
         virtual void outputToBackend( OutputBackend* ob );
         

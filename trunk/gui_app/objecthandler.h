@@ -115,4 +115,21 @@ public:
         const QString name() const { return "polygon"; }
 };
 
+
+class TextHandler : public ObjectHandler
+{
+        TextHandler() : ObjectHandler() {}
+public:
+        static TextHandler* instance() {
+                static TextHandler* inst = new TextHandler();
+                return inst;
+        }
+
+        CreateAction* createAction( Controler* c, QActionGroup* g );
+        ObjectDialog* editDialog( DrawObject* o, 
+                                  EditdialogAction* a, QWidget* parent );
+
+        const QString name() const { return "text"; }
+};
+
 #endif

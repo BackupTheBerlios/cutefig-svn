@@ -37,7 +37,6 @@
 
 class CreateAction : public InteractiveAction
 {
-        Q_OBJECT
 protected:
         CreateAction( Controler* parent, QActionGroup* group = 0 ) 
                 : InteractiveAction( parent, group ) {}
@@ -67,7 +66,6 @@ private:
 
 class EllipseCAction : public CreateAction
 {
-        Q_OBJECT
 public:
         EllipseCAction( Controler* parent, QActionGroup* group = 0 )
                 : CreateAction( parent, group ) {
@@ -83,7 +81,6 @@ protected:
 
 class PolylineCAction : public CreateAction
 {
-        Q_OBJECT
 public:
         PolylineCAction( Controler* parent, QActionGroup* group = 0 )
                 : CreateAction( parent, group ) {
@@ -99,7 +96,6 @@ protected:
 
 class PolygonCAction : public CreateAction
 {
-        Q_OBJECT
 public:
         PolygonCAction( Controler* parent, QActionGroup* group = 0 )
                 : CreateAction( parent, group ) {

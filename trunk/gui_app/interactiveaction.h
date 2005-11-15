@@ -39,6 +39,8 @@
 class DrawObject;
 class Selection;
 
+class QKeyEvent;
+
 class InteractiveAction : public QAction
 {
         Q_OBJECT
@@ -48,12 +50,15 @@ public:
 
         virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m ) = 0;
         virtual void move( const QPoint&, const QMatrix* ) {}
+        virtual bool keyStroke( const QKeyEvent* ) { return false; }
 
         virtual void handleSelection() {}
 
         virtual bool isActive() const = 0;
         virtual bool wouldHandle( DrawObject* o, const QPoint& p=QPoint(), const QMatrix* m=0 )=0;
         virtual bool wouldHandleSelection( const QPoint& p = QPoint(), const QMatrix* m = 0 );
+        virtual bool acceptsKeyStrokes() { return false; }
+        
         const QCursor& cursor() const { return cursor_; }
 
         virtual const QString commandName() const = 0;

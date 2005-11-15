@@ -61,3 +61,13 @@ ObjectDialog* PolygonHandler::editDialog( DrawObject* o, EditdialogAction* a,
 {
         return new PolygonDialog( o, a, parent );
 }
+
+CreateAction* TextHandler::createAction( Controler* c, QActionGroup* g )
+{
+        return new TextAction( c, g );
+}
+
+ObjectDialog* TextHandler::editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
+{
+        return 0;
+}

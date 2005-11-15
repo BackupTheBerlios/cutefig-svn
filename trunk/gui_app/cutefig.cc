@@ -281,6 +281,7 @@ void CuteFig::setupObjectMapper()
         mapper.registerItem( EllipseHandler::instance() );
         mapper.registerItem( PolylineHandler::instance() );
         mapper.registerItem( PolygonHandler::instance() );
+        mapper.registerItem( TextHandler::instance() );
 }
 
 void CuteFig::exportFigure()

@@ -76,11 +76,11 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
 {
         QSize size( 500, 500 );
         setFocusPolicy( Qt::StrongFocus );
-    
-        setFocusPolicy( Qt::StrongFocus );
         offset_ = QPoint( 0,0 );
         setAttribute( Qt::WA_NoBackground );
 
+        setAttribute( Qt::WA_KeyCompression );
+        
         setMouseTracking( true );
         setFixedSize( size );
 
@@ -126,7 +126,7 @@ void CanvasView::mouseReleaseEvent( QMouseEvent* e )
                 controler_->selectObject( o );
         }
 
-        if ( controler_->willAcceptAction( p, &scaleMatrixInv_ ) ) {
+        if ( controler_->willAcceptClick( p, &scaleMatrixInv_ ) ) {
                 snap( p );
                 setCursor( controler_->callActionClick( p, f, &scaleMatrixInv_ ) );
         } else
@@ -154,7 +154,7 @@ void CanvasView::mouseMoveEvent( QMouseEvent* e )
            << p.x() << " : " << p.y();
         mainWindow_->statusBar()->showMessage( s );
 
-        if ( controler_->wouldAcceptAction( p, &scaleMatrixInv_ ) ) {
+        if ( controler_->wouldAcceptClick( p, &scaleMatrixInv_ ) ) {
                 if ( snap( p ) ) 
                         controler_->callActionMove( p, &scaleMatrixInv_ );
         } else {
@@ -172,7 +172,7 @@ void CanvasView::mouseMoveEvent( QMouseEvent* e )
 
 void CanvasView::contextMenuEvent( QContextMenuEvent* e )
 {
-        if ( controler_->wouldAcceptAction( e->pos(), &scaleMatrixInv_ ) ) {
+        if ( controler_->wouldAcceptClick( e->pos(), &scaleMatrixInv_ ) ) {
                 e->ignore();
                 return;
         }
@@ -205,8 +205,13 @@ void CanvasView::contextMenuEvent( QContextMenuEvent* e )
                 e->ignore();
 }
 
-void CanvasView::keyReleaseEvent( QKeyEvent* e )
+void CanvasView::keyPressEvent( QKeyEvent* e )
 {
+        if ( controler_->callActionKeyStroke( e ) ) {
+                e->accept();
+                return;
+        }
+
         switch ( e->key() ) {
             case Qt::Key_Escape: 
                     controler_->cancelAction();
@@ -220,6 +225,17 @@ void CanvasView::keyReleaseEvent( QKeyEvent* e )
         }
 }
 
+bool CanvasView::event( QEvent* e )
+{
+        if ( e->type() == QEvent::ShortcutOverride ) {
+                QKeyEvent* ke = (QKeyEvent*) e;
+                if ( controler_->willAcceptKeyStroke() )
+                        ke->accept();
+        }
+
+        return QWidget::event( e );
+}
+
 inline void CanvasView::handleReturnHit()
 {
         QPoint p; 
@@ -228,7 +244,7 @@ inline void CanvasView::handleReturnHit()
         else 
                 p = mapFromGlobal( QCursor::pos() );
             
-        if ( controler_->willAcceptAction( p, &scaleMatrixInv_ ) ) 
+        if ( controler_->willAcceptClick( p, &scaleMatrixInv_ ) ) 
                 controler_->callActionClick( p, Fig::Final, &scaleMatrixInv_ );
 }
 
@@ -485,3 +501,4 @@ Fig::PointFlag calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
 
         return pf;
 }
+

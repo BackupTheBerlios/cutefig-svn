@@ -95,7 +95,10 @@ protected:
         virtual void mouseMoveEvent( QMouseEvent * e );
         virtual void contextMenuEvent( QContextMenuEvent* e );
 
-        virtual void keyReleaseEvent( QKeyEvent* e );
+        virtual void keyPressEvent( QKeyEvent* e );
+        virtual bool event( QEvent* e );
+//        virtual void inputMethodEvent( QInputMethodEvent* e );
+//        virtual QVariant inputMethodQuery( Qt::InpurMethodQuery* e );
 
         virtual void paintEvent( QPaintEvent* e );
 

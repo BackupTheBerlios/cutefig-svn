@@ -167,16 +167,35 @@ const QCursor Controler::callActionClick( const QPoint& p, Fig::PointFlag f, con
         return Qt::ArrowCursor;
 }
 
-bool Controler::willAcceptAction( const QPoint& p, const QMatrix* m ) const
+bool Controler::callActionKeyStroke( const QKeyEvent* ke ) 
+{
+      
+        
+        if ( !(actionIsActive_ && editAction_ ) )
+                return false;
+
+        if ( editAction_->keyStroke( ke ) ) {
+                updateViews();
+                return true;
+        }
+
+        return false;
+}
+
+bool Controler::willAcceptClick( const QPoint& p, const QMatrix* m ) const
 {
         return editAction_ && editAction_->wouldHandleSelection( p, m );
 }
 
-bool Controler::wouldAcceptAction( const QPoint& p, const QMatrix* m ) const
+bool Controler::wouldAcceptClick( const QPoint& p, const QMatrix* m ) const
 {
-        return actionIsActive_ && willAcceptAction( p, m );
+        return actionIsActive_ && willAcceptClick( p, m );
 }
 
+bool Controler::willAcceptKeyStroke() const
+{
+        return editAction_ && editAction_->acceptsKeyStrokes();
+}
 
 /** Returns all controlpoints of all DrawObjects that can be handled
  * by editingAction_. If there is already a wObject_ registered only
@@ -184,22 +203,6 @@ bool Controler::wouldAcceptAction( const QPoint& p, const QMatrix* m ) const
  */
 const QPolygonF Controler::objectsPoints()
 {
-//         if ( !( editAction_ || !selection_.isEmpty() ) )
-//                 return 0;
-
-//         QPolygonF points;
-
-//         if ( actionIsActive_ ) {
-//                 if ( wObject_ )
-//                         points = wObject_->points();
-//         }  else {
-//                 ObjectList::const_iterator it = figure_->objects().begin();
-//                 for( ; it != figure_->objects().end(); ++it )
-//                         if ( !editAction_ || editAction_->handles( *it ) )
-//                                 points << (*it)->points();
-//         }
-
-//         return points;
         QPolygonF points;
 
         foreach ( DrawObject* o, selection_.objects() )
@@ -329,4 +332,6 @@ void Controler::setToolActionsGroup( ToolActions* ta )
         activeToolActions_.append( ta->scale() );
         activeToolActions_.append( ta->move() );
 }
+
+
 

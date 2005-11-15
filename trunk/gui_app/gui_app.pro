@@ -36,12 +36,14 @@ HEADERS += cutefig.h \
            relativeaction.h \
            scaleaction.h \
            createaction.h \
+           textaction.h \
            pointmoveaction.h \
            deleteaction.h \
            cutnpaste.h \
            groupungroup.h \
            editdialogaction.h \
            command.h \
+           objectcommand.h \
            addcommand.h \
            deletecommand.h \
            changecommand.h \
@@ -64,6 +66,7 @@ SOURCES += cutefig.cc \
            relativeaction.cc \
            scaleaction.cc \
            createaction.cc \
+           textaction.cc \
            pointmoveaction.cc \
            deleteaction.cc \
            cutnpaste.cc \

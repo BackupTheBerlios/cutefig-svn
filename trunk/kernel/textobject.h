@@ -22,18 +22,48 @@
 **
 ******************************************************************************/
 
-#ifndef allactions_h
-#define allactions_h
+#ifndef textobject_h
+#define textobject_h
 
-#include "interactiveaction.h"
-#include "relativeaction.h"
-#include "createaction.h"
-#include "scaleaction.h"
-#include "pointmoveaction.h"
-#include "deleteaction.h"
-#include "cutnpaste.h"
-#include "groupungroup.h"
-#include "editdialogaction.h"
-#include "textaction.h"
+#include "drawobject.h"
+
+#include <QString>
+#include <QFont>
+
+class TextObject : public DrawObject
+{
+        Q_OBJECT
+public:
+        TextObject( Figure* parent = 0 );
+        TextObject( TextObject* o );
+        ~TextObject() {}
+
+        virtual DrawObject* copy();
+
+        virtual const QString objectname() { return "text"; }
+
+        virtual void draw( QPainter* p ) const;
+        
+        virtual void outputToBackend( OutputBackend* ob );
+        
+        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
+
+        void addPiece( const QString& piece );
+
+        QString& text() { return text_; }
+        
+private:
+        void setupPainterPath();
+        void setupRects();
+        void doSpecificPreparation() {}
+
+        QPointF* nextPoint() { return 0; }
+
+        void passPointFlag( Fig::PointFlag f ) {}
+
+        QString text_;
+        QFont font_;
+};
+
 
 #endif
