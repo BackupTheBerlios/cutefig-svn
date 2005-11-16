@@ -310,9 +310,12 @@ void ResLib<Resource>::ResourceData::setData( const Resource& d )
 
 class QPixmap;
 
-template<> inline const QString Res::resourceName<QColor>() { return "color"; }
-template<> inline const QString Res::resourceName<Gradient>() { return "gradient"; }
-template<> inline const QString Res::resourceName<Dashes>() { return "dashes"; }
-template<> inline const QString Res::resourceName<QPixmap>() { return "pixmap"; }
+namespace Res 
+{
+        template<> inline const QString resourceName<QColor>() { return "color"; }
+        template<> inline const QString resourceName<Gradient>() { return "gradient"; }
+        template<> inline const QString resourceName<Dashes>() { return "dashes"; }
+        template<> inline const QString resourceName<QPixmap>() { return "pixmap"; }
+}
 
 #endif

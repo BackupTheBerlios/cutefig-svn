@@ -26,7 +26,6 @@
 #define resourceuser_h
 
 #include "resourcekey.h"
-#include "reslib.h"
 
 #include <QDebug>
 
@@ -52,6 +51,7 @@ protected:
         ResourceKey key_;
 };
 
+#include "reslib.h"
 
 template<typename Resource> class ResourceUser : public AbstractResourceUser
 {
