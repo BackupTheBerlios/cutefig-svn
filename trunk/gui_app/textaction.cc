@@ -83,12 +83,15 @@ bool TextAction::keyStroke( const QKeyEvent* ke )
 
         qDebug() << "keyStroke" << ke->text() << cursorPos_;
 
-        if ( handled )
+        if ( handled ) {
+                textObject_->update();
                 return true;
+        }
         
         QString t = ke->text();
         if ( !t.isEmpty() ) {
                 text.insert( cursorPos_++, ke->text() );
+                textObject_->update();
                 return true;
         }
 

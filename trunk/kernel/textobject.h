@@ -29,6 +29,10 @@
 
 #include <QString>
 #include <QFont>
+#include <QTextDocument>
+#include <QTextLayout>
+#include <QPixmap>
+
 
 class TextObject : public DrawObject
 {
@@ -36,7 +40,7 @@ class TextObject : public DrawObject
 public:
         TextObject( Figure* parent = 0 );
         TextObject( TextObject* o );
-        ~TextObject() {}
+        ~TextObject();
 
         virtual DrawObject* copy();
 
@@ -49,6 +53,7 @@ public:
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
         void addPiece( const QString& piece );
+        void update() { getReadyForDraw(); }
 
         QString& text() { return text_; }
         
@@ -62,6 +67,9 @@ private:
         void passPointFlag( Fig::PointFlag f ) {}
 
         QString text_;
+        QTextDocument textDocument_;
+        QPixmap dummyPaintDevice_;
+        QTextLayout* textLayout_;
         QFont font_;
 };
 

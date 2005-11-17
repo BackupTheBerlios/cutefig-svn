@@ -27,20 +27,36 @@
 
 #include <QFontMetricsF>
 #include <QPainter>
+#include <QTextBlock>
+#include <QAbstractTextDocumentLayout>
 
 TextObject::TextObject( Figure* parent )
         : DrawObject( parent ),
           text_(),
+          textDocument_( this ),
+          dummyPaintDevice_(),
+          textLayout_( 0 ),
           font_()
-{}
+{
+        textDocument_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
+}
 
 
 TextObject::TextObject( TextObject* o )
         : DrawObject( o ),
           text_( o->text_ ),
+          textDocument_( this ),
+          dummyPaintDevice_(),
+          textLayout_( 0 ),
           font_( o->font_ )
 {
+        textDocument_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
         getReadyForDraw();
+}
+
+TextObject::~TextObject()
+{
+        delete textLayout_;
 }
 
 DrawObject* TextObject::copy()
@@ -60,7 +76,22 @@ void TextObject::setupPainterPath()
 
 void TextObject::setupRects()
 {
-        bRect_ = QFontMetricsF( font_ ).boundingRect( text_ );
+        bRect_ = QRectF();
+        qDebug() << text_;
+        if ( text_.isEmpty() )
+                return;
+        
+        textDocument_.setHtml( text_ );
+        
+        textLayout_ = new QTextLayout( textDocument_.begin() );
+        textLayout_->beginLayout();
+        QTextLine line = textLayout_->createLine();
+        if ( !line.isValid() )
+                return;
+        textLayout_->endLayout();
+
+        bRect_ = textLayout_->boundingRect().translated( points_[0] );
+        qDebug() << bRect_;
 }
 
 void TextObject::addPiece( const QString& piece )
@@ -76,6 +107,6 @@ bool TextObject::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 
 void TextObject::draw( QPainter* p ) const
 {
-        p->setFont( font_ );
-        p->drawText( points_[0], text_ );
+        if ( textLayout_ )
+                textLayout_->draw( p, points_[0] );
 }
