@@ -28,6 +28,7 @@
 #include "addcommand.h"
 
 #include <QKeyEvent>
+#include <QApplication>
 
 #include <QDebug>
 
@@ -36,7 +37,9 @@ void TextAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
         textObject_->pointSet( m->map( QPointF( p ) ), f );
         pointIsSet_ = true;
         cursorPos_ = 0;
-        qDebug() << "click";
+        textObject_->setCursorPos( 0 );
+        cursorTimer_ = startTimer( QApplication::cursorFlashTime()/2 );
+        textObject_->update();
 }
 
 
@@ -46,8 +49,11 @@ bool TextAction::keyStroke( const QKeyEvent* ke )
                 return false;
         
         if ( ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter ) {
+                killTimer( cursorTimer_ );
+                textObject_->hideCursor();
                 controler_->execAction( new AddCommand( selection_ ) );
                 selection_.updateBackups();
+                pointIsSet_ = false;
                 return true;
         }
 
@@ -81,9 +87,8 @@ bool TextAction::keyStroke( const QKeyEvent* ke )
                     handled = false;
         }
 
-        qDebug() << "keyStroke" << ke->text() << cursorPos_;
-
         if ( handled ) {
+                textObject_->setCursorPos( cursorPos_ );
                 textObject_->update();
                 return true;
         }
@@ -91,6 +96,7 @@ bool TextAction::keyStroke( const QKeyEvent* ke )
         QString t = ke->text();
         if ( !t.isEmpty() ) {
                 text.insert( cursorPos_++, ke->text() );
+                textObject_->setCursorPos( cursorPos_ );
                 textObject_->update();
                 return true;
         }
@@ -108,4 +114,22 @@ DrawObject* TextAction::createObject()
 {
         textObject_ = new TextObject( controler_->figure() );
         return textObject_;
+}
+
+// void TextAction::timerEvent( QTimerEvent* )
+// {
+//         qDebug() << "timer";
+// }
+
+bool TextAction::event( QEvent* e )
+{
+        if ( e->type() == QEvent::Timer ) {
+                if ( textObject_ ) {
+                        textObject_->toggleCursor();
+                        controler_->updateViews();
+                }
+                return true;
+        }
+        
+        return QAction::event(e);
 }

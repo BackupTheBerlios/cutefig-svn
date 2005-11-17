@@ -122,11 +122,10 @@ bool InteractiveAction::wouldHandleSelection( const QPoint& p, const QMatrix* m 
                 return wouldHandle( 0, p );
 
         foreach ( DrawObject* o, selection_.objects() )
-                if ( wouldHandle( o, p, m ) )
+                if ( wouldHandle( o, p, m ) ) 
                         return true;
-
+        
         return false;
-
 }
 
 const QString InteractiveAction::completeName() const

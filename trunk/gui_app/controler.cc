@@ -137,6 +137,7 @@ void Controler::execAction( Command* cmd )
                 appendToCmdList( cmd );
         }
         editAction_ = 0;
+        actionIsActive_ = false;
         explicitEAction_ = false;
 
         updateViews();

@@ -47,6 +47,7 @@ public:
         virtual const QString objectname() { return "text"; }
 
         virtual void draw( QPainter* p ) const;
+        virtual void drawTentative( QPainter* p ) const;
         
         virtual void outputToBackend( OutputBackend* ob );
         
@@ -54,6 +55,9 @@ public:
 
         void addPiece( const QString& piece );
         void update() { getReadyForDraw(); }
+        void setCursorPos( int c );
+        void toggleCursor();
+        void hideCursor() { cursorVisible_ = false; }
 
         QString& text() { return text_; }
         
@@ -74,6 +78,9 @@ private:
         QPointF actualPoint_;
 
         Qt::Alignment alignment_;
+
+        int cursor_;
+        bool cursorVisible_;
 };
 
 

@@ -53,17 +53,27 @@ public:
 
 //        virtual const QString commandName() const;
 
+        virtual bool wouldHandle( DrawObject*, const QPoint& = QPoint(), const QMatrix* =0 )
+        {
+                return !pointIsSet_;
+        }
+        
+
         virtual bool acceptsKeyStrokes() { return pointIsSet_; }
 
         virtual void reset();
         
 protected:
         virtual DrawObject* createObject();
+
+//        void timerEvent( QTimerEvent* e );
+        bool event( QEvent* e );
         
 private:
         bool pointIsSet_;
         TextObject* textObject_;
         int cursorPos_;
+        int cursorTimer_;
 };
 
 #endif

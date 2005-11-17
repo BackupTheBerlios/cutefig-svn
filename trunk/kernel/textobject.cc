@@ -37,7 +37,9 @@ TextObject::TextObject( Figure* parent )
           dummyPaintDevice_(),
           textLayout_( 0 ),
           font_(),
-          alignment_( Qt::AlignHCenter | Qt::AlignVCenter )
+          alignment_( Qt::AlignHCenter | Qt::AlignVCenter ),
+          cursor_( -1 ),
+          cursorVisible_( false )
 {
         textDocument_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
 }
@@ -50,7 +52,9 @@ TextObject::TextObject( TextObject* o )
           dummyPaintDevice_(),
           textLayout_( 0 ),
           font_( o->font_ ),
-          alignment_( o->alignment_ )
+          alignment_( o->alignment_ ),
+          cursor_( -1 ),
+          cursorVisible_( false )
 {
         textDocument_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
         getReadyForDraw();
@@ -79,19 +83,16 @@ void TextObject::setupPainterPath()
 void TextObject::setupRects()
 {
         bRect_ = QRectF();
-        qDebug() << text_;
-        if ( text_.isEmpty() )
-                return;
         
         textDocument_.setHtml( text_ );
+
+        if ( !textLayout_ )
+                textLayout_ = new QTextLayout( textDocument_.begin() );
         
-        textLayout_ = new QTextLayout( textDocument_.begin() );
         textLayout_->beginLayout();
         QTextLine line = textLayout_->createLine();
-        if ( !line.isValid() )
-                return;
         textLayout_->endLayout();
-        
+
         bRect_ = line.naturalTextRect();
         
         QPointF offset(0,0);
@@ -109,7 +110,7 @@ void TextObject::setupRects()
         actualPoint_ = points_[0] - offset;
         
         bRect_.translate( actualPoint_ );
-        qDebug() << offset << actualPoint_;
+        cRect_ = bRect_;
 }
 
 void TextObject::addPiece( const QString& piece )
@@ -120,11 +121,33 @@ void TextObject::addPiece( const QString& piece )
 
 bool TextObject::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 {
-        return false;
+        bRect_.contains( p );
 }
 
 void TextObject::draw( QPainter* p ) const
 {
-        if ( textLayout_ )
+        if ( !textLayout_ )
+                return;
+
+        if ( !text_.isEmpty() )
                 textLayout_->draw( p, actualPoint_ );
+        if ( cursorVisible_ )
+                textLayout_->drawCursor( p, actualPoint_, cursor_ );                
+}
+
+void TextObject::drawTentative( QPainter* p ) const
+{
+        draw( p );
+}
+
+void TextObject::setCursorPos( int c )
+{
+        cursor_ = c;
+        if ( c < 0 )
+                cursorVisible_ = false;
+}
+
+void TextObject::toggleCursor()
+{
+        cursorVisible_ = cursor_ >= 0 && !cursorVisible_;
 }
