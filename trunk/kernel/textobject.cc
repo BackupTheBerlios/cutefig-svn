@@ -36,7 +36,8 @@ TextObject::TextObject( Figure* parent )
           textDocument_( this ),
           dummyPaintDevice_(),
           textLayout_( 0 ),
-          font_()
+          font_(),
+          alignment_( Qt::AlignHCenter | Qt::AlignVCenter )
 {
         textDocument_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
 }
@@ -48,7 +49,8 @@ TextObject::TextObject( TextObject* o )
           textDocument_( this ),
           dummyPaintDevice_(),
           textLayout_( 0 ),
-          font_( o->font_ )
+          font_( o->font_ ),
+          alignment_( o->alignment_ )
 {
         textDocument_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
         getReadyForDraw();
@@ -71,7 +73,7 @@ void TextObject::outputToBackend( OutputBackend* ob )
 
 void TextObject::setupPainterPath()
 {
-        painterPath_.addText( points_[0], font_, text_ );
+//        painterPath_.addText( points_[0], font_, text_ );
 }
 
 void TextObject::setupRects()
@@ -89,9 +91,25 @@ void TextObject::setupRects()
         if ( !line.isValid() )
                 return;
         textLayout_->endLayout();
+        
+        bRect_ = line.naturalTextRect();
+        
+        QPointF offset(0,0);
+        
+        if ( alignment_ & Qt::AlignRight )
+                offset.rx() = bRect_.width();
+        else if ( alignment_ & Qt::AlignHCenter )
+                offset.rx() = bRect_.width()/2;
 
-        bRect_ = textLayout_->boundingRect().translated( points_[0] );
-        qDebug() << bRect_;
+        if ( alignment_ & Qt::AlignBottom )
+                offset.ry() = bRect_.height();
+        if ( alignment_ & Qt::AlignVCenter )
+                offset.ry() = bRect_.height()/2;
+        
+        actualPoint_ = points_[0] - offset;
+        
+        bRect_.translate( actualPoint_ );
+        qDebug() << offset << actualPoint_;
 }
 
 void TextObject::addPiece( const QString& piece )
@@ -108,5 +126,5 @@ bool TextObject::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 void TextObject::draw( QPainter* p ) const
 {
         if ( textLayout_ )
-                textLayout_->draw( p, points_[0] );
+                textLayout_->draw( p, actualPoint_ );
 }

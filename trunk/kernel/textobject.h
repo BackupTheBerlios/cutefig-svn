@@ -71,6 +71,9 @@ private:
         QPixmap dummyPaintDevice_;
         QTextLayout* textLayout_;
         QFont font_;
+        QPointF actualPoint_;
+
+        Qt::Alignment alignment_;
 };
 
 
