@@ -29,7 +29,17 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QLayout>
+#include <QTimer>
 
+/** \class CentralWidget
+ *
+ *  It basically hosts the two Rulers and the CanvasView. Maybe a
+ *  QSplitter will be added together with some sort of structure view.
+ */
+
+/** Constructs all the child widgets, connects signals and slots and
+ * then resizes the rulers by calling resize rulers by a QTimer.
+ */
 CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
         : QWidget( parent )
 {
@@ -44,8 +54,7 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
 
         cv->setHRuler( hRuler_ );
         cv->setVRuler( vRuler_ );
-//         connect( cv, SIGNAL( posX(int) ), hRuler_, SLOT( setValue(int) ) );
-//         connect( cv, SIGNAL( posY(int) ), vRuler_, SLOT( setValue(int) ) );
+
         connect( cv, SIGNAL( scaleChanged( double ) ), hRuler_, SLOT( setScale( double ) ) );
         connect( cv, SIGNAL( scaleChanged( double ) ), vRuler_, SLOT( setScale( double ) ) );
         connect( sa->horizontalScrollBar(), SIGNAL( valueChanged(int) ), 
@@ -60,12 +69,12 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
         l->addWidget( hRuler_, 0,1 );
         l->addWidget( vRuler_, 1,0 );
         l->addWidget( sa, 1,1 );
+
+        QTimer::singleShot( 0, this, SLOT( resizeRulers() ) );
 }
 
-void CentralWidget::resizeEvent( QResizeEvent* e )
+void CentralWidget::resizeRulers()
 {
-//        QWidget::resizeEvent( e );
-        qDebug("Resize event %d, %d", viewport_->width(), viewport_->height());
         hRuler_->setLength( viewport_->width() );
-        vRuler_->setLength( viewport_->height() );
+        vRuler_->setLength( viewport_->height() );    
 }

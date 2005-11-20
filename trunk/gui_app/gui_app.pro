@@ -37,6 +37,7 @@ HEADERS += cutefig.h \
            scaleaction.h \
            createaction.h \
            textaction.h \
+           textpropaction.h \
            pointmoveaction.h \
            deleteaction.h \
            cutnpaste.h \
@@ -52,6 +53,7 @@ HEADERS += cutefig.h \
            ruler.h \
            objectdialog.h \
            ellipsedialog.h \
+           textobjectdialog.h \
            polylinedialog.h \
            polygondialog.h 
 SOURCES += cutefig.cc \
@@ -67,6 +69,7 @@ SOURCES += cutefig.cc \
            scaleaction.cc \
            createaction.cc \
            textaction.cc \
+           textpropaction.cc \
            pointmoveaction.cc \
            deleteaction.cc \
            cutnpaste.cc \
@@ -81,6 +84,7 @@ SOURCES += cutefig.cc \
            ruler.cc \
            objectdialog.cc \
            ellipsedialog.cc \
+           textobjectdialog.cc \
            polylinedialog.cc \
            polygondialog.cc \
            main.cc

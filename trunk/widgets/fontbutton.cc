@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -22,18 +22,25 @@
 **
 ******************************************************************************/
 
-#ifndef colordialog_h
-#define colordialog_h
+#include "fontbutton.h"
 
-#include <QColorDialog>
+#include <QFontDialog>
 
-class ColorDialog : public QColorDialog
+FontButton::FontButton( const QString& text, QWidget* parent )
+        : QPushButton( parent )
 {
-public:
-        static QColor getColor( const QColor& initial = Qt::white, bool* ok = 0,
-                                QWidget* parent = 0 );
-};
+        setText( text );
+        connect( this, SIGNAL( clicked() ), this, SLOT( changeFont() ) );
+}
 
+void FontButton::changeFont()
+{
+        bool ok;
         
+        QFont f = QFontDialog::getFont( &ok, font_, parentWidget() );
 
-#endif
+        if ( ok ) {
+                font_ = f;
+                emit fontChanged( font_ );
+        }
+}

@@ -48,7 +48,7 @@ EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,
 }
 
 
-void EllipseDialog::setUpPrivate()
+void EllipseDialog::setUpWidgetsPrivate()
 {
         qDebug("EllipseDialog::setUpPrivate");
         QFrame* page = new QFrame();
@@ -104,14 +104,12 @@ void EllipseDialog::setUpPrivate()
 
 }
 
-void EllipseDialog::setDefaultValues()
+void EllipseDialog::setDefaultValuesPrivate()
 {
         angleSlider->setValue( (int) ellipse_->angle() );
-
-        ObjectDialog::setDefaultValues();
 }
 
-void EllipseDialog::setUpConnections()
+void EllipseDialog::setUpConnectionsPrivate()
 {
         qDebug("Ellipse::setupConnections");
         
@@ -119,8 +117,6 @@ void EllipseDialog::setUpConnections()
         connect( angleSlider, SIGNAL( valueChanged(int) ), angleSpin, SLOT( setValue(int) ) );
         connect( angleSlider, SIGNAL( valueChanged(int) ), ellipse_, SLOT( setAngle(int) ) );
         connect( angleSlider, SIGNAL( valueChanged(int) ), action_, SLOT( wObjectHasChanged() ) );
-
-        ObjectDialog::setUpConnections();
 }
 
 

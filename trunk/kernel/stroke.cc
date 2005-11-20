@@ -174,7 +174,9 @@ const QBrush Stroke::brush( const QRectF& rect ) const
             case sGradient:
             {
                     QGradient* qgrad = static_cast<ResourceUser<Gradient>*>( resourceUser_ )->data().toQGradient( rect );
-                    ret = *qgrad;
+                    if ( qgrad )
+                            ret = QBrush( *qgrad );
+                    delete qgrad;
                     break;
             }
             case sPixmap:

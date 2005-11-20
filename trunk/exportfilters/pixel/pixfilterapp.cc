@@ -116,7 +116,7 @@ int PixfilterApp::getOptions( int& _optind )
                             usage();
                             return 1;
                             break;
-                    case 'F':
+                    case 'l':
                             printImageFormats();
                             return 1;
                     case '?':

@@ -43,9 +43,9 @@ public:
 private:
         Ellipse* ellipse_;
 
-        virtual void setUpPrivate();
-        virtual void setDefaultValues();
-        virtual void setUpConnections();
+        virtual void setUpWidgetsPrivate();
+        virtual void setDefaultValuesPrivate();
+        virtual void setUpConnectionsPrivate();
         virtual void castDrawObject();
         
         QSlider* angleSlider;

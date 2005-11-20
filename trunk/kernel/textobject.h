@@ -32,7 +32,7 @@
 #include <QTextDocument>
 #include <QTextLayout>
 #include <QPixmap>
-
+#include <QList>
 
 class TextObject : public DrawObject
 {
@@ -46,6 +46,8 @@ public:
 
         virtual const QString objectname() { return "text"; }
 
+        QFont font() { return font_; }
+        
         virtual void draw( QPainter* p ) const;
         virtual void drawTentative( QPainter* p ) const;
         
@@ -53,22 +55,48 @@ public:
         
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
-        void addPiece( const QString& piece );
-        void update() { getReadyForDraw(); }
+//        void addPiece( const QString& piece );
+
+        void alignHCenter();
+        bool isHCentered() const;
+
+        void alignLeft();
+        bool isLeftAligned() const;
+        void alignRight();
+        bool isRightAligned() const;
+        
+        void addPiece( int pos, const QString& piece );
+        void removePiece( int pos, int length );
+
+        void insertByCursor( const QString& piece );
+        void removeCharForward();
+        void removeCharBackward();
+
+        void incrementCursorPos();
+        void decrementCursorPos();
+
         void setCursorPos( int c );
+        void moveCursorToEnd();
+        
         void toggleCursor();
         void hideCursor() { cursorVisible_ = false; }
 
-        QString& text() { return text_; }
-        
+//        QString& text() { return text_; }
+
+public slots:
+        void setFont( const QFont& f );
+
 private:
         void setupPainterPath();
         void setupRects();
         void doSpecificPreparation() {}
+        void doDraw( QPainter* p ) const;
 
         QPointF* nextPoint() { return 0; }
 
         void passPointFlag( Fig::PointFlag f ) {}
+
+        int realPos( int pos );
 
         QString text_;
         QTextDocument textDocument_;
@@ -79,9 +107,27 @@ private:
 
         Qt::Alignment alignment_;
 
-        int cursor_;
+        int cursorPos_;
+        int textLength_;
         bool cursorVisible_;
+
+        QList<int> charLength_;
 };
+
+inline bool TextObject::isHCentered() const
+{
+        return alignment_ & Qt::AlignHCenter;
+}
+
+inline bool TextObject::isLeftAligned() const
+{
+        return alignment_ & Qt::AlignLeft;
+}
+
+inline bool TextObject::isRightAligned() const
+{
+        return alignment_ & Qt::AlignRight;
+}
 
 
 #endif

@@ -51,6 +51,7 @@ class ActionCollection;
 class InteractiveAction;
 class EditActions;
 class ToolActions;
+class TextAction;
 class QEvent;
 
 typedef QList<ActionCollection*> ActionGroups;
@@ -74,6 +75,9 @@ public:
         void setEditActionsGroup( EditActions* ea ) { editActionsGroup_ = ea; }
         void setToolActionsGroup( ToolActions* ta );
         ToolActions* toolActions() const { return toolActionsGroup_; }
+
+        void setTextAction( TextAction* ta ) { textAction_ = ta; }
+        TextAction* textAction() const { return textAction_; }
         //EditActions* editActionsGroup() const { return editActionsGroup_; }
 
         void selectObject( DrawObject* o );
@@ -164,6 +168,8 @@ private:
         EditActions* editActionsGroup_;
         ToolActions* toolActionsGroup_;
 
+        TextAction* textAction_;
+        
         ActionGroups actionGroups_;
 };
 

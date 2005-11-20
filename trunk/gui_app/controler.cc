@@ -87,6 +87,8 @@ const QCursor Controler::considerObject( DrawObject* o, const QPoint& p, const Q
                 return QCursor( Qt::ArrowCursor );
 }
 
+/** 
+ */
 const QCursor Controler::findToolAction( const QPoint& p, const QMatrix* m )
 {
         if ( editAction_ ) { 
@@ -106,7 +108,7 @@ const QCursor Controler::findToolAction( const QPoint& p, const QMatrix* m )
         return Qt::ArrowCursor;
 }
 
-/** Usually called by InteractiveAction::getActive(). 
+/** Usually called by InteractiveAction::wakeup(). 
  */
 void Controler::newAction( InteractiveAction* a )
 {

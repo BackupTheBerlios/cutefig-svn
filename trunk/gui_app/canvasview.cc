@@ -45,15 +45,15 @@
  * This class is responsible to display the figure to the user and to
  * handle user interaction. It accepts key and mouse events, figures
  * out whether they are to be handled and tells the Controler to call
- * InteractiveAction::click() or InteractiveAction::move()
- * respectively.
+ * InteractiveAction::click(), InteractiveAction::move() or
+ * InteractiveAction::keyStroke() respectively.
  *
  * The second job of CanvasView is to pass a QPainter to the Figure to
  * which the DrawObjects can be painted to. Furthermore it draws the
  * paper and the snap grid. It communicates with the two instances of
  * Ruler to tell them about mouse moves and changes of the
  * zoomscale. Drawing the helplines is also planned.
-*/
+ */
 
 //! calculates the Fig::PointFlag out of m and b. 
 Fig::PointFlag calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m );
@@ -132,7 +132,7 @@ void CanvasView::mouseReleaseEvent( QMouseEvent* e )
         } else
                 if ( !o ) {
                         controler_->cancelAction();
-                        controler_->selectObject( o );
+                        controler_->selectObject( 0 );
                 }
 }
 
@@ -234,6 +234,16 @@ bool CanvasView::event( QEvent* e )
         }
 
         return QWidget::event( e );
+}
+
+void CanvasView::inputMethodEvent( QInputMethodEvent* e )
+{
+        
+}
+
+QVariant CanvasView::inputMethodQuery( Qt::InputMethodQuery* e )
+{
+        return QVariant();
 }
 
 inline void CanvasView::handleReturnHit()
@@ -501,4 +511,3 @@ Fig::PointFlag calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
 
         return pf;
 }
-

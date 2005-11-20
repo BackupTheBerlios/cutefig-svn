@@ -25,7 +25,7 @@
 /** \page action_system The action system
  *
  * Almost all the user interaction is initiated by actions. An action
- * is a class that is derived from QAction. There ist one abstract
+ * is a class that is derived from QAction. There is one abstract
  * action class for actions that directly modify the figure,
  * InteractiveAction.
  *
@@ -37,6 +37,7 @@
  * \link CuteFig::setupActions() CuteFig::setupActions() \endlink
  * creates the menus for the menubar and toolbars for the main window.
  *
+ * \sa InteractiveAction for a more detailed overview.
  */
 
 #ifndef actions_h
@@ -254,5 +255,13 @@ public:
         ~CreateActions() {}
 };
 
+
+
+class TextPropActions : public ActionCollection
+{
+public:
+        TextPropActions( Controler* parent );
+        ~TextPropActions() {}
+};
 
 #endif

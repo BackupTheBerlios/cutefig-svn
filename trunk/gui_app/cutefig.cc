@@ -47,12 +47,15 @@
 
 #include <fstream>
 
-//#include "brushdialog.h" //test
-
 int CuteFig::rulerWidth = 30;
 double CuteFig::unit = Fig::cm2pix;
 
-CuteFig::CuteFig( QApplication* app )
+/** The constructor of CuteFig. It constructs all the three items
+ *  which are needed for the MVC design pattern. Then it triggers the
+ *  initialisation by calling init() via the delayed initialisation
+ *  idiom described in http://www.codeskipper.org/.
+ */
+CuteFig::CuteFig()
 {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         setAttribute( Qt::WA_DeleteOnClose );
@@ -67,25 +70,28 @@ CuteFig::CuteFig( QApplication* app )
         cview_ = new CanvasView( controler_, figure_, this );
         
         controler_->addView( cview_ );
-//        connect( cview_, SIGNAL( status( const QString& ) ),
-//                 statusBar(), SLOT( message( const QString& ) ) );
         
         CentralWidget* cw = new CentralWidget( cview_, this );
         setCentralWidget( cw );
 
         viewport_ = cw->viewport();
 
+        QTimer::singleShot( 0, this, SLOT( init() ) );
+}
+
+void CuteFig::init()
+{
         setupObjectMapper();
         setupActions();
         
-        int argc = app->argc();
-        char** argv = app->argv();
+        int argc = qApp->argc();
+        char** argv = qApp->argv();
         
         if ( argc > 1) {
                 filename_ = argv[1];
                 load( filename_ );
         }
-        statusBar()->showMessage("Hello");
+        statusBar()->showMessage("Hello");    
 }
 
 void CuteFig::newDoc()
@@ -222,7 +228,7 @@ void CuteFig::closeEvent( QCloseEvent* ce )
 
 void CuteFig::about()
 {
-        QString s = tr("A vector based drawing program\n" 
+        QString s = tr("A vector based drawing programme\n" 
                        "CopyLeft by Johannes Mueller "
                        "<joh@users.berlios.de>");
         
@@ -288,3 +294,4 @@ void CuteFig::exportFigure()
 {
         ExportGUI::instance().exportFigure( figure_ );
 }
+

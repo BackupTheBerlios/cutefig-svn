@@ -81,6 +81,7 @@ public slots:
 signals:
         void status( const QString& ); 
         //!< emits the status of the view for a window's status bar 
+
         void posX( int );
         void posY( int );
         //!< emits the coordinates of the cursor to be recieved by a Ruler.
@@ -97,8 +98,8 @@ protected:
 
         virtual void keyPressEvent( QKeyEvent* e );
         virtual bool event( QEvent* e );
-//        virtual void inputMethodEvent( QInputMethodEvent* e );
-//        virtual QVariant inputMethodQuery( Qt::InpurMethodQuery* e );
+        virtual void inputMethodEvent( QInputMethodEvent* e );
+        virtual QVariant inputMethodQuery( Qt::InputMethodQuery* e );
 
         virtual void paintEvent( QPaintEvent* e );
 

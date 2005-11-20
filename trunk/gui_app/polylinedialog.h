@@ -36,7 +36,7 @@ public:
         ~PolylineDialog() { };
 
 protected:
-        virtual void setUpPrivate() {};
+        virtual void setUpWidgetsPrivate() {};
         virtual void castDrawObject() {};
 };
 

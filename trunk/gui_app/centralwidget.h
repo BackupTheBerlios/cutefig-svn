@@ -33,6 +33,10 @@ class QMainWindow;
 class Ruler;
 class CanvasView;
 
+/** \class CentralWidget
+ *  \brief The central widget of the CuteFig.  
+ */
+
 class CentralWidget : public QWidget
 {
         Q_OBJECT
@@ -42,13 +46,21 @@ public:
 
         QWidget* viewport() const { return viewport_; }
 
-protected:
-        void resizeEvent( QResizeEvent* );
+private slots:
+        void resizeRulers(); //!< resizes the Rulers
 
 private:
+        void resizeEvent( QResizeEvent* );
+
         Ruler *hRuler_, *vRuler_;  //!< Two rulers to indicate the position
         QWidget* viewport_;        //!< The scroll views's viewport
         
 };
+
+inline void CentralWidget::resizeEvent( QResizeEvent* )
+{
+        resizeRulers();
+}
+
 
 #endif

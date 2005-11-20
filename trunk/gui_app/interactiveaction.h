@@ -64,8 +64,9 @@ public:
         virtual const QString commandName() const = 0;
         virtual const QString completeName() const;
 
+        //! resets the action. (called by wakeup())
+        /*! supposed to do cleanups */
         virtual void reset() {}
-        /*!< resets the action. (called by getActive) */
 
 protected:
         Controler* controler_; //!< the Controler instance
@@ -75,9 +76,7 @@ protected:
 
 protected slots:
         void selectionChanged();
-
-private slots:
-        void getActive(); 
+        virtual void wakeup(); 
 };
 
 #endif

@@ -35,5 +35,6 @@
 #include "groupungroup.h"
 #include "editdialogaction.h"
 #include "textaction.h"
+#include "textpropaction.h"
 
 #endif

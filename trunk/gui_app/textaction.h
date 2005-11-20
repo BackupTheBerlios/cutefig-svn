@@ -40,6 +40,7 @@ public:
                 setIcon( QIcon(":images/text.png") );
                 setShortcut( Qt::Key_T );
                 cursor_ = Qt::IBeamCursor;
+                controler_->setTextAction( this );
         }
         
         ~TextAction() {}
@@ -57,7 +58,13 @@ public:
         {
                 return !pointIsSet_;
         }
-        
+
+        bool isEditing() const
+        {
+                return pointIsSet_;
+        }
+
+        TextObject* textObject() { return textObject_; }
 
         virtual bool acceptsKeyStrokes() { return pointIsSet_; }
 
@@ -66,13 +73,11 @@ public:
 protected:
         virtual DrawObject* createObject();
 
-//        void timerEvent( QTimerEvent* e );
         bool event( QEvent* e );
         
 private:
         bool pointIsSet_;
         TextObject* textObject_;
-        int cursorPos_;
         int cursorTimer_;
 };
 

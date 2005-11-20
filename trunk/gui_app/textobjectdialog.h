@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -22,18 +22,31 @@
 **
 ******************************************************************************/
 
-#ifndef colordialog_h
-#define colordialog_h
+#ifndef textobjectdialog_h
+#define textobjectdialog_h
 
-#include <QColorDialog>
+#include "objectdialog.h"
 
-class ColorDialog : public QColorDialog
+class TextObject;
+class FontButton;
+class StrokeWidget;
+
+class TextObjectDialog : public ObjectDialog
 {
+        Q_OBJECT
 public:
-        static QColor getColor( const QColor& initial = Qt::white, bool* ok = 0,
-                                QWidget* parent = 0 );
-};
+        TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent );
+        ~TextObjectDialog() {}
 
-        
+private:
+        virtual void setUpConnections();
+        virtual void setDefaultValues();
+        virtual void castDrawObject();
+
+        TextObject* textObject_;
+
+        StrokeWidget* stroke_;
+        FontButton* fontButton_;
+};
 
 #endif

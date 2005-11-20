@@ -24,6 +24,7 @@
 
 
 #include "textobject.h"
+#include "stroke.h"
 
 #include <QFontMetricsF>
 #include <QPainter>
@@ -37,9 +38,11 @@ TextObject::TextObject( Figure* parent )
           dummyPaintDevice_(),
           textLayout_( 0 ),
           font_(),
-          alignment_( Qt::AlignHCenter | Qt::AlignVCenter ),
-          cursor_( -1 ),
-          cursorVisible_( false )
+          alignment_( Qt::AlignVCenter ),
+          cursorPos_( 0 ),
+          textLength_( 0 ),
+          cursorVisible_( false ),
+          charLength_()
 {
         textDocument_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
 }
@@ -53,8 +56,10 @@ TextObject::TextObject( TextObject* o )
           textLayout_( 0 ),
           font_( o->font_ ),
           alignment_( o->alignment_ ),
-          cursor_( -1 ),
-          cursorVisible_( false )
+          cursorPos_( 0 ),
+          textLength_( 0 ),
+          cursorVisible_( false ),
+          charLength_( o->charLength_ )
 {
         textDocument_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
         getReadyForDraw();
@@ -70,7 +75,7 @@ DrawObject* TextObject::copy()
         return new TextObject( this );
 }
 
-void TextObject::outputToBackend( OutputBackend* ob )
+void TextObject::outputToBackend( OutputBackend* )
 {
     
 }
@@ -85,6 +90,8 @@ void TextObject::setupRects()
         bRect_ = QRectF();
         
         textDocument_.setHtml( text_ );
+
+        textDocument_.setDefaultFont( font_ );
 
         if ( !textLayout_ )
                 textLayout_ = new QTextLayout( textDocument_.begin() );
@@ -113,26 +120,91 @@ void TextObject::setupRects()
         cRect_ = bRect_;
 }
 
-void TextObject::addPiece( const QString& piece )
+
+void TextObject::addPiece( int pos, const QString& p )
 {
-        text_.append( piece );
+        QString st;
+        int realStart = realPos( pos );
+        for ( int i=0; i < p.length(); ++i ) {
+                if ( p.at(i) == '<' ) {
+                        st += "&lt;";
+                        charLength_.insert( pos, 4 );
+                }
+                else if ( p.at(i) == '>' ) {
+                        st += "&gt;";
+                        charLength_.insert( pos, 4 );
+                }
+                else if ( p.at(i) == '&' ) {
+                        st += "&amp;";
+                        charLength_.insert( pos, 5 );
+                }
+                else {
+                        st += p.at( i );
+                        charLength_.insert( pos, 1 );
+                }
+                
+                ++pos;
+                ++textLength_;
+        }
+        
+        text_.insert( realStart, st ); 
+
         getReadyForDraw();
 }
 
-bool TextObject::pointHitsOutline( const QPointF& p, qreal tolerance ) const
+void TextObject::removePiece( int pos, int length )
 {
-        bRect_.contains( p );
+        for ( int i = 0; i < length; ++i ) {
+                text_.remove( realPos( pos ), charLength_[pos] );
+                charLength_.removeAt( pos );
+                --textLength_;
+        }
+
+        getReadyForDraw();
+}
+
+void TextObject::insertByCursor( const QString& piece )
+{
+        addPiece( cursorPos_++, piece );
+}
+
+void TextObject::removeCharForward()
+{
+        if ( cursorPos_ < textLength_ )
+                removePiece( cursorPos_, 1 );
+}
+
+void TextObject::removeCharBackward()
+{
+        if ( cursorPos_ )
+                removePiece( --cursorPos_, 1 );
+}
+
+int TextObject::realPos( int pos )
+{
+        int ret = 0;
+        
+        for ( int i = 0; i < pos; ++i )
+                ret += charLength_[i];
+
+        return ret;
+}
+
+bool TextObject::pointHitsOutline( const QPointF& p, qreal ) const
+{
+        return bRect_.contains( p );
 }
 
 void TextObject::draw( QPainter* p ) const
 {
-        if ( !textLayout_ )
-                return;
+        QPen op = p->pen();
+        p->setPen( QPen( stroke_.brush( bRect_ ), 0 ) );
 
-        if ( !text_.isEmpty() )
-                textLayout_->draw( p, actualPoint_ );
-        if ( cursorVisible_ )
-                textLayout_->drawCursor( p, actualPoint_, cursor_ );                
+        doDraw( p );
+        if ( cursorVisible_ && textLayout_ )
+                textLayout_->drawCursor( p, actualPoint_, cursorPos_ );
+
+        p->setPen( op );
 }
 
 void TextObject::drawTentative( QPainter* p ) const
@@ -140,14 +212,81 @@ void TextObject::drawTentative( QPainter* p ) const
         draw( p );
 }
 
+void TextObject::doDraw( QPainter* p ) const
+{
+        if ( !textLayout_ )
+                return;
+
+        if ( !text_.isEmpty() )
+                textLayout_->draw( p, actualPoint_ );    
+}
+
 void TextObject::setCursorPos( int c )
 {
-        cursor_ = c;
+        cursorPos_ = c;
         if ( c < 0 )
                 cursorVisible_ = false;
 }
 
 void TextObject::toggleCursor()
 {
-        cursorVisible_ = cursor_ >= 0 && !cursorVisible_;
+        cursorVisible_ = !cursorVisible_;
+}
+
+void TextObject::setFont( const QFont& f )
+{
+        font_ = f;
+        getReadyForDraw();
+}
+
+
+void TextObject::incrementCursorPos()
+{
+        if ( realPos( cursorPos_ ) < text_.length() )
+                ++cursorPos_;
+}
+
+void TextObject::decrementCursorPos()
+{
+        if ( cursorPos_ )
+                --cursorPos_;
+}
+
+void TextObject::moveCursorToEnd()
+{
+        setCursorPos( textLength_ );
+}
+
+void TextObject::alignHCenter()
+{
+        if ( isHCentered() )
+                return;
+        
+        alignment_ &= Qt::AlignVertical_Mask;
+        alignment_ |= Qt::AlignHCenter;
+
+        getReadyForDraw();
+}
+
+void TextObject::alignLeft()
+{
+        if ( isLeftAligned() )
+                return;
+        
+        alignment_ &= Qt::AlignVertical_Mask;
+        alignment_ |= Qt::AlignLeft;
+
+        getReadyForDraw();
+}
+
+
+void TextObject::alignRight()
+{
+        if ( isRightAligned() )
+                return;
+
+        alignment_ &= Qt::AlignVertical_Mask;
+        alignment_ |= Qt::AlignRight;
+
+        getReadyForDraw();
 }

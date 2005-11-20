@@ -36,7 +36,7 @@ public:
         ~PolygonDialog() { };
 
 protected:
-        virtual void setUpPrivate() {};
+        virtual void setUpWidgetsPrivate() {};
         virtual void castDrawObject() {};        
 };
 

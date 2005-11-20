@@ -13,6 +13,7 @@ RESOURCES += widgets.qrc
 
 HEADERS = resourcebutton.h \
           colorbutton.h \
+          fontbutton.h \
           resourceiconengine.h \
           mouseeventhandler.h \
           gradientwidget.h \
@@ -33,7 +34,8 @@ HEADERS = resourcebutton.h \
           reslibeditor.h
 
 
-SOURCES = resourceiconengine.cc \
+SOURCES = fontbutton.h \
+          resourceiconengine.cc \
           mouseeventhandler.cc \
           gradientwidget.cc \
           strokedemo.cc \

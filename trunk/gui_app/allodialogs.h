@@ -27,6 +27,7 @@
 
 #include "objectdialog.h"
 #include "ellipsedialog.h"
+#include "textobjectdialog.h"
 #include "polylinedialog.h"
 #include "polygondialog.h"
 

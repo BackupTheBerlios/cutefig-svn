@@ -28,8 +28,6 @@
 #include <QMainWindow>
 #include <QSize>
 
-class QApplication;
-
 class Figure;
 class CanvasView;
 class Controler;
@@ -43,7 +41,7 @@ class CuteFig: public QMainWindow
         Q_OBJECT
 
 public:
-        CuteFig( QApplication* parent=0 ); //!< Called from within main()
+        CuteFig(); //!< Called from within main()
         ~CuteFig() {}
         
         Controler* controler() const { return controler_; }
@@ -56,6 +54,7 @@ protected:
 
 
 private slots:
+        void init(); //! performs the initialisation that cannot be done in the constructor
         void newDoc(); //!< a new document has been opened 
         void choose(); //!< lets the user choose a document to open
         void load( const QString& fileName ); //!< opens a chosen document

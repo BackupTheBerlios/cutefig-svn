@@ -43,9 +43,6 @@ ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent 
 { 
         qDebug("ObjectDialog::ObjectDialog");
         drawObject_ = o;
-
-        tabWidget = new QTabWidget( this );
-        dialogLayout_->insertWidget( 0, tabWidget );
 } 
 
 void ObjectDialog::setUpGeneral()
@@ -113,10 +110,6 @@ void ObjectDialog::reset()
         }
 
         setDrawObject( o );
-        
-//        lineShow->disconnect();
-//        fillPattern->disconnect();
-        depth->disconnect();
 
         setDefaultValues();
         setUpConnections();
@@ -126,6 +119,10 @@ void ObjectDialog::reset()
 void ObjectDialog::setDefaultValues()
 { 
         qDebug("ObjectDialog::setDefaultValues");
+        
+//        lineShow->disconnect();
+//        fillPattern->disconnect();
+        depth->disconnect();
 
         penWidget->setPen( drawObject_->p_pen() );
         lineStroke->setStroke( drawObject_->p_stroke() );
@@ -133,6 +130,8 @@ void ObjectDialog::setDefaultValues()
 
         depth->setValue( drawObject_->depth() );
         comment->setPlainText( drawObject_->comment() );
+
+        setDefaultValuesPrivate();
 }
 
 
@@ -148,12 +147,17 @@ void ObjectDialog::setUpConnections()
         connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );
         
         connect( depth, SIGNAL( valueChanged( int ) ), action_, SLOT( wObjectHasChanged() ) );
+
+        setUpConnectionsPrivate();
 }
 
 void ObjectDialog::setUpAll()
-{
+{        
+        tabWidget = new QTabWidget( this );
+        dialogLayout_->insertWidget( 0, tabWidget );
+
         setUpGeneral();
-        setUpPrivate();
+        setUpWidgetsPrivate();
         setDefaultValues();
         setUpConnections();
 }

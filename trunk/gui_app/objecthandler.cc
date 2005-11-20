@@ -69,5 +69,5 @@ CreateAction* TextHandler::createAction( Controler* c, QActionGroup* g )
 
 ObjectDialog* TextHandler::editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
 {
-        return 0;
+        return new TextObjectDialog( o, a, parent );
 }

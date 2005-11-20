@@ -62,17 +62,23 @@ public slots:
 protected:
         DrawObject *drawObject_, *backup_;
         QTabWidget* tabWidget;
+        
         void setUpAll();
         
         virtual void setUpConnections();
+        virtual void setUpConnectionsPrivate() {}
+        
         virtual void setDefaultValues();
-        virtual void setUpPrivate()= 0;
-        virtual void castDrawObject() = 0;
+        virtual void setDefaultValuesPrivate() {}
+        
+        virtual void setUpWidgetsPrivate() {}
+        
+        virtual void castDrawObject() =0;
         
         EditdialogAction* action_;
         
  
-private:
+//private:
         void setUpGeneral();   
         void setDrawObject( DrawObject* o );
         

@@ -70,6 +70,7 @@ AllActions::AllActions( CuteFig* parent )
         addActions( new FormatActions( controler ) );
         addActions( new CreateActions( controler ) );
         addActions( new ToolActions( controler ) );
+        addActions( new TextPropActions( controler ) );
 }
 
 
@@ -390,3 +391,14 @@ FormatActions::FormatActions( Controler* parent )
         new UngroupAction( parent, this );    
 }
 
+
+/************************ TextPropActions **************************/
+
+TextPropActions::TextPropActions( Controler* parent )
+        : ActionCollection( parent )
+{
+        setText( tr("Text &properties") );
+        new TextHCenterAction( parent, this );
+        new TextLeftAction( parent, this );
+        new TextRightAction( parent, this );
+}
