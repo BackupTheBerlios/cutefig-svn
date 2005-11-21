@@ -121,7 +121,7 @@ void TextObject::setupRects()
 }
 
 
-void TextObject::addPiece( int pos, const QString& p )
+void TextObject::addPiece( int& pos, const QString& p )
 {
         QString st;
         int realStart = realPos( pos );
@@ -165,7 +165,7 @@ void TextObject::removePiece( int pos, int length )
 
 void TextObject::insertByCursor( const QString& piece )
 {
-        addPiece( cursorPos_++, piece );
+        addPiece( cursorPos_, piece );
 }
 
 void TextObject::removeCharForward()

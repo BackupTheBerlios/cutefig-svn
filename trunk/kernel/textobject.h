@@ -55,8 +55,6 @@ public:
         
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
-//        void addPiece( const QString& piece );
-
         void alignHCenter();
         bool isHCentered() const;
 
@@ -65,7 +63,7 @@ public:
         void alignRight();
         bool isRightAligned() const;
         
-        void addPiece( int pos, const QString& piece );
+        void addPiece( int& pos, const QString& piece );
         void removePiece( int pos, int length );
 
         void insertByCursor( const QString& piece );
