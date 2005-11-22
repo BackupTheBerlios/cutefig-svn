@@ -290,3 +290,36 @@ void TextObject::alignRight()
 
         getReadyForDraw();
 }
+
+void TextObject::alignTop()
+{
+        if ( isTopAligned() )
+                return;
+
+        alignment_ &= Qt::AlignHorizontal_Mask;
+        alignment_ |= Qt::AlignTop;
+
+        getReadyForDraw();
+}
+
+void TextObject::alignVCenter()
+{
+        if ( isVCentered() )
+                return;
+
+        alignment_ &= Qt::AlignHorizontal_Mask;
+        alignment_ |= Qt::AlignVCenter;
+
+        getReadyForDraw();
+}
+
+void TextObject::alignBottom()
+{
+        if ( isBottomAligned() )
+                return;
+
+        alignment_ &= Qt::AlignHorizontal_Mask;
+        alignment_ |= Qt::AlignBottom;
+
+        getReadyForDraw();
+}

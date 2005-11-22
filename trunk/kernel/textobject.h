@@ -62,6 +62,13 @@ public:
         bool isLeftAligned() const;
         void alignRight();
         bool isRightAligned() const;
+
+        void alignTop();
+        bool isTopAligned() const;
+        void alignVCenter();
+        bool isVCentered() const;
+        void alignBottom();
+        bool isBottomAligned() const;
         
         void addPiece( int& pos, const QString& piece );
         void removePiece( int pos, int length );
@@ -92,7 +99,7 @@ private:
 
         QPointF* nextPoint() { return 0; }
 
-        void passPointFlag( Fig::PointFlag f ) {}
+        void passPointFlag( Fig::PointFlag ) {}
 
         int realPos( int pos );
 
@@ -126,6 +133,22 @@ inline bool TextObject::isRightAligned() const
 {
         return alignment_ & Qt::AlignRight;
 }
+
+inline bool TextObject::isTopAligned() const
+{
+        return alignment_ & Qt::AlignTop;
+}
+
+inline bool TextObject::isVCentered() const
+{
+        return alignment_ & Qt::AlignVCenter;
+}
+
+inline bool TextObject::isBottomAligned() const
+{
+        return alignment_ & Qt::AlignBottom;
+}
+
 
 
 #endif

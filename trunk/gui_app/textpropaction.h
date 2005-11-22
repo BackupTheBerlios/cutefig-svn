@@ -110,4 +110,59 @@ public:
 };
 
 
+class TextVCenterAction : public TextPropAction
+{
+public:
+        TextVCenterAction( Controler* parent, QActionGroup* agr = 0 )
+                : TextPropAction( parent, agr )
+        {
+                setText( tr("Align &Middle") );
+                setIcon( QIcon(":images/text_middle.png") );
+        }
+
+        virtual void handleObject( TextObject* to );
+
+        virtual const QString commandName() const
+        {
+                return tr("align middle");
+        }        
+};
+
+class TextTopAction : public TextPropAction
+{
+public:
+        TextTopAction( Controler* parent, QActionGroup* agr = 0 )
+                : TextPropAction( parent, agr )
+        {
+                setText( tr("Align &top") );
+                setIcon( QIcon(":images/text_top.png") );
+        }
+
+        virtual void handleObject( TextObject* to );
+
+        virtual const QString commandName() const
+        {
+                return tr("align top");
+        }        
+};
+
+class TextBottomAction : public TextPropAction
+{
+public:
+        TextBottomAction( Controler* parent, QActionGroup* agr = 0 )
+                : TextPropAction( parent, agr )
+        {
+                setText( tr("Align &bottom") );
+                setIcon( QIcon(":images/text_bottom.png") );
+        }
+
+        virtual void handleObject( TextObject* to );
+
+        virtual const QString commandName() const
+        {
+                return tr("align bottom");
+        }        
+};
+
+
 #endif

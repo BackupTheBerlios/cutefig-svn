@@ -93,3 +93,18 @@ void TextRightAction::handleObject( TextObject* to )
 {
         to->alignRight();
 }
+
+void TextVCenterAction::handleObject( TextObject* to )
+{
+        to->alignVCenter();
+}
+
+void TextTopAction::handleObject( TextObject* to )
+{
+        to->alignTop();
+}
+
+void TextBottomAction::handleObject( TextObject* to )
+{
+        to->alignBottom();
+}

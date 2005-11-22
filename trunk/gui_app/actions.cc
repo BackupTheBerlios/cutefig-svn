@@ -401,4 +401,7 @@ TextPropActions::TextPropActions( Controler* parent )
         new TextHCenterAction( parent, this );
         new TextLeftAction( parent, this );
         new TextRightAction( parent, this );
+        new TextTopAction( parent, this );
+        new TextVCenterAction( parent, this );
+        new TextBottomAction( parent, this );
 }
