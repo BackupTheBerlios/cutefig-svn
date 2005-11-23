@@ -97,9 +97,9 @@ public:
         bool radiusGrasped( const QPoint& p, const QPoint& c, qreal radius );
 
 private:
-        QPoint center( qreal radius ) 
+        QPoint center( qreal offset ) 
         {
-                return s.rect2_.center() + radius * ( s.rect1_.center() - s.rect2_.center() );
+                return s.rect2_.center() + offset * ( s.rect1_.center() - s.rect2_.center() );
         }
         
 };
@@ -122,12 +122,11 @@ private:
 GradientWidget::GradientWidget( Gradient* gr, QWidget * parent )
         : QWidget( parent ),
           movedPoint_( 0 ),
-          colorStopIndex_( -1 ),
-          dummyUIHandler( new UIHandler(*this) ),
-          linearUIHandler( new LinearUIHandler(*this) ),
-          radialUIHandler( new RadialUIHandler(*this) ),
-          moveInAction_( false )
+          colorStopIndex_( -1 )
 {
+        static UIHandler dh( *this );
+        dummyUIHandler = &dh;
+        
         setGradient( gr );
 
         QSize s( handleSize_,handleSize_ );
@@ -150,6 +149,10 @@ GradientWidget::~GradientWidget()
         delete mouseDispatcher_;
 }
 
+/*! Therefore it makes point1_ and point2_ point to the appropriate
+ *  points. Finally it has the uiHandler_ initialized, and the widget
+ *  updated.
+ */
 void GradientWidget::setGradient( Gradient* gr )
 {
         gradient_ = gr;
@@ -181,14 +184,20 @@ void GradientWidget::initUIHandler()
 
 void GradientWidget::initLinearGradient()
 {
-        uiHandler_ = linearUIHandler;
+        static LinearUIHandler h( *this );
+        uiHandler_ =  &h;
 }
 
 void GradientWidget::initRadialGradient()
 {
-        uiHandler_ = radialUIHandler;
+        static RadialUIHandler h( *this );
+        uiHandler_ = &h;
 }
 
+//! handles enabling and disabeling of the widget
+/*! Basically it makes uiHandler_ point to dummyUIHandler if the
+ *  widget is disabled.
+ */
 void GradientWidget::changeEvent( QEvent* e )
 {
         if ( e->type() == QEvent::EnabledChange )
@@ -197,6 +206,11 @@ void GradientWidget::changeEvent( QEvent* e )
         QWidget::changeEvent( e );
 }
 
+//! repaints the widget
+/*! paints the background chessboard, and then the Gradient. The two
+ *  point defining the gradient are drawn. Finally it passes the
+ *  QPainter to UIHandler::paint() so that the handles are drawn.
+ */
 void GradientWidget::paintEvent( QPaintEvent* e )
 {
         QPainter p( this );
@@ -223,6 +237,10 @@ void GradientWidget::paintEvent( QPaintEvent* e )
         p.end();
 }
 
+//! paints the handles for the LinearUIHandler
+/*! Draws a line from the start to the end and puts the handles for
+ *  the color stops on it.
+ */
 void GradientWidget::LinearUIHandler::paint( QPainter* p )
 {        
         foreach ( QGradientStop cs, s.gradient_->colorStops() ) 
@@ -267,21 +285,22 @@ void GradientWidget::update()
 
 QRect GradientWidget::clsToRect( double offset )
 {
-        QRect r;
         QPoint csp;
-        r.setSize( QSize( handleSize_,handleSize_ ) );
         double t;
+        
         t = ( point2_->x() - point1_->x() ) * offset;
         t += point1_->x();
         csp.setX( qRound( t * size_.width() ) + handleSize_ );
         t = ( point2_->y() - point1_->y() ) * offset;
         t += point1_->y();
         csp.setY( qRound( t * size_.height() ) + handleSize_ );
-        r.moveCenter( csp );
         
-        return r;
+        return Geom::centerRect( csp, QSize( handleSize_,handleSize_ ) );
 }
 
+/*! Note that the validity of movedPoint_ is not checked. Declared
+ *  inline as there is only called from one point.
+ */
 inline void GradientWidget::moveEdgePointTo( QPoint p )
 {
         if ( p.x() > size_.width() )
@@ -327,13 +346,11 @@ bool GradientWidget::initialClick( QMouseEvent* e )
 
                 if ( rect1_.contains( p ) ) {
                         movedPoint_ = point1_;
-                        moveInAction_ = true;
                         return true;
                 }
         
                 if ( rect2_.contains( p ) ) {
                         movedPoint_ = point2_;
-                        moveInAction_ = true;
                         return true;
                 }
         }
@@ -384,7 +401,6 @@ bool GradientWidget::finalClick()
         movedPoint_ = 0;
         colorStopIndex_ = -1;
 
-        moveInAction_ = false;
         setCursor( QCursor( Qt::ArrowCursor ) );
 
         return false;
@@ -437,6 +453,9 @@ void GradientWidget::move( QMouseEvent* e )
 
 }
 
+/*! If setindex is true, colorStopIndex_ is set to the index of the
+ *  color stop found or to -1 if no color stop is found.
+ */
 bool GradientWidget::findColorStopUnderMouse( const QPoint& p, bool setIndex )
 {
         int i = 0;

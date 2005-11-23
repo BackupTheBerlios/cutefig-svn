@@ -73,45 +73,71 @@ protected:
         virtual void changeEvent( QEvent* e );
         
 private:
+        //! The Gradient being edited
         Gradient* gradient_;
 
+        //! The two rectangles representing the two points defining the gradient
         QRect rect1_, rect2_;
+
+        //! a pointer to the point being moved
         QPointF* movedPoint_;
+
+        //! pointers two the points defining the gradient
         QPointF *point1_, *point2_;
+
         
+        //! sets up rect1_ and rect2_
         void setHandleRects();
+
+
+        //! moves *movedPoint_ to p assuring that it's not "outside" of the widget
         void moveEdgePointTo( QPoint p );
+
+        //! returns true if there is a color stop under the mouse cursor.
         bool findColorStopUnderMouse( const QPoint& p, bool setIndex = false );
+
+        //! the index of the color stop just being handled
         int colorStopIndex_;
-        
+
+        //! returns a rectangle that can be used to represent a color stop at offset.
         QRect clsToRect( double offset );
 
         class UIHandler;
-//        class DummyUIHandler;
         class LinearUIHandler;
         class RadialUIHandler;
 
         UIHandler* uiHandler_;
         UIHandler* dummyUIHandler;
-        LinearUIHandler* linearUIHandler;
-        RadialUIHandler* radialUIHandler;
 
         AbstractMouseEventHandler* mouseEventHandler_;
         GWMouseEventDispatcher* mouseDispatcher_;
-        
+
+        //! handles the initial click of a drag event.
         bool initialClick( QMouseEvent* e );
+
+        //! handles the final click of a drag event.
         bool finalClick();
+
+        //! handles the mouse move of a drag event.
         void drag( QMouseEvent* e );
+
+        //! handles the mous move without dragging anything
         void move( QMouseEvent* e );
-        
-        bool moveInAction_;
-        
+
+        //! makes uiHandler_ point to a LinearUIHandler
         void initLinearGradient();
+        
+        //! makes uiHandler_ point to a RadialUIHandler
         void initRadialGradient();
 
+        //! decides which kind of UIHandler to use
         void initUIHandler();
 
+        //! the widget size() - 2 handleSize_, so that the Gradient
+        //  does not use up all the widget area.
         QSize size_;
+
+        //! TODO the size of the handles... to be outsourced somewhere else.
         static const int handleSize_ = 5;
 };
 
