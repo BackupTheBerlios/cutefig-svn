@@ -22,12 +22,11 @@
 **
 ******************************************************************************/
 
-//#include <QtGui>
-
 #include "gradientwidget.h"
 #include "gradient.h"
 #include "geometry.h"
 #include "mouseeventhandler.h"
+#include "paintutils.h"
 
 #include <QPainter>
 #include <QPaintEvent>
@@ -37,30 +36,39 @@
 
 #include <QDebug>
 
+//! Abstract class of UIHandlers
+/*! An UIHandler takes mouse clicks and mouse moves and calculates the
+ *  what to do with the GradientWidget::gradient_.
+ */
 class GradientWidget::UIHandler
 {
 public:
+        //! Takes a reference to the GradientWidget.
         UIHandler( GradientWidget& w ) : s( w ) {}
+
+        //! Called when the user clicks at a certain point.
+        /*! Supposed to return true when a mouse dragging follows.
+         */
         virtual bool click( const QPoint& ) { return false; }
+
+        //! Called on mouse move
         virtual void move( const QPoint& ) {}
-        virtual void paint( QPainter* p ) = 0; 
-        virtual bool colorStopHit( const QGradientStop& gs, const QPoint& p ) =0;
-        virtual double calcOffset( const QPoint& p ) = 0;
-        virtual bool isReal() const = 0;
-//        virtual void reset() {}
+
+        //! supposed to paint the help lines and other items
+        virtual void paint( QPainter* ) {}
+
+        //! supposed to return true if the mouse cursor is near a color stop
+        virtual bool colorStopHit( const QGradientStop&, const QPoint& ) { return false; }
+
+        //! supposed to calculate the value for QColorStop represented by the point p
+        virtual double calcOffset( const QPoint& ) { return -1; }
+
+        //! is supposed to return true by subclasses.
+        virtual bool isReal() const { return false; }
         
 protected:
+        //! the instance of the GradientWidget
         GradientWidget& s;
-};
-
-class GradientWidget::DummyUIHandler : public GradientWidget::UIHandler 
-{
-public:
-        DummyUIHandler( GradientWidget& w ) : UIHandler( w ) {}
-        virtual void paint( QPainter* ) {}
-        virtual bool colorStopHit( const QGradientStop&, const QPoint& ) { return false; }
-        virtual double calcOffset( const QPoint& ) { return 0; }
-        virtual bool isReal() const { return false; }
 };
 
 class GradientWidget::LinearUIHandler : public GradientWidget::UIHandler
@@ -84,8 +92,8 @@ public:
         virtual bool colorStopHit( const QGradientStop& gs, const QPoint& p );
         virtual double calcOffset( const QPoint& p );
         virtual bool isReal() const { return true; }
-//        virtual void reset() {}
 
+        //! returns true if p is on the edge of circle of a radius around c.
         bool radiusGrasped( const QPoint& p, const QPoint& c, qreal radius );
 
 private:
@@ -115,7 +123,7 @@ GradientWidget::GradientWidget( Gradient* gr, QWidget * parent )
         : QWidget( parent ),
           movedPoint_( 0 ),
           colorStopIndex_( -1 ),
-          dummyUIHandler( new DummyUIHandler(*this) ),
+          dummyUIHandler( new UIHandler(*this) ),
           linearUIHandler( new LinearUIHandler(*this) ),
           radialUIHandler( new RadialUIHandler(*this) ),
           moveInAction_( false )
@@ -195,27 +203,10 @@ void GradientWidget::paintEvent( QPaintEvent* e )
 
         p.setClipRect( e->rect() );
 
-        const int fw = 50;
-        
-        QRect r;
-        r.setSize( QSize( fw,fw ) );
-
-        bool inc = !( int(ceil(double(height())/fw))%2 );
-        
-        int i = 0;
-        for ( int x=0; x<width(); x+=fw ) {
-                for( int y=0; y<height(); y+=fw ) {
-                        r.moveTopLeft( QPoint(x,y) );
-                        QColor c( ( i++ % 2 ) ? Qt::lightGray : Qt::darkGray );
-                        
-                        p.fillRect( r, c );
-                }
-                if ( inc )
-                        i++;
-        }
+        PaintUtils::paintChessBoard( &p, QRect( QPoint(), size() ) );
 
         if ( gradient_->type() != Gradient::None ) {
-                r = QRect(  handleSize_, handleSize_, size_.width(), size_.height() );
+                QRect r(  handleSize_, handleSize_, size_.width(), size_.height() );
                 p.setBrush( QBrush( *gradient_->toQGradient( r ) ) );
                 p.drawRect( r );
                 p.setBrush( Qt::NoBrush );

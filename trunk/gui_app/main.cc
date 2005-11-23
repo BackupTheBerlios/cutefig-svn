@@ -46,6 +46,9 @@
  *  \ref resource_system
  *  
  *  \ref action_system
+ *
+ *  \ref mouse_interaction
+ *  
  *  \subsection mvc_sec Model-View-Controler
  *
  *  Like many modern GUI-systems CuteFig uses a Model-View-Controler

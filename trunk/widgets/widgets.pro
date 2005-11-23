@@ -11,7 +11,8 @@ include(../cutefig_base.pri)
 
 RESOURCES += widgets.qrc
 
-HEADERS = resourcebutton.h \
+HEADERS = paintutils.h \
+          resourcebutton.h \
           colorbutton.h \
           fontbutton.h \
           resourceiconengine.h \
@@ -34,7 +35,8 @@ HEADERS = resourcebutton.h \
           reslibeditor.h
 
 
-SOURCES = fontbutton.h \
+SOURCES = paintutils.cc \
+          fontbutton.cc \
           resourceiconengine.cc \
           mouseeventhandler.cc \
           gradientwidget.cc \

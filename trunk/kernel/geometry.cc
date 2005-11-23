@@ -32,10 +32,13 @@ qreal Geom::distance( const QPointF& p1, const QPointF& p2 )
 {
         qreal xd = p1.x() - p2.x();
         qreal yd = p1.y() - p2.y();
-//        return sqrt( xd*xd + yd*yd );
         return hypot( xd, yd );
 }
 
+/*! Basically needed to show the scaling handles to the user. The
+ *  points returned are the four corner points and the four points in the
+ *  middle of the edge lines of the rectangle r if the edge line is non zero.
+ */
 QVector<QPointF> Geom::boundingPoints( const QRectF& r )
 {
         QVector<QPointF> pts;
@@ -57,11 +60,15 @@ QVector<QPointF> Geom::boundingPoints( const QRectF& r )
         return pts;
 }
 
+/*! The hardcoded 5 is not nice :(
+ */
 bool Geom::isNear( const QPointF& p1, const QPointF& p2 )
 {
         return ( distance( p1, p2 ) < 5 );
 }
 
+/*! Used for example to detect whether the mouse cursor is near a line.
+ */
 bool Geom::intersect( const QLineF& l, const QRectF& r ) 
 {
         QLineF d1( r.topLeft(), r.bottomRight() );
@@ -78,6 +85,7 @@ QRect Geom::centerRect( const QPoint& center, const QSize& size )
 
         return r;
 }
+
 
 QRectF Geom::centerRect( const QPointF& center, const QSizeF& size )
 {

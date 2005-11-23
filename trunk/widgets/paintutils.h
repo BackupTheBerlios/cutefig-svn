@@ -27,5 +27,5 @@ class QRect;
 
 namespace PaintUtils
 {
-        void paintChessBoard( QPainter* pt, const QRect& rect );
+        void paintChessBoard( QPainter* pt, const QRect& rect, int fieldWidth = 50 );
 }

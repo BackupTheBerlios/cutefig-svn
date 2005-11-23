@@ -78,8 +78,7 @@ GradientEditor::GradientEditor( Gradient& gradient,  EditDialog* dlg, QVBoxLayou
             default: break;
         }
         
-        connect( gradType_, SIGNAL( stateChanged(int) ), dlg, SLOT( typeChanged(int) ) );
-
+        connect( gradType_, SIGNAL( stateChanged(int) ), this, SLOT( typeChanged(int) ) );
         
         layout_->insertLayout( 0, mainLayout );
 }

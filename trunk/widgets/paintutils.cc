@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  $Id: paintutils.h 69 2005-11-20 23:19:56Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,37 +22,32 @@
 **
 ******************************************************************************/
 
-#include "mouseeventhandler.h"
 
-/** Is not reimplemeted by the two MouseEventHandlers shipped...
- */
-void AbstractMouseEventHandler::mouseMoveEvent( QMouseEvent* e )
+#include "paintutils.h"
+
+#include <QPainter>
+
+#include <cmath>
+
+void PaintUtils::paintChessBoard( QPainter* painter, const QRect& rect, int fw )
 {
-        if ( dragging_ )
-                dispatcher_->drag( e );
-        else
-                dispatcher_->move( e );
+        QRect r;
+        r.setSize( QSize( fw,fw ) );
 
-}
-
-void ClickMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ ) 
-                dragging_ = dispatcher_->finalClick( e );
-        else 
-                dragging_ = dispatcher_->initialClick( e );
-}
-
-
-void DragMouseEventHandler::mousePressEvent( QMouseEvent* e )
-{
-        dragging_ = dispatcher_->initialClick( e );
-}
-
-
-void DragMouseEventHandler::mouseReleaseEvent( QMouseEvent* e )
-{
-        if ( dragging_ )
-                dispatcher_->finalClick( e );
-        dragging_ = false;
+        int w = rect.width();
+        int h = rect.height();
+        
+        bool inc = !( int(ceil(double(h)/fw))%2 );
+        
+        int i = 0;
+        for ( int x = 0; x < w; x += fw ) {
+                for( int y = 0; y < h; y += fw ) {
+                        r.moveTopLeft( QPoint( x,y ) );
+                        QColor c( ( i++ % 2 ) ? Qt::lightGray : Qt::darkGray );
+                        
+                        painter->fillRect( r, c );
+                }
+                if ( inc )
+                        ++i;
+        }
 }
