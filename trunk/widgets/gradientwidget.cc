@@ -99,7 +99,7 @@ public:
 private:
         QPoint center( qreal offset ) 
         {
-                return s.rect2_.center() + offset * ( s.rect1_.center() - s.rect2_.center() );
+                return s.p2() + offset * ( s.p1() - s.p2() );
         }
         
 };
@@ -246,13 +246,13 @@ void GradientWidget::LinearUIHandler::paint( QPainter* p )
         foreach ( QGradientStop cs, s.gradient_->colorStops() ) 
                 p->drawEllipse( s.clsToRect( cs.first ) );
         
-        p->drawLine( s.rect1_.center(), s.rect2_.center() );
+        p->drawLine( s.p1(), s.p2() );
 }
 
 void GradientWidget::RadialUIHandler::paint( QPainter* p ) 
 {       
         qreal dia = 2*s.gradient_->radius()*hypot( s.size_.width(), s.size_.height() );
-        QRectF rect = Geom::centerRect( s.rect1_.center(), QSizeF( dia, dia ) );
+        QRectF rect = Geom::centerRect( s.p1(), QSizeF( dia, dia ) );
 
         
         p->setPen( Qt::DotLine );
@@ -448,7 +448,7 @@ void GradientWidget::move( QMouseEvent* e )
 
         RadialUIHandler* rh = dynamic_cast<RadialUIHandler*>( uiHandler_ );
 
-        if ( rh && rh->radiusGrasped( p, rect1_.center(), gradient_->radius() ) )
+        if ( rh && rh->radiusGrasped( p, p1(), gradient_->radius() ) )
                 setCursor( Qt::SizeAllCursor );
 
 }
@@ -485,34 +485,67 @@ bool GradientWidget::RadialUIHandler::colorStopHit( const QGradientStop& gs, con
 
 bool GradientWidget::RadialUIHandler::click( const QPoint& p )
 {        
-        return radiusGrasped( p, s.rect1_.center(), s.gradient_->radius() );
+        return radiusGrasped( p, s.p1(), s.gradient_->radius() );
 }
 
-double GradientWidget::LinearUIHandler::calcOffset( const QPoint& p )
+double GradientWidget::LinearUIHandler::calcOffset( const QPoint& P )
 {
         using namespace Geom;
         
-        const QPointF a = QPointF( s.rect2_.center() - s.rect1_.center() );
-        const QPointF b = QPointF( p - s.rect1_.center() );
+        const QPointF A = QPointF( s.p2() - s.p1() );
+        const QPointF B = QPointF( P - s.p1() );
         
-        double a2 = scalarProduct( a,a );
-
-        const QPointF px = scalarProduct(a,b)/a2 * a;
-        
-        return sqrt( scalarProduct(px,px)/a2 );
+        return scalarProduct( A,B ) / scalarProduct( A,A );
 }
 
-double GradientWidget::RadialUIHandler::calcOffset( const QPoint& p )
+
+/*! The value to be calculated is the racio between the distances:
+ *      - between the focal point \f$P_2\f$ and the point \f$P\f$: \f$x\f$
+ *      - between the focal point and the point of intersection
+ *        of the gradient circle and the line containing focal point and p,
+ *        called A.
+ *        
+ *  Now the maths used:
+ *  
+ *  We consider the triangular of \f$P_2\f$, \f$A\f$ and \f$C\f$ where
+ *  \f$C\f$ is the center of the gradient circle. Let \f$\alpha\f$ be
+ *  the angle between \f$P_2 P\f$ and \f$P_2 C\f$ and the distances 
+ *
+ *  The cosinus theorem gives us the following relation:
+ *  \f[
+ *      r^2 = f^2 + a^2 - 2 a f \cos\alpha
+ *  \f]
+ *  
+ *  where \f$r\f$ is Gradient::radius_, \f$a\f$ is the distance \f$P_2
+ *  A\f$ and \f$f\f$ the distance \f$P_2 C\f$. Now let's the
+ *  expression \f$f \cos\alpha\f$ call \f$c\f$.
+ *
+ *  Using
+ *  \f[
+ *      <F,X> = f x \cos\alpha
+ *  \f]
+ *  where X is the vector \f$P_2 P\f$ we get by the cosinus theorem:
+ *  \f[
+ *      a = c + \sqrt{ c^2 + r^2 - f^2 }
+ *  \f]
+ *
+ *  then we return a/x.
+ *
+ *  If p is in the gradient circle the result will be 1. As a
+ *  colorstop can't have an offset > 1 we return 1 in case P is
+ *  outside the gradient's circle.
+ */
+double GradientWidget::RadialUIHandler::calcOffset( const QPoint& P )
 {
         using namespace Geom;
 
         const double r = s.gradient_->radius()*hypot( s.size_.width(), s.size_.height() );
 
-        if ( distance( s.rect1_.center(), p ) > r )
+        if ( distance( s.p1(), P ) > r )
                 return 1;
         
-        const QPointF F = s.rect1_.center() - s.rect2_.center();
-        const QPointF X = p - s.rect2_.center();
+        const QPointF F = s.p1() - s.p2();
+        const QPointF X = P - s.p2();
         const double x = pabs( X );
         const double f = pabs( F );
         const double c = f * scalarProduct( F,X )/(f*x);
@@ -524,7 +557,7 @@ double GradientWidget::RadialUIHandler::calcOffset( const QPoint& p )
 
 void GradientWidget::RadialUIHandler::move( const QPoint& p )
 {
-                qreal rad = Geom::distance( p, s.rect1_.center() );
+                qreal rad = Geom::distance( p, s.p1() );
                 rad /= hypot( s.size_.width(), s.size_.height() );
                 s.gradient_->setRadius(rad);
                 s.update();

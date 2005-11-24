@@ -133,6 +133,12 @@ private:
         //! decides which kind of UIHandler to use
         void initUIHandler();
 
+        //! returns the first point of the gradient scaled
+        QPoint p1() const;
+
+        //! returns the second point of the gradient scaled
+        QPoint p2() const;
+        
         //! the widget size() - 2 handleSize_, so that the Gradient
         //  does not use up all the widget area.
         QSize size_;
@@ -140,5 +146,17 @@ private:
         //! TODO the size of the handles... to be outsourced somewhere else.
         static const int handleSize_ = 5;
 };
+
+inline QPoint GradientWidget::p1() const
+{
+        return rect1_.center();
+}
+
+
+inline QPoint GradientWidget::p2() const
+{
+        return rect2_.center();
+}
+
 
 #endif
