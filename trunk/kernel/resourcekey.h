@@ -22,8 +22,12 @@
 **
 ******************************************************************************/
 
-/** \page resource_system The resource system
+/*!
+ * \page resource_system The resource system
  *
+ *
+ * \section resource_rationale Rationale
+ * 
  * The CuteFig has the concept of resources and resource libraries. A
  * resource can be any data that is used in a figure. Resources of a
  * certain type can be stored in a resource library ResLib. A resource
@@ -42,9 +46,9 @@
  * function ResourceKey::isBuiltIn() can be used to determine whether
  * a resource is a built in one.
  *
- * In order to be able to read an use non-builtin resources all
- * non-builtin resources have to be stored in the figure file. This is
- * known by calling ResourceKey::isToBeSaved(). In the figure file
+ * In order to be able to read all non-builtin resources have to be
+ * stored in the figure file. This is known by calling
+ * ResourceKey::isToBeSaved(). In the figure file
  * ResourceKey::keyString() is stored to give the resource its
  * name. To be able to compare the resource with a resource of the
  * local library that has the same name a hash sum is stored by
@@ -90,9 +94,28 @@
  * templates. The class methods of those classes that are not
  * implementable generically have to be specialised.
  *
- * The method Figure::usedResources() is used to determine which
- * resources are used by the Figure and thus have to be stored into
- * the figure file. 
+ * \section resourcesystem_key_classes Key Classes
+ *
+ * The following classes are important for the resource system:
+ *
+ * In the kernel:
+ *     - ResourceKey -- the key to resources in ResLib
+ *     - ResLib <T> -- the resource library for a certain data type
+ *     - ResourceUser <T> -- a user of a resource. Acts a little bit like a
+ *       reference counter.
+ *     - ResourceIO -- handles the IO of resourced data
+ *     - ResLibInit -- fills the ResLibs with the builtIn data on application
+ *       startup.
+ *
+ * Widgets:
+ *     - ResourceButton <T> -- a button that shows the resource data and
+ *       invokes dialog to edit the resource data.
+ *     - ResourceDemo <T> -- a widget that shows the resource data
+ *     - ReslibEditor <T> -- edits the ResLib <T>
+ *     - ResourceIconEngine <T> -- used to implement QIcons to show resource
+ *       data.
+ *     - ResourceModel <T> -- adapts the ResLib <T> to Qt's MVC architecture
+ *      
  */
 
 #ifndef resourcekey_h
@@ -103,12 +126,17 @@
 
 #include <QDebug>
 
-/** \class ResourceKey
- *
- * \brief Serves as the key to access a certain resource.
- *
+class ResourceKey;
+
+uint qHash( const ResourceKey& key );
+bool operator== ( const ResourceKey& k1, const ResourceKey& k2 );
+bool operator<  ( const ResourceKey& k1, const ResourceKey& k2 );
+
+
+//! Serves as the key to access a certain resource.
+/*!
  * A ResourceKey is the key to access a resource stored in a ResLib by
- * ResLib::operator[const ResourceKey&]. A ResourceKey contains of a
+ * ResLib::operator[const ResourceKey&]. A ResourceKey contains a
  * QString keyString_ that is stored into the figure file and
  * displayed to the user. The other data that is bound to a
  * ResourceKey are the ResourceKey::Flags flags_. These are to keep
@@ -121,16 +149,12 @@
  *
  * For a general overview of the resource system see \ref resource_system.
  */
-class ResourceKey;
-
-uint qHash( const ResourceKey& key );
-bool operator== ( const ResourceKey& k1, const ResourceKey& k2 );
-bool operator<  ( const ResourceKey& k1, const ResourceKey& k2 );
-
 class ResourceKey
 {
 public:
+        //! represent the way a Resource is stored
         enum Flags { Invalid = 0x00, BuiltIn = 0x01, InLib = 0x02, InFig = 0x04 };
+        
         friend uint qHash( const ResourceKey& key );
         friend bool operator== ( const ResourceKey& k1, const ResourceKey& k2 );
         friend bool operator<  ( const ResourceKey& k1, const ResourceKey& k2 );
@@ -140,15 +164,20 @@ public:
         ResourceKey( const ResourceKey& o ) : keyString_( o.keyString_ ), flags_( o.flags_ ) {}
         
         const QString& keyString() const { return keyString_; }
-        
+
+        //! true if the Resource is built in
         bool isBuiltIn() const { return flags_ & BuiltIn; }
+
+        //! true if the Resource is to be saved in to the figure file
         bool isToBeSaved() const { return flags_ > BuiltIn; }
+
         bool isValid() const { return flags_ != Invalid; }
 
         static ResourceKey builtIn( const QString& ks ) { return ResourceKey( ks, BuiltIn ); }
         static ResourceKey inFig( const QString& ks ) { return ResourceKey( ks, InFig ); }
         static ResourceKey inLib( const QString& ks ) { return ResourceKey( ks, InLib ); }
 
+        //! used if the user changed the name of a resource
         static ResourceKey newName( const QString& ks, const ResourceKey& other )
         { return ResourceKey( ks, other.flags_ ); }
         
@@ -159,13 +188,13 @@ private:
         Flags flags_;
 };
 
-//#define BUILTIN_KEY( key ) ResourceKey( key, ResourceKey::BuiltIn )
-
+//! needed for lookups of QMap
 inline bool operator== ( const ResourceKey& k1, const ResourceKey& k2 )
 {
         return k1.keyString_ == k2.keyString_ && k1.flags_ == k2.flags_;
 }
 
+//! needed for sorting ResourceKey in QMap
 inline bool operator< ( const ResourceKey& k1, const ResourceKey& k2 )
 {
         if ( k1.flags_ < k2.flags_ )
@@ -177,6 +206,7 @@ inline bool operator< ( const ResourceKey& k1, const ResourceKey& k2 )
         return k1.keyString_ < k2.keyString_;
 }
 
+//! obsolete, was needed for lookups when ResLib used QHash
 inline uint qHash( const ResourceKey& key )
 {
         return qHash( qHash( key.keyString_ ) ^ key.flags_ );

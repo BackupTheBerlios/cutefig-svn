@@ -28,8 +28,12 @@
 #include <QVector>
 #include <QMap>
 
+//! A small namespace to avoid name colision with a globally visible function
 namespace Res
 {
+        //! returns the key word of Resource used in the figure file
+        /** The actual functions ar to be sepecialised.
+         */
         template<typename Resource> const QString resourceName();
 }
 
@@ -39,20 +43,15 @@ namespace Res
 
 #include <QDebug>
 
-// The following two lines are an ugly hack to make the thing compile
-// using g++-3.3. The will be dropped as soon as Gentoo Linux switches
-// to g++-4.0 :)
-// template<typename Resource> class ResLib;
-// #include "strokelib.h"
-
 class ResLibInit;
-//template<typename Resource> class ResourceUser;
-
-
 
 
 class AbstractResourceUser;
 
+//! Abstract base class of ResLib
+/** Used to put all the differen ResLibs of differen Resource type in
+ *  one container class.
+ */
 class AbstractResLib
 {
 public:
@@ -67,10 +66,8 @@ private:
         AbstractResLib( const AbstractResLib& ) {}
 };
 
-/** \class ResLib<Resource>
- *
- * \brief stores resources of the type Resource
- *
+//! stores resources of the type Resource
+/*!
  * Resouces of a certain type T are accessible by the
  * ResLib<T>. Speaking of "the" ResLib<T> means that there is only one
  * instance of a ResLib for every type which is accessible by the
@@ -85,10 +82,8 @@ template<class Resource> class ResLib : public AbstractResLib
 {
         
 public:
+        //! fills the ResLib with the builtin resources on application startup.
         friend class ResLibInit;
-        //!< fills the ResLib with the builtin resources on application startup.
-        friend void ResLib<Stroke>::insertBuiltIn( const ResourceKey&, const Stroke& );
-//        friend class ResLib<Stroke>;
         
         //! returns the instance of the ResLib.
         static ResLib<Resource>& instance() 
@@ -106,53 +101,69 @@ public:
         int hashSum( const ResourceKey& key, bool* found = 0 ) const;
         //! Recalculates the hash sum represented by key.
         int recalcHashSum( const ResourceKey& key, bool* found = 0 ) const;
-        
-        const Resource& operator[]( const ResourceKey& key );
-        
-        void setResource( const ResourceKey& key, const Resource& resource );
-        
-//        const ResourceKey key( const Resource& data ) const { return map_[data]; }
 
+        //! gives access to the Resource behind key.
+        const Resource& operator[]( const ResourceKey& key );
+
+        //! changes the Resource behind key, if it is in the ResLib
+        void setResource( const ResourceKey& key, const Resource& resource );
+
+        //! true if ResLib contains a resource of the key key
         bool contains( const ResourceKey& key ) const { return map_.contains( key ); }
 
+        //! true if the Resource of key is used by a ResourceUser
         bool isBeingUsed( const ResourceKey& key ) const { return !map_[key].users.isEmpty(); }
-        
+
+        //! the number of items in the ResLib
         int count() const { return map_.count(); }
-        ResourceKey at( int i ) const { return map_.keys().at ( i ); }
+
+        //! the Resource at the i'th position
+        ResourceKey at( int i ) const { return map_.keys().at( i ); }
+
+        //! the position of the Resource of key
         int indexOf( const ResourceKey& key ) const { return map_.keys().indexOf( key ); }
 
+        //! change the key name of the Resource without changing the resource itself
         bool changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey );
-        
+
+        //! returns a list of all the keys in ResLib
         const ResourceKeyList keys() const { return map_.keys(); }
 
+        //! adds a new ResourceUser to the list of resource users
         const Resource* assignResource( const ResourceKey& key, AbstractResourceUser* u );
+
+        //! removes a ResourceUser of the list of resource users
         void unassignResource( const ResourceKey& key, AbstractResourceUser* u );
-        
-//        QList<Resource> resources() const { return map_.values(); }
         
 private:
         ResLib<Resource>() : map_() {}; //!< Private to enforce singularity.
         ResLib<Resource>( const ResLib<Resource>& ) {} //! just to avoid copying the instance
 
+        //! inserts a builtIn resource. It is accessible by friends.
         void insertBuiltIn( const ResourceKey& key, const Resource& data )
-        //!<< inserts a builtIn resource. It is accessible by friends. 
         {
                 map_[key] = data;
         }
 
         class ResourceData;
 
+        //! a default constructed instance of Resource
         static Resource dummyResource_;
         
         QMap<ResourceKey, ResourceData> map_; //!< resolves a ResourceKey to a Resource
-//        QHash<ResourceKey, int> hashSums_; //!< resolves a ResourceKey to the hash sum        
+        
 };
 
 
 template<> class ResLib<Stroke>;
 
 template<typename Resource>
+
+/** This is to be returned if a resource is requested by a key that is
+ *  not in the ResLib.
+ */
 Resource ResLib<Resource>::dummyResource_ = Resource();
+
 
 /** It therefore first checks whether the resource is not
  *  builtIn. Also the hash sum is calculated.
@@ -220,6 +231,9 @@ int ResLib<Resource>::recalcHashSum( const ResourceKey& key, bool* found ) const
         return newsum;
 }
 
+/*! returns the default constructed dummyResource_ in case the key can
+ *  not be looked up
+ */
 template<typename Resource>
 const Resource& ResLib<Resource>::operator[]( const ResourceKey& key )
 {
@@ -238,23 +252,27 @@ void ResLib<Resource>::setResource( const ResourceKey& key, const Resource& res 
 }
 
 
+/** All users of the resource are informed of the name change.
+ */
 template<typename Resource>
 bool ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey )
 {
         if ( !contains( oldKey ) || contains( newKey ) )
                 return false;
-
+        
         ResourceData d = map_[oldKey];
+        map_[newKey] = d;
         foreach ( AbstractResourceUser* u, d.users )
-                u->nameChanged( newKey );
+                u->setResource( newKey );
 
         map_.remove( oldKey );
-        map_[newKey] = d;
 
         return true;
 }
 
-
+/** Does nothing if the key could not be looked up or if the user is
+ *  already in the userlist.
+ */
 template<typename Resource>
 const Resource* ResLib<Resource>::assignResource( const ResourceKey& key, AbstractResourceUser* u )
 {
@@ -268,16 +286,9 @@ const Resource* ResLib<Resource>::assignResource( const ResourceKey& key, Abstra
         return &d.data();
 }
 
-template<typename Resource>
-void ResLib<Resource>::unassignResource( const ResourceKey& key, AbstractResourceUser* u ) 
-{
-        if ( !contains( key ) )
-                return;
-
-        map_[key].users.removeAll( u );
-}
-
-
+//! Contains the data of the Resource, the hash sum and the user list.
+/** and keeps all consistent
+ */
 template<typename Resource>
 class ResLib<Resource>::ResourceData
 {
@@ -300,6 +311,18 @@ private:
         Resource data_;
         unsigned int hashSum_;
 };
+
+/** does nothing if the key could not be looked up
+ */
+template<typename Resource>
+void ResLib<Resource>::unassignResource( const ResourceKey& key, AbstractResourceUser* u ) 
+{
+        if ( !contains( key ) )
+                return;
+
+        map_[key].users.removeAll( u );
+}
+
 
 template<typename Resource>
 void ResLib<Resource>::ResourceData::setData( const Resource& d ) 

@@ -133,7 +133,8 @@ void ReslibEditor<Resource>::setupModel()
 template<typename Resource>        
 void ReslibEditor<Resource>::resourceChanged( const QModelIndex& index, const QModelIndex& prev )
 {
-        setResource( resLib_.at( index.row() ) );
+        if ( index.isValid() )
+                setResource( resLib_.at( index.row() ) );
 
         int p = prev.row();
         if ( p >=0 && p <= resLib_.count() )

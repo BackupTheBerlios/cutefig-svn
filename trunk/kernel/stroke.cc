@@ -36,50 +36,42 @@
 
 Stroke::Stroke()
         : type_( sNone ),
-          resourceUser_( 0 ),
-          key_()
+          resourceUser_( 0 )
 {}
 
 Stroke::Stroke( const Stroke& other )
         : type_( other.type_ ),
-          resourceUser_( other.resourceUser_ ? other.resourceUser_->clone() : 0 ),
-          key_( other.key_ )
+          resourceUser_( other.resourceUser_ ? other.resourceUser_->clone() : 0 )
 {
 }
 
 Stroke::Stroke( const QColor& color )
         : type_( sColor ),
-          resourceUser_( new ResourceUser<QColor>( color ) ),
-          key_()
+          resourceUser_( new ResourceUser<QColor>( color ) )
 {}
 
 Stroke& Stroke::operator=( const Stroke& other )
 {
         type_ = other.type_;
 
-        if ( resourceUser_ )
-                delete resourceUser_;
+        delete resourceUser_;
         
         resourceUser_ = other.resourceUser_ ? other.resourceUser_->clone() : 0;
         
-        key_ = other.key_;
-
         return *this;
 }
 
 
 Stroke::~Stroke()
 {
-        if ( resourceUser_ )
-                delete resourceUser_;
+        delete resourceUser_;
 }
 
 void Stroke::setColor( const QColor& color )
 {
         type_ = sColor;
 
-        if ( resourceUser_ )
-                delete resourceUser_;
+        delete resourceUser_;
         
         resourceUser_ = new ResourceUser<QColor>();
         static_cast<ResourceUser<QColor>*>( resourceUser_ )->setResource( color );
@@ -89,34 +81,27 @@ void Stroke::setColor( const ResourceKey& key )
 {
         type_ = sColor;
 
-        if ( resourceUser_ )
-                delete resourceUser_;
+        delete resourceUser_;
         
         resourceUser_ = new ResourceUser<QColor>();
         static_cast<ResourceUser<QColor>*>( resourceUser_ )->setResource( key );
-
-        key_ = key;
 }
 
 void Stroke::setGradient( const ResourceKey& key )
 {
         type_ = sGradient;
 
-        if ( resourceUser_ )
-                delete resourceUser_;
+        delete resourceUser_;
         
         resourceUser_ = new ResourceUser<Gradient>();
         static_cast<ResourceUser<Gradient>*>( resourceUser_ )->setResource( key );
-        
-        key_ = key;
 }
 
 void Stroke::setPixmap( const QPixmap& pixmap )
 {
         type_ = sPixmap;
         
-        if ( resourceUser_ )
-                delete resourceUser_;
+        delete resourceUser_;
         
         if ( !resourceUser_ )
                 resourceUser_ = new ResourceUser<QPixmap>();
@@ -127,36 +112,29 @@ void Stroke::setPixmap( const QPixmap& pixmap )
 QColor Stroke::color() const
 {
         if ( type_ == sColor )
-                return static_cast<ResourceUser<QColor>*>( resourceUser_ )->data();
+                return resourceUser_->resource<QColor>();
         else
                 return QColor();
 }
 
-Gradient Stroke::gradient() const
-{
-        if ( type_ == sGradient )
-                return static_cast<ResourceUser<Gradient>*>( resourceUser_ )->data();
-        else
-                return Gradient();
-}
 
 void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
 {
         switch ( type_ ) {
             case sColor:
-                    painter->fillPath( path, QBrush( static_cast<ResourceUser<QColor>*>( resourceUser_ )->data() ) );
+                    painter->fillPath( path, QBrush( resourceUser_->resource<QColor>() ) );
                     break;
             case sGradient:
             {
                     QRectF r = path.boundingRect();
-                    QGradient* qgrad = static_cast<ResourceUser<Gradient>*>( resourceUser_ )->data().toQGradient( r );
+                    QGradient* qgrad = resourceUser_->resource<Gradient>().toQGradient( r );
                     if ( qgrad )
                             painter->fillPath( path, *qgrad );
                     delete qgrad;
                     break;
             }
             case sPixmap:
-                    painter->fillPath( path, QBrush( static_cast<ResourceUser<QPixmap>*>( resourceUser_ )->data() ) );
+                    painter->fillPath( path, QBrush( resourceUser_->resource<QPixmap>() ) );
                     break;
             case sNone:
             default: break;
@@ -169,18 +147,18 @@ const QBrush Stroke::brush( const QRectF& rect ) const
         
         switch ( type_ ) {
             case sColor:
-                    ret = static_cast<ResourceUser<QColor>*>( resourceUser_ )->data();
+                    ret = resourceUser_->resource<QColor>();
                     break;
             case sGradient:
             {
-                    QGradient* qgrad = static_cast<ResourceUser<Gradient>*>( resourceUser_ )->data().toQGradient( rect );
+                    QGradient* qgrad = resourceUser_->resource<Gradient>().toQGradient( rect );
                     if ( qgrad )
                             ret = QBrush( *qgrad );
                     delete qgrad;
                     break;
             }
             case sPixmap:
-                    ret = static_cast<ResourceUser<QPixmap>*>( resourceUser_ )->data();
+                    ret = resourceUser_->resource<QPixmap>();
                     break;
             case sNone:
             default: break;
@@ -212,3 +190,7 @@ const QString Stroke::typeString() const
 }
 
 
+const ResourceKey Stroke::key() const
+{
+        return resourceUser_ ? resourceUser_->key() : ResourceKey();
+}

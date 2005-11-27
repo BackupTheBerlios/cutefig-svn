@@ -22,19 +22,6 @@
 **
 ******************************************************************************/
 
-/** \class Figure
- *
- *  The Figure is the Model in the MVC approach. It takes a pointer to
- *  a Controler by setControler() which is usually called by an
- *  instance of a Controler. The Controler tells the Figure about
- *  updates the user made. This is done by using the routines
- *  addDrawObject() and removeDrawObject().
- *
- *  To paint the figure on a view, the Figure can be passed a pointer
- *  to a QPainter by the routine drawElements(). All elements will
- *  be drawn to this painter.
- */
-
 #include "figure.h"
 #include "drawobject.h"
 #include "compound.h"
@@ -47,25 +34,13 @@
 
 #include <QDebug>
 
-/** \class Figure
- *  
- *  A Figure has two ObjectLists: objectList_ and drawingLists_. The
- *  former contains all the DrawObjects of the figure including
- *  Compounds. The latter does not contain the Compouds but all
- *  children and grandchildren of the compounds unless they are
- *  compounds themselfes. This distinction is necessary because
- *  without it a Compound would not honor different depths of
- *  childObjects.
- */
-
 Figure::Figure( QObject *parent ) :
         QObject( parent ),
         scale_( 1.0 )
 {
 }
 
-/** Takes a list of DrawOjbects and tells them to recalculate. Usually
- *  called by a Parser.
+/** Then tells them to recalculate. Usually called by a Parser.
  */
 void Figure::takeDrawObjects( const ObjectList& l )
 {
@@ -80,7 +55,8 @@ void Figure::takeDrawObjects( const ObjectList& l )
 }
 
 /** Takes a single DrawObject. It is assumed that the DrawObject
- *  already calculated itself. 
+ *  already calculated itself. First the Resources used by the
+ *  DrawObject are reclaimed.
  */
 void Figure::addDrawObject( DrawObject* o )
 {
@@ -90,7 +66,8 @@ void Figure::addDrawObject( DrawObject* o )
 }
 
 /** Adds a DrawObject to the drawingList_. If o is a Compound its
- *  childObjects are inserted recursively.
+ *  childObjects are inserted recursively. The Compound itself is not
+ *  inserted.
  */
 void Figure::addObjectToDrawingList( DrawObject* o )
 {
@@ -119,15 +96,15 @@ void Figure::sortIntoDrawingList( DrawObject* o )
                 if ( DrawObject::isLessThan( drawingList_[middle], o ) ) {
                         begin = middle + 1;
                         n -= half + 1;
-                } else {
+                } else 
                         n = half;
-                }
         }
 
         drawingList_.insert( begin, o );
 }
 
-/** Removes a DrawObject from the objectList_ and from the drawingList.
+/** First releases the Resource used by the DrawObject. Then removes a
+ *  DrawObject from the objectList_ and from the drawingList.
  */
 void Figure::removeDrawObject( DrawObject* o )
 {
@@ -137,7 +114,8 @@ void Figure::removeDrawObject( DrawObject* o )
 }
 
 /** Removes a DrawObject from the drawingList_. If it is a Compound
- *  all its children are removed.
+ *  all its children are removed. The Compound itself does not have to
+ *  be removed as drawingList_ does not contain the Compounds.
  */
 void Figure::removeObjectFromDrawingList( DrawObject* o )
 {
@@ -211,40 +189,11 @@ QRectF Figure::boundingRect() const
         return r;
 }
 
-/** Returns a list of the keys of all Dashes used by the DrawObjects
- *  in the drawingList_. This is needed for CFigOutput to know which
- *  Dashes of the DashesLib to export into the cig-file.
+/** Each DrawObject of objectList_ is asked for the Resources it uses.
+ *  Those resources are then added to the ResourceSet returned if the
+ *  Resource::isToBeSaved() and if th Resource is not yet in the
+ *  ResourceSet.
  */
-// const ResourceKeyList Figure::dashList() const
-// {
-//         ResourceKeyList rkl;
-//         foreach ( DrawObject* o, drawingList_ ) {
-//                 ResourceKey k = o->pen().dashesKey();
-//                 if ( k.isToBeSaved() && !rkl.count( k ) )
-//                         rkl << k;
-//         }
-        
-//         return rkl;
-// }
-
-// const ResourceKeyList Figure::strokeList() const
-// {
-//         ResourceKeyList skl;
-//         ResourceKey key;
-        
-//         foreach ( DrawObject* o, drawingList_ ) {
-//                 key = o->fill().key();
-//                 if ( key.isToBeSaved() && !skl.contains( key ) ) 
-//                         skl << key;
-
-//                 key = o->stroke().key();
-//                 if ( key.isToBeSaved() && !skl.contains( key ) )
-//                         skl << key;
-//         }
-
-//         return skl;
-// }
-
 const ResourceSet Figure::usedResources() const
 {
         ResourceSet resSet;

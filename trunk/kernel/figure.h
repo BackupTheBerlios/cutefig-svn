@@ -22,10 +22,6 @@
 **
 ******************************************************************************/
 
-/** \class Figure
- *  \brief The Figure contains all DrawObject objects of a figure. It is the 
- *  \e document the user is editing.
- */
 
 #ifndef figure_h
 #define figure_h
@@ -45,7 +41,25 @@ class QPointF;
 class QPoint;
 class QRectF;
 
-
+//! contains all DrawObject objects of a figure. It is the \e document the user is editing.
+/** The Figure is the Model in the MVC approach. It takes a pointer to
+ *  a Controler by setControler() which is usually called by an
+ *  instance of a Controler. The Controler tells the Figure about
+ *  updates the user made. This is done by using the routines
+ *  addDrawObject() and removeDrawObject().
+ *
+ *  To paint the figure on a view, the Figure can be passed a pointer
+ *  to a QPainter by the routine drawElements(). All elements will
+ *  be drawn to this painter.
+ *
+ *  A Figure has two ObjectLists: objectList_ and drawingLists_. The
+ *  former contains all the DrawObjects of the figure including
+ *  Compounds. The latter does not contain the Compouds but all
+ *  children and grandchildren of the compounds unless they are
+ *  compounds themselfes. This distinction is necessary because
+ *  without it a Compound would not honor different depths of
+ *  childObjects.
+ */
 class Figure : public QObject
 {
         Q_OBJECT
@@ -54,38 +68,47 @@ public:
         Figure( QObject * parent = 0 );
         ~Figure() {};
 
-        void setControler( Controler* c ) { controler_ = c; };
-        double scale() const { return scale_; };
+        //! sets the controler_ to c
+        void setControler( Controler* c ) { controler_ = c; }
 
+        //! returns the scale_ of the Figure.
+        double scale() const { return scale_; }
+
+        //! adds all the DrawObjects of the ObjectList l.
         void takeDrawObjects( const ObjectList& l );
-        void addDrawObject( DrawObject* drobj );
-        void removeDrawObject( DrawObject* drobj );
 
+        //! adds one DrawObject
+        void addDrawObject( DrawObject* o );
+
+        //! removes a DrawObject
+        void removeDrawObject( DrawObject* o );
+
+        //! sorts the objects
         void sortObjects(); 
 
+        //! draws all DrawObjects exept the bakups
         void drawElements( QPainter* p, const ObjectList& backups = ObjectList() ) const; 
 
+        //! returns a pointer tho the DrawObject under the point p
         DrawObject* findContainingObject( const QPointF& p, qreal tolerance ) const;
 
+        //! Outputs all objects to the OutputBackend ob
         void outputObjects( OutputBackend* ob ) const;
-        //!< Outputs all objects to the OutputBackend ob
 
+        //! returns th bounding rect of the figure
         QRectF boundingRect() const;
+
+        //! true iff there are no DrawObjects
         bool isEmpty() const { return objectList_.isEmpty(); }
                 
 
+        //! Clears the objectList_ and deletes all containing objects.
         void clear();
-        //!< Clears the objectList_ and deletes all containing objects.
 
-//         void addDashes( int key ){
-//                 dashList_.push_back( key );
-//         }; //!< Adds a dash style to the dashList_.
-
+        //! returns all Resources used by the Figure
         const ResourceSet usedResources() const;
         
-//         const ResourceKeyList dashList() const;
-//         const ResourceKeyList strokeList() const;
-
+        //! returns the objects of the figure
         const ObjectList& objects() { return objectList_; }
 
 private:
@@ -95,9 +118,11 @@ private:
         
         ObjectList objectList_, drawingList_;
 
+        /** The scale that is used internally. Not to be mixed up with
+         *  the zoom, that is only used by a CanvasView.
+         */
         double scale_;
 
         Controler* controler_;
-
 };
 #endif

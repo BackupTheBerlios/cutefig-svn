@@ -29,16 +29,6 @@
 
 #include <QDebug>
 
-/**
- */
-// void Selection::selectList( const ObjectList& l )
-// {
-//         backups_ = l;
-//         objects_ = ObjectList();
-//         foreach ( DrawObject* o, l )
-//                 objects_.append( o->copy() );
-// }
-
 /** Unselects everything on receiving a null pointer. Otherwise the
  *  DrawObject o is added to the Selection if it is not yet in it. If
  *  it is it is unselected.

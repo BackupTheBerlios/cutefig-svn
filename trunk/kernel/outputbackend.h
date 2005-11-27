@@ -61,9 +61,7 @@ public:
         QStringList& errorReport() { return errorReport_; }
         
 protected:
-        Stroke::StrokeType strokeType( const Stroke& s ) { return s.type_; }
-//        QColor strokeColor( const Stroke& s ) { return s.data_.value<QColor>(); }
-//        Gradient strokeGradient( const Stroke& s ) { return s.data_.value<Gradient>(); }
+        Stroke::StrokeType strokeType( const Stroke& s ) { return s.type(); }
         
         const Figure& figure_;
         std::ostream& fileStream_;

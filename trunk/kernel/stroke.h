@@ -40,44 +40,36 @@ class QRectF;
 
 class OutputBackend;
 
-//template<typename Resource> class ResourceUser;
-
+//! Represents the possibilities of patterns that can used to draw or fill an object.
+/** So far it can contain a QColor or a Gradient. Pixmaps and vector
+ *  patterns are to be implemented. The data is kept in an ResourceUser. 
+ */
 class Stroke 
 {
 public:
+        //! the possible types of a Stroke
         enum StrokeType { sNone = 0, sColor, sGradient, sPixmap, sComplex };
 
-        friend class OutputBackend;
-        
         Stroke();
         explicit Stroke( const QColor& color );
 
-//         static Stroke colorStroke( const ResourceKey& key );
-//         static Stroke gradientStroke( const ResourceKey& key );
-        
-//        Stroke( const ResourceKey& key, const QColor& color );
-//        Stroke( const ResourceKey& key, const Gradient& gradient );
         Stroke( const Stroke& other );
 
         ~Stroke();
         
         void setNone() { type_ = sNone; }
         void setColor( const QColor& color );
-//        void setGradient( const Gradient& gradient );
         void setPixmap( const QPixmap& pixmap );
 
         void setColor( const ResourceKey& key );
         void setGradient( const ResourceKey& key );
         
         QColor color() const;
-        bool isHardColor() const { return !key_.isValid() && type_ == sColor; }
+        bool isHardColor() const { return resourceUser_ && type_ == sColor; }
 
-        Gradient gradient() const;
-        
         StrokeType type() const { return type_; }
         
-//        void setKey( const ResourceKey& key );
-        const ResourceKey& key() const { return key_; }
+        const ResourceKey key() const;
 
         void fillPath( const QPainterPath& path, QPainter* painter ) const;
         
@@ -94,37 +86,9 @@ public:
                 
 private:
         StrokeType type_;
-//        QVariant data_;
-
 
         AbstractResourceUser* resourceUser_;
-
-//        Gradient* gradient_;
-        
-        ResourceKey key_;
 };
-
-// inline Stroke Stroke::colorStroke( const ResourceKey& key ) 
-// {
-//         Stroke s;
-//         s.type_ = sColor;
-//         s.color_ = new ResourceUser<QColor>();
-//         s.color_->setResource( key );
-//         s.key_ = key;
-        
-//         return s;
-// }
-
-// inline Stroke Stroke::gradientStroke( const ResourceKey& key ) 
-// {
-//         Stroke s;
-//         s.type_ = sGradient;
-//         s.gradient_ = new ResourceUser<Gradient>();
-//         s.gradient_->setResource( key );
-//         s.key_ = key;
-        
-//         return s;
-// }
 
 inline int qHash( const QColor& ) 
 {
