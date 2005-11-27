@@ -43,7 +43,7 @@ public:
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
-        virtual const QString objectname() { return "polyline"; };
+        virtual const QString objectname() const { return "polyline"; };
 
         virtual void outputToBackend( OutputBackend *ob );
         

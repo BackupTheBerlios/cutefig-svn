@@ -41,7 +41,7 @@ public:
 
         virtual DrawObject* copy();
 
-        virtual const QString objectname() { return "ellipse"; }
+        virtual const QString objectname() const { return "ellipse"; }
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 

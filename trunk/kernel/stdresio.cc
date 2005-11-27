@@ -89,7 +89,7 @@ bool TResourceIO<Gradient>::parseResource( const QString& itemtype, std::istream
                 }
         } else {
                 if ( itemtype != "gradstop" ) {
-                        errorString_ = tr("gradstop expeted");
+                        errorString_ = tr("gradstop expected");
                         failed_ = true;
                         return false;
                 }

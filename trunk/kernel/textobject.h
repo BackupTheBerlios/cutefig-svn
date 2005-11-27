@@ -44,7 +44,7 @@ public:
 
         virtual DrawObject* copy();
 
-        virtual const QString objectname() { return "text"; }
+        virtual const QString objectname() const { return "text"; }
 
         QFont font() { return font_; }
         

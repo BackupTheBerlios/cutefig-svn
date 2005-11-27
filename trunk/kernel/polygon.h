@@ -39,7 +39,7 @@ public:
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
-        virtual const QString objectname() { return "polygon"; };
+        virtual const QString objectname() const { return "polygon"; };
 
 private:
         virtual void setupPainterPath();

@@ -48,7 +48,7 @@ public:
 
         virtual DrawObject* copy() { return new Compound( this ); }
 
-        virtual const QString objectname() { return "group"; }
+        virtual const QString objectname() const { return "group"; }
 
         virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;

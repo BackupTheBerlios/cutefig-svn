@@ -65,7 +65,7 @@ public:
         virtual DrawObject* copy() = 0;
         
         //! supposed to return the name of the object in english.
-        virtual const QString objectname() =0;
+        virtual const QString objectname() const =0;
 
         virtual uint minPoints() const { return 2; }
         
