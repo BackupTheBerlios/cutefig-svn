@@ -18,7 +18,7 @@ HEADERS = paintutils.h \
           resourceiconengine.h \
           mouseeventhandler.h \
           gradientwidget.h \
-          strokedemo.h \
+          resourcedemo.h \
           flagbuttongroup.h \
           stylecombobox.h \
           strokewidget.h \
@@ -40,7 +40,7 @@ SOURCES = paintutils.cc \
           resourceiconengine.cc \
           mouseeventhandler.cc \
           gradientwidget.cc \
-          strokedemo.cc \
+          resourcedemo.cc \
           flagbuttongroup.cc \
           stylecombobox.cc \
           strokewidget.cc \

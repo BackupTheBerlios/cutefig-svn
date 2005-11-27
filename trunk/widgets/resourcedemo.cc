@@ -22,58 +22,44 @@
 **
 ******************************************************************************/
 
-#include "strokedemo.h"
-#include "stroke.h"
-#include "pen.h"
+#include "resourcedemo.h"
+#include "gradient.h"
 
-#include <QPainter>
-#include <QPainterPath>
-#include <QPaintEvent>
-
-#include <QDebug>
-
-StrokeDemo::StrokeDemo( const Stroke& stroke, QWidget* parent )
-        : QFrame( parent ),
-          stroke_( stroke )
+template<>
+void ResourceDemo<QColor>::doPainting( QPainter* p )
 {
-        setMinimumSize( QSize( 90, 90 ) );
-        setFrameStyle( Panel|Sunken );
-        setLineWidth( 2 );
+        int w3 = width()/3;
+        int h3 = height()/3;
+        
+        p->fillRect( w3,h3, w3,h3, *resource_ );
 }
 
-void StrokeDemo::setStroke( const Stroke& stroke )
+template<>
+void ResourceDemo<Gradient>::doPainting( QPainter* p )
 {
-        stroke_ = stroke;
-        repaint();
-}
-
-void StrokeDemo::paintEvent( QPaintEvent* e )
-{
-        QPainter pt( this );
-        pt.setClipRegion( e->region() );
-        pt.setRenderHint( QPainter::Antialiasing );
         int w = width();
         int h = height();
         int w3 = w/3;
         int h3 = h/3;
         int w9 = w3/3;
         int h9 = h3/3;
+        w3 *=2;
 
-        qDebug() << w << w3 << w9;
-        qDebug() << h << h3 << h9;
-        
-        pt.fillRect( 0,0, w,h, Qt::white );        
+        QGradient* qGrad = resource_->toQGradient( QRect( w9,h9, w3,h3 ) );
 
-        QPainterPath el1;
-        el1.addEllipse( w9,h9, w3,h3 );
+        if ( !qGrad )
+                return;
 
-        Pen pen;
-        pen.setWidth( 3 );
-        pen.strikePath( el1, stroke_, &pt );
+        p->setPen( QPen( *qGrad, 3.0 ) );
+        p->drawEllipse( w9,h9, w3,h3 );
 
-        QPainterPath el2;
-        el2.addEllipse( w9,5*h9, w3,h3 );
-        stroke_.fillPath( el2, &pt );
+        h9 *= 5;
 
-        QFrame::paintEvent( e );
+        delete qGrad;
+
+        qGrad = resource_->toQGradient( QRect( w9,h9, w3,h3 ) );
+        p->setPen( Qt::NoPen );
+        p->setBrush( *qGrad ); 
+        p->drawEllipse( w9,h9, w3,h3 );
 }
+

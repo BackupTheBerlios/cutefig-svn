@@ -30,6 +30,7 @@
 #include "typedefs.h"
 #include "resourcemodel.h"
 #include "resourcedialog.h"
+#include "resourcedemo.h"
 
 #include <QModelIndex>
 #include <QItemSelectionModel>
@@ -38,6 +39,7 @@
 
 class QAction;
 class StrokeDemo;
+
 
 class AbstractReslibEditor : public EditDialog
 {
@@ -68,6 +70,8 @@ private slots:
 
 protected:
         virtual void setResource( const ResourceKey& key ) = 0;
+
+        virtual QWidget* resourceDemo() = 0;
         
         QAction* copyResourceAction_;
         QAction* deleteResourceAction_;
@@ -75,8 +79,6 @@ protected:
 
         QAbstractListModel* resourceModel_;
         QItemSelectionModel* selectedResource_;
-
-//         ResourceDemo* resourceDemo_;
         
         ResourceKey oldResourceKey_, resourceKey_, previousResourceKey_;
 };
@@ -86,7 +88,8 @@ template<typename Resource> class ReslibEditor : public AbstractReslibEditor
 public:
         ReslibEditor( const ResourceKey& initial, QWidget* parent = 0 )
                 : AbstractReslibEditor( initial, parent ),
-                  resLib_( ResLib<Resource>::instance() )
+                  resLib_( ResLib<Resource>::instance() ),
+                  resourceDemo_( 0 )
         {
                 setupModel();
                 init();
@@ -106,7 +109,11 @@ private:
 
         virtual void setResource( const ResourceKey& );
 
+        virtual QWidget* resourceDemo();
+        
         ResLib<Resource>& resLib_;
+
+        ResourceDemo<Resource>* resourceDemo_;
 
         void setupModel();
 };
@@ -172,13 +179,7 @@ void ReslibEditor<Resource>::deleteResource()
         
         resLib_.remove( resourceKey_ );
 
-//         if ( ind > resLib_.count() )
-//                 ind--;
-
         setResource( previousResourceKey_ );
-        
-//         selectedResource_->select( resourceModel_->index( previousSelection_ ),
-//                                    QItemSelectionModel::ClearAndSelect );
 }
 
 template<typename Resource>        
@@ -188,6 +189,8 @@ void ReslibEditor<Resource>::editResource()
 
         if ( ResourceDialog<Resource>::execute( resource ) == QDialog::Accepted  ) 
                 resLib_.setResource( resourceKey_, resource );
+
+        resourceDemo_->update();
 }
 
 template<typename Resource>        
@@ -203,7 +206,7 @@ void ReslibEditor<Resource>::setResource( const ResourceKey& key )
         selectedResource_->select( resourceModel_->index( resLib_.indexOf( resourceKey_ ) ),
                                  QItemSelectionModel::ClearAndSelect );
 
-//        resourceDemo_->setResource( resLib_[key] );
+        resourceDemo_->setResource( &resLib_[key] );
 }
 
 template<typename Resource>        
@@ -222,5 +225,15 @@ ResourceKey ReslibEditor<Resource>::getResource( const ResourceKey& initial, boo
 
         return result;
 }
+
+template<typename Resource>
+QWidget* ReslibEditor<Resource>::resourceDemo()
+{
+        if ( !resourceDemo_ )
+                resourceDemo_ = new ResourceDemo<Resource>( &resLib_[resourceKey_], this );
+
+        return resourceDemo_;
+}
+
 
 #endif

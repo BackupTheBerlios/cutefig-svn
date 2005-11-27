@@ -24,7 +24,6 @@
 
 #include "reslibeditor.h"
 #include "actionpushbutton.h"
-//#include "resourcedemo.h"
 #include "colordialog.h"
 #include "resourcedialog.h"
 
@@ -47,7 +46,6 @@ void AbstractReslibEditor::init()
                  this, SLOT( resourceChanged( const QModelIndex&, const QModelIndex& ) ) );
         
         copyResourceAction_ = new QAction( tr("&Copy"), this );
-//        copyResourceAction_->setShortcutContext( Qt::ApplicationShortcut );
         copyResourceAction_->setShortcut( Qt::CTRL+Qt::Key_C );
         connect( copyResourceAction_, SIGNAL( triggered() ), this, SLOT( copyResource() ) );
         
@@ -80,8 +78,8 @@ void AbstractReslibEditor::init()
         mainLayout->addLayout( editButtonLayout );
 
 
-//        resourceDemo_ = new ResourceDemo( resourceLib[resourceKey], this );
-//        mainLayout->addWidget( resourceDemo_ );
+        QWidget* resDem = resourceDemo();
+        mainLayout->addWidget( resDem );
         
         dialogLayout_->insertLayout( 0, mainLayout );
 
