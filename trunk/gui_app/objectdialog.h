@@ -47,23 +47,20 @@ class ObjectDialog : public EditDialog
 {
         Q_OBJECT
 public:
-        ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent=0 );
         ~ObjectDialog() {};
         
-        DrawObject* backupObject() const { return backup_; };
-        DrawObject* drawObject() const { return drawObject_; };
-
 public slots:
         virtual void reset();
         virtual void accept();
+        
+protected slots:
+        virtual void init();
 
-        void showValue( int v ) {qDebug() << v;}
-        
 protected:
-        DrawObject *drawObject_, *backup_;
+        ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent=0 );
+
+        DrawObject* drawObject_;//, *backup_;
         QTabWidget* tabWidget;
-        
-        void setUpAll();
         
         virtual void setUpConnections();
         virtual void setUpConnectionsPrivate() {}
@@ -71,19 +68,12 @@ protected:
         virtual void setDefaultValues();
         virtual void setDefaultValuesPrivate() {}
         
-        virtual void setUpWidgetsPrivate() {}
-        
         virtual void castDrawObject() =0;
         
         EditdialogAction* action_;
-        
- 
-//private:
+
         void setUpGeneral();   
         void setDrawObject( DrawObject* o );
-        
-//        QGroupBox* setUpLineGroup( QWidget* page );
-//        QGroupBox* setUpFillGroup( QWidget* page );
 
         PenWidget* penWidget;
         StrokeWidget* lineStroke;

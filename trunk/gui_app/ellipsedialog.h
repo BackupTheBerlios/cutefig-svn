@@ -43,7 +43,6 @@ public:
 private:
         Ellipse* ellipse_;
 
-        virtual void setUpWidgetsPrivate();
         virtual void setDefaultValuesPrivate();
         virtual void setUpConnectionsPrivate();
         virtual void castDrawObject();

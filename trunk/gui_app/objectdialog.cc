@@ -43,13 +43,20 @@ ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent 
 { 
         qDebug("ObjectDialog::ObjectDialog");
         drawObject_ = o;
+
+        tabWidget = new QTabWidget( this );
+        dialogLayout_->insertWidget( 0, tabWidget );
+
+        setUpGeneral();
+        
+        QTimer::singleShot( 0, this, SLOT( init() ) );
 } 
 
 void ObjectDialog::setUpGeneral()
 {
         qDebug("ObjectDialog::setUpGeneral");
 
-        QFrame* page = new QFrame();
+        QWidget* page = new QWidget();
         tabWidget->addTab( page, "&General" );
 
         QGridLayout* layout = new QGridLayout( page );
@@ -151,13 +158,10 @@ void ObjectDialog::setUpConnections()
         setUpConnectionsPrivate();
 }
 
-void ObjectDialog::setUpAll()
-{        
-        tabWidget = new QTabWidget( this );
-        dialogLayout_->insertWidget( 0, tabWidget );
-
-        setUpGeneral();
-        setUpWidgetsPrivate();
+void ObjectDialog::init()
+{
+        castDrawObject();
+        
         setDefaultValues();
         setUpConnections();
 }

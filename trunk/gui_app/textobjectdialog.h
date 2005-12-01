@@ -39,13 +39,12 @@ public:
         ~TextObjectDialog() {}
 
 private:
-        virtual void setUpConnections();
-        virtual void setDefaultValues();
+        virtual void setUpConnectionsPrivate();
+        virtual void setDefaultValuesPrivate();
         virtual void castDrawObject();
 
         TextObject* textObject_;
 
-        StrokeWidget* stroke_;
         FontButton* fontButton_;
 };
 

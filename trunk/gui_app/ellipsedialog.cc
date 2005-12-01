@@ -43,15 +43,8 @@ EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,
 {
         qDebug("EllipseDialog::EllipseDialog");
         setWindowTitle( tr("Ellipse Properties") );
-        castDrawObject();
-        setUpAll();
-}
 
-
-void EllipseDialog::setUpWidgetsPrivate()
-{
-        qDebug("EllipseDialog::setUpPrivate");
-        QFrame* page = new QFrame();
+        QWidget* page = new QWidget();
         tabWidget->addTab( page, "&Ellipse" );
 
         QGridLayout* topLayout = new QGridLayout( page );
@@ -103,6 +96,7 @@ void EllipseDialog::setUpWidgetsPrivate()
         dgl->addWidget( diamButton );
 
 }
+
 
 void EllipseDialog::setDefaultValuesPrivate()
 {

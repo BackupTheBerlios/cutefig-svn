@@ -30,5 +30,4 @@ PolygonDialog::PolygonDialog( DrawObject *o, EditdialogAction* a,
         : ObjectDialog( o, a, parent )
 {
         setWindowTitle( tr("Polygon Properties") );
-        setUpAll();
 }

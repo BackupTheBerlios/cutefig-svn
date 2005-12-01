@@ -27,6 +27,7 @@
 #include "fontbutton.h"
 #include "strokewidget.h"
 #include "editdialogaction.h"
+#include "penwidget.h"
 
 #include <QLayout>
 #include <QTextEdit>
@@ -37,69 +38,36 @@ TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget*
         : ObjectDialog( o,a, parent )
 {
         setWindowTitle( tr("Text Properties") );
-        castDrawObject();
-
-        QHBoxLayout* mainLayout = new QHBoxLayout();
-
-        QVBoxLayout* lcl = new QVBoxLayout();
+        QWidget* page = new QWidget();
+        tabWidget->addTab( page, "&Text" );
         
-        stroke_ = new StrokeWidget( tr("Text &stroke"), this );
-        lcl->addWidget( stroke_ );
-
-        QHBoxLayout* dlt = new QHBoxLayout();
-        depth = new QSpinBox( this );
-        depth->setMinimum(0);
-        depth->setMaximum(999);
-        depth->setSingleStep(1);
-        QLabel* dlb = new QLabel( tr("&Depth"), this );
-        dlb->setBuddy( depth );
-        dlt->addWidget( dlb );
-        dlt->addWidget( depth );
-
-        lcl->addLayout( dlt );
+        QHBoxLayout* mainLayout = new QHBoxLayout( page );
+        
+        QVBoxLayout* lcl = new QVBoxLayout();
 
         mainLayout->addLayout( lcl );
 
         QVBoxLayout* rcl = new QVBoxLayout();
         
-        fontButton_ = new FontButton( tr("Choose &Font"), this );
+        fontButton_ = new FontButton( tr("Choose &Font"), page );
         rcl->addWidget( fontButton_ );
 
-        rcl->addStretch();
-        
-        comment = new QTextEdit( this );
-//        comment->setTextFormat( Qt::PlainText );
-        comment->setTabChangesFocus( true );
-        QLabel* clb = new QLabel( tr("&Comment"), this );
-        clb->setBuddy( comment );
-        rcl->addWidget( clb );
-        rcl->addWidget( comment );
-
         mainLayout->addLayout( rcl );
-        
-        dialogLayout_->insertLayout( 0, mainLayout );
-        
-        setUpConnections();
-        setDefaultValues();
+
+        penWidget->setEnabled( false );
+        fillStroke->setEnabled( false );
 }
 
-void TextObjectDialog::setUpConnections()
+void TextObjectDialog::setUpConnectionsPrivate()
 {
-        connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );
-        connect( depth, SIGNAL( valueChanged(int) ), action_, SLOT( wObjectHasChanged() ) );
-        
-        connect( stroke_, SIGNAL( strokeChanged() ), action_, SLOT( wObjectHasChanged() ) );
-        
         connect( fontButton_, SIGNAL( fontChanged(const QFont&) ),
                  textObject_, SLOT( setFont(const QFont& ) ) );
         connect( fontButton_, SIGNAL( fontChanged(const QFont&) ),
                  action_, SLOT( wObjectHasChanged() ) );
 }
 
-void TextObjectDialog::setDefaultValues()
+void TextObjectDialog::setDefaultValuesPrivate()
 {
-        depth->setValue( drawObject_->depth() );
-        stroke_->setStroke( drawObject_->p_stroke() );
         fontButton_->setFont( textObject_->font() );
 }
 

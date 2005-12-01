@@ -30,5 +30,4 @@ PolylineDialog::PolylineDialog( DrawObject *o, EditdialogAction* a,
         : ObjectDialog( o, a, parent )
 {
         setWindowTitle( tr("Polyline Properties") );
-        setUpAll();
 }
