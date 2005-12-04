@@ -361,7 +361,7 @@ CreateActions::CreateActions( Controler* parent )
 {
         setText( tr("&Add") );
         ObjectMapper& m = ObjectMapper::instance();
-        foreach ( ObjectHandler* h, m.objectMap_.values() )
+        foreach ( ObjectHandler* h, m.handlers() )
                 h->createAction( parent, this );
 }
 

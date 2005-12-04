@@ -31,13 +31,9 @@
 #include "canvasview.h"
 #include "controler.h"
 #include "figure.h"
-#include "ruler.h"
 #include "parser.h"
-#include "initialiser.h"
-//#include "xfigoutput.h"
+#include "guiinit.h"
 
-#include "objectmapper.h"
-#include "objecthandler.h"
 #include "actions.h"
 #include "errorreporter.h"
 
@@ -61,7 +57,6 @@ CuteFig::CuteFig()
         setAttribute( Qt::WA_DeleteOnClose );
         setWindowTitle( tr("The CuteFig drawing system") );
 
-        Initialiser::go();
         
         figure_ = new Figure( this );
         controler_ = new Controler( this );
@@ -81,7 +76,7 @@ CuteFig::CuteFig()
 
 void CuteFig::init()
 {
-        setupObjectMapper();
+        GUIInitialiser::go();
         setupActions();
         
         int argc = qApp->argc();
@@ -276,18 +271,6 @@ void CuteFig::setupActions()
         helpMenu->addAction( "&About", this, SLOT(about()), Qt::Key_F1 );
         helpMenu->addSeparator();
 //        helpMenu->addAction( QWhatsThis::createAction( this ) );
-}
-
-
-/** All the known DrawObject types are registered.
- */
-void CuteFig::setupObjectMapper()
-{
-        ObjectMapper& mapper = ObjectMapper::instance();
-        mapper.registerItem( EllipseHandler::instance() );
-        mapper.registerItem( PolylineHandler::instance() );
-        mapper.registerItem( PolygonHandler::instance() );
-        mapper.registerItem( TextHandler::instance() );
 }
 
 void CuteFig::exportFigure()

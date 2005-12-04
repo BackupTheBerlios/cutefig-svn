@@ -289,13 +289,14 @@ void Parser::parseStroke( Stroke& s )
                 QColor color;
                 if (stream_ >> color)
                         s = Stroke( color );
-        }
-        else {
-                QString kw;
+        } else {
                 ResourceKey key;
                 
                 s = Stroke();
-                if ( (stream_ >> kw >> key) && key.isValid() ) {
+                if ( (stream_ >> key) && key.isValid() ) {
+                
+                        QString kw;
+                        stream_ >> kw;
                         
                         if ( kw == "color" ) {
                                 s.setColor( key );
@@ -351,7 +352,11 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
                 parseError( tr("Invalid pen.") );
 
         parseStroke( stroke );
+        if ( stream_.fail() )
+                qDebug() << "failed1";
         parseStroke( fill );
+        if ( stream_.fail() )
+                qDebug() << "failed2";
         
         if ( !( stream_ >> depth ) ) {
                 parseError( tr("Invalid depth, assuming 50") );

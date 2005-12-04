@@ -99,7 +99,7 @@ protected:
         virtual void keyPressEvent( QKeyEvent* e );
         virtual bool event( QEvent* e );
         virtual void inputMethodEvent( QInputMethodEvent* e );
-        virtual QVariant inputMethodQuery( Qt::InputMethodQuery* e );
+        virtual QVariant inputMethodQuery( Qt::InputMethodQuery q );
 
         virtual void paintEvent( QPaintEvent* e );
 

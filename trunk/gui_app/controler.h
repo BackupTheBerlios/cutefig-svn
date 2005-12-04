@@ -101,6 +101,8 @@ public:
         const QCursor callActionClick( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
 
         bool callActionKeyStroke( const QKeyEvent* ke );
+
+        bool callInputMethodHandler( const QInputMethodEvent* e );
         
         void cancelAction();
         void execAction( Command* cmd );

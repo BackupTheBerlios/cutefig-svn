@@ -31,20 +31,15 @@
 #include <QPixmap>
 #include <QPainter>
 
-Polygon::Polygon( Figure * parent )
+Polygon::Polygon( Figure* parent )
         : Polyline( parent )
 {
 }
 
-Polygon::Polygon( Polygon * o )
+Polygon::Polygon( const Polygon* o )
         : Polyline( o )
 {
         getReadyForDraw();
-}
-
-DrawObject * Polygon::copy()
-{
-        return new Polygon( this );
 }
 
 void Polygon::outputToBackend( OutputBackend* ob )

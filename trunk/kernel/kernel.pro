@@ -13,6 +13,8 @@ HEADERS += fig.h \
            figure.h \
            drawobject.h \
            compound.h \
+           rectangloid.h \
+           rectangle.h \
            ellipse.h \
            polyline.h \
            polygon.h \
@@ -37,6 +39,8 @@ SOURCES += figure.cc \
            geometry.cc \
            drawobject.cc \
            compound.cc \
+           rectangloid.cc \
+           rectangle.cc \
            ellipse.cc \
            polyline.cc \
            polygon.cc \

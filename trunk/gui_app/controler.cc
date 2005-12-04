@@ -34,7 +34,8 @@
  */
 
 #include "controler.h"
-#include "allobjects.h"
+#include "figure.h"
+#include "drawobject.h"
 #include "interactiveaction.h"
 #include "actions.h"
 
@@ -172,12 +173,23 @@ const QCursor Controler::callActionClick( const QPoint& p, Fig::PointFlag f, con
 
 bool Controler::callActionKeyStroke( const QKeyEvent* ke ) 
 {
-      
-        
         if ( !(actionIsActive_ && editAction_ ) )
                 return false;
 
         if ( editAction_->keyStroke( ke ) ) {
+                updateViews();
+                return true;
+        }
+
+        return false;
+}
+
+bool Controler::callInputMethodHandler( const QInputMethodEvent* e )
+{
+        if ( !( actionIsActive_ && editAction_ ) )
+                return false;
+
+        if ( editAction_->inputMethodEvent( e ) ) {
                 updateViews();
                 return true;
         }
@@ -296,7 +308,7 @@ void Controler::appendToCmdList( Command* c )
 void Controler::setToolProperties()
 {
 //         if ( !wObject_ ) {
-//                 qDebug("Controler::setToolProperties shouldn't be called " 
+//                 qDeug(b"Controler::setToolProperties shouldn't be called " 
 //                        "without wObject_");
 //                 return;
 //         }
@@ -335,6 +347,7 @@ void Controler::setToolActionsGroup( ToolActions* ta )
         activeToolActions_.append( ta->scale() );
         activeToolActions_.append( ta->move() );
 }
+
 
 
 

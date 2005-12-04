@@ -29,6 +29,7 @@
 #include "figure.h"
 #include "pen.h"
 #include "stroke.h"
+#include "typedefs.h"
 
 #include <QRectF>
 #include <QPolygonF>
@@ -55,17 +56,18 @@ class DrawObject : public QObject
         Q_OBJECT
 public:
         DrawObject( Figure* parent = 0 );
-        DrawObject( DrawObject* );
+        DrawObject( const DrawObject* );
         ~DrawObject() {}
 
         friend void Figure::takeDrawObjects( const ObjectList& );
         friend class Compound;
 
         //! supposed to make a deep copy and return a pointer to it.
-        virtual DrawObject* copy() = 0;
+        virtual DrawObject* copy() const = 0;
         
         //! supposed to return the name of the object in english.
         virtual const QString objectname() const =0;
+        virtual const QString objectKeyWord() const =0;
 
         virtual uint minPoints() const { return 2; }
         
@@ -96,6 +98,7 @@ public:
         
         void setPoints( QPolygonF pa ) { points_ = pa; }
         QPolygonF& points() { return points_; }
+        const QPolygonF& points() const { return points_; }
         virtual QPointF center() const { return points_.boundingRect().center(); }
         //!< returns the central point of the object.
 
@@ -180,5 +183,20 @@ protected:
 
 };
 
+#define CUTE_DECLARE_DRAWOBJECT( Classname, okeyword, oname ) \
+class Classname; \
+namespace DObjects \
+{ \
+         template<> inline const QString objectname<Classname>() \
+         { return DrawObject::tr(oname); } \
+         template<> inline const QString objectKeyWord<Classname>() { return okeyword; } \
+}
+
+#define DRAW_OBJECT( Classname ) \
+public:\
+         const QString objectname() const { return DObjects::objectname<Classname>(); } \
+         const QString objectKeyWord() const { return DObjects::objectKeyWord<Classname>(); } \
+         DrawObject* copy() const { return new Classname( this ); } \
+private:
 
 #endif

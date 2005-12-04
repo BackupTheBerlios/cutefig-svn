@@ -42,6 +42,7 @@ ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent 
           action_ ( a )
 { 
         qDebug("ObjectDialog::ObjectDialog");
+        setWindowTitle( tr("%1 Properties").arg( o->objectname() ) );
         drawObject_ = o;
 
         tabWidget = new QTabWidget( this );

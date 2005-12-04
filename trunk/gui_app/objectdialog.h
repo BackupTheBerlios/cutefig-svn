@@ -47,6 +47,7 @@ class ObjectDialog : public EditDialog
 {
         Q_OBJECT
 public:
+        ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent=0 );
         ~ObjectDialog() {};
         
 public slots:
@@ -57,8 +58,6 @@ protected slots:
         virtual void init();
 
 protected:
-        ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent=0 );
-
         DrawObject* drawObject_;//, *backup_;
         QTabWidget* tabWidget;
         
@@ -68,7 +67,7 @@ protected:
         virtual void setDefaultValues();
         virtual void setDefaultValuesPrivate() {}
         
-        virtual void castDrawObject() =0;
+        virtual void castDrawObject() {};
         
         EditdialogAction* action_;
 

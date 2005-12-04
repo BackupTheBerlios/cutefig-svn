@@ -25,49 +25,48 @@
 
 #include "objecthandler.h"
 #include "allactions.h"
+#include "allobjects.h"
 #include "allodialogs.h"
 
 #include "controler.h"
 
-CreateAction* EllipseHandler::createAction( Controler* c, QActionGroup* g )
-{
-        return new EllipseCAction( c, g );
-}
+// template<>
+// ObjectDialog* TObjectHandler<Rectangle>::editDialog( DrawObject* o, EditdialogAction* a, 
+//                                                      QWidget* parent )
+// {
+//         return 0;//new RectangleDialog( o, a, parent );
+// }
 
-ObjectDialog* EllipseHandler::editDialog( DrawObject* o, EditdialogAction* a, 
-                                          QWidget* parent )
+template<>
+ObjectDialog* TObjectHandler<Ellipse>::editDialog( DrawObject* o, EditdialogAction* a, 
+                                                   QWidget* parent )
 {
         return new EllipseDialog( o, a, parent );
 }
 
-CreateAction* PolylineHandler::createAction( Controler* c, QActionGroup* g )
-{
-        return new PolylineCAction( c, g );
-}
-
-ObjectDialog* PolylineHandler::editDialog( DrawObject* o, EditdialogAction* a, 
-                                           QWidget* parent )
+template<>
+ObjectDialog* TObjectHandler<Polyline>::editDialog( DrawObject* o, EditdialogAction* a, 
+                                                    QWidget* parent )
 {
         return new PolylineDialog( o, a, parent );
 }
 
-CreateAction* PolygonHandler::createAction( Controler* c, QActionGroup* g )
-{
-        return new PolygonCAction( c, g );
-}
-
-ObjectDialog* PolygonHandler::editDialog( DrawObject* o, EditdialogAction* a, 
-                                          QWidget* parent )
+template<>
+ObjectDialog* TObjectHandler<Polygon>::editDialog( DrawObject* o, EditdialogAction* a, 
+                                                   QWidget* parent )
 {
         return new PolygonDialog( o, a, parent );
 }
 
-CreateAction* TextHandler::createAction( Controler* c, QActionGroup* g )
-{
-        return new TextAction( c, g );
-}
-
-ObjectDialog* TextHandler::editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
+template<>
+ObjectDialog* TObjectHandler<TextObject>::editDialog( DrawObject* o, EditdialogAction* a,
+                                                      QWidget* parent )
 {
         return new TextObjectDialog( o, a, parent );
+}
+
+template<>
+CreateAction* TObjectHandler<TextObject>::createAction( Controler* c, QActionGroup* g )
+{
+        return new TextAction( c, g );
 }

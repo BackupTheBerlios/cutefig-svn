@@ -26,15 +26,18 @@
 #ifndef objecthandler_h
 #define objecthandler_h
 
-class CreateAction;
-class ObjectDialog;
 class Controler;
 class QActionGroup;
 class DrawObject;
 class QWidget;
 class EditdialogAction;
 
+#include "dobjectfactory.h"
+#include "createaction.h"
+#include "objectdialog.h"
+
 #include <QString>
+
 
 /** \class ObjectHandler
  *  \brief An abstract base class to handle DrawObjects
@@ -62,74 +65,97 @@ public:
         virtual ObjectDialog* editDialog( DrawObject* o, 
                                           EditdialogAction* a, 
                                           QWidget* parent )=0;
-        virtual const QString name() const = 0;
+        virtual const QString keyword() const = 0;
 };
 
-class EllipseHandler : public ObjectHandler
+template<typename ObjectType>
+class TObjectHandler : public ObjectHandler
 {
-        EllipseHandler() : ObjectHandler() {}
-
+        TObjectHandler<ObjectType>() : ObjectHandler() {}
 public:
-        static EllipseHandler* instance() {
-                static EllipseHandler* inst = new EllipseHandler();
+        static TObjectHandler<ObjectType>* instance() {
+                static TObjectHandler<ObjectType>* inst = new TObjectHandler<ObjectType>();
                 return inst;
         }
 
-        CreateAction* createAction( Controler* c, QActionGroup* g );
-        ObjectDialog* editDialog( DrawObject* o, 
-                                  EditdialogAction* a, QWidget* parent );
+        CreateAction* createAction( Controler* c, QActionGroup* g ) 
+        {
+                return new TCreateAction<ObjectType>( c, g );
+        }
         
-        const QString name() const { return "ellipse"; };
-};
-
-class PolylineHandler : public ObjectHandler
-{
-        PolylineHandler() : ObjectHandler() {}
-
-public:
-        static PolylineHandler* instance() {
-                static PolylineHandler* inst = new PolylineHandler();
-                return inst;
+        ObjectDialog* editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
+        {
+                return new ObjectDialog( o, a, parent );        
         }
-
-        CreateAction* createAction( Controler* c, QActionGroup* g );
-        ObjectDialog* editDialog( DrawObject* o, 
-                                  EditdialogAction* a, QWidget* parent );
-
-        const QString name() const { return "polyline"; }
+        
+        const QString keyword() const { return DObjects::objectKeyWord<ObjectType>(); }
 };
 
-class PolygonHandler : public ObjectHandler
-{
-        PolygonHandler() : ObjectHandler() {}
-public:
-        static PolygonHandler* instance() {
-                static PolygonHandler* inst = new PolygonHandler();
-                return inst;
-        }
+// class EllipseHandler : public ObjectHandler
+// {
+//         EllipseHandler() : ObjectHandler() {}
 
-        CreateAction* createAction( Controler* c, QActionGroup* g );
-        ObjectDialog* editDialog( DrawObject* o, 
-                                  EditdialogAction* a, QWidget* parent );
+// public:
+//         static EllipseHandler* instance() {
+//                 static EllipseHandler* inst = new EllipseHandler();
+//                 return inst;
+//         }
 
-        const QString name() const { return "polygon"; }
-};
+//         CreateAction* createAction( Controler* c, QActionGroup* g );
+//         ObjectDialog* editDialog( DrawObject* o, 
+//                                   EditdialogAction* a, QWidget* parent );
+        
+//         const QString name() const { return "ellipse"; };
+// };
+
+// class PolylineHandler : public ObjectHandler
+// {
+//         PolylineHandler() : ObjectHandler() {}
+
+// public:
+//         static PolylineHandler* instance() {
+//                 static PolylineHandler* inst = new PolylineHandler();
+//                 return inst;
+//         }
+
+//         CreateAction* createAction( Controler* c, QActionGroup* g );
+//         ObjectDialog* editDialog( DrawObject* o, 
+//                                   EditdialogAction* a, QWidget* parent );
+
+//         const QString name() const { return "polyline"; }
+// };
+
+// class PolygonHandler : public ObjectHandler
+// {
+//         PolygonHandler() : ObjectHandler() {}
+// public:
+//         static PolygonHandler* instance() {
+//                 static PolygonHandler* inst = new PolygonHandler();
+//                 return inst;
+//         }
+
+//         CreateAction* createAction( Controler* c, QActionGroup* g );
+//         ObjectDialog* editDialog( DrawObject* o, 
+//                                   EditdialogAction* a, QWidget* parent );
+
+//         const QString name() const { return "polygon"; }
+// };
 
 
-class TextHandler : public ObjectHandler
-{
-        TextHandler() : ObjectHandler() {}
-public:
-        static TextHandler* instance() {
-                static TextHandler* inst = new TextHandler();
-                return inst;
-        }
+// class TextHandler : public ObjectHandler
+// {
+//         TextHandler() : ObjectHandler() {}
+// public:
+//         static TextHandler* instance() {
+//                 static TextHandler* inst = new TextHandler();
+//                 return inst;
+//         }
 
-        CreateAction* createAction( Controler* c, QActionGroup* g );
-        ObjectDialog* editDialog( DrawObject* o, 
-                                  EditdialogAction* a, QWidget* parent );
+//         CreateAction* createAction( Controler* c, QActionGroup* g );
+//         ObjectDialog* editDialog( DrawObject* o, 
+//                                   EditdialogAction* a, QWidget* parent );
 
-        const QString name() const { return "text"; }
-};
+//         const QString name() const { return "text"; }
+// };
 
 #endif

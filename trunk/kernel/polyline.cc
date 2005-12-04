@@ -35,22 +35,17 @@
 
 #include <QDebug>
 
-Polyline::Polyline( Figure * parent )
+Polyline::Polyline( Figure* parent )
         : DrawObject( parent )
 {
         nextPoint_ = &points_[0];
 }
 
-Polyline::Polyline( Polyline *o )
+Polyline::Polyline( const Polyline* o )
         : DrawObject( o ),
           nextPoint_( 0 )
 {
         getReadyForDraw();
-}
-
-DrawObject * Polyline::copy()
-{
-        return new Polyline( this );
 }
 
 void Polyline::passPointFlag( Fig::PointFlag f )

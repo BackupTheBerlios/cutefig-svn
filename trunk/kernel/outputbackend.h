@@ -27,6 +27,8 @@
 
 class Figure;
 class DrawObject;
+
+class Rectangle;
 class Ellipse;
 class Polyline;
 class Polygon;
@@ -47,14 +49,16 @@ public:
         OutputBackend( std::ostream& ts, const Figure& f ) 
                 : figure_( f ),
                   fileStream_( ts ),
-                  errorReport_() {}
+                  errorReport_()
+        {}
         virtual ~OutputBackend() {}
 
-        virtual void outputEllipse( Ellipse* el ) = 0;
-        virtual void outputPolyline( Polyline* pl ) = 0;
-        virtual void outputPolygon( Polygon* pg ) = 0;
+        virtual void outputRectangle( const Rectangle* rc ) = 0;
+        virtual void outputEllipse( const Ellipse* el ) = 0;
+        virtual void outputPolyline( const Polyline* pl ) = 0;
+        virtual void outputPolygon( const Polygon* pg ) = 0;
 
-        virtual void outputCompound( Compound* cd ) = 0;
+        virtual void outputCompound( const Compound* cd ) = 0;
         
         virtual void processOutput() = 0;
 
@@ -65,7 +69,7 @@ protected:
         
         const Figure& figure_;
         std::ostream& fileStream_;
-        QStringList errorReport_;        
+        QStringList errorReport_;
 };
 
 #endif

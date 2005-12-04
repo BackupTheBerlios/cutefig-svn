@@ -28,6 +28,7 @@
 #include "addcommand.h"
 
 #include <QKeyEvent>
+#include <QInputMethodEvent>
 #include <QApplication>
 
 #include <QDebug>
@@ -84,6 +85,15 @@ bool TextAction::keyStroke( const QKeyEvent* ke )
         }
 
         return false;
+}
+
+bool TextAction::inputMethodEvent( const QInputMethodEvent* e )
+{
+        if ( !pointIsSet_ )
+                return false;
+        
+        textObject_->insertByCursor( e->commitString() );
+        return true;
 }
 
 void TextAction::reset()

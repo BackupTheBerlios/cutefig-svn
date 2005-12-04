@@ -74,7 +74,7 @@ private:
 
         QWidget* viewport_;
 
-        void setupObjectMapper();  //!< sets up the ObjectMapper
+//        void setupObjectMapper();  //!< sets up the ObjectMapper
         void setupActions(); //!< sets up the standard actions
 
 public:

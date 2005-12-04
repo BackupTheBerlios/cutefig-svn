@@ -39,16 +39,17 @@ class CfigOutput : public OutputBackend
 public:
         CfigOutput( std::ostream& ts, const Figure& f ) : OutputBackend( ts, f ) {}
         ~CfigOutput() {}
-
-        virtual void outputEllipse( Ellipse* el );
-        virtual void outputPolyline( Polyline* pl );
-        virtual void outputPolygon( Polygon* pg );
-        virtual void outputCompound( Compound* cd );
+        
+        virtual void outputRectangle( const Rectangle* rc );
+        virtual void outputEllipse( const Ellipse* el );
+        virtual void outputPolyline( const Polyline* pl );
+        virtual void outputPolygon( const Polygon* pg );
+        virtual void outputCompound( const Compound* cd );
         
         virtual void processOutput();
 
 private:
-        void outputGenericData( QString s );
+        void outputGenericData();
         void outputPoints();
         void outputResources();
 //         void outputDashes();
@@ -56,12 +57,14 @@ private:
 
         static const char* objectString;
 
-        DrawObject* drawObject_;
+        const DrawObject* drawObject_;
 
         QHash<int,int> dashMap_;
 
 //        ResourceTable dashTable_;
         
 };
+
+
 
 #endif

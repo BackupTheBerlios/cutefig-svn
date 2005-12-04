@@ -50,7 +50,7 @@ Compound::Compound( const ObjectList& l, Figure* parent )
                 o->setParent( this );
 }
 
-Compound::Compound( Compound* c )
+Compound::Compound( const Compound* c )
         : DrawObject( c )
 {
         foreach ( DrawObject* o, c->childObjects_ ) {

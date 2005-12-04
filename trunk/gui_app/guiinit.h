@@ -22,9 +22,23 @@
 **
 ******************************************************************************/
 
-#include "rectangle.h"
-#include "ellipse.h"
-#include "polyline.h"
-#include "polygon.h"
-#include "compound.h"
-#include "textobject.h"
+#ifndef guiinit_h
+#define guiinit_h
+
+#include "initialiser.h"
+
+class GUIInitialiser
+{
+public:
+        static void go()
+        {
+                static GUIInitialiser gi;
+        }
+
+private:
+        GUIInitialiser();
+        GUIInitialiser( const GUIInitialiser& ) {}
+};
+
+
+#endif

@@ -25,6 +25,8 @@
 #ifndef dobjectfactory_h
 #define dobjectfactory_h
 
+#include "typedefs.h"
+
 #include <QHash>
 #include <QString>
 
@@ -33,6 +35,9 @@ class DrawObjectIO;
 class DrawObject;
 class Figure;
 
+//! Constructs a DrawObject described by a keyword
+/*! 
+ */
 class DrawObjectFactory
 {
 public:
@@ -46,7 +51,6 @@ protected:
                 dFHash_[kw] = this;
         }
 
-        //        virtual DrawObject newDrawObjectIO() = 0;
         virtual DrawObject* parseObject( std::istream& is, Figure* fig ) = 0;
         
 private:
@@ -55,21 +59,19 @@ private:
         static QHash<QString, DrawObjectFactory*> dFHash_;
 };
 
-
-class DrawObjectIO
+template<typename ObjectType>
+class TDrawObjectFactory : public DrawObjectFactory
 {
 public:
-        virtual ~DrawObjectIO() {}
+        TDrawObjectFactory<ObjectType>()
+                : DrawObjectFactory( DObjects::objectKeyWord<ObjectType>() )
+        {}
 
-        virtual DrawObject* parseDrawObject( std::istream& is, Figure* fig ) = 0;
-
-protected:
-        DrawObjectIO() {}
-private:
-        DrawObjectIO( const DrawObjectIO& ) {}
+        virtual DrawObject* parseObject( std::istream&, Figure* fig ) 
+        {
+                return new ObjectType( fig );
+        }
 };
-
-
 
 
 #endif

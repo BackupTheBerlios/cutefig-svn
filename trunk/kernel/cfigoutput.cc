@@ -36,10 +36,18 @@
 
 const char* CfigOutput::objectString = "object ";
 
-void CfigOutput::outputEllipse( Ellipse* el )
+void CfigOutput::outputRectangle( const Rectangle* r )
+{
+        drawObject_ = r;
+        outputGenericData();
+        fileStream_ << "\n";
+        outputPoints();
+}
+
+void CfigOutput::outputEllipse( const Ellipse* el )
 {
         drawObject_ = el;
-        outputGenericData( "ellipse" );
+        outputGenericData();
         fileStream_ << std::setprecision( 3 );
         fileStream_ << ' ' << el->isCircle() << ' ' 
                     << el->isSpecifiedByRadii() << ' ' << el->angle()
@@ -47,23 +55,23 @@ void CfigOutput::outputEllipse( Ellipse* el )
         outputPoints();
 }
 
-void CfigOutput::outputPolyline( Polyline* pl )
+void CfigOutput::outputPolyline( const Polyline* pl )
 {
         drawObject_ = pl;
-        outputGenericData( "polyline" );
+        outputGenericData();
         fileStream_ << "\n";
         outputPoints();
 }
 
-void CfigOutput::outputPolygon( Polygon* pg )
+void CfigOutput::outputPolygon( const Polygon* pg )
 {
         drawObject_ = pg;
-        outputGenericData( "polygon" );
+        outputGenericData();
         fileStream_ << "\n";
         outputPoints();
 }
 
-void CfigOutput::outputCompound( Compound* cd )
+void CfigOutput::outputCompound( const Compound* cd )
 {
         const ObjectList& objects = cd->childObjects();
         fileStream_ << "compound_begin\n";
@@ -101,12 +109,12 @@ std::ostream& operator<< ( std::ostream& ts, const Stroke& st )
         if ( st.isHardColor() )
                 ts << st.color();
         else
-                ts << st.typeString() << ' ' << st.key();
+                ts << st.key() << ' ' << st.typeString();
 
         return ts;
 }
 
-void CfigOutput::outputGenericData( QString name )
+void CfigOutput::outputGenericData()
 {
         const Pen& p = drawObject_->pen();
 
@@ -116,7 +124,8 @@ void CfigOutput::outputGenericData( QString name )
                         fileStream_ << "# " << s << '\n';
         }
         
-        fileStream_ << "object " << name << ' ' << drawObject_->points().size() << ' ';
+        fileStream_ << "object " << drawObject_->objectKeyWord() << ' '
+                    << drawObject_->points().size() << ' ';
         
         fileStream_ << p.width() << ' ' << p.dashesKey() << ' '
                     << (int)p.capStyle() << ' ' << (int)p.joinStyle() << ' '
@@ -140,3 +149,4 @@ void CfigOutput::outputResources()
                         rIO->outputResource( key, fileStream_ );
         }
 }
+

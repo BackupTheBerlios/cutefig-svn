@@ -21,6 +21,7 @@ RESOURCES = cutefig.qrc
 
 # Input
 HEADERS += cutefig.h \
+           guiinit.h \
            centralwidget.h \
            viewbase.h \
            canvasview.h \
@@ -57,6 +58,7 @@ HEADERS += cutefig.h \
            polylinedialog.h \
            polygondialog.h 
 SOURCES += cutefig.cc \
+           guiinit.cc \
            centralwidget.cc \
            canvasview.cc \
            controler.cc \

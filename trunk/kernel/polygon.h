@@ -27,19 +27,19 @@
 
 #include "polyline.h"
 
+CUTE_DECLARE_DRAWOBJECT( Polygon, "polygon", "&Polygon" );
+
 class Polygon : public Polyline
 {
         Q_OBJECT
+        DRAW_OBJECT( Polygon );
 public:
-        Polygon( Figure * parent =0 );
+        Polygon( Figure* parent =0 );
         ~Polygon() { };
 
-        Polygon( Polygon * o );
-        virtual DrawObject * copy();
+        Polygon( const Polygon* o );
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
-
-        virtual const QString objectname() const { return "polygon"; };
 
 private:
         virtual void setupPainterPath();

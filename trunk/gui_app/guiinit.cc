@@ -22,9 +22,20 @@
 **
 ******************************************************************************/
 
-#include "rectangle.h"
-#include "ellipse.h"
-#include "polyline.h"
-#include "polygon.h"
-#include "compound.h"
-#include "textobject.h"
+#include "guiinit.h"
+#include "initialiser.h"
+#include "objectmapper.h"
+#include "objecthandler.h"
+#include "allobjects.h"
+
+GUIInitialiser::GUIInitialiser()
+{
+        Initialiser::go();
+        
+        ObjectMapper& mapper = ObjectMapper::instance();
+        mapper.registerItem( TObjectHandler<Rectangle>::instance() );
+        mapper.registerItem( TObjectHandler<Ellipse>::instance() );
+        mapper.registerItem( TObjectHandler<Polyline>::instance() );
+        mapper.registerItem( TObjectHandler<Polygon>::instance() );
+        mapper.registerItem( TObjectHandler<TextObject>::instance() );
+}

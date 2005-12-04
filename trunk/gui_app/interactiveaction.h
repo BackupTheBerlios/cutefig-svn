@@ -51,7 +51,8 @@ public:
         virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m ) = 0;
         virtual void move( const QPoint&, const QMatrix* ) {}
         virtual bool keyStroke( const QKeyEvent* ) { return false; }
-
+        virtual bool inputMethodEvent( const QInputMethodEvent* ) { return false; }
+        
         virtual void handleSelection() {}
 
         virtual bool isActive() const = 0;

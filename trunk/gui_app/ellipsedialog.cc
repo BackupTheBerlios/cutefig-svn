@@ -42,7 +42,7 @@ EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,
         : ObjectDialog( o, a, parent )
 {
         qDebug("EllipseDialog::EllipseDialog");
-        setWindowTitle( tr("Ellipse Properties") );
+//        setWindowTitle( tr("Ellipse Properties") );
 
         QWidget* page = new QWidget();
         tabWidget->addTab( page, "&Ellipse" );

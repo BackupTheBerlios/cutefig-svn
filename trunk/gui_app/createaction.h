@@ -25,8 +25,8 @@
 #ifndef createaction_h
 #define createaction_h 
 
-#include "allobjects.h"
 #include "interactiveaction.h"
+#include "typedefs.h"
 
 /** \class CreateAction
  *  \brief A base class for create actions of DrawObjects
@@ -64,49 +64,28 @@ private:
 };
 
 
-class EllipseCAction : public CreateAction
+template<typename ObjectType>
+class TCreateAction : public CreateAction 
 {
 public:
-        EllipseCAction( Controler* parent, QActionGroup* group = 0 )
-                : CreateAction( parent, group ) {
-                setText( tr("Create &Ellipse") );
-                setShortcut( Qt::Key_E );
-                setIcon( QIcon(":images/ellipse.png") );
-                cursor_ = Qt::UpArrowCursor;
-        }
+        TCreateAction<ObjectType>( Controler* parent, QActionGroup* g = 0 );
 
 protected:
-        virtual DrawObject* createObject() { return new Ellipse( controler_->figure() ); }
+        DrawObject* createObject() { return new ObjectType( controler_->figure() ); }
+
+private:
+        void init();
 };
 
-class PolylineCAction : public CreateAction
-{
-public:
-        PolylineCAction( Controler* parent, QActionGroup* group = 0 )
-                : CreateAction( parent, group ) {
-                setText( tr("Create Poly&line") );
-                setShortcut( Qt::Key_L );
-                setIcon( QIcon(":images/polyline.png") );
-                cursor_ = Qt::UpArrowCursor;
-        }
+template<typename ObjectType>
+TCreateAction<ObjectType>::TCreateAction( Controler* parent, QActionGroup* g )
+        : CreateAction( parent, g )
+{  
+        cursor_ = Qt::UpArrowCursor;
+        setText( tr("Create %1").arg( DObjects::objectname<ObjectType>() ) );
+        setIcon( QIcon(":images/" + DObjects::objectKeyWord<ObjectType>() + ".png") );
+        init();
+}
 
-protected:
-        virtual DrawObject* createObject() { return new Polyline( controler_->figure() ); }
-};
-
-class PolygonCAction : public CreateAction
-{
-public:
-        PolygonCAction( Controler* parent, QActionGroup* group = 0 )
-                : CreateAction( parent, group ) {
-                setText( tr("Create &Polygon") );
-                setIcon( QIcon(":images/polygon.png") );
-                setShortcut( Qt::Key_P );
-                cursor_ = Qt::UpArrowCursor;
-        }
-
-protected:
-        virtual DrawObject* createObject() { return new Polygon( controler_->figure() ); }
-};
 
 #endif

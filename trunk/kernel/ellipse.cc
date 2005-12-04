@@ -30,41 +30,30 @@
 #include "geometry.h"
 #include "ellipse.h"
 #include "outputbackend.h"
-
+#include "dobjectfactory.h"
  
 Ellipse::Ellipse( Figure* parent ) 
-        : DrawObject( parent )
-{          
-        specByRadii_ = false;
-        circle_ = false;
-        angle_ = 0.0;
+        : Rectangloid( parent ),
+          specByRadii_( false ),
+          circle_( false )
+{
 }
 
-Ellipse::Ellipse( Ellipse *o ) 
-        : DrawObject( o ),
+Ellipse::Ellipse( const Ellipse *o ) 
+        : Rectangloid( o ),
           specByRadii_( o->specByRadii_ ),
-          circle_( o->circle_ ),
-          angle_( o->angle()/rad )
+          circle_( o->circle_ )
 {
         getReadyForDraw();
         doSpecificPreparation();
 }
 
-DrawObject* Ellipse::copy()
-{
-        return new Ellipse( this );
-}
+// DrawObject* Ellipse::copy()
+// {
+//         return new Ellipse( this );
+// }
 
-QPointF* Ellipse::nextPoint()
-{
-        if ( points_.size() == 1 ) {
-                points_.resize( 2 );
-                return &points_[1];
-        } else 
-                return 0;
-}
-
-void Ellipse::setupPainterPath()
+void Ellipse::setupWidthAndHeight()
 {
         if ( specByRadii_ )
                 center_ = points_[0];
@@ -78,41 +67,11 @@ void Ellipse::setupPainterPath()
                 w2_ = fabs(center_.x() - points_[1].x());
                 h2_ = fabs(center_.y() - points_[1].y());
         }
-
-        w_ = 2*w2_; h_ = 2*h2_;
-        
-
-        bRect_.setSize( QSizeF( w_, h_ ) );
-        bRect_.moveCenter( QPointF(0.,0.) );
-
-        painterPath_ = QPainterPath();
-        painterPath_.addEllipse( bRect_ );
-
-        rotation_ = QMatrix();
-        rotation_.rotate( -angle_*rad );        
-
-        bRect_ = rotation_.mapRect( bRect_ );
-
-        QMatrix rottrans = QMatrix();
-        rottrans.translate( center_.x(), center_.y() );
-        painterPath_ = rottrans.map( rotation_.map(painterPath_) );
 }
 
-void Ellipse::setupRects()
+void Ellipse::addPath()
 {
-        double c = cos( angle_ );
-        double s = sin( angle_ );
-
-        double wc = w_*c;
-        double ws = w_*s;
-        double hc = h_*c;
-        double hs = h_*s;
-        
-        double w = sqrt( wc*wc + hs*hs );
-        double h = sqrt( ws*ws + hc*hc );
-
-        cRect_ = Geom::centerRect( center_, QSizeF( w,h ) );
-        bRect_ = Geom::centerRect( center_, QSizeF( w+pen_.width(), h+pen_.width() ) );
+        painterPath_.addEllipse( bRect_ );
 }
 
 void Ellipse::doSpecificPreparation()
@@ -169,27 +128,12 @@ void Ellipse::outputToBackend( OutputBackend* ob )
         ob->outputEllipse( this );
 }
 
-void Ellipse::setAngle( double a )
-{
-        angle_ = a/rad;
-        getReadyForDraw();
-}
-
-void Ellipse::setAngle( int a )
-{
-        setAngle( (double) a );
-}
-
-void Ellipse::setAngleNew( double a )
-{
-        angle_ = a/rad;
-}
-
 
 ///
 
 
-DrawObject* EllipseFactory::parseObject( std::istream& is, Figure* fig )
+template<>
+DrawObject* TDrawObjectFactory<Ellipse>::parseObject( std::istream& is, Figure* fig )
 {
         int circle, byRadius;
         double angle;
@@ -206,4 +150,3 @@ DrawObject* EllipseFactory::parseObject( std::istream& is, Figure* fig )
         
         return e;
 }
-

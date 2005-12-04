@@ -48,7 +48,7 @@ TextObject::TextObject( Figure* parent )
 }
 
 
-TextObject::TextObject( TextObject* o )
+TextObject::TextObject( const TextObject* o )
         : DrawObject( o ),
           text_( o->text_ ),
           textDocument_( this ),
@@ -68,11 +68,6 @@ TextObject::TextObject( TextObject* o )
 TextObject::~TextObject()
 {
         delete textLayout_;
-}
-
-DrawObject* TextObject::copy()
-{
-        return new TextObject( this );
 }
 
 void TextObject::outputToBackend( OutputBackend* )

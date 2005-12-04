@@ -27,23 +27,18 @@
 
 #include "drawobject.h"
 
-class QPainter;
+CUTE_DECLARE_DRAWOBJECT( Polyline, "polyline", "Poly&line" );
 
 class Polyline : public DrawObject
 {
         Q_OBJECT
+        DRAW_OBJECT( Polyline );
 public:
         Polyline( Figure * parent =0 );
-        Polyline( Polyline *o );
+        Polyline( const Polyline* o );
         ~Polyline() { };
 
-        friend class PolylineDialog;
-
-        virtual DrawObject * copy();
-
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
-
-        virtual const QString objectname() const { return "polyline"; };
 
         virtual void outputToBackend( OutputBackend *ob );
         
@@ -56,19 +51,5 @@ protected:
         QPointF *nextPoint_;
 };
 
-
-// Factory
-
-#include "dobjectfactory.h"
-
-class PolylineFactory : public DrawObjectFactory
-{
-public:
-        PolylineFactory() : DrawObjectFactory("polyline") {}
-        virtual DrawObject* parseObject( std::istream&, Figure* fig ) 
-        {
-                return new Polyline( fig );
-        }
-};
 
 #endif

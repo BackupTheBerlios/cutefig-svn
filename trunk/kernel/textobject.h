@@ -34,18 +34,17 @@
 #include <QPixmap>
 #include <QList>
 
+CUTE_DECLARE_DRAWOBJECT( TextObject, "text", "&Text" );
+
 class TextObject : public DrawObject
 {
         Q_OBJECT
+        DRAW_OBJECT( TextObject );
 public:
         TextObject( Figure* parent = 0 );
-        TextObject( TextObject* o );
+        TextObject( const TextObject* o );
         ~TextObject();
-
-        virtual DrawObject* copy();
-
-        virtual const QString objectname() const { return "text"; }
-
+        
         QFont font() { return font_; }
         
         virtual void draw( QPainter* p ) const;

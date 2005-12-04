@@ -24,6 +24,7 @@
 
 #include "createaction.h"
 #include "addcommand.h"
+#include "allobjects.h"
 
 void CreateAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
 {
@@ -44,4 +45,30 @@ void CreateAction::handleSelection()
 {
         cObject_ = createObject();
         selection_.setObjectToBeCreated( cObject_ );
+}
+
+
+template<> void TCreateAction<Rectangle>::init()
+{
+        setShortcut( Qt::Key_R );
+}
+
+template<> void TCreateAction<Ellipse>::init()
+{
+        setShortcut( Qt::Key_E );
+}
+
+template<> void TCreateAction<Polygon>::init()
+{
+        setShortcut( Qt::Key_P );
+}
+
+template<> void TCreateAction<Polyline>::init()
+{
+        setShortcut( Qt::Key_L );
+}
+
+template<> void TCreateAction<TextObject>::init()
+{
+        setShortcut( Qt::Key_T );
 }

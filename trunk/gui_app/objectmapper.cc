@@ -41,7 +41,7 @@ ObjectDialog* ObjectMapper::editDialog( DrawObject* o, EditdialogAction* a,
         if ( !o )
                 return 0;
         
-        ObjectHandler* h = lookup( o->objectname() );
+        ObjectHandler* h = lookup( o->objectKeyWord() );
         if ( !h )
                 return 0;
 
@@ -50,19 +50,22 @@ ObjectDialog* ObjectMapper::editDialog( DrawObject* o, EditdialogAction* a,
 
 bool ObjectMapper::registerItem( ObjectHandler* h )
 {
-        const QString name = h->name();
-        if ( objectMap_.contains( name ) )
+        const QString keyword = h->keyword();
+        qDebug() << "registering" << keyword;
+        
+        if ( objectMap_.contains( keyword ) )
                 return false;
 
-        objectMap_.insert(name, h );
+        objectMap_.insert(keyword, h );
+        handlers_ << h;
         return true;
 }
 
-ObjectHandler* ObjectMapper::lookup( const QString& name )
+ObjectHandler* ObjectMapper::lookup( const QString& keyword )
 {
-     ObjectHandler* h = objectMap_.value( name );
+     ObjectHandler* h = objectMap_.value( keyword );
      if ( !h ) 
-                qDebug() << "DrawObject " << name 
+                qDebug() << "DrawObject " << keyword 
                          << " not registered in ObjectMapper";
                
      return h;

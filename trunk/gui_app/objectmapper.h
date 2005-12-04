@@ -26,6 +26,7 @@
 #define objectmapper_h
 
 #include <QHash>
+#include <QList>
 #include <QString>
 
 class CreateAction;
@@ -44,13 +45,13 @@ class QWidget;
  *  is declared friend, because it just takes the objectMap_ and sets
  *  up the CreateAction subclasses.
  *
- *  For the lookup \link DrawObject::objectname()
- *  DrawObject::objectname() \endlink is used.
+ *  For the lookup \link DrawObject::objectKeyWord()
+ *  DrawObject::objectKeyWord() \endlink is used.
  */
 
 class ObjectMapper
 {
-        ObjectMapper() : objectMap_() {}
+        ObjectMapper() : objectMap_(), handlers_() {}
 
 public:
         friend class CreateActions;
@@ -67,8 +68,12 @@ public:
 
         bool registerItem( ObjectHandler* h );
 
+        const QList<ObjectHandler*>& handlers() { return handlers_; }
+
 private:
         QHash<QString, ObjectHandler*> objectMap_;
+        QList<ObjectHandler*> handlers_;
+        
         ObjectHandler* lookup( const QString& name );
 };
 

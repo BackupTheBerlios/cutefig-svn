@@ -31,7 +31,9 @@
 
 #include "fig.h"
 #include "geometry.h"
-#include "allobjects.h"
+//#include "allobjects.h"
+#include "drawobject.h"
+#include "figure.h"
 #include "cutefig.h"
 #include "ruler.h"
 #include "addcommand.h"
@@ -78,7 +80,7 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
         setFocusPolicy( Qt::StrongFocus );
         offset_ = QPoint( 0,0 );
         setAttribute( Qt::WA_NoBackground );
-
+        setAttribute( Qt::WA_InputMethodEnabled );
         setAttribute( Qt::WA_KeyCompression );
         
         setMouseTracking( true );
@@ -90,9 +92,6 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
         setSnap( 1.0 );
 
         updateFigure();
-
-//         activeToolActions_.append( controler_->toolActions()->move() );
-//         activeToolActions_.append( controler_->toolActions()->scale() );
 }
 
 void CanvasView::mouseDoubleClickEvent( QMouseEvent* e )
@@ -211,7 +210,7 @@ void CanvasView::keyPressEvent( QKeyEvent* e )
                 e->accept();
                 return;
         }
-
+        
         switch ( e->key() ) {
             case Qt::Key_Escape: 
                     controler_->cancelAction();
@@ -221,8 +220,9 @@ void CanvasView::keyPressEvent( QKeyEvent* e )
             case Qt::Key_Return:
                     handleReturnHit();
             default:
-                    e->ignore();
+                    break;//e->ignore();
         }
+        e->accept();
 }
 
 bool CanvasView::event( QEvent* e )
@@ -238,12 +238,15 @@ bool CanvasView::event( QEvent* e )
 
 void CanvasView::inputMethodEvent( QInputMethodEvent* e )
 {
-        
+        if ( controler_->callInputMethodHandler( e ) ) 
+                e->accept();
+        else
+                e->ignore();
 }
 
-QVariant CanvasView::inputMethodQuery( Qt::InputMethodQuery* e )
+QVariant CanvasView::inputMethodQuery( Qt::InputMethodQuery q )
 {
-        return QVariant();
+        return QWidget::inputMethodQuery( q );
 }
 
 inline void CanvasView::handleReturnHit()

@@ -53,7 +53,7 @@ DrawObject::DrawObject( Figure* parent )
         depth_ = 50;
 }
 
-DrawObject::DrawObject( DrawObject* o )
+DrawObject::DrawObject( const DrawObject* o )
         : QObject( o->parent() ),
           pen_( o->pen_ ),
           stroke_( o->stroke_ ),

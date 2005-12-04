@@ -30,6 +30,8 @@
 
 #include <QList>
 
+CUTE_DECLARE_DRAWOBJECT( Compound, "group", "" );
+
 /** \class Compound
  * 
  *  \brief Implements a Compound object for Group/Ungroup
@@ -39,16 +41,13 @@
 class Compound : public DrawObject
 {
         Q_OBJECT
+        DRAW_OBJECT( Compound )
 public:
         Compound( const ObjectList& l, Figure* parent );
-        Compound( Compound* c );
+        Compound( const Compound* c );
         ~Compound() {}
 
         void releaseChildren();
-
-        virtual DrawObject* copy() { return new Compound( this ); }
-
-        virtual const QString objectname() const { return "group"; }
 
         virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
@@ -67,7 +66,7 @@ public:
 
         virtual void outputToBackend( OutputBackend* ob );
 
-        const ObjectList& childObjects() { return childObjects_; }
+        const ObjectList& childObjects() const { return childObjects_; }
 
 protected:
         virtual QPointF* nextPoint() { return 0; }

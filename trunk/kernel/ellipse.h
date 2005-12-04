@@ -29,66 +29,46 @@
 
 #include <QMatrix>
 
-#include "drawobject.h"
+#include "rectangloid.h"
 
-class Ellipse : public DrawObject
+CUTE_DECLARE_DRAWOBJECT( Ellipse, "ellipse", "&Ellipse" );
+        
+class Ellipse : public Rectangloid
 {
         Q_OBJECT
+        DRAW_OBJECT( Ellipse );
+        
 public:
         Ellipse( Figure* parent=0 );
-        Ellipse( Ellipse *o );
+        Ellipse( const Ellipse *o );
         ~Ellipse() {}
 
-        virtual DrawObject* copy();
-
-        virtual const QString objectname() const { return "ellipse"; }
+//        virtual DrawObject* copy();
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
-
-        double angle() const { return angle_ * rad; }
-        QPointF center() const { return center_; }
 
         bool isCircle() const { return circle_; }
         bool isSpecifiedByRadii() const { return specByRadii_; }
 
         virtual void outputToBackend( OutputBackend* ob );
         
-        void setAngleNew( double a );
 
 public slots:
         void setSpecByRadii( bool r );
         void setIsCircle( bool c );
-        void setAngle( double a );
-        void setAngle( int a );
-
 
 private:
         bool specByRadii_, circle_;
 
-        double angle_;
-        QPointF center_, fp1_, fp2_;
-        qreal w_, h_, w2_, h2_, rad_d_;
-
-        QMatrix rotation_;
-
-        QRectF oldRect_;
-        void setupPainterPath();
-        void setupRects();
-        void doSpecificPreparation();
-        QPointF* nextPoint();
+        QPointF fp1_, fp2_;
+        qreal rad_d_;
         
         void passPointFlag( Fig::PointFlag f );
-
-        static const double rad = 180/M_PI;
+        
+        void doSpecificPreparation();
+        void setupWidthAndHeight();
+        void addPath();
 };
 
-#include "dobjectfactory.h"
-
-class EllipseFactory : public DrawObjectFactory
-{
-public:
-        EllipseFactory() : DrawObjectFactory("ellipse") {}
-        virtual DrawObject* parseObject( std::istream& is, Figure* fig );
-};
 
 #endif

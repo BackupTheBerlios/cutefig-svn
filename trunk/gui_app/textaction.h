@@ -49,6 +49,7 @@ public:
         virtual void move( const QPoint&, const QMatrix* ) {}
 
         virtual bool keyStroke( const QKeyEvent* ke );
+        virtual bool inputMethodEvent( const QInputMethodEvent* e );
         
 //        virtual const QCursor cursor( DrawObject* ) const { return Qt::IBeamCursor; }
 
@@ -80,5 +81,16 @@ private:
         TextObject* textObject_;
         int cursorTimer_;
 };
+
+// template<>
+// class TCreateAction<TextObject> : public TextAction
+// {
+// public:
+//         TCreateAction<TextObject>( Controler* parent, QActionGroup* group = 0 )
+//                 : TextAction( parent, group )
+//         {}
+// };
+
+
 
 #endif
