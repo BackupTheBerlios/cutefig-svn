@@ -24,7 +24,7 @@
 
 
 #include "editdialogaction.h"
-#include "objectmapper.h"
+#include "objectguihandler.h"
 #include "objectdialog.h"
 #include "changecommand.h"
 #include "drawobject.h"
@@ -43,9 +43,8 @@ void EditdialogAction::handleSelection()
 
 void EditdialogAction::editObject()
 {
-        ObjectMapper& m = ObjectMapper::instance();
         QWidget* p = controler_->mainWindow();
-        ObjectDialog* dlg = m.editDialog( selection_.objects()[0], this, p );
+        ObjectDialog* dlg = ObjectGUIHandler::editDialog( selection_.objects()[0], this, p );
 
         wObjectChanged_ = false;
         if ( dlg->exec() == QDialog::Rejected || !wObjectChanged_ ) 

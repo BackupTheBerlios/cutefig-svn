@@ -22,34 +22,37 @@
 **
 ******************************************************************************/
 
+#include "objectguihandler.h"
 #include "dobjectfactory.h"
+#include "drawobject.h"
 
-QHash<QString, DrawObjectFactory*> DrawObjectFactory::dFHash_;
+#include <QDebug>
 
-DrawObject* DrawObjectFactory::getDrawObject( const QString& keyWord,
-                                              std::istream& is, Figure* fig )
+QStringList ObjectGUIHandler::keyWords_;
+
+ObjectGUIHandler::ObjectGUIHandler( const QString& keyword )
 {
-        DrawObjectFactory* f = dFHash_[keyWord];
+        DrawObjectFactory::registerGUIHandler( keyword, this );
+        keyWords_ << keyword;
+}
 
-        DrawObject* o = 0;
-
-        if ( f )
-                o = f->parseObject( is, fig );
+void ObjectGUIHandler::setupCreateActions( Controler* c, QActionGroup* g )
+{
+        foreach ( QString kw, keyWords_ ) {
+                ObjectGUIHandler* gh = DrawObjectFactory::guiHandler( kw );
+                if ( gh )
+                        gh->makeCreateAction( c,g );
+                else
+                        qDebug() << "no ObjectGUIHandler for" << kw;
+        }
         
-        return o;
 }
 
-void DrawObjectFactory::registerGUIHandler( const QString& keyword, ObjectGUIHandler* gh )
+ObjectDialog* ObjectGUIHandler::editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
 {
-        DrawObjectFactory* f = dFHash_[keyword];
-
-        if ( f )
-                f->guiHandler_ = gh;
+        const QString kw = o->objectKeyWord();
+        return DrawObjectFactory::guiHandler( kw )->makeEditDialog( o,a, parent );
 }
 
-ObjectGUIHandler* DrawObjectFactory::guiHandler( const QString& keyWord )
-{
-        DrawObjectFactory* f = dFHash_[keyWord];
 
-        return f ? f->guiHandler_ : 0;
-}
+

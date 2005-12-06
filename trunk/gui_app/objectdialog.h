@@ -26,7 +26,7 @@
 #define objectdialog_h
 
 #include "editdialog.h"
-
+#include "objectguihandler.h"
 #include <QTabWidget>
 
 class EditdialogAction;

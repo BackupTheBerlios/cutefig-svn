@@ -75,3 +75,11 @@ void TextObjectDialog::castDrawObject()
 {
         textObject_ = qobject_cast<TextObject*>( drawObject_ );
 }
+
+template<>
+ObjectDialog* TObjectGUIHandler<TextObject>::makeEditDialog( DrawObject* o, EditdialogAction* a,
+                                                      QWidget* parent )
+{
+        return new TextObjectDialog( o, a, parent );
+}
+

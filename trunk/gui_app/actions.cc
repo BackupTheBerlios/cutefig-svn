@@ -27,8 +27,7 @@
 #include "controler.h"
 #include "cutefig.h"
 #include "canvasview.h"
-#include "objecthandler.h"
-#include "objectmapper.h"
+#include "objectguihandler.h"
 
 #include "zoomcombobox.h"
 
@@ -360,9 +359,7 @@ CreateActions::CreateActions( Controler* parent )
         : ActionCollection( parent )
 {
         setText( tr("&Add") );
-        ObjectMapper& m = ObjectMapper::instance();
-        foreach ( ObjectHandler* h, m.handlers() )
-                h->createAction( parent, this );
+        ObjectGUIHandler::setupCreateActions( parent, this );
 }
 
 

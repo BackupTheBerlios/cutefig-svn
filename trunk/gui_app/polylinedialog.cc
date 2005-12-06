@@ -25,9 +25,19 @@
 #include "polylinedialog.h"
 #include "editdialogaction.h"
 
+class Polyline;
+
+
 PolylineDialog::PolylineDialog( DrawObject *o, EditdialogAction* a,
                                 QWidget * parent )
         : ObjectDialog( o, a, parent )
 {
         setWindowTitle( tr("Polyline Properties") );
+}
+
+template<>
+ObjectDialog* TObjectGUIHandler<Polyline>::makeEditDialog( DrawObject* o, EditdialogAction* a, 
+                                                    QWidget* parent )
+{
+        return new PolylineDialog( o, a, parent );
 }

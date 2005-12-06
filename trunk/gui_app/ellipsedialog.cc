@@ -116,5 +116,12 @@ void EllipseDialog::setUpConnectionsPrivate()
 
 void EllipseDialog::castDrawObject()
 {
-        ellipse_ = qobject_cast<Ellipse*>( drawObject_ );
+        ellipse_ = static_cast<Ellipse*>( drawObject_ );
+}
+
+template<>
+ObjectDialog* TObjectGUIHandler<Ellipse>::makeEditDialog( DrawObject* o, EditdialogAction* a, 
+                                                   QWidget* parent )
+{
+        return new EllipseDialog( o, a, parent );
 }

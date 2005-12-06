@@ -24,18 +24,16 @@
 
 #include "guiinit.h"
 #include "initialiser.h"
-#include "objectmapper.h"
-#include "objecthandler.h"
+#include "objectguihandler.h"
 #include "allobjects.h"
 
 GUIInitialiser::GUIInitialiser()
 {
         Initialiser::go();
         
-        ObjectMapper& mapper = ObjectMapper::instance();
-        mapper.registerItem( TObjectHandler<Rectangle>::instance() );
-        mapper.registerItem( TObjectHandler<Ellipse>::instance() );
-        mapper.registerItem( TObjectHandler<Polyline>::instance() );
-        mapper.registerItem( TObjectHandler<Polygon>::instance() );
-        mapper.registerItem( TObjectHandler<TextObject>::instance() );
+        static TObjectGUIHandler<Rectangle> rgh;
+        static TObjectGUIHandler<Ellipse> egh;
+        static TObjectGUIHandler<Polyline> pgh;
+        static TObjectGUIHandler<Polygon> lgh;
+        static TObjectGUIHandler<TextObject> tgh;
 }

@@ -34,6 +34,7 @@
 class DrawObjectIO;
 class DrawObject;
 class Figure;
+class ObjectGUIHandler;
 
 //! Constructs a DrawObject described by a keyword
 /*! 
@@ -42,14 +43,18 @@ class DrawObjectFactory
 {
 public:
         static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* fig );
-
+        static ObjectGUIHandler* guiHandler( const QString& keyWord );
         virtual ~DrawObjectFactory() {}
 
+        static void registerGUIHandler( const QString& keyword, ObjectGUIHandler* );
+        
 protected:
         DrawObjectFactory( const QString& kw )
         {
                 dFHash_[kw] = this;
         }
+
+        ObjectGUIHandler* guiHandler_;        
 
         virtual DrawObject* parseObject( std::istream& is, Figure* fig ) = 0;
         
@@ -71,6 +76,7 @@ public:
         {
                 return new ObjectType( fig );
         }
+        
 };
 
 

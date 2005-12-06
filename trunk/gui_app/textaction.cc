@@ -26,6 +26,7 @@
 #include "textaction.h"
 #include "textobject.h"
 #include "addcommand.h"
+#include "objectguihandler.h"
 
 #include <QKeyEvent>
 #include <QInputMethodEvent>
@@ -119,4 +120,10 @@ bool TextAction::event( QEvent* e )
         }
         
         return QAction::event(e);
+}
+
+template<>
+CreateAction* TObjectGUIHandler<TextObject>::makeCreateAction( Controler* c, QActionGroup* g )
+{
+        return new TextAction( c, g );
 }

@@ -37,6 +37,7 @@ Initialiser::Initialiser()
         static TDrawObjectFactory<Ellipse> elf;
         static TDrawObjectFactory<Polyline> plf;
         static TDrawObjectFactory<Polygon> pgf;
+        static TDrawObjectFactory<TextObject> tgf;
 
         static TResourceIOFactory<QColor> ciof;
         static TResourceIOFactory<Gradient> giof;

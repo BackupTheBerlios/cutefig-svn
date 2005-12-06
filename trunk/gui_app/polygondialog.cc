@@ -25,9 +25,19 @@
 #include "polygondialog.h"
 #include "editdialogaction.h"
 
+class Polygon;
+
 PolygonDialog::PolygonDialog( DrawObject *o, EditdialogAction* a,
                               QWidget * parent )
         : ObjectDialog( o, a, parent )
 {
         setWindowTitle( tr("Polygon Properties") );
+}
+
+
+template<>
+ObjectDialog* TObjectGUIHandler<Polygon>::makeEditDialog( DrawObject* o, EditdialogAction* a, 
+                                                   QWidget* parent )
+{
+        return new PolygonDialog( o, a, parent );
 }
