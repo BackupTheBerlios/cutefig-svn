@@ -38,7 +38,7 @@
 //#include "strokelib.h"
 // #include "gradient.h"
 #include "resourceio.h"
-#include "dobjectfactory.h"
+#include "objecthandler.h"
 #include "drawobject.h"
 #include "compound.h"
 #include "streamops.h"
@@ -363,7 +363,7 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
                 depth = 50;
         }
 
-        DrawObject* o = DrawObjectFactory::getDrawObject( obType, stream_, figure_ );
+        DrawObject* o = ObjectHandler::getDrawObject( obType, stream_, figure_ );
         if ( !o ) {
                 npoints = 0;
                 parseError( invalidObjectData, Discarding );

@@ -31,8 +31,6 @@ HEADERS += cutefig.h \
            actions.h \
            allactions.h\
            allodialogs.h\
-           objectmapper.h \
-           objecthandler.h\
            objectguihandler.h \
            interactiveaction.h \
            relativeaction.h \
@@ -65,8 +63,6 @@ SOURCES += cutefig.cc \
            controler.cc \
            selection.cc \
            actions.cc \
-           objectmapper.cc \
-           objecthandler.cc \
            objectguihandler.cc \
            interactiveaction.cc \
            relativeaction.cc \

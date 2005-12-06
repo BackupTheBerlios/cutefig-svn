@@ -23,7 +23,7 @@
 ******************************************************************************/
 
 #include "objectguihandler.h"
-#include "dobjectfactory.h"
+#include "objecthandler.h"
 #include "drawobject.h"
 
 #include <QDebug>
@@ -32,14 +32,14 @@ QStringList ObjectGUIHandler::keyWords_;
 
 ObjectGUIHandler::ObjectGUIHandler( const QString& keyword )
 {
-        DrawObjectFactory::registerGUIHandler( keyword, this );
+        ObjectHandler::registerGUIHandler( keyword, this );
         keyWords_ << keyword;
 }
 
 void ObjectGUIHandler::setupCreateActions( Controler* c, QActionGroup* g )
 {
         foreach ( QString kw, keyWords_ ) {
-                ObjectGUIHandler* gh = DrawObjectFactory::guiHandler( kw );
+                ObjectGUIHandler* gh = ObjectHandler::guiHandler( kw );
                 if ( gh )
                         gh->makeCreateAction( c,g );
                 else
@@ -51,7 +51,7 @@ void ObjectGUIHandler::setupCreateActions( Controler* c, QActionGroup* g )
 ObjectDialog* ObjectGUIHandler::editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
 {
         const QString kw = o->objectKeyWord();
-        return DrawObjectFactory::guiHandler( kw )->makeEditDialog( o,a, parent );
+        return ObjectHandler::guiHandler( kw )->makeEditDialog( o,a, parent );
 }
 
 

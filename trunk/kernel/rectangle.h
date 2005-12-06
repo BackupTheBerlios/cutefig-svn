@@ -47,12 +47,12 @@ private:
 
 };
 
-// #include "dobjectfactory.h"
+// #include "objecthandler.h"
 
-// class RectangleFactory : public DrawObjectFactory
+// class RectangleFactory : public ObjectHandler
 // {
 // public:
-//         RectangleFactory() : DrawObjectFactory("rectangle") {}
+//         RectangleFactory() : ObjectHandler("rectangle") {}
 //         virtual DrawObject* parseObject( std::istream& is, Figure* fig );
 // };
 

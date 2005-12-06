@@ -22,34 +22,33 @@
 **
 ******************************************************************************/
 
-#include "dobjectfactory.h"
+#include "objecthandler.h"
 
-QHash<QString, DrawObjectFactory*> DrawObjectFactory::dFHash_;
+QHash<QString, ObjectHandler*> ObjectHandler::ohHhash_;
 
-DrawObject* DrawObjectFactory::getDrawObject( const QString& keyWord,
-                                              std::istream& is, Figure* fig )
+DrawObject* ObjectHandler::getDrawObject( const QString& keyWord, std::istream& is, Figure* fig )
 {
-        DrawObjectFactory* f = dFHash_[keyWord];
+        ObjectHandler* h = ohHhash_[keyWord];
 
         DrawObject* o = 0;
 
-        if ( f )
-                o = f->parseObject( is, fig );
+        if ( h )
+                o = h->parseObject( is, fig );
         
         return o;
 }
 
-void DrawObjectFactory::registerGUIHandler( const QString& keyword, ObjectGUIHandler* gh )
+void ObjectHandler::registerGUIHandler( const QString& keyword, ObjectGUIHandler* gh )
 {
-        DrawObjectFactory* f = dFHash_[keyword];
+        ObjectHandler* h = ohHhash_[keyword];
 
-        if ( f )
-                f->guiHandler_ = gh;
+        if ( h )
+                h->guiHandler_ = gh;
 }
 
-ObjectGUIHandler* DrawObjectFactory::guiHandler( const QString& keyWord )
+ObjectGUIHandler* ObjectHandler::guiHandler( const QString& keyWord )
 {
-        DrawObjectFactory* f = dFHash_[keyWord];
+        ObjectHandler* h = ohHhash_[keyWord];
 
-        return f ? f->guiHandler_ : 0;
+        return h ? h->guiHandler_ : 0;
 }

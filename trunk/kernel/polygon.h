@@ -50,12 +50,12 @@ private:
 
 // Factory
 
-#include "dobjectfactory.h"
+#include "objecthandler.h"
 
-class PolygonFactory : public DrawObjectFactory
+class PolygonFactory : public ObjectHandler
 {
 public:
-        PolygonFactory() : DrawObjectFactory("polygon") {}
+        PolygonFactory() : ObjectHandler("polygon") {}
         virtual DrawObject* parseObject( std::istream&, Figure* fig ) 
         {
                 return new Polygon( fig );

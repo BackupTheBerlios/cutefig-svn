@@ -24,7 +24,7 @@
 
 #include "rectangle.h"
 #include "outputbackend.h"
-#include "dobjectfactory.h"
+#include "objecthandler.h"
 
 
 Rectangle::Rectangle( Figure* parent )
@@ -73,7 +73,7 @@ void Rectangle::addPath()
 }
 
 template<>
-DrawObject* TDrawObjectFactory<Rectangle>::parseObject( std::istream&, Figure* fig )
+DrawObject* TObjectHandler<Rectangle>::parseObject( std::istream&, Figure* fig )
 {
         return new Rectangle( fig );
 }

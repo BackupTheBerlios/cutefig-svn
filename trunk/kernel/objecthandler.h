@@ -22,8 +22,8 @@
 **
 ******************************************************************************/
 
-#ifndef dobjectfactory_h
-#define dobjectfactory_h
+#ifndef objecthandler_h
+#define objecthandler_h
 
 #include "typedefs.h"
 
@@ -39,19 +39,19 @@ class ObjectGUIHandler;
 //! Constructs a DrawObject described by a keyword
 /*! 
  */
-class DrawObjectFactory
+class ObjectHandler
 {
 public:
         static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* fig );
         static ObjectGUIHandler* guiHandler( const QString& keyWord );
-        virtual ~DrawObjectFactory() {}
+        virtual ~ObjectHandler() {}
 
         static void registerGUIHandler( const QString& keyword, ObjectGUIHandler* );
         
 protected:
-        DrawObjectFactory( const QString& kw )
+        ObjectHandler( const QString& kw )
         {
-                dFHash_[kw] = this;
+                ohHhash_[kw] = this;
         }
 
         ObjectGUIHandler* guiHandler_;        
@@ -59,17 +59,17 @@ protected:
         virtual DrawObject* parseObject( std::istream& is, Figure* fig ) = 0;
         
 private:
-        DrawObjectFactory( const DrawObjectFactory& ) {}
+        ObjectHandler( const ObjectHandler& ) {}
 
-        static QHash<QString, DrawObjectFactory*> dFHash_;
+        static QHash<QString, ObjectHandler*> ohHhash_;
 };
 
 template<typename ObjectType>
-class TDrawObjectFactory : public DrawObjectFactory
+class TObjectHandler : public ObjectHandler
 {
 public:
-        TDrawObjectFactory<ObjectType>()
-                : DrawObjectFactory( DObjects::objectKeyWord<ObjectType>() )
+        TObjectHandler<ObjectType>()
+                : ObjectHandler( DObjects::objectKeyWord<ObjectType>() )
         {}
 
         virtual DrawObject* parseObject( std::istream&, Figure* fig ) 

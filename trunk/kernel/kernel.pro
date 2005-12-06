@@ -19,7 +19,7 @@ HEADERS += fig.h \
            polyline.h \
            polygon.h \
            textobject.h \
-           dobjectfactory.h \
+           objecthandler.h \
            pen.h \
            stroke.h \
            gradient.h \
@@ -45,7 +45,7 @@ SOURCES += figure.cc \
            polyline.cc \
            polygon.cc \
            textobject.cc \
-           dobjectfactory.cc \
+           objecthandler.cc \
            pen.cc \
            stroke.cc \
            gradient.cc \

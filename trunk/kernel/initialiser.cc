@@ -33,11 +33,11 @@ Initialiser::Initialiser()
 {
         ResLibInit::init();
 
-        static TDrawObjectFactory<Rectangle> rcf;
-        static TDrawObjectFactory<Ellipse> elf;
-        static TDrawObjectFactory<Polyline> plf;
-        static TDrawObjectFactory<Polygon> pgf;
-        static TDrawObjectFactory<TextObject> tgf;
+        static TObjectHandler<Rectangle> rcf;
+        static TObjectHandler<Ellipse> elf;
+        static TObjectHandler<Polyline> plf;
+        static TObjectHandler<Polygon> pgf;
+        static TObjectHandler<TextObject> tgf;
 
         static TResourceIOFactory<QColor> ciof;
         static TResourceIOFactory<Gradient> giof;

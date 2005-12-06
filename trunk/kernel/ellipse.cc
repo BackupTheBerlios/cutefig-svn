@@ -30,7 +30,7 @@
 #include "geometry.h"
 #include "ellipse.h"
 #include "outputbackend.h"
-#include "dobjectfactory.h"
+#include "objecthandler.h"
  
 Ellipse::Ellipse( Figure* parent ) 
         : Rectangloid( parent ),
@@ -133,7 +133,7 @@ void Ellipse::outputToBackend( OutputBackend* ob )
 
 
 template<>
-DrawObject* TDrawObjectFactory<Ellipse>::parseObject( std::istream& is, Figure* fig )
+DrawObject* TObjectHandler<Ellipse>::parseObject( std::istream& is, Figure* fig )
 {
         int circle, byRadius;
         double angle;
