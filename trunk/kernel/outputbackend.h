@@ -32,6 +32,7 @@ class Rectangle;
 class Ellipse;
 class Polyline;
 class Polygon;
+class TextObject;
 class Compound;
 
 //class QTextStream;
@@ -57,6 +58,7 @@ public:
         virtual void outputEllipse( const Ellipse* el ) = 0;
         virtual void outputPolyline( const Polyline* pl ) = 0;
         virtual void outputPolygon( const Polygon* pg ) = 0;
+        virtual void outputTextObject( const TextObject* to ) = 0;
 
         virtual void outputCompound( const Compound* cd ) = 0;
         

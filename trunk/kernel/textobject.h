@@ -26,6 +26,7 @@
 #define textobject_h
 
 #include "drawobject.h"
+#include "objecthandler.h"
 
 #include <QString>
 #include <QFont>
@@ -44,8 +45,12 @@ public:
         TextObject( Figure* parent = 0 );
         TextObject( const TextObject* o );
         ~TextObject();
+
+        friend DrawObject* TObjectHandler<TextObject>::parseObject( std::istream&, Figure* fig );
         
-        QFont font() { return font_; }
+        const QFont& font() const { return font_; }
+
+        virtual uint minPoints() const { return 1; }
         
         virtual void draw( QPainter* p ) const;
         virtual void drawTentative( QPainter* p ) const;
@@ -68,6 +73,8 @@ public:
         bool isVCentered() const;
         void alignBottom();
         bool isBottomAligned() const;
+
+        Qt::Alignment alignment() const { return alignment_; }
         
         void addPiece( int& pos, const QString& piece );
         void removePiece( int pos, int length );
@@ -85,7 +92,7 @@ public:
         void toggleCursor();
         void hideCursor() { cursorVisible_ = false; }
 
-//        QString& text() { return text_; }
+        const QString& text() const { return text_; }
 
 public slots:
         void setFont( const QFont& f );

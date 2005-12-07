@@ -25,6 +25,8 @@
 
 #include "textobject.h"
 #include "stroke.h"
+#include "outputbackend.h"
+#include "streamops.h"
 
 #include <QFontMetricsF>
 #include <QPainter>
@@ -70,9 +72,9 @@ TextObject::~TextObject()
         delete textLayout_;
 }
 
-void TextObject::outputToBackend( OutputBackend* )
+void TextObject::outputToBackend( OutputBackend* ob )
 {
-    
+        ob->outputTextObject( this );
 }
 
 void TextObject::setupPainterPath()
@@ -90,7 +92,8 @@ void TextObject::setupRects()
 
         if ( !textLayout_ )
                 textLayout_ = new QTextLayout( textDocument_.begin() );
-        
+
+        textLayout_->setFont( font_ );
         textLayout_->beginLayout();
         QTextLine line = textLayout_->createLine();
         textLayout_->endLayout();
@@ -317,4 +320,27 @@ void TextObject::alignBottom()
         alignment_ |= Qt::AlignBottom;
 
         getReadyForDraw();
+}
+
+
+template<>
+DrawObject* TObjectHandler<TextObject>::parseObject( std::istream& is, Figure* fig )
+{
+        QString family;
+        int pointSize;
+        bool italic;
+        int weight, alignment;
+        QString text;
+
+        is >> family >> pointSize >> italic >> weight >> alignment >> text;
+
+        if ( is.fail() )
+                return 0;
+
+        TextObject* to = new TextObject( fig );
+        to->setFont( QFont( family, pointSize, weight, italic ) );
+        to->alignment_ = Qt::Alignment(alignment);
+        to->text_ = text;
+
+        return to;
 }

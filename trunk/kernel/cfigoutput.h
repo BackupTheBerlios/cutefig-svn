@@ -44,6 +44,8 @@ public:
         virtual void outputEllipse( const Ellipse* el );
         virtual void outputPolyline( const Polyline* pl );
         virtual void outputPolygon( const Polygon* pg );
+        virtual void outputTextObject( const TextObject* to );
+
         virtual void outputCompound( const Compound* cd );
         
         virtual void processOutput();

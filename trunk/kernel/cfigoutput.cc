@@ -71,6 +71,20 @@ void CfigOutput::outputPolygon( const Polygon* pg )
         outputPoints();
 }
 
+void CfigOutput::outputTextObject( const TextObject* to )
+{
+        drawObject_ = to;
+        outputGenericData();
+
+        const QFont& f = to->font();
+        
+        fileStream_ << f.family() << ' ' << f.pointSize() << ' '
+                    << f.italic() << ' ' << f.weight() << ' '
+                    << to->alignment() << ' ' << to->text() << "\n";
+
+        outputPoints();
+}
+
 void CfigOutput::outputCompound( const Compound* cd )
 {
         const ObjectList& objects = cd->childObjects();
@@ -149,4 +163,3 @@ void CfigOutput::outputResources()
                         rIO->outputResource( key, fileStream_ );
         }
 }
-
