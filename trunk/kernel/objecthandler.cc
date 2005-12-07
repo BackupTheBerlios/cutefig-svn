@@ -24,11 +24,11 @@
 
 #include "objecthandler.h"
 
-QHash<QString, ObjectHandler*> ObjectHandler::ohHhash_;
+QHash<QString, ObjectHandler*> ObjectHandler::ohHash_;
 
 DrawObject* ObjectHandler::getDrawObject( const QString& keyWord, std::istream& is, Figure* fig )
 {
-        ObjectHandler* h = ohHhash_[keyWord];
+        ObjectHandler* h = ohHash_[keyWord];
 
         DrawObject* o = 0;
 
@@ -40,7 +40,7 @@ DrawObject* ObjectHandler::getDrawObject( const QString& keyWord, std::istream& 
 
 void ObjectHandler::registerGUIHandler( const QString& keyword, ObjectGUIHandler* gh )
 {
-        ObjectHandler* h = ohHhash_[keyword];
+        ObjectHandler* h = ohHash_[keyword];
 
         if ( h )
                 h->guiHandler_ = gh;
@@ -48,7 +48,7 @@ void ObjectHandler::registerGUIHandler( const QString& keyword, ObjectGUIHandler
 
 ObjectGUIHandler* ObjectHandler::guiHandler( const QString& keyWord )
 {
-        ObjectHandler* h = ohHhash_[keyWord];
+        ObjectHandler* h = ohHash_[keyWord];
 
         return h ? h->guiHandler_ : 0;
 }

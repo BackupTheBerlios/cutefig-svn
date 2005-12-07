@@ -43,15 +43,20 @@ void ObjectGUIHandler::setupCreateActions( Controler* c, QActionGroup* g )
                 if ( gh )
                         gh->makeCreateAction( c,g );
                 else
-                        qDebug() << "no ObjectGUIHandler for" << kw;
-        }
-        
+                        qDebug() << "+++ BUG +++ no ObjectGUIHandler for" << kw;
+        } 
 }
 
 ObjectDialog* ObjectGUIHandler::editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
 {
         const QString kw = o->objectKeyWord();
-        return ObjectHandler::guiHandler( kw )->makeEditDialog( o,a, parent );
+        ObjectGUIHandler* gh = ObjectHandler::guiHandler( kw );
+        if ( !gh ) {
+                qDebug() << "+++ BUG +++ no ObjectGUIHandler for" << kw << "using default one.";
+                return new ObjectDialog( o,a, parent );
+        }
+        
+        return gh->makeEditDialog( o,a, parent );
 }
 
 

@@ -51,7 +51,7 @@ public:
 protected:
         ObjectHandler( const QString& kw )
         {
-                ohHhash_[kw] = this;
+                ohHash_[kw] = this;
         }
 
         ObjectGUIHandler* guiHandler_;        
@@ -61,7 +61,7 @@ protected:
 private:
         ObjectHandler( const ObjectHandler& ) {}
 
-        static QHash<QString, ObjectHandler*> ohHhash_;
+        static QHash<QString, ObjectHandler*> ohHash_;
 };
 
 template<typename ObjectType>

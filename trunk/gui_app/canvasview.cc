@@ -288,7 +288,7 @@ void CanvasView::drawSelection( QPainter* p )
 
 // redraws the whole figure
 //
-void CanvasView::updateFigure( const Selection& s, bool tentative )
+void CanvasView::updateFigure( bool tentative )
 {        
         if ( !tentative ) {
                 QPainter p;
@@ -297,14 +297,14 @@ void CanvasView::updateFigure( const Selection& s, bool tentative )
                 p.setRenderHint( QPainter::Antialiasing, true );
                 drawGrid( &p );
                 p.setMatrix( scaleMatrix_ );
-                figure_->drawElements( &p, s.backups() );
+                figure_->drawElements( &p, controler_->backups() );
                 p.end();
         }
 
         tentativeDraw_ = tentative;
 
-        if ( !s.isEmpty() ) {
-                QRect r = scaleMatrix_.mapRect( s.boundingRect().toRect() );
+        if ( !controler_->selectedObjects().isEmpty() ) {
+                QRect r = scaleMatrix_.mapRect( controler_->selection().boundingRect().toRect() );
                 repaint();// r | oldRect_ );
                 oldRect_ = r;
         }
@@ -312,7 +312,6 @@ void CanvasView::updateFigure( const Selection& s, bool tentative )
                 update();
                 oldRect_ = QRect();
         }
-        tentativeDraw_ = false;
 }
 
 void CanvasView::paintEvent( QPaintEvent * e )

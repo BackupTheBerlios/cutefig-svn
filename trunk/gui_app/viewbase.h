@@ -31,8 +31,6 @@ class DrawObject;
 class Controler;
 class Figure;
 
-#include "selection.h"
-
 class ViewBase
 {
 public:
@@ -40,7 +38,7 @@ public:
                 : controler_( c ), figure_( f ) {};
         virtual ~ViewBase() { };
 
-        virtual void updateFigure( const Selection& = Selection(), bool tentative = false ) = 0;
+        virtual void updateFigure( bool tentative = false ) = 0;
         
 protected:
         Controler* controler_;

@@ -74,14 +74,16 @@ void Compound::releaseChildren()
                 o->setParent( parent() );
 }
 
-void Compound::draw( QPainter* )
+void Compound::draw( QPainter* p ) const
 {
-        qDebug() << "Compound::draw() should not be called...";
+        foreach ( DrawObject* o, childObjects_ )
+                o->drawTentative( p );
 }
 
-void Compound::drawTentative( QPainter* )
+void Compound::drawTentative( QPainter* p ) const
 {
-        qDebug() << "Compound::drawTentative() should not be called...";
+        foreach ( DrawObject* o, childObjects_ )
+                o->drawTentative( p );
 }
 
 void Compound::move( const QPointF& d )

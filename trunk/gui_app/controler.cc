@@ -321,7 +321,7 @@ void Controler::setToolProperties()
 void Controler::updateViewsImediately( bool tentative )
 {
         foreach ( ViewBase* v, viewList_ ) 
-                v->updateFigure( selection_, tentative );
+                v->updateFigure( tentative );
 }
 
 void Controler::updateViews()

@@ -59,7 +59,7 @@ public:
          //!< The constructor needs a Controler \param c and a Figure \param f.
         ~CanvasView() { }
 
-        void updateFigure( const Selection& selection = Selection(), bool tentative = false );
+        void updateFigure( bool tentative = false );
         //!< Redraws the whole figure, o is the DrawObject just edited.
 
         void setFixedSize( const QSize& s );

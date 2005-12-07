@@ -52,8 +52,8 @@ public:
         virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
-        virtual void draw( QPainter* p );
-        virtual void drawTentative( QPainter* p );
+        virtual void draw( QPainter* p ) const;
+        virtual void drawTentative( QPainter* p ) const;
 
         virtual QPointF center() const;
 

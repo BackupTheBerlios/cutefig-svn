@@ -106,5 +106,5 @@ void CutAction::handleSelection()
         clipboard_->setContents( selection_.objects() );
         controler_->execAction( new DeleteCommand( selection_ ) );
         selection_.clear( false );
-        controler_->updateViews();
+//        controler_->updateViews();
 }
