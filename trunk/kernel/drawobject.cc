@@ -35,6 +35,7 @@
 
 #include "drawobject.h"
 #include "geometry.h"
+#include "compound.h"
 
 #include <QPainter>
 
@@ -47,7 +48,8 @@ DrawObject::DrawObject( Figure* parent )
           stroke_( Qt::black ),
           points_( 1 ),
           currentPoint_( 0 ),
-          bRect_( 0,0,0,0 )
+          bRect_( 0,0,0,0 ),
+          compoundParent_( 0 )
 {
         figure_ = parent;
         depth_ = 50;
@@ -60,7 +62,8 @@ DrawObject::DrawObject( const DrawObject* o )
           fill_( o->fill_ ),
           depth_( o->depth_ ),
           commentString_( o->commentString_ ),
-          points_( o->points_ )
+          points_( o->points_ ),
+          compoundParent_( 0 )
 {
 }
 
@@ -195,4 +198,22 @@ QList<AbstractResourceUser*> DrawObject::resourceUsers()
         rul << stroke_.resourceUser() << fill_.resourceUser() << pen_.resourceUser();
 
         return rul;
+}
+
+DrawObject* DrawObject::ancestor() 
+{
+        if ( compoundParent_ )
+                return compoundParent_->ancestor(); 
+        else
+                return this;
+}
+
+void DrawObject::setCompoundParent( Compound* p )
+{
+        if ( !p && compoundParent_ )
+                setParent( compoundParent_->parent() );
+        else {
+                compoundParent_ = p;
+                setParent( p );
+        }
 }

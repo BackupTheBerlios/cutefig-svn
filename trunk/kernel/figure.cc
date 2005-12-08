@@ -152,29 +152,10 @@ DrawObject* Figure::findContainingObject( const QPointF& p, qreal tolerance ) co
  */
 void Figure::drawElements( QPainter* p, const ObjectList& backups ) const
 {
-        QList<Compound*> cpds;
-        foreach ( DrawObject* o, backups ) {
-                Compound* c = qobject_cast<Compound*>( o );
-                if ( c )
-                        cpds << c;
-        }
-
-        QList<Compound*>::const_iterator begin = cpds.begin();
-        QList<Compound*>::const_iterator end = cpds.end();
-        
-        foreach ( DrawObject* o, drawingList_ ) {
-                bool drawit = true;
-
-                QList<Compound*>::const_iterator it = begin;
-                
-                while ( drawit && it != end )
-                        if ( (*it++)->childObjects().contains( o ) )
-                                drawit = false;
-                
-                if ( drawit && !backups.contains( o ) )
+        foreach ( DrawObject* o, drawingList_ ) 
+                if ( !backups.contains( o->ancestor() ) )
                         o->draw( p );
-        }
-}
+} 
 
 /** Outputs the DrawObjects to the OutputBackend ob.
  */

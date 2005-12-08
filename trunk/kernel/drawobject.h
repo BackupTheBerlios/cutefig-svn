@@ -69,6 +69,8 @@ public:
         virtual const QString objectname() const =0;
         virtual const QString objectKeyWord() const =0;
 
+        DrawObject* ancestor();
+
         virtual uint minPoints() const { return 2; }
         
         virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
@@ -181,6 +183,9 @@ protected:
         QRectF bRect_, cRect_;
         static unsigned clickTolerance_;
 
+private:
+        void setCompoundParent( Compound* p );
+        Compound* compoundParent_;
 };
 
 #define CUTE_DECLARE_DRAWOBJECT( Classname, okeyword, oname ) \

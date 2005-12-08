@@ -46,8 +46,8 @@ Compound::Compound( const ObjectList& l, Figure* parent )
         : DrawObject( parent ),
           childObjects_( l )
 {
-        foreach ( DrawObject* o, l )
-                o->setParent( this );
+        foreach ( DrawObject* o, l ) 
+                o->setCompoundParent( this );
 }
 
 Compound::Compound( const Compound* c )
@@ -55,7 +55,7 @@ Compound::Compound( const Compound* c )
 {
         foreach ( DrawObject* o, c->childObjects_ ) {
                 DrawObject* newObject = o->copy();
-                newObject->setParent( this );
+                newObject->setCompoundParent( this );
                 childObjects_.append( newObject );
         }
 
@@ -71,7 +71,7 @@ Compound::Compound( const Compound* c )
 void Compound::releaseChildren()
 {
         foreach ( DrawObject* o, childObjects_ )
-                o->setParent( parent() );
+                o->setCompoundParent( 0 );
 }
 
 void Compound::draw( QPainter* p ) const
