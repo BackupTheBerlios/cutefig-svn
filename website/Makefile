@@ -1,6 +1,6 @@
 
 
-PAGES = index status docs userdoc developer download
+PAGES = index status docs userdoc developer download contact
 
 LAYOUT = layout.tmpl
 CFSTYLE = cfstyle.css
