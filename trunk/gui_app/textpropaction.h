@@ -37,9 +37,7 @@ public:
         ~TextPropAction() {}
 
         virtual void click( const QPoint&, Fig::PointFlag, const QMatrix* );
-
         virtual void handleSelection();
-        
         virtual bool isActive() const { return false; }
 
         virtual bool wouldHandle( DrawObject* o, const QPoint& p= QPoint(), const QMatrix* m=0 );
@@ -48,7 +46,6 @@ protected:
         virtual void handleObject( TextObject* to ) = 0;
         virtual void wakeup();
         
-private:
         TextAction* textAction_;
 };
 

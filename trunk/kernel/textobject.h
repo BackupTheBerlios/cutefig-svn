@@ -33,6 +33,7 @@
 #include <QTextDocument>
 #include <QTextLayout>
 #include <QTextCursor>
+#include <QTextCharFormat>
 #include <QPixmap>
 #include <QList>
 
@@ -77,6 +78,9 @@ public:
         void alignBottom();
         bool isBottomAligned() const;
 
+        bool isBold() const;
+        bool toggleBold();
+        
         Qt::Alignment alignment() const { return alignment_; }
         
         void insertByCursor( const QString& piece );
@@ -96,6 +100,9 @@ public:
 
         const QString text() const;
 
+signals:
+        void charFormatChanged();
+        
 public slots:
         void setFont( const QFont& f );
 
@@ -109,8 +116,11 @@ private:
 
         void passPointFlag( Fig::PointFlag ) {}
 
+        void trackCharFormat();
+        
         QTextDocument doc_;
         QTextCursor cursor_;
+        QTextCharFormat charFormat_;
         QPixmap dummyPaintDevice_;
         QTextLayout* textLayout_;
         QFont font_;

@@ -401,4 +401,8 @@ TextPropActions::TextPropActions( Controler* parent )
         new TextTopAction( parent, this );
         new TextVCenterAction( parent, this );
         new TextBottomAction( parent, this );
+
+        new TextBoldAction( parent, this );
+
+        parent->setTextPropActions( this );
 }

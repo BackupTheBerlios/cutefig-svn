@@ -37,5 +37,7 @@
 	<file>images/text_top.png</file>
 	<file>images/text_middle.png</file>
 	<file>images/text_bottom.png</file>
+	<file>images/text_super.png</file>
+	<file>images/text_sub.png></file>
     </qresource>
 </RCC>	

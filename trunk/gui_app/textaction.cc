@@ -27,6 +27,7 @@
 #include "textobject.h"
 #include "addcommand.h"
 #include "objectguihandler.h"
+#include "actions.h"
 
 #include <QKeyEvent>
 #include <QInputMethodEvent>
@@ -38,6 +39,7 @@ void TextAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
 {
         textObject_->pointSet( m->map( QPointF( p ) ), f );
         pointIsSet_ = true;
+        controler_->textPropActions()->setAllEnabled( true );
         textObject_->setCursorPos( 0 );
         cursorTimer_ = startTimer( QApplication::cursorFlashTime()/2 );
 }
@@ -54,6 +56,7 @@ bool TextAction::keyStroke( const QKeyEvent* ke )
                 controler_->execAction( new AddCommand( selection_ ) );
                 selection_.updateBackups();
                 pointIsSet_ = false;
+                controler_->textPropActions()->setAllEnabled( false );
                 return true;
         }
 

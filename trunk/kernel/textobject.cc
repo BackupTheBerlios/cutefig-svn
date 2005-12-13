@@ -222,8 +222,8 @@ const QString TextObject::text() const
 
 void TextObject::insertByCursor( const QString& piece )
 {
-        qDebug() << "insertByCursor" << cursor_.position() << piece;
-        cursor_.insertText( piece );
+        qDebug() << "insertByCursor" << cursor_.position() << piece << charFormat_.fontWeight();
+        cursor_.insertText( piece, charFormat_ );
         qDebug() << doc_.toPlainText();
         getReadyForDraw();
 }
@@ -231,18 +231,21 @@ void TextObject::insertByCursor( const QString& piece )
 void TextObject::removeCharForward()
 {
         cursor_.deleteChar();
+        trackCharFormat();
         getReadyForDraw();
 }
 
 void TextObject::removeCharBackward()
 {
         cursor_.deletePreviousChar();
+        trackCharFormat();
         getReadyForDraw();
 }
 
 void TextObject::setCursorPos( int c )
 {
         cursor_.setPosition( c );
+        trackCharFormat();
 }
 
 int TextObject::cursorPos() const
@@ -253,19 +256,46 @@ int TextObject::cursorPos() const
 void TextObject::incrementCursorPos()
 {
         cursor_.movePosition( QTextCursor::NextCharacter );
+        trackCharFormat();
 }
 
 void TextObject::decrementCursorPos()
 {
         cursor_.movePosition( QTextCursor::PreviousCharacter );
+        trackCharFormat();
 }
 
 void TextObject::moveCursorToEnd()
 {
         cursor_.movePosition( QTextCursor::End );
+        trackCharFormat();
 }
 
+void TextObject::trackCharFormat()
+{
+        if ( charFormat_ != cursor_.charFormat() ) {
+                qDebug () << "charFormat_ changed";
+                charFormat_ = cursor_.charFormat();
+                emit charFormatChanged();
+        }
+}
 
+bool TextObject::isBold() const
+{
+        return cursor_.charFormat().fontWeight() > QFont::Normal;
+}
+
+bool TextObject::toggleBold()
+{
+        qDebug() << "toggleBold";
+        if ( isBold() ) {
+                charFormat_.setFontWeight( QFont::Normal );
+                return false;
+        } else {
+                charFormat_.setFontWeight( QFont::Bold );
+                return true;
+        }
+}
 
 void TextObject::alignHCenter()
 {

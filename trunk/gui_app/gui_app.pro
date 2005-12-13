@@ -38,6 +38,7 @@ HEADERS += cutefig.h \
            createaction.h \
            textaction.h \
            textpropaction.h \
+           texttagaction.h \
            pointmoveaction.h \
            deleteaction.h \
            cutnpaste.h \
@@ -70,6 +71,7 @@ SOURCES += cutefig.cc \
            createaction.cc \
            textaction.cc \
            textpropaction.cc \
+           texttagaction.cc \
            pointmoveaction.cc \
            deleteaction.cc \
            cutnpaste.cc \

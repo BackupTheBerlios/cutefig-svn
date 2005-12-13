@@ -36,5 +36,6 @@
 #include "editdialogaction.h"
 #include "textaction.h"
 #include "textpropaction.h"
+#include "texttagaction.h"
 
 #endif
