@@ -32,6 +32,7 @@
 #include <QFont>
 #include <QTextDocument>
 #include <QTextLayout>
+#include <QTextCursor>
 #include <QPixmap>
 #include <QList>
 
@@ -59,6 +60,8 @@ public:
         
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
+        void setText( const QString& text );
+        
         void alignHCenter();
         bool isHCentered() const;
 
@@ -76,9 +79,6 @@ public:
 
         Qt::Alignment alignment() const { return alignment_; }
         
-        void addPiece( int& pos, const QString& piece );
-        void removePiece( int pos, int length );
-
         void insertByCursor( const QString& piece );
         void removeCharForward();
         void removeCharBackward();
@@ -87,18 +87,20 @@ public:
         void decrementCursorPos();
 
         void setCursorPos( int c );
+        int cursorPos() const;
+        
         void moveCursorToEnd();
         
         void toggleCursor();
         void hideCursor() { cursorVisible_ = false; }
 
-        const QString& text() const { return text_; }
+        const QString text() const;
 
 public slots:
         void setFont( const QFont& f );
 
 private:
-        void setupPainterPath();
+        void setupPainterPath() {}
         void setupRects();
         void doSpecificPreparation() {}
         void doDraw( QPainter* p ) const;
@@ -107,10 +109,8 @@ private:
 
         void passPointFlag( Fig::PointFlag ) {}
 
-        int realPos( int pos );
-
-        QString text_;
-        QTextDocument textDocument_;
+        QTextDocument doc_;
+        QTextCursor cursor_;
         QPixmap dummyPaintDevice_;
         QTextLayout* textLayout_;
         QFont font_;
@@ -118,11 +118,7 @@ private:
 
         Qt::Alignment alignment_;
 
-        int cursorPos_;
-        int textLength_;
         bool cursorVisible_;
-
-        QList<int> charLength_;
 };
 
 inline bool TextObject::isHCentered() const
