@@ -226,7 +226,8 @@ void ResourceUser<Resource>::reclaimResource()
         if ( !key_.isValid() )
                 return;
 
-        resLib_.insert( key_, data_ );
+        if ( !resLib_.contains( key_ ) )
+                resLib_.insert( key_, data_ );
         p_data_ = resLib_.assignResource( key_, this );
 }       
 

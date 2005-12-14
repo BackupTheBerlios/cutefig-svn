@@ -152,6 +152,7 @@ void TextObject::setupRects()
 
 void TextObject::setText( const QString& text ) 
 {
+        qDebug() << text;
         doc_.setHtml( text );
 }
 
@@ -193,8 +194,12 @@ QString formatTags( const QTextCharFormat& oldFormat, const QTextCharFormat& new
 const QString TextObject::text() const
 {
         QString text = doc_.toPlainText();
+        text.replace("&", "&amp;");
+        text.replace("<", "&lt;");
+        text.replace(">", "&gt;");
 
-        QTextDocument d( doc_.toHtml() );
+        QTextDocument d;
+        d.setHtml( doc_.toHtml() );
         QTextCursor crs( &d );
         QTextCharFormat currentFormat = crs.charFormat();
         QTextCharFormat lastFormat;
@@ -205,6 +210,9 @@ const QString TextObject::text() const
                 crs.movePosition(QTextCursor::NextCharacter);
                 currentFormat = crs.charFormat();
                 QString tags = formatTags( lastFormat, currentFormat );
+                if ( text[pos] == '&' )
+                        while ( text[++pos] != ';');
+                        
                 text.insert( pos++, tags );
                 pos += tags.length();
                 lastFormat = currentFormat;
@@ -213,18 +221,12 @@ const QString TextObject::text() const
         text.append( formatTags( currentFormat, QTextCharFormat() ) );
 
         text.replace("\n", "<br>");
-        text.replace("&", "&amp;");
-        text.replace("<", "&lt;");
-        text.replace(">", "&gt;");
-        
         return text;
 }
 
 void TextObject::insertByCursor( const QString& piece )
 {
-        qDebug() << "insertByCursor" << cursor_.position() << piece << charFormat_.fontWeight();
         cursor_.insertText( piece, charFormat_ );
-        qDebug() << doc_.toPlainText();
         getReadyForDraw();
 }
 

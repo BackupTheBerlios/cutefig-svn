@@ -121,7 +121,7 @@ void EllipseDialog::castDrawObject()
 
 template<>
 ObjectDialog* TObjectGUIHandler<Ellipse>::makeEditDialog( DrawObject* o, EditdialogAction* a, 
-                                                   QWidget* parent )
+                                                          QWidget* parent )
 {
         return new EllipseDialog( o, a, parent );
 }
