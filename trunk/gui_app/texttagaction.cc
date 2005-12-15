@@ -32,8 +32,8 @@ TextTagAction::TextTagAction( Controler* parent, QActionGroup* g )
         : TextPropAction( parent, g )
 {
         setCheckable( true );
-//         disconnect( this, SLOT( wakeup() ) );
-//        connect( this, SIGNAL( triggered( bool ) ), this, SLOT( wakeup() ) );
+//        disconnect( this, SLOT( wakeup() ) );
+//        connect( this, SIGNAL( changed() ), this, SLOT( wakeup() ) );
 }
 
 bool TextTagAction::wouldHandle( DrawObject*, const QPoint&, const QMatrix* )
@@ -51,7 +51,7 @@ bool TextTagAction::wouldHandle( DrawObject*, const QPoint&, const QMatrix* )
 
 void TextTagAction::handleObject( TextObject* to )
 {
-        toggleState( to );
+        setChecked( toggleState( to ) );
 }
 
 void TextTagAction::wakeup()
@@ -59,16 +59,17 @@ void TextTagAction::wakeup()
 //        if ( textAction_->isEditing() )
         qDebug() << "wakeup()";
         handleObject( textAction_->textObject() );
-
+        connect( this, SIGNAL( changed() ), this, SLOT( wakeup() ) );
+        qDebug() << isEnabled();
 }
 
-void TextTagAction::setStateCorrectly()
-{
-        if ( !textAction_->isEditing() )
-                return;
+// void TextTagAction::setStateCorrectly()
+// {
+//         if ( !textAction_->isEditing() )
+//                 return;
         
-        setChecked( correctState( textAction_->textObject() ) );
-}
+//         setChecked( correctState( textAction_->textObject() ) );
+// }
 
 // bool TextTagAction::shouldBeChecked()
 // {

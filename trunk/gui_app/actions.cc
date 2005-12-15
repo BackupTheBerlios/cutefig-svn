@@ -129,7 +129,7 @@ EditActions::EditActions( Controler* parent )
         : ActionCollection( parent )
 {
         setText( tr("&Edit") );
-
+        
         undoMenu_ = new QMenu( parent->mainWindow() );
         undo_ = new QAction( QIcon(":images/undo.png"), undoString_, this );
         undo_->setShortcut( Qt::CTRL+Qt::Key_Z );
@@ -395,6 +395,7 @@ TextPropActions::TextPropActions( Controler* parent )
         : ActionCollection( parent )
 {
         setText( tr("Text &properties") );
+        setExclusive( false );
         new TextHCenterAction( parent, this );
         new TextLeftAction( parent, this );
         new TextRightAction( parent, this );

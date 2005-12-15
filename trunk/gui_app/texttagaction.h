@@ -49,8 +49,8 @@ private:
         virtual bool toggleState( TextObject* to ) = 0;
         virtual bool correctState( const TextObject* to ) = 0;
         
-private slots:
-        void setStateCorrectly();
+// private slots:
+//         void setStateCorrectly();
 };
 
 
