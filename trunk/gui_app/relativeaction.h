@@ -38,8 +38,8 @@ class RelativeAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        RelativeAction( Controler* parent, QActionGroup* group = 0 )
-                : InteractiveAction( parent, group ), 
+        RelativeAction( Controler* parent )
+                : InteractiveAction( parent ), 
                   finished_( true ),
                   last_() {}
 
@@ -69,8 +69,8 @@ class MoveAction : public RelativeAction
 {
         Q_OBJECT
 public:
-        MoveAction( Controler* parent, QActionGroup* group = 0 )
-                : RelativeAction( parent, group ) {
+        MoveAction( Controler* parent )
+                : RelativeAction( parent ) {
                 setText( tr("&Move Object") );
                 setShortcut( Qt::CTRL+Qt::Key_M );
                 cursor_ = Qt::CrossCursor;

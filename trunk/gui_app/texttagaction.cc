@@ -28,8 +28,8 @@
 
 #include <QDebug>
 
-TextTagAction::TextTagAction( Controler* parent, QActionGroup* g )
-        : TextPropAction( parent, g )
+TextTagAction::TextTagAction( Controler* parent )
+        : TextPropAction( parent )
 {
         setCheckable( true );
 //        disconnect( this, SLOT( wakeup() ) );

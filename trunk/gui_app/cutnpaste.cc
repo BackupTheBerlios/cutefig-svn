@@ -30,8 +30,8 @@
 
 #include <QDebug>
 
-CopyAction::CopyAction( Controler* parent, QActionGroup* group )
-        : InteractiveAction( parent, group ),
+CopyAction::CopyAction( Controler* parent )
+        : InteractiveAction( parent ),
           clipboard_( Clipboard::instance() ) 
 {
         setText( tr("&Copy") );
@@ -54,8 +54,8 @@ void CopyAction::handleSelection()
 }
 
 
-PasteAction::PasteAction( Controler* parent, QActionGroup* group )
-                : InteractiveAction( parent, group ),
+PasteAction::PasteAction( Controler* parent )
+                : InteractiveAction( parent ),
                   clipboard_( Clipboard::instance() ) 
 {
         setText( tr("&Paste") );
@@ -86,8 +86,8 @@ void PasteAction::handleSelection()
 }
 
 
-CutAction::CutAction( Controler* parent, QActionGroup* group )
-        : InteractiveAction( parent, group ),
+CutAction::CutAction( Controler* parent )
+        : InteractiveAction( parent ),
           clipboard_( Clipboard::instance() )
 {
         setText("Cu&t");

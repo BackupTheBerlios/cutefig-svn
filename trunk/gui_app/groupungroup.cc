@@ -28,8 +28,8 @@
 
 #include <QDebug>
 
-GroupAction::GroupAction( Controler* parent, QActionGroup* group )
-        : InteractiveAction( parent, group )        
+GroupAction::GroupAction( Controler* parent )
+        : InteractiveAction( parent )        
 {
         setText("&Group");
         setIcon( QIcon(":images/group.png") );
@@ -50,8 +50,8 @@ bool GroupAction::wouldHandleSelection( const QPoint&, const QMatrix* )
 }
 
 
-UngroupAction::UngroupAction( Controler* parent, QActionGroup* group )
-        : InteractiveAction( parent, group )
+UngroupAction::UngroupAction( Controler* parent )
+        : InteractiveAction( parent )
 {
         setText( tr("&Ungroup") );
         setIcon( QIcon(":images/ungroup.png") );

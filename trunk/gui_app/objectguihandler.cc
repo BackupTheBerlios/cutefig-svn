@@ -25,6 +25,8 @@
 #include "objectguihandler.h"
 #include "objecthandler.h"
 #include "drawobject.h"
+#include "actioncollection.h"
+
 
 #include <QDebug>
 
@@ -36,12 +38,12 @@ ObjectGUIHandler::ObjectGUIHandler( const QString& keyword )
         keyWords_ << keyword;
 }
 
-void ObjectGUIHandler::setupCreateActions( Controler* c, QActionGroup* g )
+void ObjectGUIHandler::setupCreateActions( Controler* c, ActionCollection* ac )
 {
         foreach ( QString kw, keyWords_ ) {
                 ObjectGUIHandler* gh = ObjectHandler::guiHandler( kw );
                 if ( gh )
-                        gh->makeCreateAction( c,g );
+                        ac->addAction( gh->makeCreateAction( c ) );
                 else
                         qDebug() << "+++ BUG +++ no ObjectGUIHandler for" << kw;
         } 

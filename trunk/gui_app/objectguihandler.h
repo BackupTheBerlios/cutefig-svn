@@ -33,18 +33,19 @@
 
 class ObjectDialog;
 class EditdialogAction;
+class ActionCollection;
 
 class ObjectGUIHandler
 {
 public:
-        static void setupCreateActions( Controler* c, QActionGroup* g );
+        static void setupCreateActions( Controler* c, ActionCollection* cltn );
         static ObjectDialog* editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent  );
         
 protected:
         ObjectGUIHandler( const QString& keyword );
         virtual ~ObjectGUIHandler() {}
 
-        virtual CreateAction* makeCreateAction( Controler* c, QActionGroup* g ) = 0;
+        virtual CreateAction* makeCreateAction( Controler* c ) = 0;
         virtual ObjectDialog* makeEditDialog( DrawObject* o, EditdialogAction* a, QWidget* p ) =0;
 
 private:
@@ -60,14 +61,14 @@ public:
                 : ObjectGUIHandler( DObjects::objectKeyWord<ObjectType>() )
         {}
 
-        CreateAction* makeCreateAction( Controler* c, QActionGroup* g );
+        CreateAction* makeCreateAction( Controler* c );
         ObjectDialog* makeEditDialog( DrawObject* o, EditdialogAction* a, QWidget* p );
 };
 
 template<typename ObjectType>
-CreateAction* TObjectGUIHandler<ObjectType>::makeCreateAction( Controler* c, QActionGroup* g )
+CreateAction* TObjectGUIHandler<ObjectType>::makeCreateAction( Controler* c )
 {
-        return new TCreateAction<ObjectType>( c,g );
+        return new TCreateAction<ObjectType>( c );
 }
 
 template<typename ObjectType>

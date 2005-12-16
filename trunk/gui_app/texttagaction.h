@@ -32,7 +32,7 @@ class TextTagAction : public TextPropAction
 {
         Q_OBJECT
 protected:
-        TextTagAction(  Controler* parent, QActionGroup* g =0 );
+        TextTagAction(  Controler* parent );
 public:
         ~TextTagAction() {}
 
@@ -60,8 +60,8 @@ private:
 class TextBoldAction : public TextTagAction
 {
 public:
-        TextBoldAction( Controler* parent, QActionGroup* g = 0 )
-                : TextTagAction( parent, g )
+        TextBoldAction( Controler* parent )
+                : TextTagAction( parent )
         {
                 setText( tr("&Bold") );
                 setIcon( QIcon(":images/text_bold.png") );

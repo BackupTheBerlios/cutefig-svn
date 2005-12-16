@@ -126,7 +126,7 @@ bool TextAction::event( QEvent* e )
 }
 
 template<>
-CreateAction* TObjectGUIHandler<TextObject>::makeCreateAction( Controler* c, QActionGroup* g )
+CreateAction* TObjectGUIHandler<TextObject>::makeCreateAction( Controler* c )
 {
-        return new TextAction( c, g );
+        return new TextAction( c );
 }

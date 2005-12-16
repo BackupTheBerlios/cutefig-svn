@@ -34,7 +34,7 @@ class ScaleAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        ScaleAction( Controler* parent, QActionGroup* group = 0 );
+        ScaleAction( Controler* parent );
         ~ScaleAction() {}
 
         virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m );

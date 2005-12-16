@@ -32,8 +32,8 @@ class TextObject;
 class TextAction : public CreateAction
 {
 public:
-        TextAction( Controler* parent, QActionGroup* group = 0 )
-                : CreateAction( parent, group ),
+        TextAction( Controler* parent )
+                : CreateAction( parent ),
                   pointIsSet_( false )
         {
                 setText( tr("Create &Text") );
@@ -86,8 +86,8 @@ private:
 // class TCreateAction<TextObject> : public TextAction
 // {
 // public:
-//         TCreateAction<TextObject>( Controler* parent, QActionGroup* group = 0 )
-//                 : TextAction( parent, group )
+//         TCreateAction<TextObject>( Controler* parent )
+//                 : TextAction( parent )
 //         {}
 // };
 

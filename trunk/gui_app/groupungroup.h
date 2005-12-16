@@ -31,7 +31,7 @@ class GroupAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        GroupAction( Controler* parent, QActionGroup* group = 0 ); 
+        GroupAction( Controler* parent ); 
         ~GroupAction() {}
 
         virtual void click( const QPoint&, Fig::PointFlag, const QMatrix* ) {}
@@ -53,7 +53,7 @@ class UngroupAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        UngroupAction( Controler* parent, QActionGroup* group = 0 );
+        UngroupAction( Controler* parent );
         ~UngroupAction() {}
 
         virtual void click( const QPoint&, Fig::PointFlag, const QMatrix* ) {}

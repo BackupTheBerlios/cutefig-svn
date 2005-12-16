@@ -22,38 +22,21 @@
 **
 ******************************************************************************/
 
-#ifndef deleteaction_h
-#define deleteaction_h
+#include "actioncollection.h"
 
-#include "interactiveaction.h"
-
-class DeleteAction : public InteractiveAction
+/** This was suggested by the QT4 docs in order to replace the QT3
+ * function.
+ */
+void ActionCollection::addSeparator()
 {
-        Q_OBJECT
-public:
-        DeleteAction( Controler* parent )
-                : InteractiveAction( parent ) {
-                setText("&Delete");
-                setIcon( QIcon(":images/editdelete.png") );
-                setShortcut( Qt::Key_Delete );
-                cursor_ = Qt::ForbiddenCursor;
-        }
-        ~DeleteAction() {}
+        QAction* s = new QAction( this );
+        s->setSeparator( true );
+        addAction( s );
+}
 
-        virtual void click( const QPoint& p,Fig::PointFlag f, const QMatrix* m );
+void ActionCollection::setAllEnabled( bool enabled )
+{
+        foreach ( QAction* a, actions() )
+                a->setEnabled( enabled );
+}
 
-
-        virtual bool wouldHandle( DrawObject* o, const QPoint& = QPoint(), const QMatrix* = 0) { 
-                return o; 
-        }
-
-        virtual bool isActive() const { return false; }
-        virtual void handleSelection();
-
-        virtual const QString commandName() const { return "delete"; }
-
-private:
-        void deleteSelection();
-};
-
-#endif

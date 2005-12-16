@@ -45,7 +45,7 @@ class InteractiveAction : public QAction
 {
         Q_OBJECT
 public:
-        InteractiveAction( Controler* parent, QActionGroup* group = 0 );
+        InteractiveAction( Controler* parent );
         ~InteractiveAction() {}
 
         virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m ) = 0;

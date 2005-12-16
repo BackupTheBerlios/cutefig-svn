@@ -32,8 +32,8 @@ class PointMoveAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        PointMoveAction( Controler* parent, QActionGroup* group=0 )
-                : InteractiveAction( parent, group ),
+        PointMoveAction( Controler* parent )
+                : InteractiveAction( parent ),
                   pointToMove_( 0 ) {
                 setText( tr("Move &Point") );
                 setShortcut( Qt::CTRL+Qt::Key_P );

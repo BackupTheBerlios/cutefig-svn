@@ -43,6 +43,7 @@
 #ifndef actions_h
 #define actions_h
 
+#include "actioncollection.h"
 
 #include <QAction>
 #include <QActionGroup>
@@ -59,51 +60,6 @@ class InteractiveAction;
 class ZoomComboBox;
 
 typedef QList<ActionCollection*> ActionGroups;
-
-/** \class ActionCollection 
- *
- * \brief Actions belonging semantically * together are put into one
- * ActionCollection
- *
- * For every menu in the menubar and its submenus there is one
- * ActionCollection. ActionCollection is derived from QActionGroup.
- * It brings in the following functionality:
- *     - the text() attribute, the name of the menu in the menu bar
- *     - the addSeparator() method as suggested in the QT4-docs to 
- *       replace addSeperator() of QActionGroup in QT3
- *     - A QHash to map a certain action to a QWidget in case the
- *       action wants to setup a special widget for the toolBar. This
- *       is done for example by undo and redo.
- */
-
-class ActionCollection : public QActionGroup
-{
-        Q_OBJECT
-public:
-        ActionCollection( QObject* parent ) 
-                : QActionGroup( parent ),
-                  specialWidgets_() {}
-
-        ~ActionCollection() {}
-
-        void addSeparator(); //!< adds a seperator to appear in the menu
-        const QString text() { return text_; } //!< returns the name to appear on the menu bar.
-
-        QWidget* toolBarWidget( QAction* action ) { return specialWidgets_[action]; }
-        //!< returns a pointer to a special QWidget or 0 if the action does not have one.
-
-        void setAllEnabled( bool enabled = true ); //!< probably not needed
-
-protected:        
-        void setText( const QString& text ) { text_ = text; } 
-        //!< sets the text to appear in the menu bar.
-
-        QHash<QAction*, QWidget*> specialWidgets_;
-        //!< in this QHash actions can store their special buttons
-
-private:
-        QString text_;
-};
 
 
 /** \class AllActions

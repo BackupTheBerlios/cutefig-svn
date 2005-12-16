@@ -33,7 +33,7 @@ class CopyAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        CopyAction( Controler* parent, QActionGroup* group = 0 );
+        CopyAction( Controler* parent );
         ~CopyAction() {}
 
         void click( const QPoint& p,Fig::PointFlag f, const QMatrix* m );
@@ -55,7 +55,7 @@ class PasteAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        PasteAction( Controler* parent, QActionGroup* group = 0 );
+        PasteAction( Controler* parent );
         ~PasteAction() {}
 
         void click( const QPoint&, Fig::PointFlag, const QMatrix* ) {}
@@ -80,7 +80,7 @@ class CutAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        CutAction( Controler* parent, QActionGroup* group = 0 );
+        CutAction( Controler* parent );
         ~CutAction() {}
 
         void click( const QPoint& p,Fig::PointFlag f, const QMatrix* m );

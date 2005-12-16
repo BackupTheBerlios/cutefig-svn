@@ -28,6 +28,7 @@ HEADERS += cutefig.h \
            controler.h \
            clipboard.h \
            selection.h \
+           actioncollection.h \
            actions.h \
            allactions.h\
            allodialogs.h\
@@ -63,6 +64,7 @@ SOURCES += cutefig.cc \
            canvasview.cc \
            controler.cc \
            selection.cc \
+           actioncollection.cc \
            actions.cc \
            objectguihandler.cc \
            interactiveaction.cc \

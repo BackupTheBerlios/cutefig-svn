@@ -38,8 +38,8 @@
 class CreateAction : public InteractiveAction
 {
 protected:
-        CreateAction( Controler* parent, QActionGroup* group = 0 ) 
-                : InteractiveAction( parent, group ) {}
+        CreateAction( Controler* parent ) 
+                : InteractiveAction( parent ) {}
 public:
         ~CreateAction() {}
 
@@ -68,7 +68,7 @@ template<typename ObjectType>
 class TCreateAction : public CreateAction 
 {
 public:
-        TCreateAction<ObjectType>( Controler* parent, QActionGroup* g = 0 );
+        TCreateAction<ObjectType>( Controler* parent );
 
 protected:
         DrawObject* createObject() { return new ObjectType( controler_->figure() ); }
@@ -78,8 +78,8 @@ private:
 };
 
 template<typename ObjectType>
-TCreateAction<ObjectType>::TCreateAction( Controler* parent, QActionGroup* g )
-        : CreateAction( parent, g )
+TCreateAction<ObjectType>::TCreateAction( Controler* parent )
+        : CreateAction( parent )
 {  
         cursor_ = Qt::UpArrowCursor;
         setText( tr("Create %1").arg( DObjects::objectname<ObjectType>() ) );

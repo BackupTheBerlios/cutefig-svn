@@ -39,22 +39,6 @@
 
 #include <QDebug>
 
-/** This was suggested by the QT4 docs in order to replace the QT3
- * function.
- */
-void ActionCollection::addSeparator()
-{
-        QAction* s = new QAction( this );
-        s->setSeparator( true );
-        addAction( s );
-}
-
-void ActionCollection::setAllEnabled( bool enabled )
-{
-        foreach ( QAction* a, actions() )
-                a->setEnabled( enabled );
-}
-
 
 /********************** AllActions **************************/
 
@@ -80,36 +64,44 @@ FileActions::FileActions( CuteFig* parent )
 {
         setText( tr("&File") );
         QAction* fileNew = new QAction( QIcon(":images/filenew.png"), tr("&New"),  this );
+        addAction( fileNew );
         fileNew->setShortcut( Qt::CTRL+Qt::Key_N );
         connect( fileNew, SIGNAL( triggered() ), parent, SLOT( newDoc() ) );
 
         QAction* open = new QAction( QIcon(":images/fileopen.png"), tr("&Open"), this );
+        addAction( open );
         open->setShortcut( Qt::CTRL+Qt::Key_O );
         connect( open, SIGNAL( triggered() ), parent, SLOT( choose()) );
         
         QAction* save = new QAction( QIcon(":images/filesave.png"), tr("&Save"), this );
+        addAction( save );
         save->setShortcut( Qt::CTRL+Qt::Key_S );
         connect( save, SIGNAL( triggered() ), parent, SLOT( save() ) );
 
         QAction* saveAs = new QAction( QIcon(":images/filesaveas.png"), tr("Save &as"), this );
+        addAction( saveAs );
         connect( saveAs, SIGNAL( triggered() ), parent, SLOT( saveAs() ) );
 
         addSeparator();
 
         QAction* exprt = new QAction( tr("E&xport"), this );
+        addAction( exprt );
         connect( exprt, SIGNAL( triggered() ), parent, SLOT( exportFigure() ) );
         
         QAction* print = new QAction( QIcon(":images/fileprint.png"), tr("&Print"), this );
+        addAction( print );
         print->setShortcut( Qt::CTRL+Qt::Key_P );
         connect( print, SIGNAL( triggered() ), parent, SLOT( print() ) );
 
         addSeparator();
 
         QAction* close = new QAction( QIcon(":images/fileclose.png"), "&Close", this );
+        addAction( close );
         close->setShortcut( Qt::CTRL+Qt::Key_W );
         connect( close, SIGNAL( triggered() ), parent, SLOT( close() ) );
 
         QAction* quit = new QAction( QIcon(":images/exit.png"), "&Quit", this );
+        addAction( quit );
         quit->setShortcut( Qt::CTRL+Qt::Key_Q );
         connect( quit, SIGNAL( triggered() ), qApp, SLOT( closeAllWindows() ) );
 }
@@ -132,6 +124,7 @@ EditActions::EditActions( Controler* parent )
         
         undoMenu_ = new QMenu( parent->mainWindow() );
         undo_ = new QAction( QIcon(":images/undo.png"), undoString_, this );
+        addAction( undo_ );
         undo_->setShortcut( Qt::CTRL+Qt::Key_Z );
         connect( undo_, SIGNAL( triggered() ), parent, SLOT( undo() ) );
         undo_->setEnabled( false );
@@ -147,6 +140,7 @@ EditActions::EditActions( Controler* parent )
 
         redoMenu_ = new QMenu( parent->mainWindow() );
         redo_ = new QAction( QIcon(":images/redo.png"), redoString_, this );
+        addAction( redo_ );
         redo_->setShortcut( Qt::CTRL+Qt::Key_R );
         connect( redo_, SIGNAL( triggered() ), parent, SLOT( redo() ) );
         redo_->setEnabled( false );
@@ -163,13 +157,13 @@ EditActions::EditActions( Controler* parent )
 
         addSeparator();
 
-        new CopyAction( parent, this );
-        new PasteAction( parent, this );
-        new CutAction( parent, this );
-        new DeleteAction( parent, this );
+        addAction( new CopyAction( parent ) );
+        addAction( new PasteAction( parent ) );
+        addAction( new CutAction( parent ) );
+        addAction( new DeleteAction( parent ) );
 
         addSeparator();
-        new EditdialogAction( parent, this );
+        addAction( new EditdialogAction( parent ) );
 
         parent->setEditActionsGroup( this );
         parent->addActionGroup( this );
@@ -369,9 +363,11 @@ ToolActions::ToolActions( Controler* parent )
         : ActionCollection( parent )
 {
         setText("&Tools");
-        move_  = new MoveAction( parent, this );
-        scale_ = new ScaleAction( parent, this );
-        new PointMoveAction( parent, this );
+        move_ = new MoveAction( parent );
+        addAction( move_ );
+        scale_ = new ScaleAction( parent );
+        addAction( scale_ );
+        addAction( new PointMoveAction( parent ) );
         setAllEnabled( true );
 
         parent->setToolActionsGroup( this );
@@ -384,8 +380,8 @@ FormatActions::FormatActions( Controler* parent )
         : ActionCollection( parent )
 {
         setText( tr("&Format") );
-        new GroupAction( parent, this );
-        new UngroupAction( parent, this );    
+        addAction( new GroupAction( parent ) );
+        addAction( new UngroupAction( parent ) );    
 }
 
 
@@ -395,15 +391,14 @@ TextPropActions::TextPropActions( Controler* parent )
         : ActionCollection( parent )
 {
         setText( tr("Text &properties") );
-        setExclusive( false );
-        new TextHCenterAction( parent, this );
-        new TextLeftAction( parent, this );
-        new TextRightAction( parent, this );
-        new TextTopAction( parent, this );
-        new TextVCenterAction( parent, this );
-        new TextBottomAction( parent, this );
+        addAction( new TextHCenterAction( parent ) );
+        addAction( new TextLeftAction( parent ) );
+        addAction( new TextRightAction( parent ) );
+        addAction( new TextTopAction( parent ) );
+        addAction( new TextVCenterAction( parent ) );
+        addAction( new TextBottomAction( parent ) );
 
-        new TextBoldAction( parent, this );
+        addAction( new TextBoldAction( parent ) );
 
         parent->setTextPropActions( this );
 }

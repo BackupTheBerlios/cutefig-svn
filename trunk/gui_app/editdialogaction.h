@@ -35,8 +35,8 @@ class EditdialogAction : public InteractiveAction
 public:
         friend class ObjectDialog;
 
-        EditdialogAction( Controler* parent, QActionGroup* group = 0 )
-                : InteractiveAction( parent, group ) {
+        EditdialogAction( Controler* parent )
+                : InteractiveAction( parent ) {
                 setText("Edit Object");
                 setIcon( QIcon(":images/edit.png") );
                 setWhatsThis( tr("Edit the object's properties") );

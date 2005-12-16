@@ -31,8 +31,8 @@
 
 #include <QDebug>
 
-TextPropAction::TextPropAction( Controler* parent, QActionGroup* g )
-        : InteractiveAction( parent, g ),
+TextPropAction::TextPropAction( Controler* parent )
+        : InteractiveAction( parent  ),
           textAction_( controler_->textAction() )
 {
 }

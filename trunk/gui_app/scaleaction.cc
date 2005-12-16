@@ -36,8 +36,8 @@
 #include <QDebug>
 
 
-ScaleAction::ScaleAction( Controler* parent, QActionGroup* group )
-        : InteractiveAction( parent, group )
+ScaleAction::ScaleAction( Controler* parent )
+        : InteractiveAction( parent )
 {
         setText( tr("&Scale") );
         setShortcut( Qt::ALT+Qt::Key_S );

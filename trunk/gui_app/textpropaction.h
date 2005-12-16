@@ -33,7 +33,7 @@ class TextAction;
 class TextPropAction : public InteractiveAction
 {
 public:
-        TextPropAction( Controler* parent, QActionGroup* = 0 );
+        TextPropAction( Controler* parent );
         ~TextPropAction() {}
 
         virtual void click( const QPoint&, Fig::PointFlag, const QMatrix* );
@@ -53,8 +53,8 @@ protected:
 class TextHCenterAction : public TextPropAction
 {
 public:
-        TextHCenterAction( Controler* parent, QActionGroup* agr = 0 )
-                : TextPropAction( parent, agr )
+        TextHCenterAction( Controler* parent )
+                : TextPropAction( parent )
         {
                 setText( tr("Align &center") );
                 setIcon( QIcon(":images/text_center.png") );
@@ -72,8 +72,8 @@ public:
 class TextLeftAction : public TextPropAction
 {
 public:
-        TextLeftAction( Controler* parent, QActionGroup* agr = 0 )
-                : TextPropAction( parent, agr )
+        TextLeftAction( Controler* parent )
+                : TextPropAction( parent )
         {
                 setText( tr("Align &left") );
                 setIcon( QIcon(":images/text_left.png") );
@@ -91,8 +91,8 @@ public:
 class TextRightAction : public TextPropAction
 {
 public:
-        TextRightAction( Controler* parent, QActionGroup* agr = 0 )
-                : TextPropAction( parent, agr )
+        TextRightAction( Controler* parent )
+                : TextPropAction( parent )
         {
                 setText( tr("Align &right") );
                 setIcon( QIcon(":images/text_right.png") );
@@ -110,8 +110,8 @@ public:
 class TextVCenterAction : public TextPropAction
 {
 public:
-        TextVCenterAction( Controler* parent, QActionGroup* agr = 0 )
-                : TextPropAction( parent, agr )
+        TextVCenterAction( Controler* parent )
+                : TextPropAction( parent )
         {
                 setText( tr("Align &Middle") );
                 setIcon( QIcon(":images/text_middle.png") );
@@ -128,8 +128,8 @@ public:
 class TextTopAction : public TextPropAction
 {
 public:
-        TextTopAction( Controler* parent, QActionGroup* agr = 0 )
-                : TextPropAction( parent, agr )
+        TextTopAction( Controler* parent )
+                : TextPropAction( parent )
         {
                 setText( tr("Align &top") );
                 setIcon( QIcon(":images/text_top.png") );
@@ -146,8 +146,8 @@ public:
 class TextBottomAction : public TextPropAction
 {
 public:
-        TextBottomAction( Controler* parent, QActionGroup* agr = 0 )
-                : TextPropAction( parent, agr )
+        TextBottomAction( Controler* parent )
+                : TextPropAction( parent )
         {
                 setText( tr("Align &bottom") );
                 setIcon( QIcon(":images/text_bottom.png") );

@@ -35,8 +35,7 @@
  *  InteractiveActions only need to be registered in an
  *  ActionGroup. This allows to easily write extensions. Only a new
  *  class derived from InteractiveAction needs to be implemented. This
- *  only needs to be added to an QActionGroup, which can also happen
- *  by passing a QActionGroup as a parameter to the constructor.
+ *  only needs to be added to an ActionCollection.
  *
  *  An action is active when the next mouse click is relevant for that
  *  action. This is normally stored in
@@ -87,15 +86,14 @@
 
 #include <QDebug>
 
-/** The constructor takes a Controler and a QActionGroup as a parameter.
+/** The constructor takes a Controler a parameter.
  * 
  */
-InteractiveAction::InteractiveAction( Controler* parent, QActionGroup* group )
+InteractiveAction::InteractiveAction( Controler* parent )
         : QAction( parent ),
           controler_( parent ),
           selection_( controler_->selection() )
 {
-        setActionGroup( group );
         connect( this, SIGNAL( triggered() ), this, SLOT( wakeup() ) );
         connect( &selection_, SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
 }
