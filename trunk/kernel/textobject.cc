@@ -33,7 +33,7 @@
 #include <QPainter>
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
-
+#include <QApplication>
 
 TextObject::TextObject( Figure* parent )
         : DrawObject( parent ),
@@ -85,15 +85,13 @@ void TextObject::draw( QPainter* p ) const
         p->setPen( QPen( stroke_.brush( bRect_ ), 0 ) );
 
         doDraw( p );
-        if ( cursorVisible_ && textLayout_ )
-                textLayout_->drawCursor( p, actualPoint_, cursor_.position() );
 
         p->setPen( op );
 }
 
 void TextObject::drawTentative( QPainter* p ) const
 {
-        draw( p );
+        doDraw( p );
 }
 
 void TextObject::doDraw( QPainter* p ) const
@@ -101,8 +99,25 @@ void TextObject::doDraw( QPainter* p ) const
         if ( !textLayout_ )
                 return;
 
+        QVector<QTextLayout::FormatRange> selection;
+
+        if ( cursor_.hasSelection() ) {
+                QTextLayout::FormatRange o;
+                
+                const QPalette& pal = QApplication::palette();
+                o.start = cursor_.selectionStart();
+                o.length = abs( cursor_.selectionEnd() - cursor_.selectionStart() );
+                o.format.setBackground(pal.brush(QPalette::Highlight));
+                o.format.setForeground(pal.brush(QPalette::HighlightedText));
+
+                selection << o;
+        }
+
         if ( !doc_.isEmpty() )
-                textLayout_->draw( p, actualPoint_ );    
+                textLayout_->draw( p, actualPoint_, selection );
+        
+        if ( cursorVisible_ && textLayout_ )
+                textLayout_->drawCursor( p, actualPoint_, cursor_.position() );
 }
 
 void TextObject::toggleCursor()
@@ -152,7 +167,6 @@ void TextObject::setupRects()
 
 void TextObject::setText( const QString& text ) 
 {
-        qDebug() << text;
         doc_.setHtml( text );
 }
 
@@ -244,9 +258,9 @@ void TextObject::removeCharBackward()
         getReadyForDraw();
 }
 
-void TextObject::setCursorPos( int c )
+void TextObject::setCursorPos( int c, QTextCursor::MoveMode mode )
 {
-        cursor_.setPosition( c );
+        cursor_.setPosition( c, mode );
         trackCharFormat();
 }
 
@@ -255,48 +269,86 @@ int TextObject::cursorPos() const
         return cursor_.position();
 }
 
-void TextObject::incrementCursorPos()
+void TextObject::incrementCursorPos( QTextCursor::MoveMode mode )
 {
-        cursor_.movePosition( QTextCursor::NextCharacter );
+        cursor_.movePosition( QTextCursor::NextCharacter, mode );
         trackCharFormat();
 }
 
-void TextObject::decrementCursorPos()
+void TextObject::decrementCursorPos( QTextCursor::MoveMode mode )
 {
-        cursor_.movePosition( QTextCursor::PreviousCharacter );
+        cursor_.movePosition( QTextCursor::PreviousCharacter, mode );
         trackCharFormat();
 }
 
-void TextObject::moveCursorToEnd()
+void TextObject::moveCursorToEnd( QTextCursor::MoveMode mode )
 {
-        cursor_.movePosition( QTextCursor::End );
+        cursor_.movePosition( QTextCursor::End, mode );
         trackCharFormat();
+}
+
+void TextObject::setCursorToPoint( const QPointF& p )
+{
+        qreal x = p.x() - bRect_.left();
+        //qreal y = p.y() - bRect_.top();
+
+        QTextLine line = textLayout_->lineAt( 0 );
+        setCursorPos( line.xToCursor( x ) );
+}
+
+bool TextObject::clearSelection()
+{
+        if ( !cursor_.hasSelection() )
+                return false;
+        
+        cursor_.clearSelection();
+        return true;
 }
 
 void TextObject::trackCharFormat()
 {
         if ( charFormat_ != cursor_.charFormat() ) {
-                qDebug () << "charFormat_ changed";
                 charFormat_ = cursor_.charFormat();
                 emit charFormatChanged();
         }
 }
 
-bool TextObject::isBold() const
+void TextObject::toggleBold()
 {
-        return cursor_.charFormat().fontWeight() > QFont::Normal;
+        if ( charFormat_.font().bold() ) 
+                charFormat_.setFontWeight( QFont::Normal );
+        else 
+                charFormat_.setFontWeight( QFont::Bold );
+
+        cursor_.mergeCharFormat( charFormat_ );
 }
 
-bool TextObject::toggleBold()
+void TextObject::toggleItalic()
 {
-        qDebug() << "toggleBold";
-        if ( isBold() ) {
-                charFormat_.setFontWeight( QFont::Normal );
-                return false;
-        } else {
-                charFormat_.setFontWeight( QFont::Bold );
-                return true;
-        }
+        charFormat_.setFontItalic( !charFormat_.fontItalic() );
+        cursor_.mergeCharFormat( charFormat_ );
+}
+
+void TextObject::toggleSuperScript()
+{
+        if ( charFormat_.verticalAlignment() == QTextCharFormat::AlignSuperScript )
+                charFormat_.setVerticalAlignment( QTextCharFormat::AlignNormal );
+        else
+                charFormat_.setVerticalAlignment( QTextCharFormat::AlignSuperScript );
+
+        cursor_.mergeCharFormat( charFormat_ );
+        emit charFormatChanged();
+}
+
+void TextObject::toggleSubScript()
+{
+        if ( charFormat_.verticalAlignment() == QTextCharFormat::AlignSubScript )
+                charFormat_.setVerticalAlignment( QTextCharFormat::AlignNormal );
+        else
+                charFormat_.setVerticalAlignment( QTextCharFormat::AlignSubScript );
+        
+        cursor_.mergeCharFormat( charFormat_ );
+        emit charFormatChanged();
 }
 
 void TextObject::alignHCenter()
@@ -371,17 +423,16 @@ DrawObject* TObjectHandler<TextObject>::parseObject( std::istream& is, Figure* f
 {
         QString family;
         int pointSize;
-        bool italic;
-        int weight, alignment;
+        int alignment;
         QString text;
 
-        is >> family >> pointSize >> italic >> weight >> alignment >> text;
+        is >> family >> pointSize >> alignment >> text;
 
         if ( is.fail() )
                 return 0;
 
         TextObject* to = new TextObject( fig );
-        to->setFont( QFont( family, pointSize, weight, italic ) );
+        to->setFont( QFont( family, pointSize ) );
         to->alignment_ = Qt::Alignment(alignment);
         to->setText( text );
 

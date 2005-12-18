@@ -111,7 +111,7 @@ private:
     
         void drawPaper( QPainter* p ); //!< draws the paper
         void drawGrid( QPainter* p );  //!< draws the snap grid
-        void drawSnap( QPainter* p ); //!< emphesizes the point snaped to
+        QRect snapRect(); //!< emphesizes the point snaped to
         void setGrid( double gridWidth  ); //!< sets the width of the grid
         void setSnap( double snapWidth );  //!< sets the width of the snapgrid
 
@@ -146,8 +146,6 @@ private:
         bool snapped_;
 
         bool tentativeDraw_;
-
-        static qreal clickTolerance_;
 };
 
 #endif

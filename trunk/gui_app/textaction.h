@@ -28,21 +28,13 @@
 #include "createaction.h"
 
 class TextObject;
+class QTextCharFormat;
 
 class TextAction : public CreateAction
 {
+        Q_OBJECT
 public:
-        TextAction( Controler* parent )
-                : CreateAction( parent ),
-                  pointIsSet_( false )
-        {
-                setText( tr("Create &Text") );
-                setIcon( QIcon(":images/text.png") );
-                setShortcut( Qt::Key_T );
-                cursor_ = Qt::IBeamCursor;
-                controler_->setTextAction( this );
-        }
-        
+        TextAction( Controler* parent );
         ~TextAction() {}
 
         virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
@@ -53,43 +45,42 @@ public:
         
 //        virtual const QCursor cursor( DrawObject* ) const { return Qt::IBeamCursor; }
 
-//        virtual const QString commandName() const;
+        virtual const QString commandName() const;
 
         virtual bool wouldHandle( DrawObject*, const QPoint& = QPoint(), const QMatrix* =0 )
         {
-                return !pointIsSet_;
+                return true;
         }
 
-        bool isEditing() const
-        {
-                return pointIsSet_;
-        }
+        virtual void handleSelection() {}
+
+        bool isEditing() const { return textObject_; }
 
         TextObject* textObject() { return textObject_; }
 
-        virtual bool acceptsKeyStrokes() { return pointIsSet_; }
+        virtual bool acceptsKeyStrokes() { return textObject_; }
+
+        virtual bool wantsSnap( const QPoint& p, const QMatrix* m );
 
         virtual void reset();
         
 protected:
-        virtual DrawObject* createObject();
+        virtual DrawObject* createObject() { return 0; }
 
-        bool event( QEvent* e );
-        
+private slots:
+        void dispatchFormat();
+
 private:
-        bool pointIsSet_;
         TextObject* textObject_;
         int cursorTimer_;
-};
+        bool textNew_;
 
-// template<>
-// class TCreateAction<TextObject> : public TextAction
-// {
-// public:
-//         TCreateAction<TextObject>( Controler* parent )
-//                 : TextAction( parent )
-//         {}
-// };
+        bool event( QEvent* e );
+        bool cursorMovement( const QKeyEvent* ke );
+        void commitTextObject();
+
+        TextObject* textObjectUnderPoint( const QPointF& p );
+};
 
 
 

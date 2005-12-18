@@ -60,11 +60,7 @@ UngroupAction::UngroupAction( Controler* parent )
 
 void UngroupAction::handleSelection()
 {
-        Compound* cpd = qobject_cast<Compound*>( selection_.objects()[0] );
-        if ( !cpd ) {
-                qDebug() << "UngroupAction::handleSelection, cast to Compound failed";
-                return;
-        }
+        Compound* cpd = static_cast<Compound*>( selection_.objects()[0] );
 
         cpd->releaseChildren();
         selection_.setListToBeInserted( cpd->childObjects(), false );

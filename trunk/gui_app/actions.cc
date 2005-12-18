@@ -399,6 +399,9 @@ TextPropActions::TextPropActions( Controler* parent )
         addAction( new TextBottomAction( parent ) );
 
         addAction( new TextBoldAction( parent ) );
+        addAction( new TextItalicAction( parent ) );
+        addAction( new TextSuperScriptAction( parent ) );
+        addAction( new TextSubScriptAction( parent ) );
 
         parent->setTextPropActions( this );
 }

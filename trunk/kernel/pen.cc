@@ -38,7 +38,8 @@ const int SolidLine = -1;
 Pen::Pen() 
         : lineWidth_( 1. ),
           capStyle_( Qt::FlatCap ),
-          joinStyle_( Qt::MiterJoin )
+          joinStyle_( Qt::MiterJoin ),
+          dashes_( new ResourceUser<Dashes>() )
 {
         setDashes( ResourceKey( "S", ResourceKey::BuiltIn ) );
 }
@@ -47,21 +48,26 @@ Pen::Pen( const Pen& p )
         : lineWidth_( p.width() ),
           capStyle_( p.capStyle() ),
           joinStyle_( p.joinStyle() ),
-          dashes_( p.dashes_ )
+          dashes_( new ResourceUser<Dashes>( *p.dashes_ ) )
 {
+}
+
+Pen::~Pen()
+{
+        delete dashes_;
 }
 
 void Pen::setDashes( const ResourceKey& key )
 {
-        dashes_.setResource( key );
+        dashes_->setResource( key );
 }
 
 void Pen::strikePath( const QPainterPath& path, const Stroke& stroke, QPainter* painter ) const
 {
-        if ( !dashes_.key().isValid() )
+        if ( !dashes_->key().isValid() )
                 return;
 
-        if ( dashes_.data().isEmpty() ) {
+        if ( dashes_->data().isEmpty() ) {
                 QPen pen( stroke.brush( path ), lineWidth_, Qt::SolidLine, capStyle_, joinStyle_ );
                 painter->strokePath( path, pen );
         }
@@ -86,7 +92,7 @@ void Pen::setupPainterPath( QPainterPath& strokePath, const QPainterPath& path )
         stroker.setWidth( lineWidth_ );
         stroker.setCapStyle( capStyle_ );
         stroker.setJoinStyle( joinStyle_ );
-        stroker.setDashPattern( dashes_.data() );
+        stroker.setDashPattern( dashes_->data() );
         strokePath = stroker.createStroke( path );
 }
 

@@ -63,7 +63,7 @@ private:
         QPointF fp1_, fp2_;
         qreal rad_d_;
         
-        void passPointFlag( Fig::PointFlag f );
+        void passPointFlag_private( Fig::PointFlag f );
         
         void doSpecificPreparation();
         void setupWidthAndHeight();

@@ -207,6 +207,11 @@ bool Controler::wouldAcceptClick( const QPoint& p, const QMatrix* m ) const
         return actionIsActive_ && willAcceptClick( p, m );
 }
 
+bool Controler::actionWantsSnap( const QPoint& p, const QMatrix* m ) const
+{
+        return editAction_ && editAction_->wantsSnap( p,m );
+}
+
 bool Controler::willAcceptKeyStroke() const
 {
         return editAction_ && editAction_->acceptsKeyStrokes();

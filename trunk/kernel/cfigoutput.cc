@@ -78,8 +78,7 @@ void CfigOutput::outputTextObject( const TextObject* to )
 
         const QFont& f = to->font();
         
-        fileStream_ << f.family() << ' ' << f.pointSize() << ' '
-                    << f.italic() << ' ' << f.weight() << ' '
+        fileStream_ << ' ' << f.family() << ' ' << f.pointSize() << ' '
                     << to->alignment() << ' ' << to->text() << "\n";
 
         outputPoints();

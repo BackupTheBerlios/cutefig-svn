@@ -117,7 +117,7 @@ void Ellipse::setIsCircle( bool c )
 //         emit( objectChanged() );
 }
 
-void Ellipse::passPointFlag( Fig::PointFlag f )
+void Ellipse::passPointFlag_private( Fig::PointFlag f )
 {
         circle_ = circle_ || ( f & Fig::Straight );
         specByRadii_ = specByRadii_ || ( f & Fig::Special2 );

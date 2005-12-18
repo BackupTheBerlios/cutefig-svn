@@ -69,7 +69,7 @@ public:
         virtual const QString objectname() const =0;
         virtual const QString objectKeyWord() const =0;
 
-        DrawObject* ancestor();
+        const DrawObject* ancestor() const;
 
         virtual uint minPoints() const { return 2; }
         
@@ -163,7 +163,7 @@ protected:
 
         virtual void addSpecificResources( ResourceSet& ) {}
 
-        virtual QList<AbstractResourceUser*> resourceUsers();
+        virtual QList<AbstractResourceUser*> resourceUsers() const;
 
 
         Figure* figure_;

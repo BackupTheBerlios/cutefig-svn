@@ -42,19 +42,10 @@ public:
         virtual void outputToBackend( OutputBackend* ob );
 
 private:
+        virtual void passPointFlag_private( Fig::PointFlag ) {}
         virtual void setupWidthAndHeight();
         virtual void addPath();
 
 };
-
-// #include "objecthandler.h"
-
-// class RectangleFactory : public ObjectHandler
-// {
-// public:
-//         RectangleFactory() : ObjectHandler("rectangle") {}
-//         virtual DrawObject* parseObject( std::istream& is, Figure* fig );
-// };
-
 
 #endif

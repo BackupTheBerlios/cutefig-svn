@@ -191,7 +191,7 @@ void DrawObject::reclaimResources()
                         aru->reclaimResource();
 }
 
-QList<AbstractResourceUser*> DrawObject::resourceUsers() 
+QList<AbstractResourceUser*> DrawObject::resourceUsers() const
 {
         QList<AbstractResourceUser*> rul;
 
@@ -200,7 +200,7 @@ QList<AbstractResourceUser*> DrawObject::resourceUsers()
         return rul;
 }
 
-DrawObject* DrawObject::ancestor() 
+const DrawObject* DrawObject::ancestor() const
 {
         if ( compoundParent_ )
                 return compoundParent_->ancestor(); 

@@ -59,6 +59,8 @@ namespace Geom
 
         //! returns the absolute value of the point p, the length so to speak.
         qreal pabs( const QPointF& p );
+
+        const double clickTolerance = 5;
 };
 
 

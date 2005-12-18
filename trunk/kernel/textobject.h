@@ -78,8 +78,10 @@ public:
         void alignBottom();
         bool isBottomAligned() const;
 
-        bool isBold() const;
-        bool toggleBold();
+        void toggleBold();
+        void toggleItalic();
+        void toggleSuperScript();
+        void toggleSubScript();
         
         Qt::Alignment alignment() const { return alignment_; }
         
@@ -87,19 +89,25 @@ public:
         void removeCharForward();
         void removeCharBackward();
 
-        void incrementCursorPos();
-        void decrementCursorPos();
-
-        void setCursorPos( int c );
-        int cursorPos() const;
+        void incrementCursorPos( QTextCursor::MoveMode mode );
+        void decrementCursorPos( QTextCursor::MoveMode mode );
         
-        void moveCursorToEnd();
+        void moveCursorToEnd( QTextCursor::MoveMode mode );
+
+        void setCursorPos( int c, QTextCursor::MoveMode mode = QTextCursor::MoveAnchor );
+        int cursorPos() const;
+
+        void setCursorToPoint( const QPointF& p );
+
+        bool clearSelection();
         
         void toggleCursor();
         void hideCursor() { cursorVisible_ = false; }
 
         const QString text() const;
 
+        const QTextCharFormat& charFormat() const { return charFormat_; }
+        
 signals:
         void charFormatChanged();
         

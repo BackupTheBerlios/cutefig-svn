@@ -58,6 +58,7 @@ public:
         virtual bool isActive() const = 0;
         virtual bool wouldHandle( DrawObject* o, const QPoint& p=QPoint(), const QMatrix* m=0 )=0;
         virtual bool wouldHandleSelection( const QPoint& p = QPoint(), const QMatrix* m = 0 );
+        virtual bool wantsSnap( const QPoint&, const QMatrix* ) { return true; }
         virtual bool acceptsKeyStrokes() { return false; }
         
         const QCursor& cursor() const { return cursor_; }

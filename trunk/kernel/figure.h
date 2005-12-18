@@ -90,7 +90,7 @@ public:
         void drawElements( QPainter* p, const ObjectList& backups = ObjectList() ) const; 
 
         //! returns a pointer tho the DrawObject under the point p
-        DrawObject* findContainingObject( const QPointF& p, qreal tolerance ) const;
+        DrawObject* findContainingObject( const QPointF& p  ) const;
 
         //! Outputs all objects to the OutputBackend ob
         void outputObjects( OutputBackend* ob ) const;

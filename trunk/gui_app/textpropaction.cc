@@ -29,6 +29,8 @@
 #include "selection.h"
 #include "changecommand.h"
 
+#include <QTextCharFormat>
+
 #include <QDebug>
 
 TextPropAction::TextPropAction( Controler* parent )
@@ -78,7 +80,6 @@ void TextPropAction::wakeup()
 }
 
 
-
 void TextHCenterAction::handleObject( TextObject* to )
 {
         to->alignHCenter();
@@ -108,3 +109,4 @@ void TextBottomAction::handleObject( TextObject* to )
 {
         to->alignBottom();
 }
+

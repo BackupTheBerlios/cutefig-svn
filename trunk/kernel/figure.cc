@@ -138,10 +138,10 @@ void Figure::sortObjects()
 /** Returns the object that intersects with the rectangle of the
  *  center p and the edgelength tolerance.
  */
-DrawObject* Figure::findContainingObject( const QPointF& p, qreal tolerance ) const
+DrawObject* Figure::findContainingObject( const QPointF& p ) const
 {
         foreach ( DrawObject* o, objectList_ ) 
-                if ( o->pointHits( p, tolerance ) )
+                if ( o->pointHits( p, Geom::clickTolerance ) )
                         return o;
         
         return 0;            
@@ -149,11 +149,12 @@ DrawObject* Figure::findContainingObject( const QPointF& p, qreal tolerance ) co
 
 /** Draws all the DrawObjects of the drawingList_ except those listed
  *  in backups. These are drawn while drawing the Selection.
+ *  I know about the uglieness of const_cast. Any better ideas?
  */
 void Figure::drawElements( QPainter* p, const ObjectList& backups ) const
 {
         foreach ( DrawObject* o, drawingList_ ) 
-                if ( !backups.contains( o->ancestor() ) )
+                if ( !backups.contains( const_cast<DrawObject*>(o->ancestor()) ) )
                         o->draw( p );
 } 
 

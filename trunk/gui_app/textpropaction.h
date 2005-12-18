@@ -30,6 +30,8 @@
 class TextObject;
 class TextAction;
 
+class QTextCharFormat;
+
 class TextPropAction : public InteractiveAction
 {
 public:
@@ -42,6 +44,8 @@ public:
 
         virtual bool wouldHandle( DrawObject* o, const QPoint& p= QPoint(), const QMatrix* m=0 );
 
+        virtual void adaptToTextFormat() {}
+        
 protected:
         virtual void handleObject( TextObject* to ) = 0;
         virtual void wakeup();

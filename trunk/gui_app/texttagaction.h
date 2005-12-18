@@ -42,36 +42,60 @@ public:
 
         virtual bool wouldHandle( DrawObject*, const QPoint& = QPoint(), const QMatrix* = 0 );
 
+        virtual void adaptToTextFormat();
+        
 private:
-        virtual void handleObject( TextObject* to );
+        virtual void handleObject( TextObject* ) {}
         virtual void wakeup();
 
-        virtual bool toggleState( TextObject* to ) = 0;
         virtual bool correctState( const TextObject* to ) = 0;
-        
-// private slots:
-//         void setStateCorrectly();
+        virtual void toggleState( TextObject* to ) = 0;        
 };
-
-
-
 
 
 class TextBoldAction : public TextTagAction
 {
 public:
-        TextBoldAction( Controler* parent )
-                : TextTagAction( parent )
-        {
-                setText( tr("&Bold") );
-                setIcon( QIcon(":images/text_bold.png") );
-        }
-
+        TextBoldAction( Controler* parent );
         virtual const QString commandName() const { return tr("bold"); }
+        
+private:
+        virtual bool correctState( const TextObject* to );
+        virtual void toggleState( TextObject* to );
+};
+
+class TextItalicAction : public TextTagAction
+{
+public:
+        TextItalicAction( Controler* parent );
+        virtual const QString commandName() const { return tr("italic"); }
+        
+private:
+        virtual bool correctState( const TextObject* to );
+        virtual void toggleState( TextObject* to );
+};
+
+class TextSuperScriptAction : public TextTagAction
+{
+public:
+        TextSuperScriptAction( Controler* parent );
+        virtual const QString commandName() const { return tr("superscript"); }
 
 private:
-        virtual bool correctState( const TextObject* to ) { return to->isBold(); }
-        virtual bool toggleState( TextObject* to ) { return to->toggleBold(); }
+        virtual bool correctState( const TextObject* to );
+        virtual void toggleState( TextObject* to );
+};
+
+
+class TextSubScriptAction : public TextTagAction
+{
+public:
+        TextSubScriptAction( Controler* parent );
+        virtual const QString commandName() const { return tr("subscript"); }
+        
+private:
+        virtual bool correctState( const TextObject* to );
+        virtual void toggleState( TextObject* to );
 };
 
 

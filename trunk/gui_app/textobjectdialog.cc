@@ -73,7 +73,7 @@ void TextObjectDialog::setDefaultValuesPrivate()
 
 void TextObjectDialog::castDrawObject()
 {
-        textObject_ = qobject_cast<TextObject*>( drawObject_ );
+        textObject_ = static_cast<TextObject*>( drawObject_ );
 }
 
 template<>

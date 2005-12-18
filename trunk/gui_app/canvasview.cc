@@ -60,8 +60,6 @@
 //! calculates the Fig::PointFlag out of m and b. 
 Fig::PointFlag calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m );
 
-qreal CanvasView::clickTolerance_ = 5;
-
 /**
  * The constructor needs a Controler and a figure as parameter.
  */
@@ -121,7 +119,7 @@ void CanvasView::mouseReleaseEvent( QMouseEvent* e )
         if ( controler_->selectedObjects().isEmpty() || 
              e->modifiers() & Qt::ControlModifier &&
              ! controler_->hasAction() ) {
-                o = figure_->findContainingObject( p * scaleMatrixInv_, clickTolerance_ );
+                o = figure_->findContainingObject( p * scaleMatrixInv_ );
                 controler_->selectObject( o );
         }
 
@@ -160,7 +158,7 @@ void CanvasView::mouseMoveEvent( QMouseEvent* e )
                 QCursor crs;
                 DrawObject* o = 0;
                 if (controler_->selectedObjects().isEmpty()||e->modifiers()&Qt::ControlModifier) {
-                        o = figure_->findContainingObject( p * scaleMatrixInv_, clickTolerance_ );
+                        o = figure_->findContainingObject( p * scaleMatrixInv_ );
                         crs = controler_->considerObject( o, p, &scaleMatrixInv_ );
                 } else
                         crs = controler_->findToolAction( p, &scaleMatrixInv_ );
@@ -220,7 +218,7 @@ void CanvasView::keyPressEvent( QKeyEvent* e )
             case Qt::Key_Return:
                     handleReturnHit();
             default:
-                    break;//e->ignore();
+                    break;
         }
         e->accept();
 }
@@ -229,7 +227,8 @@ bool CanvasView::event( QEvent* e )
 {
         if ( e->type() == QEvent::ShortcutOverride ) {
                 QKeyEvent* ke = (QKeyEvent*) e;
-                if ( controler_->willAcceptKeyStroke() )
+                if ( controler_->willAcceptKeyStroke() &&
+                     ke->modifiers() <= int(Qt::ShiftModifier) )
                         ke->accept();
         }
 
@@ -338,7 +337,7 @@ void CanvasView::paintEvent( QPaintEvent * e )
         drawSelection( &p );
 
         if ( snapped_ )
-                drawSnap( &p );
+                p.drawEllipse( snapRect() );
  
         p.end();
 }
@@ -384,13 +383,13 @@ inline void CanvasView::drawGrid( QPainter* p )
 
 // emphasises the point the mouse position has been snapped to
 //
-inline void CanvasView::drawSnap( QPainter* pt )
+QRect CanvasView::snapRect()
 {
-        QRectF r;
-        r.setSize( QSizeF( 9,9 ) );
+        QRect r;
+        r.setSize( QSize( 9,9 ) );
         r.moveCenter( snapPoint_ );
 
-        pt->drawEllipse( r );
+        return r;
 }
 
 
@@ -477,8 +476,12 @@ void CanvasView::calcGrid()
 //
 bool CanvasView::snap( QPoint & p )
 {
-        if ( !snapScaled_ )
+        if ( ! ( snapScaled_ && controler_->actionWantsSnap( p, &scaleMatrixInv_ ) ) ) {
+                if ( snapped_ )
+                        repaint();
+                snapped_ = false;
                 return true;
+        }
 
         p.setX( qRound( qRound(qreal(p.x())/snapScaled_) * snapScaled_ ) );
         p.setY( qRound( qRound(qreal(p.y())/snapScaled_) * snapScaled_ ) );

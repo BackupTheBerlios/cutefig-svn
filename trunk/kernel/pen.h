@@ -53,7 +53,7 @@ public:
         Pen();
         Pen( const Pen& p );
 
-        ~Pen() {}
+        ~Pen();
 
         //! sets the line width
         void setWidth( qreal lw ) { lineWidth_ = lw; }
@@ -73,7 +73,7 @@ public:
         //! sets the dash pattern using ResLib<Dashes>::instance()
         void setDashes( const ResourceKey& key );
         //! returns the ResourceKey of the used dash pattern
-        const ResourceKey& dashesKey() const { return dashes_.key(); }
+        const ResourceKey& dashesKey() const { return dashes_->key(); }
 
         //! paints the outline of path on the painter using the given Stroke
         void strikePath( const QPainterPath& path, const Stroke&, QPainter* painter ) const;
@@ -82,7 +82,7 @@ public:
         QRectF pathRect( const QPainterPath& path ) const;
 
         //! returns the ResourceUser using the dashes
-        AbstractResourceUser* resourceUser() { return &dashes_; }
+        AbstractResourceUser* resourceUser() const { return dashes_; }
         
 private:
         //! prepares the painter path
@@ -93,7 +93,7 @@ private:
         Qt::PenCapStyle capStyle_;
         Qt::PenJoinStyle joinStyle_;
 
-        ResourceUser<Dashes> dashes_;
+        ResourceUser<Dashes>* dashes_;
 };
 
 int qHash( const Dashes& dashes );

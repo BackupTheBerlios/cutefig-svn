@@ -39,6 +39,8 @@ public:
         double angle() const { return angle_ * rad; }
         QPointF center() const { return center_; }
 
+        virtual void drawTentative( QPainter* p ) const;
+        
         void setAngleNew( double a );
 
 public slots:
@@ -60,11 +62,19 @@ protected:
         QPointF* nextPoint();
         
         void passPointFlag( Fig::PointFlag f );
+        virtual void passPointFlag_private( Fig::PointFlag f ) = 0;
 
         virtual void setupWidthAndHeight() = 0;
         virtual void addPath() = 0;
+//        virtual drawTentative_private( QPainter* p ) const = 0;
         
         static const double rad = 180/M_PI;
+        
+private:
+        bool hasAngle_;
+        void calcAngle();
+
+
 };
 
 

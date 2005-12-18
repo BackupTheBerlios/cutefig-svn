@@ -62,8 +62,7 @@ void Selection::setObjectToBeCreated( DrawObject* o, bool destructive )
         if ( destructive ) 
                 clear();
         else 
-                objects_.clear();
-        
+                objects_.clear();        
 
         objects_.append( o );
 

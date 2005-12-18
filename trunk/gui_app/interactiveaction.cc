@@ -118,7 +118,11 @@ void InteractiveAction::wakeup()
 
 void InteractiveAction::selectionChanged()
 {
-        setEnabled( wouldHandleSelection() );
+        bool enable = wouldHandleSelection();
+        setEnabled( enable );
+
+        if ( !enable )
+                setChecked( false );
 }
 
 /** Returns true, if the action handles the DrawObject o in case the
