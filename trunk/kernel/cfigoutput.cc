@@ -40,7 +40,7 @@ void CfigOutput::outputRectangle( const Rectangle* r )
 {
         drawObject_ = r;
         outputGenericData();
-        fileStream_ << "\n";
+        fileStream_ << ' ' << r->angle() << "\n";
         outputPoints();
 }
 

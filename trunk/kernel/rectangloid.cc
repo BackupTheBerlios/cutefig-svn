@@ -59,8 +59,8 @@ QPointF* Rectangloid::nextPoint()
 
 void Rectangloid::setupRects()
 {
-        double c = cos( angle_ );
-        double s = sin( angle_ );
+        double c = fabs( cos( angle_ ) );
+        double s = fabs( sin( angle_ ) );
 
         double wc = w_*c;
         double ws = w_*s;

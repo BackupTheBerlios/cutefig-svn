@@ -90,7 +90,7 @@ void CuteFig::init()
         controler_->selection().updateActions();
         readSettings();
         
-        statusBar()->showMessage("Hello");    
+        statusBar()->showMessage("Hello");
 }
 
 void CuteFig::newDoc()
@@ -189,7 +189,13 @@ void CuteFig::saveAs()
 
 void CuteFig::print()
 {
-        QMessageBox::information( this, "Does not work", "No Printing yet" );
+        QPrinter printer;
+        QPrintDialog pdlg( &printer, this );
+
+        if ( pdlg.exec() == QDialog::Accepted ) {
+                QPainter p( &printer );
+                figure_->drawElements( &p );
+        }
 }
 
 /** Asks the obligated areyousure-question before accepting the close
@@ -241,7 +247,6 @@ void CuteFig::about()
 void CuteFig::setupActions()
 {
         AllActions* actions = new AllActions( this );
-        toolBars_.clear();
 
         foreach ( ActionCollection* ac, actions->actionGroups() ) {
 
@@ -264,7 +269,6 @@ void CuteFig::setupActions()
                         delete toolBar;
                 else {
                         toolBar->setObjectName( ac->metaObject()->className() );
-                        toolBars_ << toolBar;
                         addToolBar( toolBar );
                 }
 
@@ -296,18 +300,7 @@ void CuteFig::readSettings()
 
         s.beginGroup("MainWindow");
         resize( s.value("size", size() ).toSize() );
-
-        s.beginGroup("ToolBars");
-        foreach ( QToolBar* tb, toolBars_ ) {
-                int o = s.value( tb->objectName() + "_orientation", tb->orientation() ).toInt();
-                tb->setOrientation( Qt::Orientation(o) );
-                
-                tb->setGeometry( s.value( tb->objectName() + "_geometry", tb->geometry() )
-                                 .toRect() );
-                
-                qDebug() << tb->objectName() << tb->geometry();
-        }        
-        
+        restoreState( s.value("state").toByteArray() );
         s.endGroup();
 }
 
@@ -316,17 +309,7 @@ void CuteFig::writeSettings()
         QSettings s;
 
         s.beginGroup("MainWindow");
-        
         s.setValue("size", size() );
-
-        s.beginGroup("ToolBars");
-        foreach ( QToolBar* tb, toolBars_ ) {
-                s.setValue( tb->objectName() + "_geometry", tb->geometry() );
-                s.setValue( tb->objectName() + "_orientation", tb->orientation() );
-        }
-        
-        
-        s.endGroup();
-
+        s.setValue("state", saveState() );
         s.endGroup();   
 }

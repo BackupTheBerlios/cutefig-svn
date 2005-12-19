@@ -134,8 +134,10 @@ bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
 
 void DrawObject::getReadyForDraw()
 {
-        setupPainterPath();
-        setupRects();
+        if ( points_.size() >= (int)minPoints() ) {
+                setupPainterPath();
+                setupRects();
+        }
 }
 
 void DrawObject::setupRects()

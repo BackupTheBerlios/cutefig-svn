@@ -53,6 +53,8 @@ public:
         Pen();
         Pen( const Pen& p );
 
+        Pen& operator=( const Pen& other );
+        
         ~Pen();
 
         //! sets the line width

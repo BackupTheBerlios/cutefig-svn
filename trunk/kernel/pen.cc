@@ -52,6 +52,22 @@ Pen::Pen( const Pen& p )
 {
 }
 
+Pen& Pen::operator=( const Pen& p )
+{
+        if ( this == &p )
+                return *this;
+        
+        lineWidth_ = p.lineWidth_;
+        capStyle_ = p.capStyle_;
+        joinStyle_ = p.joinStyle_;
+
+        delete dashes_;
+        dashes_ = new ResourceUser<Dashes>( *p.dashes_ );
+
+        return *this;
+}
+
+
 Pen::~Pen()
 {
         delete dashes_;

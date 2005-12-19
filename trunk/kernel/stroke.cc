@@ -52,6 +52,9 @@ Stroke::Stroke( const QColor& color )
 
 Stroke& Stroke::operator=( const Stroke& other )
 {
+        if ( this == &other )
+                return *this;
+        
         type_ = other.type_;
 
         delete resourceUser_;

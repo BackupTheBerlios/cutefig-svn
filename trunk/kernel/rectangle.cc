@@ -25,6 +25,7 @@
 #include "rectangle.h"
 #include "outputbackend.h"
 #include "objecthandler.h"
+#include "geometry.h"
 
 
 Rectangle::Rectangle( Figure* parent )
@@ -40,20 +41,33 @@ Rectangle::Rectangle( const Rectangle* r )
 
 bool Rectangle::pointHitsOutline( const QPointF& p, qreal tol ) const
 {
-        qreal x = p.x();
-        qreal y = p.y();
+        const double c = cos( -angle_ );
+        const double s = sin( -angle_ );
 
-        qreal l = bRect_.left();
-        qreal r = bRect_.right();
-        qreal t = bRect_.top();
-        qreal b = bRect_.bottom();
+        const QPointF h(  w2_*c, w2_*s );
+        const QPointF v( -h2_*s, h2_*c );
+
+        const QRectF r = Geom::centerRect( p, QSizeF( tol,tol ) );
+
+        const QPointF p1 = center_ + h + v;
+        const QPointF p2 = center_ + h - v;
+
+        if ( Geom::intersect( QLineF( p1, p2 ), r ) ) 
+                return true;
+
+        const QPointF p3 = center_ - h - v;
+        if ( Geom::intersect( QLineF( p2, p3 ), r ) ) 
+                return true;
         
-        return  ( ( fabs(l-x) < tol || fabs(r-x) < tol ) &&
-                  ( y > t && y < b ) )
-                ||
-                ( ( fabs(t-y) < tol || fabs(b-y) < tol ) &&
-                  ( x > l && x < r ) );
-}               
+        const QPointF p4 = center_ - h + v;
+        if ( Geom::intersect( QLineF( p3, p4 ), r ) ) 
+                return true;
+
+        if ( Geom::intersect( QLineF( p4,p1 ), r ) ) 
+                return true;
+
+        return false;
+}                              
 
 void Rectangle::outputToBackend( OutputBackend* ob )
 {
@@ -73,7 +87,17 @@ void Rectangle::addPath()
 }
 
 template<>
-DrawObject* TObjectHandler<Rectangle>::parseObject( std::istream&, Figure* fig )
+DrawObject* TObjectHandler<Rectangle>::parseObject( std::istream& is, Figure* fig )
 {
-        return new Rectangle( fig );
+        double angle;
+        is >> angle;
+
+        if ( is.fail() )
+                return 0;
+        
+        Rectangle* r = new Rectangle( fig );
+        r->setAngle( angle );
+
+        return r;
 }
+

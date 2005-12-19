@@ -281,23 +281,28 @@ ViewActions::ViewActions( CanvasView* parent )
         QAction* zoomIn = new QAction( QIcon(":images/viewmag+.png"), tr("Zoom &in"), this );
         zoomIn->setShortcut( Qt::Key_Plus );
         connect( zoomIn, SIGNAL( triggered() ), parent, SLOT( zoomIn() ) );
+        addAction( zoomIn );
 
         QAction* zoomOut = new QAction( QIcon(":images/viewmag-.png"), tr("Zoom &out"), this );
         zoomOut->setShortcut( Qt::Key_Minus );
         connect( zoomOut, SIGNAL( triggered() ), parent, SLOT( zoomOut() ) );
+        addAction( zoomOut );
         
         QAction* zoom1 = new QAction( QIcon(":images/viewmag1.png"), tr("O&riginal size"), this );
         zoom1->setShortcut( Qt::Key_1 );
         connect( zoom1, SIGNAL( triggered() ), parent, SLOT( zoomOrig() ) );
+        addAction( zoom1 );
 
         QAction* zoomFit = new QAction( QIcon(":images/viewmagfit.png"), tr("Fit canvas"), this );
         zoomFit->setShortcut( Qt::CTRL+Qt::Key_F );
         connect( zoomFit, SIGNAL( triggered() ), parent, SLOT( zoomFit() ) );
-
+        addAction( zoomFit );
+        
         QAction* setZoom = new QAction( tr("&Set zoom"), this );
         setupZoomMenu();
         setZoom->setMenu( zoomMenu_ );
         specialWidgets_[setZoom] = zoomComboBox_;
+        addAction( setZoom );
 }
 
 void ViewActions::setupZoomMenu()

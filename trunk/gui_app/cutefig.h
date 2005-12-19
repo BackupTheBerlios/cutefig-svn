@@ -79,8 +79,6 @@ private:
 
         void readSettings();
         void writeSettings();
-
-        QList<QToolBar*> toolBars_;
         
 public:
         static int rulerWidth;
