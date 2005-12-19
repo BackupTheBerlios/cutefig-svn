@@ -75,6 +75,8 @@ public:
         void updateBackups();
         void renewBackups();
 
+        void updateActions() { emit selectionChanged(); }
+
         const QString objectname() const;
 
         const QRectF boundingRect() const;

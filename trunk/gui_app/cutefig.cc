@@ -86,6 +86,9 @@ void CuteFig::init()
                 filename_ = argv[1];
                 load( filename_ );
         }
+
+        controler_->selection().updateActions();
+        
         statusBar()->showMessage("Hello");    
 }
 
@@ -270,6 +273,7 @@ void CuteFig::setupActions()
         menuBar()->addMenu( helpMenu );
         helpMenu->addAction( "&About", this, SLOT(about()), Qt::Key_F1 );
         helpMenu->addSeparator();
+
 //        helpMenu->addAction( QWhatsThis::createAction( this ) );
 }
 

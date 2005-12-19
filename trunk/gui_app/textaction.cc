@@ -145,7 +145,7 @@ void TextAction::commitTextObject()
                 controler_->execAction( new ChangeCommand( selection_ ) );
         
         selection_.updateBackups();
-        controler_->textPropActions()->setAllEnabled( false );    
+        controler_->textPropActions()->setAllEnabled( false );
 }
 
 bool TextAction::inputMethodEvent( const QInputMethodEvent* e )

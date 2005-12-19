@@ -40,7 +40,7 @@ bool TextTagAction::wouldHandle( DrawObject*, const QPoint&, const QMatrix* )
 {
         if ( ! textAction_->isEditing() )
                 return false;
-        
+
         setChecked( correctState( textAction_->textObject() ) );
         return true;
 }

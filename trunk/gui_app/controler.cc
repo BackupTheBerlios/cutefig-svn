@@ -124,6 +124,7 @@ void Controler::cancelAction()
         if ( !editAction_ )
                 return;
 
+        editAction_->reset();
         editAction_ = 0;
         explicitEAction_ = false;
         actionIsActive_ = 0;
@@ -139,6 +140,10 @@ void Controler::execAction( Command* cmd )
                 cmd->execute();
                 appendToCmdList( cmd );
         }
+
+        if ( editAction_ )
+                editAction_->reset();
+        
         editAction_ = 0;
         actionIsActive_ = false;
         explicitEAction_ = false;
