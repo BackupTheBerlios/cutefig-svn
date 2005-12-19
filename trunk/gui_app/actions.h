@@ -215,6 +215,7 @@ public:
 
 class TextPropActions : public ActionCollection
 {
+        Q_OBJECT
 public:
         TextPropActions( Controler* parent );
         ~TextPropActions() {}

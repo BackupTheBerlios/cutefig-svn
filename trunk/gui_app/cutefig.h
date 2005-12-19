@@ -77,6 +77,11 @@ private:
 //        void setupObjectMapper();  //!< sets up the ObjectMapper
         void setupActions(); //!< sets up the standard actions
 
+        void readSettings();
+        void writeSettings();
+
+        QList<QToolBar*> toolBars_;
+        
 public:
         static int rulerWidth;
         static double unit;

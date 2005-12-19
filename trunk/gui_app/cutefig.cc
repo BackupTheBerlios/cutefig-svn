@@ -88,6 +88,7 @@ void CuteFig::init()
         }
 
         controler_->selection().updateActions();
+        readSettings();
         
         statusBar()->showMessage("Hello");    
 }
@@ -196,12 +197,8 @@ void CuteFig::print()
  */
 void CuteFig::closeEvent( QCloseEvent* ce )
 {
-        ce->accept();
-        return;
-        if ( !controler_->figureChanged() ) {
-                ce->accept();
-                return;
-        }
+        if ( !controler_->figureChanged() ) 
+                goto finish;
         
         switch( QMessageBox::information( this, "CuteFig",
                                           tr("The document has been changed "
@@ -211,16 +208,20 @@ void CuteFig::closeEvent( QCloseEvent* ce )
                                           0, 1 ) ) {
             case 0:
                     save();
-                    ce->accept();
+                    goto finish;
                     break;
             case 1:
             default: // just for sanity
                     ce->ignore();
-                    break;
+                    return;
             case 2:
-                    ce->accept();
+                    goto finish;
                     break;
         }
+
+ finish:
+        writeSettings();
+        ce->accept();
 }
 
 
@@ -240,6 +241,7 @@ void CuteFig::about()
 void CuteFig::setupActions()
 {
         AllActions* actions = new AllActions( this );
+        toolBars_.clear();
 
         foreach ( ActionCollection* ac, actions->actionGroups() ) {
 
@@ -254,12 +256,17 @@ void CuteFig::setupActions()
                                 toolBar->addWidget( tbw );
                         } else if ( !a->icon().isNull() ) 
                                 toolBar->addAction( a );
+                        else if ( a->isSeparator() )
+                                toolBar->addSeparator();
                 }
 
                 if ( toolBar->actions().isEmpty() )
                         delete toolBar;
-                else 
+                else {
+                        toolBar->setObjectName( ac->metaObject()->className() );
+                        toolBars_ << toolBar;
                         addToolBar( toolBar );
+                }
 
                 if ( menu->actions().isEmpty() )
                         delete menu;
@@ -282,3 +289,44 @@ void CuteFig::exportFigure()
         ExportGUI::instance().exportFigure( figure_ );
 }
 
+
+void CuteFig::readSettings()
+{
+        QSettings s;
+
+        s.beginGroup("MainWindow");
+        resize( s.value("size", size() ).toSize() );
+
+        s.beginGroup("ToolBars");
+        foreach ( QToolBar* tb, toolBars_ ) {
+                int o = s.value( tb->objectName() + "_orientation", tb->orientation() ).toInt();
+                tb->setOrientation( Qt::Orientation(o) );
+                
+                tb->setGeometry( s.value( tb->objectName() + "_geometry", tb->geometry() )
+                                 .toRect() );
+                
+                qDebug() << tb->objectName() << tb->geometry();
+        }        
+        
+        s.endGroup();
+}
+
+void CuteFig::writeSettings()
+{
+        QSettings s;
+
+        s.beginGroup("MainWindow");
+        
+        s.setValue("size", size() );
+
+        s.beginGroup("ToolBars");
+        foreach ( QToolBar* tb, toolBars_ ) {
+                s.setValue( tb->objectName() + "_geometry", tb->geometry() );
+                s.setValue( tb->objectName() + "_orientation", tb->orientation() );
+        }
+        
+        
+        s.endGroup();
+
+        s.endGroup();   
+}

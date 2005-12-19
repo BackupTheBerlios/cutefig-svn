@@ -59,7 +59,13 @@
 #include <QApplication>
 
 int main( int argc, char **argv ) {
+        
         QApplication a( argc, argv );
+
+        QCoreApplication::setApplicationName("CuteFig");
+        QCoreApplication::setOrganizationName("BerliOS");
+        QCoreApplication::setOrganizationDomain("berlios.de");
+
         Q_INIT_RESOURCE( widgets );
         (new CuteFig())->show();
         a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
