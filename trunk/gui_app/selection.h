@@ -22,14 +22,6 @@
 **
 ******************************************************************************/
 
-/** \class Selection
- *
- *  \brief A class to remember the objetcs the user has selected.
- *
- *  The Selection basically has two ObjectLists: backups_ are the
- *  objects that are currently in the Figure. objects_ contains the
- *  objects that can be edited.
- */
 
 #ifndef drobjectgroup_h
 #define drobjectgroup_h
@@ -45,30 +37,34 @@ class QPointF;
 
 typedef QList<DrawObject*> ObjectList;
 
+//! A class to remember the objetcs the user has selected.
+/*! The Selection basically has two ObjectLists: backups_ are the
+ *  objects that are currently in the Figure. objects_ contains the
+ *  objects that can be edited.
+ */
 class Selection : public QObject
 {
         Q_OBJECT
 public:
+        //! Prior selected object remain selected or not.
+        enum SelectMode { Adding = 0, Exclusive };
+
+        //! Prior selected object are to be destroyed on clearance or not.
+        enum ClearMode { Keeping = 0, Destructive };
+        
         Selection( QObject* parent = 0 )
                 : QObject( parent ),
                   objects_(),
-                  backups_() {}
-
-        Selection( const Selection& other ) 
-                : QObject( other.parent() ),
-                  objects_( other.objects() ),
-                  backups_( other.backups() ) 
+                  backups_()
         {}
-        
 
         ~Selection() {}
 
-//        void selectList( const ObjectList& l ); // probably not needed
-        bool select( DrawObject* o );
-        void setObjectToBeCreated( DrawObject* o, bool destructive = true );
-        void setListToBeInserted( const ObjectList& l, bool destructive = true );
+        bool select( DrawObject* o, SelectMode mode = Adding );
+        void setObjectToBeCreated( DrawObject* o, ClearMode mode = Destructive );
+        void setListToBeInserted( const ObjectList& l, ClearMode mode = Destructive );
 
-        void clear( bool destructive = true );
+        void clear( ClearMode mode = Destructive );
        
         bool isEmpty() const { return objects_.isEmpty(); }
 
@@ -81,7 +77,6 @@ public:
 
         const QString objectname() const;
 
-//        const QRegion region() const; // probably not needed
         const QRectF boundingRect() const;
 
 signals:

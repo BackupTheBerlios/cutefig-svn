@@ -62,8 +62,7 @@ void TextAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
         TextObject* to = textObjectUnderPoint( point );
         
         if ( to ) {
-                selection_.select( 0 );
-                selection_.select( to );
+                selection_.select( to, Selection::Exclusive );
                 controler_->updateViews();
                 textObject_ = static_cast<TextObject*>( selection_.objects()[0] );
                 textObject_->setCursorToPoint( point );

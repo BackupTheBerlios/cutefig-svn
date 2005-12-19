@@ -31,17 +31,22 @@
 
 /** Unselects everything on receiving a null pointer. Otherwise the
  *  DrawObject o is added to the Selection if it is not yet in it. If
- *  it is it is unselected.
+ *  it is it is unselected. The SelectMode mode states whether the
+ *  prior selected objects are to be kept in the Selection.
  */
-bool Selection::select( DrawObject* o )
+bool Selection::select( DrawObject* o, SelectMode mode )
 {
         if ( !o ) {
                 if ( isEmpty() )
                         return false;
                 clear();
+                goto finish;
         }
+
+        if ( mode == Exclusive )
+                clear();
         
-        else if ( backups_.contains( o ) ) {
+        if ( backups_.contains( o ) ) {
                 objects_.removeAt( backups_.indexOf( o ) );
                 backups_.removeAll( o );
         } else {
@@ -49,17 +54,19 @@ bool Selection::select( DrawObject* o )
                 objects_.append( o->copy() );
         }
 
+ finish:
         emit selectionChanged();
         return true;
 }
 
 /** To be called if a new object is created, e.g by a CreateAction. In
- * this case the backups_ are empty because it doesn't make sense to
- * copy a DrawObject, that is not yet in the Figure.
+ *  this case the backups_ are empty because it doesn't make sense to
+ *  copy a DrawObject, that is not yet in the Figure. ClearMode mode
+ *  states whether backups are to be kept or not.
  */
-void Selection::setObjectToBeCreated( DrawObject* o, bool destructive )
+void Selection::setObjectToBeCreated( DrawObject* o, ClearMode mode )
 {
-        if ( destructive ) 
+        if ( mode == Destructive ) 
                 clear();
         else 
                 objects_.clear();        
@@ -70,12 +77,13 @@ void Selection::setObjectToBeCreated( DrawObject* o, bool destructive )
 }
 
 /** Similar to setObjectToBeCreated() but it takes a ObjectList. It's
- * useful if several DrawObjects are to be inserted at once, e.g. by a
- * PasteAction.
+ *  useful if several DrawObjects are to be inserted at once, e.g. by
+ *  a PasteAction. ClearMode mode states whether backups are to be
+ *  kept or not.
  */
-void Selection::setListToBeInserted( const ObjectList& l, bool destructive )
+void Selection::setListToBeInserted( const ObjectList& l, ClearMode mode )
 {
-        if ( destructive ) 
+        if ( mode == Destructive ) 
                 clear();
         else
                 objects_.clear();
@@ -86,11 +94,13 @@ void Selection::setListToBeInserted( const ObjectList& l, bool destructive )
 }
 
 /** Clears the selection. If destructive is true (default), the
- *  selected objects (not the backups) are really deleted.
+ *  selected objects (not the backups) are really deleted. ClearMode
+ *  mode states whether prior selected objects are to be destroyed or
+ *  not.
  */
-void Selection::clear( bool destructive )
+void Selection::clear( ClearMode mode )
 {
-        if ( destructive )
+        if ( mode == Destructive )
                 qDeleteAll( objects_ );
         backups_.clear();
         objects_.clear();
@@ -107,7 +117,7 @@ void Selection::restoreBackups()
 }
 
 /** Copies the backups_ to objects_. Useful after an InteractiveAction
- * is completed.
+ *  is completed.
  */
 void Selection::updateBackups()
 {
@@ -131,15 +141,6 @@ const QString Selection::objectname() const
         else
                 return "selection";
 }
-
-// const QRegion Selection::region() const
-// {
-//         QRegion r;
-//         foreach ( DrawObject* o, objects_ )
-//                 r |= o->region();
-
-//         return r;
-// }
 
 /** Returns the boundingRect of all objects.
  */

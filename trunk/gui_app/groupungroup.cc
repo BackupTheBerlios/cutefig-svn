@@ -39,7 +39,7 @@ GroupAction::GroupAction( Controler* parent )
 void GroupAction::handleSelection()
 {
         Compound* cpd = new Compound( selection_.objects(), controler_->figure() );
-        selection_.setObjectToBeCreated( cpd, false );
+        selection_.setObjectToBeCreated( cpd, Selection::Keeping );
         controler_->execAction( new ChangeCommand( selection_ ) );
         selection_.updateBackups();
 }
@@ -63,7 +63,7 @@ void UngroupAction::handleSelection()
         Compound* cpd = static_cast<Compound*>( selection_.objects()[0] );
 
         cpd->releaseChildren();
-        selection_.setListToBeInserted( cpd->childObjects(), false );
+        selection_.setListToBeInserted( cpd->childObjects(), Selection::Keeping );
         controler_->execAction( new ChangeCommand( selection_ ) );
         selection_.updateBackups();
 }
