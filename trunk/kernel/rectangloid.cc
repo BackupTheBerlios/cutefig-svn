@@ -67,8 +67,8 @@ void Rectangloid::setupRects()
         double hc = h_*c;
         double hs = h_*s;
         
-        double w = sqrt( wc*wc + hs*hs );
-        double h = sqrt( ws*ws + hc*hc );
+        double w = wc + hs;
+        double h = ws + hc;
 
         cRect_ = Geom::centerRect( center_, QSizeF( w,h ) );
         bRect_ = Geom::centerRect( center_, QSizeF( w+pen_.width(), h+pen_.width() ) );
