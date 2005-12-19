@@ -109,7 +109,7 @@ void DrawObject::draw( QPainter* p ) const
         pen_.strikePath( painterPath_, stroke_, p );
 }
 
-void DrawObject::drawTentative( QPainter *p ) const
+void DrawObject::drawTentative( QPainter *p, const QPen& ) const
 {
         p->drawPath( painterPath_ );
 }

@@ -36,7 +36,7 @@ Rectangloid::Rectangloid( Figure* parent )
 
 Rectangloid::Rectangloid( const Rectangloid* r )
         : DrawObject( r ),
-          angle_( r->angle()/rad ),
+          angle_( r->angle_ ),
           hasAngle_( false )
 {
 }
@@ -104,7 +104,6 @@ void Rectangloid::setupPainterPath()
 void Rectangloid::passPointFlag( Fig::PointFlag f )
 {
         hasAngle_ = hasAngle_ || f & Fig::Special1;
-        qDebug() << "passPointFlag" << hasAngle_;
         passPointFlag_private( f );
 }
 
@@ -125,12 +124,15 @@ void Rectangloid::setAngleNew( double a )
 }
 
 
-void Rectangloid::drawTentative( QPainter* p ) const
+void Rectangloid::drawTentative( QPainter* p, const QPen& auxpen ) const
 {
-        if ( hasAngle_ && !points_[1].isNull() )
+        if ( hasAngle_ && !points_[1].isNull() ) {
+                QPen op = p->pen();
+                p->setPen( auxpen );
                 p->drawLine( points_[0], points_[1] );
-        else
-                DrawObject::drawTentative( p );
+                p->setPen( op );
+        } else
+                DrawObject::drawTentative( p, auxpen );
 }
 
 void Rectangloid::calcAngle()

@@ -39,7 +39,7 @@ public:
         double angle() const { return angle_ * rad; }
         QPointF center() const { return center_; }
 
-        virtual void drawTentative( QPainter* p ) const;
+        virtual void drawTentative( QPainter* p, const QPen& auxpen ) const;
         
         void setAngleNew( double a );
 

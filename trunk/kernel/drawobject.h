@@ -107,7 +107,7 @@ public:
         virtual void draw( QPainter* p ) const;
         //!< supposed to draw the object to the QPainter p.
 
-        virtual void drawTentative( QPainter* p ) const;
+        virtual void drawTentative( QPainter* p, const QPen& auxPen ) const;
 
         bool pointSet( const QPointF & pos, Fig::PointFlag f = Fig::Normal ); 
         //!< sets the point just being edited and returns the next point.

@@ -80,10 +80,10 @@ void Compound::draw( QPainter* p ) const
                 o->draw( p );
 }
 
-void Compound::drawTentative( QPainter* p ) const
+void Compound::drawTentative( QPainter* p, const QPen& auxpen ) const
 {
         foreach ( DrawObject* o, childObjects_ )
-                o->drawTentative( p );
+                o->drawTentative( p, auxpen );
 }
 
 void Compound::move( const QPointF& d )

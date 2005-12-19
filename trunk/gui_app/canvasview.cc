@@ -324,10 +324,11 @@ void CanvasView::paintEvent( QPaintEvent * e )
         p.setMatrix( scaleMatrix_ );
         const ObjectList& l = controler_->selectedObjects();
 
-        if ( tentativeDraw_ )
+        if ( tentativeDraw_ ) {
+                QPen auxpen( Qt::red );
                 foreach ( DrawObject* o, l )
-                        o->drawTentative( &p );
-        else
+                        o->drawTentative( &p, auxpen );
+        } else
                 foreach ( DrawObject* o, l )
                         o->draw( &p );
 
