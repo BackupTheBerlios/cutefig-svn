@@ -44,7 +44,7 @@ public:
         enum Type { None=0, Linear, Radial };
 
         Gradient() : type_( None ) {}
-        Gradient( const Gradient& other );          
+//        Gradient( const Gradient& other );          
         Gradient( Type type, const QPointF& start, const QPointF& stop );
 
         ~Gradient() {}
@@ -69,9 +69,6 @@ public:
         QGradient* toQGradient( const QRectF& ) const;
         
 private:
-        void ensureRange( QPointF& point );
-        void ensureRange( qreal& val );
-
         Type type_;
 
         QPointF startPoint_, finalPoint_;
@@ -81,79 +78,10 @@ private:
 
 unsigned int qHash( const Gradient& grad );
 
-Q_DECLARE_METATYPE(Gradient);
+//Q_DECLARE_METATYPE(Gradient);
 
 #include <QDebug>
 QDebug operator<< ( QDebug, const Gradient& gr );
-
-        
-// class LinearGradient : public Gradient
-// {
-// public:
-//         LinearGradient( const QPointF& start, const QPointF& final )
-//                 : Gradient(), start_( start ), final_( final ) {}
-
-//         LinearGradient( const LinearGradient* other )
-//                 : Gradient( other ),
-//                   start_( other->start_ ),
-//                   final_( other->final_ ) {}
-
-//         ~LinearGradient() {}
-        
-//         virtual Gradient* copy() const { return new LinearGradient( this ); }
-        
-
-//         QPointF firstPoint() const { return start_; }
-//         QPointF secondPoint() const { return final_; }
-
-//         virtual QGradient* toQGradient( const QRectF& rect ) const;
-//         virtual Type type() const { return Linear; }
-        
-// private:
-//         QPointF start_, final_;
-
-//         virtual QPointF* first() { return &start_; }
-//         virtual QPointF* second() { return &final_; }
-// };
-
-// class RadialGradient : public Gradient
-// {
-// public:
-//         RadialGradient( const QPointF& center, const QPointF& focal, qreal radius )
-//                 : Gradient(), center_( center ), focal_( focal ), radius_( radius ) {}
-
-//         RadialGradient( const RadialGradient* other )
-//                 : Gradient( other ),
-//                   center_( other->center_ ),
-//                   focal_( other->focal_ ),
-//                   radius_( other->radius_ ) {}
-
-//         ~RadialGradient() {}
-        
-//         virtual Gradient* copy() const { return new RadialGradient( this ); }
-        
-//         void setCenterPoint( const QPointF& p );
-//         void setFocalPoint( const QPointF& p );
-//         void setRadius( qreal r );
-
-//         QPointF centerPoint() const { return center_; }
-//         QPointF focalPoint() const { return focal_; }
-
-//         QPointF firstPoint() const { return center_; }
-//         QPointF secondPoint() const { return focal_; }
-
-//         qreal radius() const { return radius_; }
-        
-//         virtual QGradient* toQGradient( const QRectF& rect ) const;
-//         virtual Type type() const { return Radial; }
-
-// private:
-//         QPointF center_, focal_;
-//         qreal radius_;
-
-//         virtual QPointF* first() { return &center_; }
-//         virtual QPointF* second() { return &focal_; }
-// };
 
 
 class GradientHandler

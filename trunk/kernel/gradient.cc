@@ -40,21 +40,27 @@ Gradient::Gradient( Type type, const QPointF& start, const QPointF& final )
 { 
 }
 
-Gradient::Gradient( const Gradient& other )
-        : type_( other.type_ ),
-          startPoint_( other.startPoint_ ),
-          finalPoint_( other.finalPoint_ ),
-          colorStops_( other.colorStops_ ),
-          radius_( other.radius_ ) 
-{
-}
+// Gradient::Gradient( const Gradient& other )
+//         : type_( other.type_ ),
+//           startPoint_( other.startPoint_ ),
+//           finalPoint_( other.finalPoint_ ),
+//           colorStops_( other.colorStops_ ),
+//           radius_( other.radius_ ) 
+// {
+// }
 
-void Gradient::ensureRange( qreal& val )
+void ensureRange( qreal& val )
 {
         if( val > 1. )
                 val = 1.;
         else if ( val < 0 )
                 val = 0;
+}
+
+void ensureRange( QPointF& point )
+{
+        ensureRange( point.rx() );
+        ensureRange( point.ry() );
 }
 
 
@@ -73,12 +79,6 @@ void Gradient::setFinalPoint( const QPointF& p )
 void Gradient::setColorAt( qreal pos, const QColor& c )
 {
         colorStops_ << qMakePair( pos, c );
-}
-
-void Gradient::ensureRange( QPointF& point )
-{
-        ensureRange( point.rx() );
-        ensureRange( point.ry() );
 }
 
 
