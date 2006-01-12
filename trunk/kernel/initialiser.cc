@@ -24,22 +24,25 @@
 
 #include "initialiser.h"
 #include "allobjects.h"
-#include "reslibinit.h"
 #include "resourceio.h"
 
 #include <QDebug>
 
-Initialiser::Initialiser()
+template<>
+void Initialiser::AutoHash<ObjectHandler>::init()
 {
-        ResLibInit::init();
-
         static TObjectHandler<Rectangle> rcf;
         static TObjectHandler<Ellipse> elf;
         static TObjectHandler<Polyline> plf;
         static TObjectHandler<Polygon> pgf;
         static TObjectHandler<TextObject> tgf;
+}
 
+template<>
+void Initialiser::AutoHash<ResourceIOFactory>::init()
+{
         static TResourceIOFactory<QColor> ciof;
         static TResourceIOFactory<Gradient> giof;
         static TResourceIOFactory<Dashes> diof;
 }
+

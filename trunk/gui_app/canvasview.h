@@ -62,14 +62,13 @@ public:
         void updateFigure( bool tentative = false );
         //!< Redraws the whole figure, o is the DrawObject just edited.
 
-        void setFixedSize( const QSize& s );
-        //!< resizes the Canvas and the QPixmap buffer to s. 
-
         Controler* controler() { return controler_; }
         CuteFig* mainWindow() { return mainWindow_; }
 
-        void setHRuler( Ruler* r ) { hRuler_ = r; }
-        void setVRuler( Ruler* r ) { vRuler_ = r; }
+        double paperWidth() const;
+        
+        void setHRuler( Ruler* r );
+        void setVRuler( Ruler* r ); 
 
 public slots:
         void zoomIn();   //!< Zooms in by 10% of the original size
@@ -77,6 +76,13 @@ public slots:
         void zoomOrig();
         void zoomFit();
         void setZoom( double z ); //!< sets the zoom to \param z * 100%.
+
+        void newSnapGrid();
+        void refineGrid();
+        void corsenGrid();
+
+        void setGridWidth( double gridWidth  ); //!< sets the width of the grid
+        void setSnapWidth( double snapWidth );  //!< sets the width of the snapgrid
 
 signals:
         void status( const QString& ); 
@@ -103,7 +109,11 @@ protected:
 
         virtual void paintEvent( QPaintEvent* e );
 
-private:        
+        virtual void enterEvent( QEvent* e );
+        virtual void leaveEvent( QEvent* e );
+        
+private:
+        void updateFigureImediately();
         void drawObjectsPoints( QPainter* p ); 
         //!< Draws the control points of all considerable objects 
 
@@ -112,10 +122,10 @@ private:
         void drawPaper( QPainter* p ); //!< draws the paper
         void drawGrid( QPainter* p );  //!< draws the snap grid
         QRect snapRect(); //!< emphesizes the point snaped to
-        void setGrid( double gridWidth  ); //!< sets the width of the grid
-        void setSnap( double snapWidth );  //!< sets the width of the snapgrid
 
         void setZoom_private( double z );
+
+        void doResizing();
 
         void calcGrid(); //!< calculates the snapgrid according to scale_
 
@@ -124,9 +134,9 @@ private:
 
         void handleReturnHit();
 
-        Ruler *hRuler_, *vRuler_;
-
         CuteFig* mainWindow_;
+
+        Ruler *hRuler_, *vRuler_;
 
         QMatrix scaleMatrix_, scaleMatrixInv_; //!< the scaling matrix
         qreal scale_, zoom_;   

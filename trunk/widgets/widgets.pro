@@ -12,6 +12,7 @@ include(../cutefig_base.pri)
 RESOURCES += widgets.qrc
 
 HEADERS = paintutils.h \
+          layouter.h \
           resourcebutton.h \
           colorbutton.h \
           fontbutton.h \
@@ -20,7 +21,7 @@ HEADERS = paintutils.h \
           gradientwidget.h \
           resourcedemo.h \
           flagbuttongroup.h \
-          stylecombobox.h \
+          resourcecombobox.h \
           strokewidget.h \
           penwidget.h \
           errorreporter.h \
@@ -36,13 +37,14 @@ HEADERS = paintutils.h \
 
 
 SOURCES = paintutils.cc \
+          layouter.cc \
           fontbutton.cc \
           resourceiconengine.cc \
           mouseeventhandler.cc \
           gradientwidget.cc \
           resourcedemo.cc \
           flagbuttongroup.cc \
-          stylecombobox.cc \
+          resourcecombobox.cc \
           strokewidget.cc \
           penwidget.cc \
           errorreporter.cc \

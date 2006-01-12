@@ -27,18 +27,10 @@
 
 #include "initialiser.h"
 
-class GUIInitialiser
+namespace Initialiser
 {
-public:
-        static void go()
-        {
-                static GUIInitialiser gi;
-        }
-
-private:
-        GUIInitialiser();
-        GUIInitialiser( const GUIInitialiser& ) {}
-};
+        void createGUIHandlers();
+}
 
 
 #endif

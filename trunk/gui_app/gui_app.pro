@@ -53,6 +53,7 @@ HEADERS += cutefig.h \
 #           colortableitem.h \
            lineshowwidget.h \
            ruler.h \
+           griddialog.h \
            objectdialog.h \
            ellipsedialog.h \
            textobjectdialog.h \
@@ -86,6 +87,7 @@ SOURCES += cutefig.cc \
 #           colortableitem.cc \
            lineshowwidget.cc \
            ruler.cc \
+           griddialog.cc \
            objectdialog.cc \
            ellipsedialog.cc \
            textobjectdialog.cc \

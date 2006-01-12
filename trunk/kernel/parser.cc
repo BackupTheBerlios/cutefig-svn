@@ -45,6 +45,7 @@
 
 #include <QTextStream>
 #include <QColor>
+#include <QCoreApplication>
 
 #include <sstream>
 #include <cctype>
@@ -54,10 +55,8 @@
 
 Dashes parseDashes( std::istringstream& is );
 
-Parser::Parser( QTextStream *ts, Figure *f, 
-                QObject * parent )
-        : QObject( parent ),
-          fileStream_( ts ),
+Parser::Parser( QTextStream *ts, Figure *f )
+        : fileStream_( ts ),
           line_( 0 ),
           figure_( f ),
           errorReport_( QString() )
@@ -352,11 +351,7 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
                 parseError( tr("Invalid pen.") );
 
         parseStroke( stroke );
-        if ( stream_.fail() )
-                qDebug() << "failed1";
         parseStroke( fill );
-        if ( stream_.fail() )
-                qDebug() << "failed2";
         
         if ( !( stream_ >> depth ) ) {
                 parseError( tr("Invalid depth, assuming 50") );
@@ -424,6 +419,11 @@ Dashes parseDashes( std::istringstream& is )
                         d.push_back( val );
         
         return d;
+}
+
+QString Parser::tr( const char* source )
+{
+        return QCoreApplication::translate("Parser", source );
 }
 
 const QString Parser::unknownItemType = tr("Ignoring unknown item %1");

@@ -59,7 +59,7 @@ template<class Resource> class ResourceButton : public AbstractResourceButton
 {
 public:
         ResourceButton( const ResourceKey& key, QWidget* parent = 0 );
-        ResourceButton( const Resource& resource, QWidget* parent = 0 );
+        ResourceButton( const Resource& resource = Resource(), QWidget* parent = 0 );
         
         ~ResourceButton() {}
 

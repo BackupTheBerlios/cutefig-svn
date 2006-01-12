@@ -22,40 +22,38 @@
 **
 ******************************************************************************/
 
-#ifndef stylecombobox_h
-#define stylecombobox_h
+#include "layouter.h"
 
-#include <QComboBox>
-#include <QPixmap>
+#include <QString>
+#include <QLayout>
+#include <QLabel>
 
-#include <QVector>
+Layouter::Layouter( QBoxLayout* layout )
+        : layout_( layout )
+{}
 
-#include "pen.h"
-#include "reslib.h"
-
-class StyleComboBox : public QComboBox
+Layouter& Layouter::labeledWidget( const QString& text, QWidget* widget )
 {
-        Q_OBJECT
-public:
-        StyleComboBox( QWidget * parent =0 );
-        ~StyleComboBox() { }
+        QLabel* label = new QLabel( text, widget->parentWidget() );
+        label->setBuddy( widget );
+        layout_->addWidget( label );
+        layout_->addWidget( widget );
 
-        void setCurrentIndex( const ResourceKey& key );
+        return *this;
+}
 
-signals:
-        void activatedDash( const ResourceKey& );
-        void highlightedDash( const ResourceKey& );
+Layouter& Layouter::stretch()
+{
+        layout_->addStretch();
+        return *this;
+}
 
-private:        
-        QPixmap drawItemQtPen( Qt::PenStyle ps );
-        QPixmap drawItemCustomPen( const ResourceKey& key );
+void Layouter::finishTo( QBoxLayout* target )
+{
+        target->addLayout( layout_ );
+}
 
-        QVector<ResourceKey> keyMap_;
-
-private slots:
-        void em_activated( int );
-        void em_highlighted( int );
-
-};
-
-#endif
+void Layouter::finishTo( QGridLayout* target, int row, int col )
+{
+        target->addLayout( layout_, row, col );
+}

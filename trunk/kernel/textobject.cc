@@ -170,6 +170,7 @@ void TextObject::setText( const QString& text )
         doc_.setHtml( text );
 }
 
+//! A helper function that returns HTML tags to get from oldFormat to newFormat.
 QString formatTags( const QTextCharFormat& oldFormat, const QTextCharFormat& newFormat )
 {
         QString tags;
@@ -204,7 +205,23 @@ QString formatTags( const QTextCharFormat& oldFormat, const QTextCharFormat& new
         return tags;
 }
 
-
+/*! We don't use QTextDocument::toHtml() as it's output is far to
+ *  complicated, i.e. it is a complete HTML-document including
+ *  <html><head></head><body></body></html> and stuff like that. It
+ *  uses even CSS for the fonts and stuff.
+ *
+ *  So we create our HTML snippet ourselfes.
+ *
+ *  Therefore we take the plain text and replace critical characters
+ *  by there entities first. Then we create a new QTextDocument on the
+ *  stack. We don't use #doc_ here as we then could not qualify the
+ *  method const and makeing #doc_ mutable would make me nervous.
+ *
+ *  We then use a QTextCursor to step through that temporary
+ *  QTextDocument and to keep track of format changes.
+ *
+ *  Finally we replace newlines by <br>.
+ */
 const QString TextObject::text() const
 {
         QString text = doc_.toPlainText();
@@ -212,17 +229,16 @@ const QString TextObject::text() const
         text.replace("<", "&lt;");
         text.replace(">", "&gt;");
 
-        QTextDocument d;
-        d.setHtml( doc_.toHtml() );
-        QTextCursor crs( &d );
-        QTextCharFormat currentFormat = crs.charFormat();
+        int oldPosition = cursor_.position();
+        cursor_.setPosition( 0 );
+        QTextCharFormat currentFormat = cursor_.charFormat();
         QTextCharFormat lastFormat;
 
         int pos = 0;
         
-        while ( !crs.atEnd() ) {
-                crs.movePosition(QTextCursor::NextCharacter);
-                currentFormat = crs.charFormat();
+        while ( !cursor_.atEnd() ) {
+                cursor_.movePosition(QTextCursor::NextCharacter);
+                currentFormat = cursor_.charFormat();
                 QString tags = formatTags( lastFormat, currentFormat );
                 if ( text[pos] == '&' )
                         while ( text[++pos] != ';');
@@ -232,10 +248,17 @@ const QString TextObject::text() const
                 lastFormat = currentFormat;
         }
 
+        cursor_.setPosition( oldPosition );
+
         text.append( formatTags( currentFormat, QTextCharFormat() ) );
 
         text.replace("\n", "<br>");
         return text;
+}
+
+bool TextObject::isEmpty() const
+{
+        return doc_.isEmpty();
 }
 
 void TextObject::insertByCursor( const QString& piece )
@@ -418,6 +441,11 @@ void TextObject::alignBottom()
         getReadyForDraw();
 }
 
+/*! Here the TextObject specific things are parsed. Note that only the
+ *  font family and the font size are taken. Other font attributes,
+ *  e.g bold, italic are encoded in HTML tags in the fontstring
+ *  itself.
+ */
 template<>
 DrawObject* TObjectHandler<TextObject>::parseObject( std::istream& is, Figure* fig )
 {
@@ -438,3 +466,4 @@ DrawObject* TObjectHandler<TextObject>::parseObject( std::istream& is, Figure* f
 
         return to;
 }
+

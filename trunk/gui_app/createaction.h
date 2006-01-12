@@ -82,8 +82,8 @@ TCreateAction<ObjectType>::TCreateAction( Controler* parent )
         : CreateAction( parent )
 {  
         cursor_ = Qt::UpArrowCursor;
-        setText( tr("Create %1").arg( DObjects::objectname<ObjectType>() ) );
-        setIcon( QIcon(":images/" + DObjects::objectKeyWord<ObjectType>() + ".png") );
+        setText( tr("Create %1").arg( ObjectType::cuteMetaObject().name() ) );
+        setIcon( QIcon(":images/" + ObjectType::cuteMetaObject().keyWord() + ".png") );
         init();
 }
 

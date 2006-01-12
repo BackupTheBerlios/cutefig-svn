@@ -23,7 +23,7 @@
 ******************************************************************************/
 
 #include "resourceiconengine.h"
-#include "stroke.h"
+#include "typedefs.h"
 #include "gradient.h"
 
 #include <QPainter>
@@ -57,19 +57,36 @@ void AbstractResourceIconEngine::paint( QPainter* p, const QRect& r,
                 paintForeground( p, r );
 }
 
-template<> void ResourceIconEngine<QColor>::paintForeground( QPainter* p, const QRect& r )
+template<>
+void ResourceIconEngine<QColor>::paintForeground( QPainter* p, const QRect& r )
 {
         p->fillRect( r, resource_ );
 }
 
-template<> void ResourceIconEngine<Gradient>::paintForeground( QPainter* p, const QRect& r )
+template<>
+void ResourceIconEngine<Gradient>::paintForeground( QPainter* p, const QRect& r )
 {
         QGradient* qg = resource_.toQGradient( r );
         if ( qg )
                 p->fillRect( r, *qg );
 }
 
-template<> void ResourceIconEngine<Stroke>::paintForeground( QPainter* p, const QRect& r )
+template<>
+void ResourceIconEngine<Dashes>::paintForeground( QPainter* p, const QRect& r )
 {
-        p->fillRect( r, resource_.brush( r ) );
+        p->fillRect( r, Qt::white );
+
+        QPen pen;
+        pen.setWidth( 2 );
+        pen.setDashPattern( resource_ );        
+        p->setPen( pen );
+
+        int h2 = r.height()/2;
+        
+        p->drawLine( 0,h2, r.width(), h2 );
+}
+
+void ResourceIconEngine<WhiteIcon>::paintForeground( QPainter* p, const QRect& r )
+{
+        p->fillRect( r, Qt::white );
 }

@@ -27,14 +27,12 @@
 
 #include "polyline.h"
 
-CUTE_DECLARE_DRAWOBJECT( Polygon, "polygon", "&Polygon" );
-
 class Polygon : public Polyline
 {
         Q_OBJECT
-        DRAW_OBJECT( Polygon );
+        DRAW_OBJECT( "polygon", "&Polygon" );
 public:
-        Polygon( Figure* parent =0 );
+        explicit Polygon( Figure* parent =0 );
         ~Polygon() { };
 
         Polygon( const Polygon* o );
@@ -46,20 +44,6 @@ private:
 
         virtual void outputToBackend( OutputBackend* ob );
         
-};
-
-// Factory
-
-#include "objecthandler.h"
-
-class PolygonFactory : public ObjectHandler
-{
-public:
-        PolygonFactory() : ObjectHandler("polygon") {}
-        virtual DrawObject* parseObject( std::istream&, Figure* fig ) 
-        {
-                return new Polygon( fig );
-        }
 };
 
 

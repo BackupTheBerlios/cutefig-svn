@@ -25,17 +25,34 @@
 #ifndef initialiser_h
 #define initialiser_h
 
-class Initialiser
+#include <QHash>
+#include <QString>
+
+namespace Initialiser
+{
+        template<typename T> class AutoHash;
+};
+
+template<typename T> class Initialiser::AutoHash
 {
 public:
-        static void go() 
+        AutoHash()
+                : hash_() 
         {
-                static Initialiser i;
+                init();
+        }
+        
+        T*& operator[]( const QString& keyword )
+        {
+                return hash_[keyword];
         }
 
 private:
-        Initialiser();
-        Initialiser( const Initialiser& ) {}
+        AutoHash( const AutoHash& );
+        
+        QHash<QString, T*> hash_;
+
+        void init();
 };
 
 

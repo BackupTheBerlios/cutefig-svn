@@ -49,6 +49,11 @@ protected:
 template<class Resource> class ResourceDialog : public EditDialog
 {
 public:
+//         ~ResourceDialog() 
+//         {
+//                 delete editor_;
+//         }
+        
         static int execute( Resource& editee, QWidget* parent = 0 ) 
         {
                 ResourceDialog<Resource> dlg( editee, parent );
@@ -78,7 +83,8 @@ protected:
         ResourceDialog<Resource>( Resource& editee, QWidget* parent = 0 )
                 : EditDialog( parent ),
                   editee_( editee ),
-                  oldData_( editee ) {}
+                  oldData_( editee )
+        {}
                   
         ~ResourceDialog<Resource>() {}
 

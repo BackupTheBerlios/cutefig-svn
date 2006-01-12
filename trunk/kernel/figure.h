@@ -26,14 +26,15 @@
 #ifndef figure_h
 #define figure_h
 
+#include "typedefs.h"
+#include "valuehash.h"
+
 #include <QList>
 #include <QObject>
-
-#include "typedefs.h"
+#include <QSizeF>
 
 class DrawObject;
 class OutputBackend;
-class Controler;
 
 class QPainter;
 
@@ -65,14 +66,19 @@ class Figure : public QObject
         Q_OBJECT
 
 public:
-        Figure( QObject * parent = 0 );
+        explicit Figure( QObject * parent = 0 );
         ~Figure() {};
 
         //! sets the controler_ to c
-        void setControler( Controler* c ) { controler_ = c; }
+        //void setControler( Controler* c ) { controler_ = c; }
 
+        QSizeF paperSize() const { return paperSize_; }      
         //! returns the scale_ of the Figure.
         double scale() const { return scale_; }
+
+        const Unit& unit() const { return unit_; }
+
+//        const Paper& paper() const { return paper_; }
 
         //! adds all the DrawObjects of the ObjectList l.
         void takeDrawObjects( const ObjectList& l );
@@ -122,7 +128,10 @@ private:
          *  the zoom, that is only used by a CanvasView.
          */
         double scale_;
+        Unit unit_;
 
-        Controler* controler_;
+        QSizeF paperSize_;
+
+//        Controler* controler_;
 };
 #endif

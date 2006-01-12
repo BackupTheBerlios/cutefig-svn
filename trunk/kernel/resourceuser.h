@@ -35,9 +35,9 @@
  *  QList<AbstractResourceUser> of all the Resources a Figure
  *  uses. Therefore DrawObject::resourceUsers() is used.
  *
- * Most of its functions are pure virtual and they are reimplemented
- * in ResourceUser. Except for ResourceUser, AbstractResourceUser is
- * not meant to be subclassed.
+ *  Most of its functions are pure virtual and they are reimplemented
+ *  in ResourceUser. Except for ResourceUser, AbstractResourceUser is
+ *  not meant to be subclassed.
  * 
  */
 class AbstractResourceUser
@@ -173,10 +173,10 @@ ResourceUser<Resource>::~ResourceUser()
  */
 template<typename Resource> const Resource& ResourceUser<Resource>::data() const
 {
-        if ( !key_.isValid() )
-                return data_;
-        else
+        if ( key_.isValid() )
                 return *p_data_;
+        else
+                return data_;
 }
 
 /** unassigns the Resource first.
@@ -198,7 +198,7 @@ void ResourceUser<Resource>::setResource( const ResourceKey& key )
 {
         const Resource* r = resLib_.assignResource( key, this );
 
-        if ( r ) {
+        if ( r || !key.isValid() ) {
                 unassignResource();
                 key_ = key;
                 p_data_ = r;

@@ -53,10 +53,4 @@ class ResourceKey;
 typedef QList<ResourceKey> ResourceKeyList;
 typedef QHash<QString,ResourceKeyList> ResourceSet;
 
-namespace DObjects
-{
-        template<typename DObjectType> const QString objectname();
-        template<typename DObjectType> const QString objectKeyWord();
-}
-
 #endif

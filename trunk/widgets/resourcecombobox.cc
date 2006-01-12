@@ -22,32 +22,38 @@
 **
 ******************************************************************************/
 
-#include "exportdialog.h"
+#include "resourcecombobox.h"
 
-#include <QPushButton>
-#include <QLayout>
+#include <QDebug>
 
-ExportDialog::ExportDialog( QWidget* parent )
-        : QDialog( parent ),
-          topLayout_( new QVBoxLayout( this ) )
+AbstractResourceComboBox::AbstractResourceComboBox( const ResourceKeyList keys, QWidget* parent )
+        : QComboBox( parent ),
+          keys_( keys )
 {
-        topLayout_->setSpacing( 6 );
+        connect( this, SIGNAL( activated(int) ), this, SLOT( mapActivate(int) ) );
+        connect( this, SIGNAL( highlighted(int) ), this, SLOT( mapHighlight(int) ) );
+}
+
+void AbstractResourceComboBox::mapActivate( int i )
+{
+        emit activated( keys_[i] );
+}
+
+void AbstractResourceComboBox::mapHighlight( int i )
+{
+        emit highlighted( keys_[i] );
+}
+
+void AbstractResourceComboBox::setCurrentIndex( const ResourceKey& key )
+{
+        QComboBox::setCurrentIndex( keys_.indexOf( key ) );
 }
 
 
-void ExportDialog::setupStandardButtons()
+template<>
+void ResourceComboBox<Dashes>::init() 
 {
-        QHBoxLayout* bottomLayout = new QHBoxLayout( topLayout_->widget() );
-        topLayout_->addItem( bottomLayout );
-
-        QPushButton* ok = new QPushButton( tr("Ok"), this );
-        ok->setAutoDefault( true );
-        connect( ok, SIGNAL( clicked() ), this, SLOT( accept() ) );
-        bottomLayout->addWidget( ok );
-
-        bottomLayout->addSpacing( 10 );
-        
-        QPushButton* cancel = new QPushButton( tr("Cancel"), this );
-        connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
-        bottomLayout->addWidget( cancel );    
+        setIconSize( QSize( iconSize().width()*3, iconSize().height() ) );
+        insertItem( 0, QIcon( new ResourceIconEngine<WhiteIcon>() ), QString() );
+        keys_.prepend( ResourceKey() );
 }

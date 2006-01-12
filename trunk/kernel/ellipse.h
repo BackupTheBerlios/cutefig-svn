@@ -31,15 +31,13 @@
 
 #include "rectangloid.h"
 
-CUTE_DECLARE_DRAWOBJECT( Ellipse, "ellipse", "&Ellipse" );
-        
 class Ellipse : public Rectangloid
 {
         Q_OBJECT
-        DRAW_OBJECT( Ellipse );
+        DRAW_OBJECT( "ellipse", "&Ellipse" );
         
 public:
-        Ellipse( Figure* parent=0 );
+        explicit Ellipse( Figure* parent=0 );
         Ellipse( const Ellipse *o );
         ~Ellipse() {}
 

@@ -26,7 +26,6 @@
 #define resourceiconengine_h
 
 #include <QIconEngine>
-#include <QDebug>
 
 class AbstractResourceIconEngine : public QIconEngine 
 {
@@ -56,5 +55,15 @@ protected:
 
         const Resource& resource_;
 };
+
+class WhiteIcon;
+
+template<>
+class ResourceIconEngine<WhiteIcon> : public AbstractResourceIconEngine
+{
+public:
+        void paintForeground( QPainter* p, const QRect& r );
+};
+
 
 #endif

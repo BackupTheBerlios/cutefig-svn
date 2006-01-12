@@ -49,6 +49,18 @@ Gradient::Gradient( Type type, const QPointF& start, const QPointF& final )
 // {
 // }
 
+// Gradient& Gradient::operator= ( const Gradient& other )
+// {
+//         type_ = other.type_;
+//         startPoint_ = other.startPoint_;
+//         finalPoint_ = other.finalPoint_;
+//         colorStops_ = other.colorStops_;
+//         radius_ = other.radius_;
+
+//         return *this;
+// }
+
+
 void ensureRange( qreal& val )
 {
         if( val > 1. )
@@ -123,33 +135,29 @@ unsigned int qHash( const Gradient& g )
 }
 
 
-// void RadialGradient::setCenterPoint( const QPointF& p )
-// {
-//         center_ = p;
-//         ensureRange( center_ );
-// }
+#include "reslib.h"
 
-// void RadialGradient::setFocalPoint( const QPointF& p )
-// {
-//         focal_ = p;
-//         ensureRange( focal_ );
-// }
-
-// void RadialGradient::setRadius( qreal r )
-// {
-//         radius_ = r;
-//         ensureRange( radius_ );
-// }
-
-// QGradient* RadialGradient::toQGradient( const QRectF& rect ) const
-// {
+template<>
+void ResLib<Gradient>::init()
+{
+        Gradient defaultGrad( Gradient::Linear, QPointF(0,0), QPointF(1,1) );
+        Gradient linGrad( Gradient::Linear, QPointF(0,0), QPointF(1,1) );
+        Gradient radGrad( Gradient::Radial, QPointF(.5,.5), QPointF(.75,.25) ) ;
+        radGrad.setRadius( .3 );
         
-//         gr->setStops( colorStops_ );
+        defaultGrad.setColorAt( 0, Qt::black );
+        defaultGrad.setColorAt( 1, Qt::white );
+        
+        linGrad.setColorAt( 0, Qt::red );
+        linGrad.setColorAt( 1, Qt::blue );
 
-//         return gr;
-// }
-
-
+        radGrad.setColorAt( 0, Qt::red );
+        radGrad.setColorAt( 1, Qt::blue );
+        
+        insertBuiltIn( "defaultGradient", defaultGrad );
+        insertBuiltIn( "linearBuiltIn",   linGrad );
+        insertBuiltIn( "radialBuiltIn",   radGrad );
+}
 
 
 QDebug operator<<(QDebug dbg, const Gradient& g)
@@ -167,4 +175,5 @@ QDebug operator<<(QDebug dbg, const Gradient& g)
 
         return dbg.space();
 }
+
 

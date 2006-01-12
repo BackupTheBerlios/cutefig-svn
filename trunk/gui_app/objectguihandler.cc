@@ -26,11 +26,20 @@
 #include "objecthandler.h"
 #include "drawobject.h"
 #include "actioncollection.h"
-
+#include "guiinit.h"
 
 #include <QDebug>
 
 QStringList ObjectGUIHandler::keyWords_;
+
+class ObjectGUIHandler::Initialiser
+{
+public:
+        Initialiser()
+        {
+                ::Initialiser::createGUIHandlers();
+        }
+};
 
 ObjectGUIHandler::ObjectGUIHandler( const QString& keyword )
 {
@@ -40,6 +49,8 @@ ObjectGUIHandler::ObjectGUIHandler( const QString& keyword )
 
 void ObjectGUIHandler::setupCreateActions( Controler* c, ActionCollection* ac )
 {
+        static Initialiser i;
+        
         foreach ( QString kw, keyWords_ ) {
                 ObjectGUIHandler* gh = ObjectHandler::guiHandler( kw );
                 if ( gh )
@@ -60,6 +71,7 @@ ObjectDialog* ObjectGUIHandler::editDialog( DrawObject* o, EditdialogAction* a, 
         
         return gh->makeEditDialog( o,a, parent );
 }
+
 
 
 

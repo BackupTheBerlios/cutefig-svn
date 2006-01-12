@@ -32,6 +32,7 @@
 #include "objectdialog.h"
 #include "progutils.h"
 #include "lineshowwidget.h"
+#include "layouter.h"
 #include "penwidget.h"
 #include "strokewidget.h"
 #include "editdialogaction.h"
@@ -61,7 +62,6 @@ void ObjectDialog::setUpGeneral()
         tabWidget->addTab( page, "&General" );
 
         QGridLayout* layout = new QGridLayout( page );
-//        ProgUtils::prepareLayout( topLayout, false );
     
         // final setup
 
@@ -74,28 +74,25 @@ void ObjectDialog::setUpGeneral()
         fillStroke = new StrokeWidget( tr("&Fill"), page );
         layout->addWidget( fillStroke, 1,0 );
         
-        QHBoxLayout* dlt = new QHBoxLayout();
-        layout->addItem( dlt, 2,0 );
         depth = new QSpinBox( page );
         depth->setMinimum(0);
         depth->setMaximum(999);
         depth->setSingleStep(1);
-        QLabel* dlb = new QLabel( tr("&Depth"), page );
-        dlb->setBuddy( depth );
-        dlt->addWidget( dlb );
-        dlt->addWidget( depth );
 
+        Layouter( new QHBoxLayout() )
+                .labeledWidget( tr("&Depth"), depth )
+                .finishTo( layout, 2,0 );
+        
+        
+        
         // Comment
 
-        QVBoxLayout* clt = new QVBoxLayout();
-        layout->addItem( clt, 2,1 );
         comment = new QTextEdit( page );
 //        comment->setTextFormat( Qt::PlainText );
         comment->setTabChangesFocus( true );
-        QLabel* clb = new QLabel( tr("&Comment"), page );
-        clb->setBuddy( comment );
-        clt->addWidget( clb );
-        clt->addWidget( comment );
+        Layouter( new QVBoxLayout() )
+                .labeledWidget( tr("&Comment"), comment )
+                .finishTo( layout,2,1 );        
 }
 
 

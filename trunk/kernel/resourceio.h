@@ -34,6 +34,11 @@
 #include <QTextStream>
 
 
+namespace Initialiser
+{
+        template<typename T> class AutoHash;
+}
+
 class ResourceIO;
 
 template<typename Resource> class ResLib;
@@ -75,11 +80,7 @@ public:
         virtual ~ResourceIOFactory() {}
         
 protected:
-        ResourceIOFactory( const QString& kw, AbstractResLib& rl )
-                : resLib_( &rl )
-        {
-                rIOFHash_[kw] = this;
-        }
+        ResourceIOFactory( const QString& kw, AbstractResLib& rl );
 
         virtual ResourceIO* newResourceIO() = 0;
 
@@ -89,7 +90,8 @@ private:
         AbstractResLib* resLibInstance() { return resLib_; }
 
         AbstractResLib* resLib_;
-        static QHash<QString,ResourceIOFactory*> rIOFHash_;        
+
+        static Initialiser::AutoHash<ResourceIOFactory> rIOFHash_;        
 };
 
 

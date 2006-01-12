@@ -48,5 +48,6 @@ EditDialog::EditDialog( QWidget* parent )
         bottomLayout->addWidget( ok );
         bottomLayout->addWidget( cancel );
 
+        dialogLayout_->setSpacing( 6 );
         dialogLayout_->insertLayout( 1, bottomLayout );
 }

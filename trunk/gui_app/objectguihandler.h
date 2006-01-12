@@ -50,6 +50,8 @@ protected:
 
 private:
         static QStringList keyWords_;
+
+        class Initialiser;
 };
 
 
@@ -58,7 +60,7 @@ class TObjectGUIHandler : public ObjectGUIHandler
 {
 public:
         TObjectGUIHandler<ObjectType>()
-                : ObjectGUIHandler( DObjects::objectKeyWord<ObjectType>() )
+                : ObjectGUIHandler( ObjectType::cuteMetaObject().keyWord() )
         {}
 
         CreateAction* makeCreateAction( Controler* c );

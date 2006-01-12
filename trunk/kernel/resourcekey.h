@@ -110,6 +110,7 @@
  * Widgets:
  *     - ResourceButton <T> -- a button that shows the resource data and
  *       invokes dialog to edit the resource data.
+ *     - ResourceComboBox <T> -- can be used to choose a resource of a ResLib
  *     - ResourceDemo <T> -- a widget that shows the resource data
  *     - ReslibEditor <T> -- edits the ResLib <T>
  *     - ResourceIconEngine <T> -- used to implement QIcons to show resource

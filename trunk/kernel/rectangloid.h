@@ -33,7 +33,7 @@ class Rectangloid : public DrawObject
 {
         Q_OBJECT
 public:
-        Rectangloid( Figure* parent = 0 );
+        explicit Rectangloid( Figure* parent = 0 );
         Rectangloid( const Rectangloid* r );
 
         double angle() const { return angle_ * rad; }

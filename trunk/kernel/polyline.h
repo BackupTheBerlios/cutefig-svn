@@ -27,14 +27,12 @@
 
 #include "drawobject.h"
 
-CUTE_DECLARE_DRAWOBJECT( Polyline, "polyline", "Poly&line" );
-
 class Polyline : public DrawObject
 {
         Q_OBJECT
-        DRAW_OBJECT( Polyline );
+        DRAW_OBJECT( "polyline", "Poly&line"  );
 public:
-        Polyline( Figure * parent =0 );
+        explicit Polyline( Figure * parent =0 );
         Polyline( const Polyline* o );
         ~Polyline() { };
 

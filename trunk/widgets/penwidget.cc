@@ -24,7 +24,7 @@
 
 #include "penwidget.h"
 #include "pen.h"
-#include "stylecombobox.h"
+#include "resourcecombobox.h"
 #include "flagbuttongroup.h"
 
 #include <QLayout>
@@ -46,7 +46,7 @@ PenWidget::PenWidget( const QString& title, QWidget* parent )
         lineLayout->addWidget( lwl, 0,0 );
         lineLayout->addWidget( lineWidth, 0,1 );       
    
-        lineDashes = new StyleComboBox( this );
+        lineDashes = new ResourceComboBox<Dashes>( this );
         QLabel* lsl = new QLabel( tr("&Style"), this );
         lsl->setBuddy( lineDashes );
         lineLayout->addWidget( lsl, 1,0 );
@@ -103,7 +103,7 @@ PenWidget::PenWidget( const QString& title, QWidget* parent )
         lineLayout->addWidget( joinGroup, 1,3 );
         
         connect( lineWidth, SIGNAL( valueChanged(double) ), this, SLOT( changeWidth(double) ) );
-        connect( lineDashes, SIGNAL( highlightedDash(const ResourceKey&) ),
+        connect( lineDashes, SIGNAL( highlighted(const ResourceKey&) ),
                  this, SLOT( changeDashes(const ResourceKey&) ) );
         connect( capStyle, SIGNAL( stateChanged(int) ), this, SLOT( changeCap(int) ) );
         connect( joinStyle, SIGNAL( stateChanged(int) ), this, SLOT( changeJoin(int) ) );

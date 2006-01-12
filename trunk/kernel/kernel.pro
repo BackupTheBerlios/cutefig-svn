@@ -9,6 +9,7 @@ CONFIG += staticlib
 # Input
 HEADERS += fig.h \
            typedefs.h \
+           valuehash.h \
            geometry.h \
            figure.h \
            drawobject.h \
@@ -27,7 +28,6 @@ HEADERS += fig.h \
            resourceuser.h \
            reslib.h \
            initialiser.h \
-           reslibinit.h \
            streamops.h \
            resourceio.h \
            parser.h \
@@ -36,6 +36,7 @@ HEADERS += fig.h \
 #           xfigoutput.h \
            progutils.h 
 SOURCES += figure.cc \
+           valuehash.cc \
            geometry.cc \
            drawobject.cc \
            compound.cc \
@@ -50,7 +51,6 @@ SOURCES += figure.cc \
            stroke.cc \
            gradient.cc \
            initialiser.cc \
-           reslibinit.cc \
            resourceio.cc \
            stdresio.cc \
            streamops.cc \

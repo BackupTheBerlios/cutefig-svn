@@ -23,10 +23,18 @@
 ******************************************************************************/
 
 #include "resourceio.h"
+#include "initialiser.h"
 
 //QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
 
-QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
+Initialiser::AutoHash<ResourceIOFactory> ResourceIOFactory::rIOFHash_;
+
+ResourceIOFactory::ResourceIOFactory( const QString& kw, AbstractResLib& rl )
+        : resLib_( &rl )
+{
+        rIOFHash_[kw] = this;
+}
+
 
 ResourceIO* ResourceIOFactory::getResourceIO( const QString& keyWord )
 {

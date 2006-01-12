@@ -34,7 +34,6 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QRadioButton>
-#include <QLabel>
 #include <QButtonGroup>
 
 EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,

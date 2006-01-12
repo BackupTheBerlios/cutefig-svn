@@ -53,6 +53,7 @@ public:
 private:
         void outputGenericData();
         void outputPoints();
+        void outputHeader();
         void outputResources();
 //         void outputDashes();
 //         void outputStrokes();

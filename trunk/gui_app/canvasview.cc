@@ -36,11 +36,12 @@
 #include "figure.h"
 #include "cutefig.h"
 #include "ruler.h"
-#include "addcommand.h"
-#include "deletecommand.h"
-#include "changecommand.h"
+//#include "addcommand.h"
+//#include "deletecommand.h"
+//#include "changecommand.h"
 #include "actions.h"
 #include "interactiveaction.h"
+#include "griddialog.h"
 
 /** \class CanvasView
  *
@@ -67,6 +68,9 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
         : QWidget( parent ),
           ViewBase( c, f ),
           mainWindow_( parent ),
+          scale_( 1 ),
+          hRuler_( 0 ),
+          vRuler_( 0 ),
           unit_( Fig::cm2pix ),
           buffer_( 1000,1000 ),
           oldRect_(),
@@ -74,7 +78,6 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
           snapped_( false ),
           tentativeDraw_( false )
 {
-        QSize size( 500, 500 );
         setFocusPolicy( Qt::StrongFocus );
         offset_ = QPoint( 0,0 );
         setAttribute( Qt::WA_NoBackground );
@@ -82,14 +85,11 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
         setAttribute( Qt::WA_KeyCompression );
         
         setMouseTracking( true );
-        setFixedSize( size );
+        doResizing();
+        setGridWidth( .5 );
+        setSnapWidth( 1.0 );
 
-        scale_ = 1.0;
-        setZoom_private( 3.0 );
-        setGrid( 1.0 );
-        setSnap( 1.0 );
-
-        updateFigure();
+//        updateFigure();
 }
 
 void CanvasView::mouseDoubleClickEvent( QMouseEvent* e )
@@ -139,16 +139,18 @@ void CanvasView::mouseReleaseEvent( QMouseEvent* e )
 void CanvasView::mouseMoveEvent( QMouseEvent* e )
 {
         QPoint p = e->pos();
-        hRuler_->setValue( p.x() );
-        vRuler_->setValue( p.y() );
+        if ( hRuler_ )
+                hRuler_->setValue( p.x() );
+        if ( vRuler_ )
+                vRuler_->setValue( p.y() );
 
+        QPointF pf( QPointF( p ) * scaleMatrixInv_ );
+        
         QString s;
         QTextStream st( &s );
         st.setRealNumberPrecision( 2 );
         st.setRealNumberNotation( QTextStream::FixedNotation );
-        st << Fig::pix2cm*p.x()/scale_ << " : " << Fig::pix2cm*p.y()/scale_
-           << "  -  "
-           << p.x() << " : " << p.y();
+        st << pf.x()/unit_ << " : " << pf.y()/unit_ << "  -  " << p.x() << " : " << p.y();
         mainWindow_->statusBar()->showMessage( s );
 
         if ( controler_->wouldAcceptClick( p, &scaleMatrixInv_ ) ) {
@@ -232,6 +234,11 @@ bool CanvasView::event( QEvent* e )
                         ke->accept();
         }
 
+        if ( e->type() == QEvent::User ) {
+                updateFigureImediately();
+                return true;
+        }
+
         return QWidget::event( e );
 }
 
@@ -241,6 +248,22 @@ void CanvasView::inputMethodEvent( QInputMethodEvent* e )
                 e->accept();
         else
                 e->ignore();
+}
+
+void CanvasView::enterEvent( QEvent* )
+{
+        if ( hRuler_ )
+                hRuler_->setIndicating( true );
+        if ( vRuler_ )
+                vRuler_->setIndicating( true );
+}
+
+void CanvasView::leaveEvent( QEvent* )
+{
+        if ( hRuler_ )
+                hRuler_->setIndicating( false );
+        if ( vRuler_ )
+                vRuler_->setIndicating( false );
 }
 
 QVariant CanvasView::inputMethodQuery( Qt::InputMethodQuery q )
@@ -285,26 +308,30 @@ void CanvasView::drawSelection( QPainter* p )
         }
 }
 
+void CanvasView::updateFigure( bool tentative )
+{
+        tentativeDraw_ = tentative;
+        QApplication::postEvent( this, new QEvent( QEvent::User ) );
+}
+
 // redraws the whole figure
 //
-void CanvasView::updateFigure( bool tentative )
+void CanvasView::updateFigureImediately()
 {        
-        if ( !tentative ) {
+        if ( !tentativeDraw_ ) {
                 QPainter p;
                 p.begin( &buffer_ );
                 drawPaper( &p );
-                p.setRenderHint( QPainter::Antialiasing, true );
                 drawGrid( &p );
+                p.setRenderHint( QPainter::Antialiasing, true );
                 p.setMatrix( scaleMatrix_ );
                 figure_->drawElements( &p, controler_->backups() );
                 p.end();
         }
 
-        tentativeDraw_ = tentative;
-
         if ( !controler_->selectedObjects().isEmpty() ) {
                 QRect r = scaleMatrix_.mapRect( controler_->selection().boundingRect().toRect() );
-                repaint();// r | oldRect_ );
+                update();// r | oldRect_ );
                 oldRect_ = r;
         }
         else {
@@ -374,12 +401,15 @@ inline void CanvasView::drawPaper( QPainter* p )
 //
 inline void CanvasView::drawGrid( QPainter* p )
 {
-        if ( !gridScaled_ )
+        if ( gridScaled_ < 0 )
                 return;
 
-        for ( qreal x=0; x<buffer_.width(); x+=gridScaled_ )
-                for ( qreal y=0; y<buffer_.height(); y+=gridScaled_ )
-                        p->drawPoint( QPointF( x, y ) );
+        p->setPen( QPen( Qt::lightGray , 1, Qt::DotLine ) );
+        
+        for ( double x = 0; x < buffer_.width(); x += gridScaled_ )
+                p->drawLine( QPointF(x,0), QPointF(x,buffer_.height()) );
+        for ( double y = 0; y < buffer_.height(); y += gridScaled_ )
+                p->drawLine( QPointF(0,y), QPointF(buffer_.width(),y) );
 }
 
 // emphasises the point the mouse position has been snapped to
@@ -427,7 +457,33 @@ void CanvasView::zoomOrig()
 void CanvasView::setZoom( double z )
 {
         setZoom_private( z );
-        updateFigure();
+}
+
+void CanvasView::newSnapGrid()
+{
+        double ogw = gridWidth_;
+        double osw = snapWidth_;
+        
+        GridDialog dlg( gridWidth_, snapWidth_, this );
+        if ( dlg.exec() == QDialog::Rejected ) {
+                gridWidth_ = ogw;
+                snapWidth_ = osw;
+                calcGrid();        
+        }
+}
+
+void CanvasView::refineGrid()
+{
+        gridWidth_ -= 0.5;
+        snapWidth_ -= 0.5;
+        calcGrid();
+}
+
+void CanvasView::corsenGrid()
+{
+        gridWidth_ += 0.5;
+        snapWidth_ += 0.5;
+        calcGrid();
 }
 
 void CanvasView::setZoom_private( double z )
@@ -436,41 +492,71 @@ void CanvasView::setZoom_private( double z )
         double scaleRatio = 1/scale_;
         scale_ = zoom_ * figure_->scale();
         scaleRatio *= scale_;
-        setFixedSize( size() * scaleRatio );
+        doResizing();
         scaleMatrix_.scale( scaleRatio, scaleRatio );
         scaleMatrixInv_ = scaleMatrix_.inverted();
         calcGrid();
-        emit( scaleChanged( scale_ ) );
+        emit scaleChanged( scale_ );
+
+        if ( hRuler_ )
+                hRuler_->setScale( scale_ );
+        if ( vRuler_ )
+                vRuler_->setScale( scale_ );
 }
 
-void CanvasView::setFixedSize( const QSize &s )
+void CanvasView::doResizing()
 {
+        QSize s = ( figure_->paperSize() * scale_ * unit_ ).toSize();
         buffer_ = QPixmap( s );
         buffer_.fill( Qt::white );
-        resize( s );
+        
+        if ( hRuler_ )
+                hRuler_->setLength( s.width() );
+        if ( vRuler_ )
+                vRuler_->setLength( s.height() );
+        resize( s );    
 }
 
-void CanvasView::setGrid( double gridWidth )
+double CanvasView::paperWidth() const
 {
-        gridWidth_ = unit_ * gridWidth;
+        return figure_->paperSize().width() * scale_;
+}
+
+void CanvasView::setHRuler( Ruler* r )
+{
+        hRuler_ = r;
+        r->setLength( width() );
+}
+
+void CanvasView::setVRuler( Ruler* r )
+{
+        vRuler_ = r;
+        r->setLength( height() );
+}
+
+void CanvasView::setGridWidth( double gridWidth )
+{
+        gridWidth_ = gridWidth;
         calcGrid();
 }
 
-void CanvasView::setSnap( double snapWidth )
+void CanvasView::setSnapWidth( double snapWidth )
 {
-        snapWidth_ = unit_ * snapWidth;
+        snapWidth_ = snapWidth;
         calcGrid();
 }
 
 void CanvasView::calcGrid()
 {
-        gridScaled_ = gridWidth_ * zoom_;
+        gridScaled_ = gridWidth_ * unit_ * zoom_;
         if ( gridScaled_ < 5 )
                 gridScaled_ = -1.0;
 
-        snapScaled_ = snapWidth_ * zoom_;
+        snapScaled_ = snapWidth_ * unit_ * zoom_;
         if ( snapScaled_ < 5 )
                 snapScaled_ = -1.0;
+
+        updateFigure();
 }
 
 // snaps a point to the snapgrid (parameter will be modified)
@@ -479,7 +565,7 @@ bool CanvasView::snap( QPoint & p )
 {
         if ( ! ( snapScaled_ && controler_->actionWantsSnap( p, &scaleMatrixInv_ ) ) ) {
                 if ( snapped_ )
-                        repaint();
+                        update();
                 snapped_ = false;
                 return true;
         }
@@ -494,7 +580,7 @@ bool CanvasView::snap( QPoint & p )
         if ( snapped ) {
                 oldSnapPoint_ = snapPoint_;
                 snapped_ = true;
-                repaint();
+                update();
         }
 
         return snapped;
@@ -517,3 +603,5 @@ Fig::PointFlag calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
 
         return pf;
 }
+
+

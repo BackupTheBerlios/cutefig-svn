@@ -60,7 +60,6 @@ Controler::Controler( QMainWindow * parent )
 void Controler::setFigure( Figure* f )
 {
         figure_ = f;
-        f->setControler( this );
         clearCommandList();
 }
 

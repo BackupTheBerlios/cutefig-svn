@@ -88,7 +88,8 @@ bool TextAction::keyStroke( const QKeyEvent* ke )
                 return false;
         
         if ( ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return ) {
-                commitTextObject();
+                if ( !textObject_->isEmpty() )
+                        commitTextObject();
                 return true;
         }
  

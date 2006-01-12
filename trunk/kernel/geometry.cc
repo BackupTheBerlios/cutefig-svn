@@ -36,8 +36,23 @@ qreal Geom::distance( const QPointF& p1, const QPointF& p2 )
 }
 
 /*! Basically needed to show the scaling handles to the user. The
- *  points returned are the four corner points and the four points in the
- *  middle of the edge lines of the rectangle r if the edge line is non zero.
+ *  points returned are the four corner points and the four points in
+ *  the middle of the edge lines of the rectangle r if the edge line
+ *  is non zero. The points are filled up in the following way:
+ *    - top left
+ *    - bottom right
+ *    - top right
+ *    - bottom left
+ *    - left middle
+ *    - right middle
+ *    - top middle
+ *    - bottom middle
+ *
+ *  In case the rectangle is a line (width() * height() == 0) the
+ *  latter four are filled up with QPoint().
+ *
+ *  This behaviour is documented here in such detail, as it is
+ *  mandatory to keep it that way as long as clients rely on it.
  */
 QVector<QPointF> Geom::boundingPoints( const QRectF& r )
 {
@@ -86,7 +101,9 @@ QRect Geom::centerRect( const QPoint& center, const QSize& size )
         return r;
 }
 
-
+/*!
+ * \overload QRect Geom::centerRect( const QPoint& center, const QSize& size )
+ */
 QRectF Geom::centerRect( const QPointF& center, const QSizeF& size )
 {
         QRectF r;

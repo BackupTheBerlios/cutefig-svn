@@ -303,6 +303,21 @@ ViewActions::ViewActions( CanvasView* parent )
         setZoom->setMenu( zoomMenu_ );
         specialWidgets_[setZoom] = zoomComboBox_;
         addAction( setZoom );
+
+        QAction* gridDialog = new QAction( tr("Snap / &Grid"), this );
+        gridDialog->setShortcut( Qt::CTRL+Qt::Key_G );
+        connect( gridDialog, SIGNAL( triggered() ), parent, SLOT( newSnapGrid() ) );
+        addAction( gridDialog );
+
+        QAction* refineGrid = new QAction( tr("Re&fine grid"), this );
+        refineGrid->setShortcut( Qt::CTRL+Qt::Key_Minus );
+        connect( refineGrid, SIGNAL( triggered() ), parent, SLOT( refineGrid() ) );
+        addAction( refineGrid );
+        
+        QAction* corsenGrid = new QAction( tr("&Corsen grid" ), this );
+        corsenGrid->setShortcut( Qt::CTRL+Qt::Key_Plus );
+        connect( corsenGrid, SIGNAL( triggered() ), parent, SLOT( corsenGrid() ) );
+        addAction( corsenGrid );
 }
 
 void ViewActions::setupZoomMenu()

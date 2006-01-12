@@ -37,21 +37,41 @@
 #include <QPixmap>
 #include <QList>
 
-CUTE_DECLARE_DRAWOBJECT( TextObject, "text", "&Text" );
-
+//! The DrawObject representing text elements.
+/*! A TextObject can also contain some rich text elements that are
+ *  defined by HTML code. The TextObject class does not only define
+ *  the TextObject itself but also an interface to manipiulate its
+ *  contents. It therefore uses the QTextCursor infrastructure of Qt.
+ *
+ *  The textmanupulating stuff will eventually be packed into a
+ *  different class... probably... maybe... erm... don't know.
+ *
+ *  The text rendering is done by Qt's rich text rendering facilities,
+ *  i.e. QTextDocument, QTextLayout and friends. This is the reason
+ *  why only font familie and font size of the font behind font() and
+ *  setFont() are relevant.
+ */
 class TextObject : public DrawObject
 {
         Q_OBJECT
-        DRAW_OBJECT( TextObject );
+        DRAW_OBJECT( "text", "&Text" );
 public:
-        TextObject( Figure* parent = 0 );
+        explicit TextObject( Figure* parent = 0 );
         TextObject( const TextObject* o );
         ~TextObject();
 
+        //! it is handy to make the parsing function friend.
         friend DrawObject* TObjectHandler<TextObject>::parseObject( std::istream&, Figure* fig );
-        
+
+        //! returns the font of the TextObject.
+        /*! Note that only font family and size are relevant, as the
+         *  rest is handled by the richt text facilities of Qt.
+         */
         const QFont& font() const { return font_; }
 
+        //! Only one point is necessary to determine the position of the TextObject.
+        /*! The rest is determined by its size and #alignment_.
+         */
         virtual uint minPoints() const { return 1; }
         
         virtual void draw( QPainter* p ) const;
@@ -61,6 +81,7 @@ public:
         
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
+        //! sets the contents, which is supposed to be a HTML snippet.
         void setText( const QString& text );
         
         void alignHCenter();
@@ -104,7 +125,9 @@ public:
         void toggleCursor();
         void hideCursor() { cursorVisible_ = false; }
 
+        //! returns the contents of the TextObject as a HTML snippet.
         const QString text() const;
+        bool isEmpty() const;
 
         const QTextCharFormat& charFormat() const { return charFormat_; }
         
@@ -127,7 +150,7 @@ private:
         void trackCharFormat();
         
         QTextDocument doc_;
-        QTextCursor cursor_;
+        mutable QTextCursor cursor_;
         QTextCharFormat charFormat_;
         QPixmap dummyPaintDevice_;
         QTextLayout* textLayout_;

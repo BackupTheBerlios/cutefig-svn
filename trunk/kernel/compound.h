@@ -30,8 +30,6 @@
 
 #include <QList>
 
-CUTE_DECLARE_DRAWOBJECT( Compound, "group", "" );
-
 /** \class Compound
  * 
  *  \brief Implements a Compound object for Group/Ungroup
@@ -41,7 +39,7 @@ CUTE_DECLARE_DRAWOBJECT( Compound, "group", "" );
 class Compound : public DrawObject
 {
         Q_OBJECT
-        DRAW_OBJECT( Compound )
+        DRAW_OBJECT( "group", "" )
 public:
         Compound( const ObjectList& l, Figure* parent );
         Compound( const Compound* c );

@@ -23,14 +23,11 @@
 ******************************************************************************/
 
 #include "guiinit.h"
-#include "initialiser.h"
 #include "objectguihandler.h"
 #include "allobjects.h"
 
-GUIInitialiser::GUIInitialiser()
+void Initialiser::createGUIHandlers()
 {
-        Initialiser::go();
-        
         static TObjectGUIHandler<Rectangle> rgh;
         static TObjectGUIHandler<Ellipse> egh;
         static TObjectGUIHandler<Polyline> pgh;

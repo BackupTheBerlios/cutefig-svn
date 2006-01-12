@@ -49,6 +49,8 @@ namespace Fig
                 Special1  = 0x0010, 
                 Special2  = 0x0020
         }; //!< Flags that can be passed to a DrawObject being edited.
+
+        const double version = 0.1;
 };
 
 namespace Msgs

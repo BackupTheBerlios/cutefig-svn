@@ -22,34 +22,27 @@
 **
 ******************************************************************************/
 
-#ifndef reslibinit_h
-#define reslibinit_h
+#ifndef griddialog_h
+#define griddialog_h
 
-#include "resourcekey.h"
+#include <QDialog>
 
-template<class Resource> class ResLib;
+class CanvasView;
 
-class ResLibInit
+class GridDialog : public QDialog
 {
+        Q_OBJECT
 public:
-        static void init() 
-        {
-                static ResLibInit r;
-        }
+        GridDialog( double gridWidth, double snapWidth, CanvasView* parent = 0 );
 
-private:
-        ResLibInit();
-        ResLibInit( const ResLibInit& ) {}
-        void initDashes();
-        void initGradients();
-        
-        template<class Resource>
-        void insert( ResLib<Resource>& rlib, const QString& key, const Resource& res )
-        {
-                ResourceKey rk( key, ResourceKey::BuiltIn );
-                rlib.insertBuiltIn( rk, res );
-        }
+//         double getGridWidth() const;
+//         double getSnapWidth() const;
+
+// signals:
+//         void gridWidthChanged( double );
+//         void snapWidthChanged( double );
         
 };
+
 
 #endif

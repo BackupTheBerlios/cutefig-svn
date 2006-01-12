@@ -30,12 +30,21 @@
 
 class QMatrix;
 
+//! Scales a DrawObject
+/*! In order to do the scaling the following things have to be implemented:
+ *     - decision whether the cursor is on a "scale handle" and which
+ *     - handle the mouse movement, during scaling
+ *     - do the actual scaling
+ *
+ *  According to the scale handle hit, we decide which kind of scaling
+ *  is to be done. This decision is cached by having a pointer to a
+ *  memberfunction put on the appropriate function.
+ */
 class ScaleAction : public InteractiveAction
 {
         Q_OBJECT
 public:
         ScaleAction( Controler* parent );
-        ~ScaleAction() {}
 
         virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
         virtual void move( const QPoint& p, const QMatrix* m );
@@ -48,6 +57,7 @@ public:
         virtual const QString commandName() const { return "scale"; }
 
 private:
+        //! Finds the 
         bool findOpposite( const QPoint& p, const QMatrix* m, DrawObject* o = 0 );
         bool pointHit( const QPointF& p1, const QPointF& p2 , const QMatrix* m );
         bool calcScaleMatrix( const QPoint& p, QMatrix& m );
@@ -59,15 +69,7 @@ private:
         void scaleValuesVer( const QPoint& p, qreal& x, qreal& y );
         void scaleValuesDiag( const QPoint& p, qreal& x, qreal& y );
 
-        // typedef bool (ScaleAction::*doScaleFptr_t)( const QPointF&p, QMatrix& m );
-//         doScaleFptr_t doScaleFptr;
-
-
-
-//         bool doScaleHor( const QPointF& p, QMatrix& m );
-//         bool doScaleVer( const QPointF& p, QMatrix& m );
-//         bool doScaleDiag( const QPointF& p, QMatrix& m );
-
+        
         QPointF opposite_, diff_;
         qreal aspectRatio_;
         QPoint last_, lastUncorr_;

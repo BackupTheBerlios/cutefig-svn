@@ -23,8 +23,15 @@
 ******************************************************************************/
 
 #include "objecthandler.h"
+#include "initialiser.h"
 
-QHash<QString, ObjectHandler*> ObjectHandler::ohHash_;
+
+Initialiser::AutoHash<ObjectHandler> ObjectHandler::ohHash_;
+
+ObjectHandler::ObjectHandler( const QString& kw )
+{
+        ohHash_[kw] = this;
+}
 
 DrawObject* ObjectHandler::getDrawObject( const QString& keyWord, std::istream& is, Figure* fig )
 {
@@ -52,3 +59,4 @@ ObjectGUIHandler* ObjectHandler::guiHandler( const QString& keyWord )
 
         return h ? h->guiHandler_ : 0;
 }
+

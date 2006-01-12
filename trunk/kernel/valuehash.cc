@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -22,27 +22,24 @@
 **
 ******************************************************************************/
 
-#ifndef rectangle_h
-#define rectangle_h
+#include "valuehash.h"
+#include "fig.h"
 
-#include "rectangloid.h"
-
-class Rectangle : public Rectangloid
+template<>
+const QString ValueHash<double>::defaultName()
 {
-        Q_OBJECT
-        DRAW_OBJECT( "rectangle", "&Rectangle" );
-public:
-        explicit Rectangle( Figure* parent = 0 );
-        Rectangle( const Rectangle* r );
+        return "inch";
+}
 
-        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
+template<>
+const double ValueHash<double>::defaultValue()
+{
+        return Fig::inch2pix;
+}
 
-        virtual void outputToBackend( OutputBackend* ob );
-
-private:
-        virtual void passPointFlag_private( Fig::PointFlag ) {}
-        virtual void setupWidthAndHeight();
-        virtual void addPath();
-};
-
-#endif
+template<>
+void fillHash<double>( QHash<QString,double>& h )
+{
+        h["inch"] = Fig::inch2pix;
+        h["cm"]   = Fig::cm2pix;
+}

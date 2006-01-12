@@ -44,7 +44,8 @@ ScaleAction::ScaleAction( Controler* parent )
         reset();
 }
 
-
+/*!
+ */
 void ScaleAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
 {
         if ( notStarted_ ) {
@@ -181,7 +182,7 @@ bool ScaleAction::findOpposite( const QPoint& p, const QMatrix* m, DrawObject* o
 
 bool ScaleAction::pointHit( const QPointF& p1, const QPointF& p2, const QMatrix* m )
 {
-        return ( Geom::distance( p1, p2 * m->inverted() ) < 5 );
+        return Geom::isNear( p1, p2 * m->inverted() );
 }
 
 bool ScaleAction::wouldHandle( DrawObject* o, const QPoint& p, const QMatrix* m )

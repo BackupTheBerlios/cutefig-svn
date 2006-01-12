@@ -162,3 +162,11 @@ void CfigOutput::outputResources()
                         rIO->outputResource( key, fileStream_ );
         }
 }
+
+void CfigOutput::outputHeader()
+{
+//         fileStream_ << "CuteFig version " << Fig::version << "\n"
+//                     << "unit      " << figure_.unit().unitname() << "\n"
+//                     << "scale     " << figure_.scale() << "\n"
+//                     << "papersize " << 
+}

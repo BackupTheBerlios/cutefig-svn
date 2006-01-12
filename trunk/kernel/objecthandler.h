@@ -36,6 +36,12 @@ class DrawObject;
 class Figure;
 class ObjectGUIHandler;
 
+namespace Initialiser
+{
+        template<typename T> class AutoHash;
+}
+
+
 //! Constructs a DrawObject described by a keyword
 /*! 
  */
@@ -49,10 +55,7 @@ public:
         static void registerGUIHandler( const QString& keyword, ObjectGUIHandler* );
         
 protected:
-        ObjectHandler( const QString& kw )
-        {
-                ohHash_[kw] = this;
-        }
+        ObjectHandler( const QString& kw );
 
         ObjectGUIHandler* guiHandler_;        
 
@@ -61,7 +64,7 @@ protected:
 private:
         ObjectHandler( const ObjectHandler& ) {}
 
-        static QHash<QString, ObjectHandler*> ohHash_;
+        static Initialiser::AutoHash<ObjectHandler> ohHash_;
 };
 
 template<typename ObjectType>
@@ -69,7 +72,7 @@ class TObjectHandler : public ObjectHandler
 {
 public:
         TObjectHandler<ObjectType>()
-                : ObjectHandler( DObjects::objectKeyWord<ObjectType>() )
+                : ObjectHandler( ObjectType::cuteMetaObject().keyWord() )
         {}
 
         virtual DrawObject* parseObject( std::istream&, Figure* fig ) 
@@ -78,6 +81,7 @@ public:
         }
         
 };
+
 
 
 #endif

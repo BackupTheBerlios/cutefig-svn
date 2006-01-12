@@ -47,6 +47,9 @@ public:
 //        Gradient( const Gradient& other );          
         Gradient( Type type, const QPointF& start, const QPointF& stop );
 
+//         Gradient( const Gradient& other );
+//         Gradient& operator= ( const Gradient& other );
+
         ~Gradient() {}
         
         QGradientStops& colorStops() { return colorStops_; }
@@ -69,6 +72,7 @@ public:
         QGradient* toQGradient( const QRectF& ) const;
         
 private:
+        
         Type type_;
 
         QPointF startPoint_, finalPoint_;

@@ -41,7 +41,7 @@ Pen::Pen()
           joinStyle_( Qt::MiterJoin ),
           dashes_( new ResourceUser<Dashes>() )
 {
-        setDashes( ResourceKey( "S", ResourceKey::BuiltIn ) );
+        setDashes( ResourceKey::builtIn("S") );
 }
 
 Pen::Pen( const Pen& p ) 
@@ -79,15 +79,14 @@ void Pen::setDashes( const ResourceKey& key )
 }
 
 void Pen::strikePath( const QPainterPath& path, const Stroke& stroke, QPainter* painter ) const
-{
+{       
         if ( !dashes_->key().isValid() )
                 return;
 
         if ( dashes_->data().isEmpty() ) {
                 QPen pen( stroke.brush( path ), lineWidth_, Qt::SolidLine, capStyle_, joinStyle_ );
                 painter->strokePath( path, pen );
-        }
-        else {
+        } else {
                 QPainterPath strokePath;
                 setupPainterPath( strokePath, path );
                 stroke.fillPath( strokePath, painter );
@@ -121,4 +120,21 @@ int qHash( const Dashes& dashes )
         ds << dashes;
 
         return qHash( data );
+}
+
+
+#include "parser.h"
+
+template<>
+void ResLib<Dashes>::init()
+{
+        insertBuiltIn( "S",               QVector<double>() );
+        insertBuiltIn( "Dot",             Parser::parseDashLine("1 3") );
+        insertBuiltIn( "Dash",            Parser::parseDashLine("3 3") );
+        insertBuiltIn( "DashDot",         Parser::parseDashLine("3 3 1 3") );
+        insertBuiltIn( "DashDotDot",      Parser::parseDashLine("3 3 1 3 1 3") );
+        insertBuiltIn( "DashDotDotDot",   Parser::parseDashLine("3 3 1 3 1 3 1 3") );
+        insertBuiltIn( "DashDashDot",     Parser::parseDashLine("3 3 3 3 1 3") );
+        insertBuiltIn( "DashDashDashDot", Parser::parseDashLine("3 3 3 3 3 3 1 3") );
+        insertBuiltIn( "DashDashDotDot",  Parser::parseDashLine("3 3 3 3 1 3 1 3") );
 }

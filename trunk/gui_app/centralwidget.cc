@@ -55,8 +55,8 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
         cv->setHRuler( hRuler_ );
         cv->setVRuler( vRuler_ );
 
-        connect( cv, SIGNAL( scaleChanged( double ) ), hRuler_, SLOT( setScale( double ) ) );
-        connect( cv, SIGNAL( scaleChanged( double ) ), vRuler_, SLOT( setScale( double ) ) );
+//         connect( cv, SIGNAL( scaleChanged( double ) ), hRuler_, SLOT( setScale( double ) ) );
+//         connect( cv, SIGNAL( scaleChanged( double ) ), vRuler_, SLOT( setScale( double ) ) );
         connect( sa->horizontalScrollBar(), SIGNAL( valueChanged(int) ), 
                  hRuler_, SLOT( setStart( int ) ) );
         connect( sa->verticalScrollBar(), SIGNAL( valueChanged(int) ),
@@ -70,11 +70,11 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
         l->addWidget( vRuler_, 1,0 );
         l->addWidget( sa, 1,1 );
 
-        QTimer::singleShot( 0, this, SLOT( resizeRulers() ) );
+//        QTimer::singleShot( 0, this, SLOT( resizeRulers() ) );
 }
 
-void CentralWidget::resizeRulers()
-{
-        hRuler_->setLength( viewport_->width() );
-        vRuler_->setLength( viewport_->height() );    
-}
+// void CentralWidget::resizeRulers()
+// {
+//         hRuler_->setLength( viewport_->width() );
+//         vRuler_->setLength( viewport_->height() );    
+// }

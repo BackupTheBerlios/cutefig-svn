@@ -205,7 +205,7 @@ void ReslibEditor<Resource>::setResource( const ResourceKey& key )
         deleteResourceAction_->setDisabled( dontTouch || resLib_.isBeingUsed( key ) );
         editResourceAction_->setEnabled( !dontTouch );
         selectedResource_->select( resourceModel_->index( resLib_.indexOf( resourceKey_ ) ),
-                                 QItemSelectionModel::ClearAndSelect );
+                                   QItemSelectionModel::ClearAndSelect );
 
         resourceDemo_->setResource( &resLib_[key] );
 }

@@ -31,7 +31,6 @@
 
 #include <QLayout>
 #include <QTextEdit>
-#include <QLabel>
 #include <QSpinBox>
 
 TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )

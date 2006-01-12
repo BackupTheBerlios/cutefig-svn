@@ -44,8 +44,9 @@ class GradientWidget::UIHandler
 {
 public:
         //! Takes a reference to the GradientWidget.
-        UIHandler( GradientWidget& w ) : s( w ) {}
+        UIHandler( GradientWidget* w ) : s( w ) {}
 
+        void setGradWidget( GradientWidget* w ) { s = w; }
         //! Called when the user clicks at a certain point.
         /*! Supposed to return true when a mouse dragging follows.
          */
@@ -68,13 +69,13 @@ public:
         
 protected:
         //! the instance of the GradientWidget
-        GradientWidget& s;
+        GradientWidget* s;
 };
 
 class GradientWidget::LinearUIHandler : public GradientWidget::UIHandler
 {
 public:
-        LinearUIHandler( GradientWidget& w ) : UIHandler( w ) {}
+        LinearUIHandler( GradientWidget* w ) : UIHandler( w ) {}
         virtual void paint( QPainter* p );
         virtual bool colorStopHit( const QGradientStop& gs, const QPoint& p );
         virtual double calcOffset( const QPoint& p );
@@ -84,7 +85,7 @@ public:
 class GradientWidget::RadialUIHandler : public GradientWidget::UIHandler
 {
 public:
-        RadialUIHandler( GradientWidget& w )
+        RadialUIHandler( GradientWidget* w )
                 : UIHandler( w ) {}
         virtual bool click( const QPoint& );
         virtual void move( const QPoint& );
@@ -99,7 +100,7 @@ public:
 private:
         QPoint center( qreal offset ) 
         {
-                return s.p2() + offset * ( s.p1() - s.p2() );
+                return s->p2() + offset * ( s->p1() - s->p2() );
         }
         
 };
@@ -124,7 +125,7 @@ GradientWidget::GradientWidget( Gradient* gr, QWidget * parent )
           movedPoint_( 0 ),
           colorStopIndex_( -1 )
 {
-        static UIHandler dh( *this );
+        static UIHandler dh( this );
         dummyUIHandler = &dh;
         
         setGradient( gr );
@@ -184,13 +185,15 @@ void GradientWidget::initUIHandler()
 
 void GradientWidget::initLinearGradient()
 {
-        static LinearUIHandler h( *this );
+        static LinearUIHandler h( this );
+        h.setGradWidget( this );
         uiHandler_ =  &h;
 }
 
 void GradientWidget::initRadialGradient()
 {
-        static RadialUIHandler h( *this );
+        static RadialUIHandler h( this );
+        h.setGradWidget( this );
         uiHandler_ = &h;
 }
 
@@ -242,24 +245,24 @@ void GradientWidget::paintEvent( QPaintEvent* e )
  *  the color stops on it.
  */
 void GradientWidget::LinearUIHandler::paint( QPainter* p )
-{        
-        foreach ( QGradientStop cs, s.gradient_->colorStops() ) 
-                p->drawEllipse( s.clsToRect( cs.first ) );
+{
+        foreach ( QGradientStop cs, s->gradient_->colorStops() ) 
+                p->drawEllipse( s->clsToRect( cs.first ) );
         
-        p->drawLine( s.p1(), s.p2() );
+        p->drawLine( s->p1(), s->p2() );
 }
 
 void GradientWidget::RadialUIHandler::paint( QPainter* p ) 
 {       
-        qreal dia = 2*s.gradient_->radius()*hypot( s.size_.width(), s.size_.height() );
-        QRectF rect = Geom::centerRect( s.p1(), QSizeF( dia, dia ) );
+        qreal dia = 2*s->gradient_->radius()*hypot( s->size_.width(), s->size_.height() );
+        QRectF rect = Geom::centerRect( s->p1(), QSizeF( dia, dia ) );
 
         
         p->setPen( Qt::DotLine );
         p->drawEllipse( rect );
 
         p->setPen( Qt::DashLine );
-        foreach ( QGradientStop gs, s.gradient_->colorStops() ) {
+        foreach ( QGradientStop gs, s->gradient_->colorStops() ) {
                 qreal d = dia*gs.first;
                 rect = Geom::centerRect( center( gs.first ), QSizeF( d,d ) );
                 p->drawEllipse( rect );
@@ -475,25 +478,25 @@ bool GradientWidget::findColorStopUnderMouse( const QPoint& p, bool setIndex )
 
 bool GradientWidget::LinearUIHandler::colorStopHit( const QGradientStop& gs, const QPoint& p )
 {
-        return s.clsToRect( gs.first ).contains( p );
+        return s->clsToRect( gs.first ).contains( p );
 }
 
 bool GradientWidget::RadialUIHandler::colorStopHit( const QGradientStop& gs, const QPoint& p )
 {
-        return radiusGrasped( p, center( gs.first ), gs.first*s.gradient_->radius() );
+        return radiusGrasped( p, center( gs.first ), gs.first*s->gradient_->radius() );
 }
 
 bool GradientWidget::RadialUIHandler::click( const QPoint& p )
 {        
-        return radiusGrasped( p, s.p1(), s.gradient_->radius() );
+        return radiusGrasped( p, s->p1(), s->gradient_->radius() );
 }
 
 double GradientWidget::LinearUIHandler::calcOffset( const QPoint& P )
 {
         using namespace Geom;
         
-        const QPointF A = QPointF( s.p2() - s.p1() );
-        const QPointF B = QPointF( P - s.p1() );
+        const QPointF A = QPointF( s->p2() - s->p1() );
+        const QPointF B = QPointF( P - s->p1() );
         
         return scalarProduct( A,B ) / scalarProduct( A,A );
 }
@@ -539,13 +542,13 @@ double GradientWidget::RadialUIHandler::calcOffset( const QPoint& P )
 {
         using namespace Geom;
 
-        const double r = s.gradient_->radius()*hypot( s.size_.width(), s.size_.height() );
+        const double r = s->gradient_->radius()*hypot( s->size_.width(), s->size_.height() );
 
-        if ( distance( s.p1(), P ) > r )
+        if ( distance( s->p1(), P ) > r )
                 return 1;
         
-        const QPointF F = s.p1() - s.p2();
-        const QPointF X = P - s.p2();
+        const QPointF F = s->p1() - s->p2();
+        const QPointF X = P - s->p2();
         const double x = pabs( X );
         const double f = pabs( F );
         const double c = f * scalarProduct( F,X )/(f*x);
@@ -557,11 +560,11 @@ double GradientWidget::RadialUIHandler::calcOffset( const QPoint& P )
 
 void GradientWidget::RadialUIHandler::move( const QPoint& p )
 {
-                qreal rad = Geom::distance( p, s.p1() );
-                rad /= hypot( s.size_.width(), s.size_.height() );
-                s.gradient_->setRadius(rad);
-                s.update();
-//                s.repaint();
+                qreal rad = Geom::distance( p, s->p1() );
+                rad /= hypot( s->size_.width(), s->size_.height() );
+                s->gradient_->setRadius(rad);
+                s->update();
+//                s->repaint();
 }
 
 
@@ -569,7 +572,7 @@ bool GradientWidget::RadialUIHandler::radiusGrasped( const QPoint& p, const QPoi
                                                      qreal radius )
 {                
         qreal d = Geom::distance( c, p );
-        d -= radius * hypot( s.size_.width(), s.size_.height() );
+        d -= radius * hypot( s->size_.width(), s->size_.height() );
         
         return ( fabs(d) < 3 );
 }

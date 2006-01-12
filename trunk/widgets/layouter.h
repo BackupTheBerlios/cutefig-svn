@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -22,27 +22,26 @@
 **
 ******************************************************************************/
 
-#ifndef rectangle_h
-#define rectangle_h
+#ifndef layouter_h
+#define layouter_h
 
-#include "rectangloid.h"
+class QString;
+class QBoxLayout;
+class QGridLayout;
+class QWidget;
 
-class Rectangle : public Rectangloid
+class Layouter
 {
-        Q_OBJECT
-        DRAW_OBJECT( "rectangle", "&Rectangle" );
 public:
-        explicit Rectangle( Figure* parent = 0 );
-        Rectangle( const Rectangle* r );
+        explicit Layouter( QBoxLayout* layout );
 
-        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
-
-        virtual void outputToBackend( OutputBackend* ob );
-
+        Layouter& labeledWidget( const QString& text, QWidget* widget );
+        Layouter& stretch();
+        void finishTo( QBoxLayout* target );
+        void finishTo( QGridLayout* target, int row, int col );
+        
 private:
-        virtual void passPointFlag_private( Fig::PointFlag ) {}
-        virtual void setupWidthAndHeight();
-        virtual void addPath();
-};
+        QBoxLayout* layout_;
+};      
 
 #endif

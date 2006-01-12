@@ -25,17 +25,22 @@
 #ifndef ruler_h
 #define ruler_h
 
-#include <QWidget>
+#include <QFrame>
 #include <QStringList>
 #include <QPixmap>
 
-/** \class Ruler
- *  
- *  \brief This is the ruler for the canvas window.
+//! This is the ruler for the canvas window.
+/*! This is the ruler for the canvas view. It shows ticks and marks
+ *  them. Depending on zoom and length scale the ticks and the
+ *  tickmarks are calculated in a suitable way by calcTickMarks(). It
+ *  indicates the current pointerposition by a red line. It can be
+ *  drawn vertically or horiziontally depending on the orientation
+ *  given in the constructor.
+ *
+ *  It is also planned that helplines can be pulled out of the ruler.
  *
  */
-
-class Ruler : public QWidget
+class Ruler : public QFrame
 {
         Q_OBJECT
 public:
@@ -43,13 +48,16 @@ public:
 //!< The constructor takes the length l and the Orientation o.
         ~Ruler() { };
 
-public slots:
         void setValue( int v );    //!< Sets the value of the pointerposition.
         void setLength( int l );   //!< Sets the length of the ruler
-        void setStart( int v );    //!< Sets the lowest visible position
 
         void setScale( double s ); //!< Sets the zoom scale 
         void setUnit( double u );  //!< Sets the length unit
+
+        void setIndicating( bool indicating );
+        
+public slots:
+        void setStart( int v );    //!< Sets the lowest visible position
 
 protected:
         void paintEvent( QPaintEvent *e );
@@ -65,11 +73,14 @@ private:
         double unit_;
         double tickVal_;
 
-        int ticks_, subTicks_, startTick_, startVal_, startPix_;
+        double ticks_, subTicks_, startTick_;
+        int startVal_, startPix_;
         static int tLen_, stLen_; //!< length of the (sub)ticks
 
         QStringList tickMarks_;
 
+        bool indicating_;
+        
         QPixmap buffer_;
 };
 

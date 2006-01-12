@@ -32,7 +32,6 @@
 #include "controler.h"
 #include "figure.h"
 #include "parser.h"
-#include "guiinit.h"
 
 #include "actions.h"
 #include "errorreporter.h"
@@ -76,7 +75,6 @@ CuteFig::CuteFig()
 
 void CuteFig::init()
 {
-        GUIInitialiser::go();
         setupActions();
         
         int argc = qApp->argc();
@@ -91,6 +89,7 @@ void CuteFig::init()
         readSettings();
         
         statusBar()->showMessage("Hello");
+        cview_->setZoom( 1.0 );
 }
 
 void CuteFig::newDoc()
@@ -125,7 +124,7 @@ void CuteFig::load( const QString& fileName )
         controler_->resetFigure();
         
         QTextStream ts( &f );    
-        Parser p( &ts, figure_, this );
+        Parser p( &ts, figure_ );
         QString errors = p.parse();
 
         if ( !errors.isEmpty() ) 
@@ -135,7 +134,7 @@ void CuteFig::load( const QString& fileName )
 }
 
 /** Uses an OutputBackend to store the figure into a file. The
- * OutputBackand is chosen depending on the filename extension.
+ *  OutputBackand is chosen depending on the filename extension.
  */
 void CuteFig::save()
 {

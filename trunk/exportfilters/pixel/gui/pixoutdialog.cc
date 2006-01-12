@@ -25,6 +25,7 @@
 #include "pixoutdialog.h"
 #include "figure.h"
 #include "colorbutton.h"
+#include "layouter.h"
 
 #include <QtGui>
 
@@ -44,7 +45,7 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         
         setWindowTitle( tr("CuteFig: export to a bitmap graphics:") );
         
-        QGridLayout* mainLayout = new QGridLayout( topLayout_->widget() );
+        QGridLayout* mainLayout = new QGridLayout();
 
         QGroupBox* sizeGroup = new QGroupBox( tr("Size"), this );
         QGridLayout* sizeLayout = new QGridLayout( sizeGroup );
@@ -83,43 +84,34 @@ PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
         keepAspect->setCheckState( Qt::Checked );
         sizeLayout->addWidget( keepAspect, 1,3, 1,2 );
 
-        QHBoxLayout* bgLayout = new QHBoxLayout( mainLayout->widget() );
         QColor bg( Qt::white );
         bg.setAlpha( 0 );
         bgColor = new ColorButton( bg, this );
-        QLabel* bgLabel = new QLabel( tr("&Background color"), this );
-        bgLabel->setBuddy( bgColor );
-        bgLayout->addWidget( bgLabel );
-        bgLayout->addWidget( bgColor );
-        
-        QHBoxLayout* gqLayout = new QHBoxLayout( mainLayout->widget() );
+
+        Layouter( new QHBoxLayout() )
+                .labeledWidget( tr("&Background color"), bgColor )
+                .finishTo( mainLayout, 2,0 );
+
 
         QDoubleSpinBox* gamma = new QDoubleSpinBox( this );
         gamma->setRange( 0, 10 );
         gamma->setSingleStep( 0.1 );
         gamma->setValue( 1 );
-        QLabel* gammaLabel = new QLabel( tr("&Gamma value"), this );
-        gammaLabel->setBuddy( gamma );
-        gqLayout->addWidget( gammaLabel );
-        gqLayout->addStretch();
-        gqLayout->addWidget( gamma );
 
-        gqLayout->addStretch();
-        
         QSlider* quality = new QSlider( Qt::Horizontal, this );
         quality->setRange( 0, 100 );
         quality->setValue( 100 );
-        QLabel* quLabel = new QLabel( tr("&Quality"), this );
-        quLabel->setBuddy( quality );
-        gqLayout->addWidget( quLabel );
-        gqLayout->addStretch();
-        gqLayout->addWidget( quality );
+
+        Layouter( new QHBoxLayout() )
+                .labeledWidget( tr("&Gamma value"), gamma )
+                .stretch()
+                .labeledWidget( tr("&Quality"), quality )
+                .finishTo( mainLayout, 4, 0 );
+        
 
         mainLayout->addWidget( sizeGroup, 0,0 );
         mainLayout->setRowMinimumHeight( 1, 6 );
-        mainLayout->addItem( bgLayout, 2,0 );
         mainLayout->setRowMinimumHeight( 3, 6 );
-        mainLayout->addItem( gqLayout, 4,0 );
         
         connect( xres, SIGNAL( valueChanged( int ) ), this, SLOT( setXres( int ) ) );
         connect( yres, SIGNAL( valueChanged( int ) ), this, SLOT( setYres( int ) ) );

@@ -197,3 +197,12 @@ const ResourceKey Stroke::key() const
 {
         return resourceUser_ ? resourceUser_->key() : ResourceKey();
 }
+
+
+template<> void ResLib<QColor>::init()
+{
+}
+
+template<> void ResLib<QPixmap>::init()
+{
+}

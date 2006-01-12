@@ -32,7 +32,7 @@
 class Pen;
 
 class QDoubleSpinBox;
-class StyleComboBox;
+template<typename Resource> class ResourceComboBox;
 class FlagButtonGroup;
 
 class PenWidget : public QGroupBox
@@ -57,7 +57,7 @@ private:
         Pen* pen_;
 
         QDoubleSpinBox* lineWidth;
-        StyleComboBox* lineDashes;
+        ResourceComboBox<Dashes>* lineDashes;
         FlagButtonGroup *capStyle, *joinStyle;
 };
 

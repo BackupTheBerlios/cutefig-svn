@@ -75,6 +75,7 @@ void ResourceDemo<Resource>::paintEvent( QPaintEvent* e )
         PaintUtils::paintChessBoard( &pt, QRect( 0,0, width(), height() ) );
 
         doPainting( &pt );
+        pt.end();
 
         QFrame::paintEvent( e );
 }

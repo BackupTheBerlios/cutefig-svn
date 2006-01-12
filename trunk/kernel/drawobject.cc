@@ -22,15 +22,6 @@
 **
 ******************************************************************************/
 
-/** \class DrawObject
- *
- *  It contains all the basic data of a DrawObject like pen_,
- *  commentString_... 
- *
- *  Many functions are virtual or even pure virtual as it is the
- *  subclasses job to implement them.
- */
-
 #include <cmath>
 
 #include "drawobject.h"
@@ -41,7 +32,6 @@
 
 #include <QDebug>
 
-unsigned DrawObject::clickTolerance_ = 10;
 
 DrawObject::DrawObject( Figure* parent )
         : QObject( parent ),
@@ -103,12 +93,25 @@ void DrawObject::cursorMove( const QPointF & pos )
         getReadyForDraw();
 }
 
+
+/*! The default implementation just uses #painterPath_ to draw it. So
+ *  it does not have to be reimplemented by every subclass.
+ */
 void DrawObject::draw( QPainter* p ) const
 {
         fill_.fillPath( painterPath_, p );
         pen_.strikePath( painterPath_, stroke_, p );
 }
 
+/*! This is useful to avoid that complex patterns have to be rendered
+ *  while the object is moved with the mouse. The default
+ *  implementation just uses #painterPath_ to draw it. So it does not
+ *  have to be reimplemented by every subclass.
+ *
+ *  \e auxpen can be used if the object needs to draw some helpline
+ *  while it is being created. See Ellipse::drawTentative for an
+ *  example.
+ */
 void DrawObject::drawTentative( QPainter *p, const QPen& ) const
 {
         p->drawPath( painterPath_ );
@@ -121,6 +124,9 @@ void DrawObject::mapMatrix( const QMatrix& m )
         getReadyForDraw();
 }
 
+/*! \e tolerance is a tolerance which is has to be variable as the
+ *  zoom a figure is looked at might is variable.
+ */
 bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
 {
 //         if ( !bRect_.intersects( Geom::centerRect( p, QSizeF( tolerance, tolerance ) ) ) )
@@ -152,24 +158,9 @@ void DrawObject::setPen( const Pen& p )
         setupRects();
 }
 
-const ResourceSet DrawObject::usedResources()
+const ResourceSet DrawObject::usedResources() const
 {
         ResourceSet rs;
-
-//         QString ts = stroke_.typeString();
-//         if ( !ts.isNull() )
-//                 rs[ts] << stroke_.key();
-
-//         ts = fill_.typeString();
-//         if ( !ts.isNull() )
-//                 rs[ts] << fill_.key();
-
-//         stroke_.addUsedResource( rs );
-//         fill_.addUsedResource( rs );
-        
-//         rs["dashes"] << pen_.dashesKey();
-        
-//         addSpecificResources( rs );
 
         foreach ( AbstractResourceUser* aru, resourceUsers() )
                 if ( aru )
@@ -179,14 +170,14 @@ const ResourceSet DrawObject::usedResources()
 }
 
 
-void DrawObject::releaseResources()
+void DrawObject::releaseResources() const
 {
         foreach ( AbstractResourceUser* aru, resourceUsers() )
                 if ( aru )
                         aru->releaseResource();
 }
 
-void DrawObject::reclaimResources()
+void DrawObject::reclaimResources() const
 {
         foreach ( AbstractResourceUser* aru, resourceUsers() )
                 if ( aru )
@@ -198,7 +189,8 @@ QList<AbstractResourceUser*> DrawObject::resourceUsers() const
         QList<AbstractResourceUser*> rul;
 
         rul << stroke_.resourceUser() << fill_.resourceUser() << pen_.resourceUser();
-
+        addSpecificResourceUsers( rul );
+        
         return rul;
 }
 

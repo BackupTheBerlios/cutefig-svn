@@ -48,12 +48,10 @@ class Figure;
 
 enum ErrorSeverity { Warning, Discarding, Fatal };
 
-class Parser : public QObject
+class Parser 
 {
-        Q_OBJECT
 public:
-        Parser( QTextStream *ts, Figure *f, 
-                QObject * parent =0 );
+        Parser( QTextStream *ts, Figure *f );
         ~Parser() { };
 
         QString parse();
@@ -96,6 +94,8 @@ private:
 //        QBrush parsePattern( int lines );
 
 //        Dashes parseDashes( std::istringstream& is );
+
+        static QString tr( const char* source );
         
         QPen setUpPen( int w, int s, int cs, int js, QColor c );
         void parseError( QString s, ErrorSeverity sev = Warning );

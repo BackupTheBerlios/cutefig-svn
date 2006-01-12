@@ -46,21 +46,21 @@ public:
 
         QWidget* viewport() const { return viewport_; }
 
-private slots:
-        void resizeRulers(); //!< resizes the Rulers
+//private slots:
+//        void resizeRulers(); //!< resizes the Rulers
 
 private:
-        void resizeEvent( QResizeEvent* );
+//        void resizeEvent( QResizeEvent* );
 
         Ruler *hRuler_, *vRuler_;  //!< Two rulers to indicate the position
         QWidget* viewport_;        //!< The scroll views's viewport
         
 };
 
-inline void CentralWidget::resizeEvent( QResizeEvent* )
-{
-        resizeRulers();
-}
+// inline void CentralWidget::resizeEvent( QResizeEvent* )
+// {
+//         resizeRulers();
+// }
 
 
 #endif
