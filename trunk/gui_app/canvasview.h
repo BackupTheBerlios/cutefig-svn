@@ -149,7 +149,6 @@ private:
         double unit_;
 
         QPoint offset_;
-        QPixmap buffer_;
         QRect oldRect_;
 
         QPoint snapPoint_, oldSnapPoint_;

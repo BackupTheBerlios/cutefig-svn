@@ -72,7 +72,6 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
           hRuler_( 0 ),
           vRuler_( 0 ),
           unit_( Fig::cm2pix ),
-          buffer_( 1000,1000 ),
           oldRect_(),
           oldSnapPoint_( QPoint(0,0) ),
           snapped_( false ),
@@ -80,7 +79,7 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
 {
         setFocusPolicy( Qt::StrongFocus );
         offset_ = QPoint( 0,0 );
-        setAttribute( Qt::WA_NoBackground );
+//        setAttribute( Qt::WA_NoBackground );
         setAttribute( Qt::WA_InputMethodEnabled );
         setAttribute( Qt::WA_KeyCompression );
         
@@ -320,13 +319,18 @@ void CanvasView::updateFigureImediately()
 {        
         if ( !tentativeDraw_ ) {
                 QPainter p;
-                p.begin( &buffer_ );
+                QPixmap b( size() );
+                p.begin( &b );
                 drawPaper( &p );
                 drawGrid( &p );
                 p.setRenderHint( QPainter::Antialiasing, true );
                 p.setMatrix( scaleMatrix_ );
                 figure_->drawElements( &p, controler_->backups() );
                 p.end();
+
+                QPalette pal;
+                pal.setBrush( QPalette::Window, b );
+                setPalette( pal );
         }
 
         if ( !controler_->selectedObjects().isEmpty() ) {
@@ -342,14 +346,17 @@ void CanvasView::updateFigureImediately()
 
 void CanvasView::paintEvent( QPaintEvent * e )
 {
+        const ObjectList& l = controler_->selectedObjects();
+
+        if ( l.isEmpty() && !snapped_ )
+                return;
+        
         QPainter p;
         p.begin( this );
         p.setRenderHint( QPainter::Antialiasing, true );
         p.setClipRect( e->rect() );
-        p.drawPixmap( e->rect(), buffer_, e->rect() );
 
         p.setMatrix( scaleMatrix_ );
-        const ObjectList& l = controler_->selectedObjects();
 
         if ( tentativeDraw_ ) {
                 QPen auxpen( Qt::red );
@@ -406,10 +413,10 @@ inline void CanvasView::drawGrid( QPainter* p )
 
         p->setPen( QPen( Qt::lightGray , 1, Qt::DotLine ) );
         
-        for ( double x = 0; x < buffer_.width(); x += gridScaled_ )
-                p->drawLine( QPointF(x,0), QPointF(x,buffer_.height()) );
-        for ( double y = 0; y < buffer_.height(); y += gridScaled_ )
-                p->drawLine( QPointF(0,y), QPointF(buffer_.width(),y) );
+        for ( double x = 0; x < width(); x += gridScaled_ )
+                p->drawLine( QPointF(x,0), QPointF(x,height()) );
+        for ( double y = 0; y < height(); y += gridScaled_ )
+                p->drawLine( QPointF(0,y), QPointF(width(),y) );
 }
 
 // emphasises the point the mouse position has been snapped to
@@ -507,8 +514,6 @@ void CanvasView::setZoom_private( double z )
 void CanvasView::doResizing()
 {
         QSize s = ( figure_->paperSize() * scale_ * unit_ ).toSize();
-        buffer_ = QPixmap( s );
-        buffer_.fill( Qt::white );
         
         if ( hRuler_ )
                 hRuler_->setLength( s.width() );
