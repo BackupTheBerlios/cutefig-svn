@@ -48,7 +48,7 @@ namespace Initialiser
 class ObjectHandler
 {
 public:
-        static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* fig );
+        static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* f=0 );
         static ObjectGUIHandler* guiHandler( const QString& keyWord );
         virtual ~ObjectHandler() {}
 

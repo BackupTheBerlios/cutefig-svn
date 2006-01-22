@@ -25,6 +25,7 @@
 #include "guiinit.h"
 #include "objectguihandler.h"
 #include "allobjects.h"
+#include "resourceio.h"
 
 void Initialiser::createGUIHandlers()
 {
@@ -32,5 +33,25 @@ void Initialiser::createGUIHandlers()
         static TObjectGUIHandler<Ellipse> egh;
         static TObjectGUIHandler<Polyline> pgh;
         static TObjectGUIHandler<Polygon> lgh;
+        static TObjectGUIHandler<BezierSpline> bgh;
         static TObjectGUIHandler<TextObject> tgh;
 }
+
+
+namespace Initialiser
+{
+        struct ResLibInit 
+        {
+                ResLibInit() 
+                {
+                        ResourceIOFactory::readResLibs();
+                }
+        };
+}
+
+
+void Initialiser::initResLibs() 
+{
+        static ResLibInit i;
+}
+

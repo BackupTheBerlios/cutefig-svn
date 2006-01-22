@@ -71,6 +71,14 @@ void CfigOutput::outputPolygon( const Polygon* pg )
         outputPoints();
 }
 
+void CfigOutput::outputBezierSpline( const BezierSpline* bs )
+{
+        drawObject_ = bs;
+        outputGenericData();
+        fileStream_ << "\n";
+        outputPoints();
+}
+
 void CfigOutput::outputTextObject( const TextObject* to )
 {
         drawObject_ = to;
@@ -170,3 +178,4 @@ void CfigOutput::outputHeader()
 //                     << "scale     " << figure_.scale() << "\n"
 //                     << "papersize " << 
 }
+

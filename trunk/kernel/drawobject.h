@@ -122,6 +122,7 @@ class AbstractResourceUser;
  *  calculated in setupPaiterPath_ is used. Some things are not
  *  drawable by QPainterPath though, e.g. rich text.
  *
+ *
  *  \section editing Editing the object
  *
  *  \subsection creating Creating an a DrawOject
@@ -131,7 +132,23 @@ class AbstractResourceUser;
  *     - pointSet()
  *     - cursorMove()
  *
- *  
+ *  \subsubsection public Public interface
+ *  Creating a DrawObject by user inteaction works the following way:
+ *  A an object of the specific DrawObject subclass is created by the
+ *  CreateAction as soon as the activates the CreateAction. Then the
+ *  CreateAction takes the users's mouse clicks and passes the points
+ *  on to the DrawObject by calling pointSet(). If the DrawObject
+ *  considers itself as finished pointSet() will return false
+ *  otherwise true. So the CreateAction will be active until
+ *  pointSet() returns false and will then add the DrawObject to the
+ *  Figure by AddCommand. During the CreateAction is active it passes
+ *  mouse moves to the DrawObject by calling cursorMove(). 
+ *
+ *  \subsubsection private Behind the scenes  
+ *  The following functions must be reimplemented by subclasses to
+ *  handle userinteraction.
+ *      - nextPoint()
+ *      - passPointFlag()
  *  
  *  
  *  \section Resources
@@ -214,7 +231,7 @@ public:
         //! supposed to draw the object tentatively, i.e. while the user is handling it.
         virtual void drawTentative( QPainter* p, const QPen& auxPen ) const;
 
-        //! sets the point just being edited and returns the next point.
+        //! sets the point just being edited and returns true if another point is needed.
         bool pointSet( const QPointF & pos, Fig::PointFlag f = Fig::Normal ); 
 
         //! moves the point just being edited tentatively.

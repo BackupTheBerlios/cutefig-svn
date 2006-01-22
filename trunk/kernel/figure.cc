@@ -49,6 +49,7 @@ void Figure::takeDrawObjects( const ObjectList& l )
         objectList_ = l;
         foreach ( DrawObject* o, l ) {
                 addObjectToDrawingList( o );
+                o->setParent( this );
                 o->getReadyForDraw();
                 o->doSpecificPreparation();
         }
@@ -63,6 +64,7 @@ void Figure::takeDrawObjects( const ObjectList& l )
 void Figure::addDrawObject( DrawObject* o )
 {
         o->reclaimResources();
+        o->setParent( this );
         objectList_.push_back( o );
         addObjectToDrawingList( o );
 }

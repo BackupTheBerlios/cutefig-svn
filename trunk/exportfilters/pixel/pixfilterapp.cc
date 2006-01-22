@@ -255,8 +255,7 @@ int PixfilterApp::exportFigure()
 {
         QTextStream ts( &infile_ );
         figure_->clear();
-        Parser p( &ts, figure_ );
-        QString errors = p.parse();
+        QString errors = Parser::parse( ts, figure_ );
         infile_.close();
 
         if ( !errors.isEmpty() )

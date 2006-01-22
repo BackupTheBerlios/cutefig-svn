@@ -32,7 +32,7 @@
 #include "controler.h"
 #include "figure.h"
 #include "parser.h"
-
+#include "guiinit.h"
 #include "actions.h"
 #include "errorreporter.h"
 
@@ -56,6 +56,7 @@ CuteFig::CuteFig()
         setAttribute( Qt::WA_DeleteOnClose );
         setWindowTitle( tr("The CuteFig drawing system") );
 
+        Initialiser::initResLibs();
         
         figure_ = new Figure( this );
         controler_ = new Controler( this );
@@ -123,9 +124,8 @@ void CuteFig::load( const QString& fileName )
         
         controler_->resetFigure();
         
-        QTextStream ts( &f );    
-        Parser p( &ts, figure_ );
-        QString errors = p.parse();
+        QTextStream ts( &f );
+        QString errors = Parser::parse( ts, figure_ );
 
         if ( !errors.isEmpty() ) 
                 ErrorReporter::report( errors );
@@ -226,6 +226,7 @@ void CuteFig::closeEvent( QCloseEvent* ce )
 
  finish:
         writeSettings();
+        ResourceIOFactory::saveResLibs();
         ce->accept();
 }
 

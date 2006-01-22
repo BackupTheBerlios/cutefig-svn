@@ -5,13 +5,13 @@ software is developed and and installed.
 
 You need to do the following steps:
 
-  * The release candidate 1 of the QT-libs version 4. You can get this
+  * The release candidate 1 of the Qt-libs version 4.1. You can get this
     from http://www.trolltech.com. Read their installing instructions
-    and install the QT-libs. 
+    and install the Qt-libs. 
 
-  * As soon as you succeeded to build QT, you should be able to build
+  * As soon as you succeeded to build Qt, you should be able to build
     the CuteFig as well. It follows the build process propagated by
-    the trolls for QT, i.e. it uses qmake to make its Makefiles. So
+    the trolls for Qt, i.e. it uses qmake to make its Makefiles. So
     what you need to do is:
 
     qmake && make

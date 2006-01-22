@@ -48,9 +48,9 @@ bool TResourceIO<QColor>::parseResource( const QString&, std::istream& is )
 }
 
 template<>
-void TResourceIO<QColor>::outputResourceBody( std::ostream& stream)
+void TResourceIO<QColor>::outputResourceBody( const QColor& res, std::ostream& stream ) const 
 {
-        stream << resource_ << " ";
+        stream << res << " ";
 }
 
 
@@ -109,19 +109,19 @@ bool TResourceIO<Gradient>::parseResource( const QString& itemtype, std::istream
 }
 
 template<>
-void TResourceIO<Gradient>::outputResourceBody( std::ostream& ts )
+void TResourceIO<Gradient>::outputResourceBody( const Gradient& res, std::ostream& ts ) const
 {
-        const QGradientStops& stops = resource_.colorStops();
+        const QGradientStops& stops = res.colorStops();
         
-        if ( resource_.type() == Gradient::Linear ) 
+        if ( res.type() == Gradient::Linear ) 
                 ts << "linear ";
         else 
                 ts << "radial ";
 
-        ts << resource_.startPoint().x() << ' ' << resource_.startPoint().y()  << ' '
-           << resource_.finalPoint().x() << ' ' << resource_.finalPoint().y();
-        if ( resource_.type() == Gradient::Radial )
-                ts << resource_.radius();
+        ts << res.startPoint().x() << ' ' << res.startPoint().y()  << ' '
+           << res.finalPoint().x() << ' ' << res.finalPoint().y();
+        if ( res.type() == Gradient::Radial )
+                ts << res.radius();
 
         ts << "\n";
 
@@ -144,9 +144,9 @@ bool TResourceIO<Dashes>::parseResource( const QString&, std::istream& is )
 }
 
 template<>
-void TResourceIO<Dashes>::outputResourceBody( std::ostream& ts )
+void TResourceIO<Dashes>::outputResourceBody( const Dashes& res, std::ostream& ts ) const
 {
-        foreach ( double d, resource_ )
+        foreach ( double d, res )
                 ts << d << ' ';
 }
 

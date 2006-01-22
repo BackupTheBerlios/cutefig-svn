@@ -40,16 +40,16 @@ namespace Res
 #include "typedefs.h"
 #include "resourcekey.h"
 #include "resourceuser.h"
+#include "resourceio.h"
+
+#include <ostream>
 
 #include <QDebug>
 
-class ResLibInit;
-
-
 class AbstractResourceUser;
-
+class ResourceIO;
 //! Abstract base class of ResLib
-/** Used to put all the different ResLibs of differen Resource type in
+/** Used to put all the different ResLibs of different Resource type in
  *  one container class.
  */
 class AbstractResLib
@@ -59,9 +59,15 @@ public:
         
         virtual void unassignResource( const ResourceKey& key, AbstractResourceUser* u ) = 0;
 
-protected:
-        AbstractResLib() {}
+        virtual void save( ResourceIO* rio, std::ostream& ts ) = 0;
 
+        virtual bool contains( const ResourceKey& key ) const =0;
+        
+protected:
+        AbstractResLib() {};
+
+        bool containsInFigOrLib( ResourceKey& key );
+        
 private:
         AbstractResLib( const AbstractResLib& );
         AbstractResLib& operator=( const AbstractResLib& );
@@ -127,17 +133,20 @@ public:
         const ResourceKeyList keys() const { return map_.keys(); }
 
         //! adds a new ResourceUser to the list of resource users
-        const Resource* assignResource( const ResourceKey& key, AbstractResourceUser* u );
+        const Resource* assignResource( ResourceKey& key, AbstractResourceUser* u );
 
         //! removes a ResourceUser of the list of resource users
         void unassignResource( const ResourceKey& key, AbstractResourceUser* u );
+
+        void save( ResourceIO* rio, std::ostream& ts );
         
 private:
         /*! Private to enforce singularity according to the Singleton
          *  design pattern.
          */
         ResLib<Resource>()
-                : map_() 
+                : AbstractResLib(),
+                  map_() 
         {
                 init();
         }
@@ -297,11 +306,11 @@ bool ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceK
  *  already in the userlist.
  */
 template<typename Resource>
-const Resource* ResLib<Resource>::assignResource( const ResourceKey& key, AbstractResourceUser* u )
+const Resource* ResLib<Resource>::assignResource( ResourceKey& key, AbstractResourceUser* u )
 {
-        if ( !contains( key ) )
+        if ( !containsInFigOrLib( key ) )
                 return 0;
-
+        
         ResourceData* d = map_[key];
         if ( !d->users.contains( u ) )
                 d->users << u;
@@ -318,6 +327,15 @@ void ResLib<Resource>::unassignResource( const ResourceKey& key, AbstractResourc
                 return;
 
         map_[key]->users.removeAll( u );
+}
+
+template<typename Resource>
+void ResLib<Resource>::save( ResourceIO* rIO, std::ostream& ts )
+{
+        const ResourceKeyList kl = map_.keys();
+        foreach ( const ResourceKey key, kl )
+                if ( key.isToBeSaved() )
+                        rIO->outputResource( key, ts );
 }
 
 

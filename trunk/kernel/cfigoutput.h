@@ -32,8 +32,6 @@
 #include <QObject>
 #include <QHash>
 
-class QPolygonF;
-
 class CfigOutput : public OutputBackend
 {
 public:
@@ -44,6 +42,7 @@ public:
         virtual void outputEllipse( const Ellipse* el );
         virtual void outputPolyline( const Polyline* pl );
         virtual void outputPolygon( const Polygon* pg );
+        virtual void outputBezierSpline( const BezierSpline* bs );
         virtual void outputTextObject( const TextObject* to );
 
         virtual void outputCompound( const Compound* cd );
@@ -55,17 +54,12 @@ private:
         void outputPoints();
         void outputHeader();
         void outputResources();
-//         void outputDashes();
-//         void outputStrokes();
 
         static const char* objectString;
 
         const DrawObject* drawObject_;
 
         QHash<int,int> dashMap_;
-
-//        ResourceTable dashTable_;
-        
 };
 
 

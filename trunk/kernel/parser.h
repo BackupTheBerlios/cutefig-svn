@@ -51,28 +51,28 @@ enum ErrorSeverity { Warning, Discarding, Fatal };
 class Parser 
 {
 public:
-        Parser( QTextStream *ts, Figure *f );
-        ~Parser() { };
-
-        QString parse();
+        static QString parse( QTextStream& ts, Figure* f );
+        static QString parseResLibs( QTextStream& ts );
 
         static Dashes parseDashLine( const std::string& s );
         
 private:
+        Parser( QTextStream& ts );
+
         ObjectList parseLoop( bool parsingCompound = false );
+        void resourceParseLoop();
         QPolygonF getPoints( uint n );
         bool readLine();
 
 //         typedef DrawObject* (Parser::*creatorType)();
 //         QHash<QString, creatorType> registeredTypes_;
         
-        QTextStream *fileStream_;
+        QTextStream& fileStream_;
         std::istringstream stream_;
         
         QString itemType_;
         uint line_;
-        Figure* figure_;
-        
+
         QString errorReport_;
 
         QString objectComment_;
@@ -85,11 +85,11 @@ private:
         DrawObject *parseGenericData( uint &npoints, QPolygonF*& pa );
 
         QPointF parsePoint();
-        void parseResource();
+        void parseResource( ResourceKey::Flags flag );
         void parseStroke( Stroke& stroke );
         void parsePen( Pen& pen );
         
-        ResourceKeyList dashList_;
+//        ResourceKeyList dashList_;
         
 //        QBrush parsePattern( int lines );
 

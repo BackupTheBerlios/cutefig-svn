@@ -27,7 +27,7 @@ Things that CuteFig will have that xfig doesn't:
 
 How is it written?
 
-CuteFig will be written in C++ using the widespread QT-Libraries. 
+CuteFig will be written in C++ using the widespread Qt-Libraries. 
 
 
 When will it be ready?

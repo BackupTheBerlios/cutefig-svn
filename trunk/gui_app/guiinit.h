@@ -30,7 +30,10 @@
 namespace Initialiser
 {
         void createGUIHandlers();
+
+        void initResLibs();
 }
+
 
 
 #endif

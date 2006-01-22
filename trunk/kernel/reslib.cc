@@ -22,42 +22,26 @@
 **
 ******************************************************************************/
 
-#ifndef initialiser_h
-#define initialiser_h
+#include "reslib.h"
 
-#include <QHash>
-#include <QString>
-
-namespace Initialiser
+//! Changes flags of key to InLib, if the resource is in the lib
+/*  As Resources coming from a data file, that are identically in the
+ *  ResLib are not added again. Therefore #ResourceKey::flags_ have to
+ *  be changed from InFig to InLib.
+ */
+bool AbstractResLib::containsInFigOrLib( ResourceKey& key )
 {
-        template<typename T> class AutoHash;
-};
-
-template<typename T> class Initialiser::AutoHash
-{
-public:
-        AutoHash()
-                : hash_() 
-        {
-                init();
-        }
+        if ( contains( key ) )
+                return true;
         
-        T*& operator[]( const QString& keyword )
-        {
-                return hash_[keyword];
+        if ( key.isInFig() ) {
+                ResourceKey k = ResourceKey::inLib( key.keyString() );
+                if ( contains( k ) ) {
+                        key = k;
+                        return true;
+                }
+                key = ResourceKey();
         }
 
-        QList<T*> objects() const
-        {
-                return hash_.values();
-        }
-        
-private:
-        AutoHash( const AutoHash& );
-        
-        QHash<QString, T*> hash_;
-
-        void init();
-};
-
-#endif
+        return false;        
+}

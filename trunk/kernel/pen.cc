@@ -123,18 +123,20 @@ int qHash( const Dashes& dashes )
 }
 
 
-#include "parser.h"
-
 template<>
 void ResLib<Dashes>::init()
 {
-        insertBuiltIn( "S",               QVector<double>() );
-        insertBuiltIn( "Dot",             Parser::parseDashLine("1 3") );
-        insertBuiltIn( "Dash",            Parser::parseDashLine("3 3") );
-        insertBuiltIn( "DashDot",         Parser::parseDashLine("3 3 1 3") );
-        insertBuiltIn( "DashDotDot",      Parser::parseDashLine("3 3 1 3 1 3") );
-        insertBuiltIn( "DashDotDotDot",   Parser::parseDashLine("3 3 1 3 1 3 1 3") );
-        insertBuiltIn( "DashDashDot",     Parser::parseDashLine("3 3 3 3 1 3") );
-        insertBuiltIn( "DashDashDashDot", Parser::parseDashLine("3 3 3 3 3 3 1 3") );
-        insertBuiltIn( "DashDashDotDot",  Parser::parseDashLine("3 3 3 3 1 3 1 3") );
+        typedef QVector<double> dsh;
+        insertBuiltIn( "S",           dsh() );
+        insertBuiltIn( "Dot",         dsh() << 1 << 3 );
+        insertBuiltIn( "Dash",        dsh() << 3 << 3 );
+        insertBuiltIn( "DashDot",     dsh() << 3 << 3 << 1 << 3 );
+        insertBuiltIn( "DashDotDot",  dsh() << 3 << 3 << 1 << 3 << 1 << 3 );
+        insertBuiltIn( "DashDashDot", dsh() << 3 << 3 << 3 << 3 << 1 << 3 );
+//         insertBuiltIn( "DashDotDotDot",
+//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 1 3 1 3 1 3") );
+//         insertBuiltIn( "DashDashDashDot",
+//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 3 3 3 3 1 3") );
+//         insertBuiltIn( "DashDashDotDot",
+//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 3 3 1 3 1 3") );
 }

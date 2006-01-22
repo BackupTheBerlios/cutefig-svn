@@ -19,6 +19,7 @@ HEADERS += fig.h \
            ellipse.h \
            polyline.h \
            polygon.h \
+           bezierspline.h \
            textobject.h \
            objecthandler.h \
            pen.h \
@@ -45,11 +46,13 @@ SOURCES += figure.cc \
            ellipse.cc \
            polyline.cc \
            polygon.cc \
+           bezierspline.cc \
            textobject.cc \
            objecthandler.cc \
            pen.cc \
            stroke.cc \
            gradient.cc \
+           reslib.cc \
            initialiser.cc \
            resourceio.cc \
            stdresio.cc \

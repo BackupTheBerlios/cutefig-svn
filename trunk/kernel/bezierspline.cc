@@ -22,42 +22,33 @@
 **
 ******************************************************************************/
 
-#ifndef initialiser_h
-#define initialiser_h
+#include "bezierspline.h"
+#include "outputbackend.h"
 
-#include <QHash>
-#include <QString>
+#include <QPainterPath>
 
-namespace Initialiser
+bool BezierSpline::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 {
-        template<typename T> class AutoHash;
-};
+        return false;
+}
 
-template<typename T> class Initialiser::AutoHash
+void BezierSpline::outputToBackend( OutputBackend *ob )
 {
-public:
-        AutoHash()
-                : hash_() 
-        {
-                init();
-        }
-        
-        T*& operator[]( const QString& keyword )
-        {
-                return hash_[keyword];
-        }
+        ob->outputBezierSpline( this );
+}
 
-        QList<T*> objects() const
-        {
-                return hash_.values();
-        }
-        
-private:
-        AutoHash( const AutoHash& );
-        
-        QHash<QString, T*> hash_;
+void BezierSpline::setupPainterPath()
+{
+        int s = points_.size()-1;
+        int m = s % 3;
+        s -= m;
 
-        void init();
-};
+        painterPath_ = QPainterPath();
+        painterPath_.moveTo( points_[0] );
+        
+        for ( int i = 1; i < s; )
+                painterPath_.cubicTo( points_[i++], points_[i++], points_[i++] );
 
-#endif
+        if ( m == 2 )
+                painterPath_.quadTo( points_[s++], points_[s++] );
+}

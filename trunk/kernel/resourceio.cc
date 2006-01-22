@@ -24,7 +24,14 @@
 
 #include "resourceio.h"
 #include "initialiser.h"
+#include "parser.h"
 
+#include <QSettings>
+#include <QFileInfo>
+#include <QDir>
+#include <QTextStream>
+
+#include <fstream>
 //QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
 
 Initialiser::AutoHash<ResourceIOFactory> ResourceIOFactory::rIOFHash_;
@@ -53,11 +60,36 @@ AbstractResLib* ResourceIOFactory::getResLibInstance( const QString& keyWord )
 {
         ResourceIOFactory* f = rIOFHash_[keyWord];
 
-
         if ( !f )
                 return 0;
 
         return f->resLibInstance();
 }
- 
+
+
+static const QString resourceFileName()
+{
+        QSettings s;
+        QString resfile( QFileInfo(s.fileName()).path() + QDir::separator() + "resourcelib.cfrl" );
+
+        return s.value( "resfiles", QVariant( resfile ) ).toString();
+}
+
+void ResourceIOFactory::saveResLibs()
+{
+        std::ofstream ts( resourceFileName().toLocal8Bit().constData() );
+        
+        foreach ( ResourceIOFactory* f, rIOFHash_.objects() )
+                f->resLibInstance()->save( f->newResourceIO(), ts );
+}
+
+void ResourceIOFactory::readResLibs()
+{
+        QFile f( resourceFileName() );
+
+        if ( f.open( QIODevice::ReadOnly ) ) {
+                QTextStream ts( &f );
+                Parser::parseResLibs( ts );
+        }
+}
 

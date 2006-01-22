@@ -68,6 +68,11 @@ template<> void TCreateAction<Polyline>::init()
         setShortcut( Qt::Key_L );
 }
 
+template<> void TCreateAction<BezierSpline>::init()
+{
+        setShortcut( Qt::Key_B );
+}
+
 template<> void TCreateAction<TextObject>::init()
 {
         setShortcut( Qt::Key_T );

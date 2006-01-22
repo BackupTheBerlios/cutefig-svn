@@ -36,14 +36,14 @@
 #include <QDebug>
 
 Polyline::Polyline( Figure* parent )
-        : DrawObject( parent )
+        : DrawObject( parent ),
+          finished_( false )
 {
-        nextPoint_ = &points_[0];
 }
 
 Polyline::Polyline( const Polyline* o )
         : DrawObject( o ),
-          nextPoint_( 0 )
+          finished_( true )
 {
         getReadyForDraw();
 }
@@ -51,19 +51,16 @@ Polyline::Polyline( const Polyline* o )
 void Polyline::passPointFlag( Fig::PointFlag f )
 {
         if ( f & Fig::Final )
-                nextPoint_ = 0;
+                finished_ = true;
 }
 
 QPointF* Polyline::nextPoint()
 {       
-        if (  nextPoint_ ) {
-                int c = points_.size();
-                points_.resize( c + 1 );
-                points_[c] = QPointF( 0,0 );
-                nextPoint_ = &points_[c];
-        }
-
-        return nextPoint_;
+        if (  finished_ )
+                return 0;
+        
+        points_.append( QPointF() );
+        return &points_.last();
 }
 
 void Polyline::setupPainterPath()

@@ -174,6 +174,8 @@ public:
 
         bool isValid() const { return flags_ != Invalid; }
 
+        bool isInFig() const { return flags_ & InFig; }
+
         static ResourceKey builtIn( const QString& ks ) { return ResourceKey( ks, BuiltIn ); }
         static ResourceKey inFig( const QString& ks ) { return ResourceKey( ks, InFig ); }
         static ResourceKey inLib( const QString& ks ) { return ResourceKey( ks, InLib ); }

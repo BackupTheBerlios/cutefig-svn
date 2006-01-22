@@ -196,11 +196,11 @@ void ResourceUser<Resource>::setResource( const Resource& data )
 template<typename Resource>
 void ResourceUser<Resource>::setResource( const ResourceKey& key )
 {
-        const Resource* r = resLib_.assignResource( key, this );
+        key_ = key;
+        const Resource* r = resLib_.assignResource( key_, this );
 
-        if ( r || !key.isValid() ) {
+        if ( r || !key_.isValid() ) {
                 unassignResource();
-                key_ = key;
                 p_data_ = r;
         }
 }

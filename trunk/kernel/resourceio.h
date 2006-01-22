@@ -41,6 +41,7 @@ namespace Initialiser
 
 class ResourceIO;
 
+class AbstractResLib;
 template<typename Resource> class ResLib;
 
 /** \class ResourceIOFactory
@@ -76,6 +77,9 @@ class ResourceIOFactory
 public:
         static ResourceIO* getResourceIO( const QString& keyWord );
         static AbstractResLib* getResLibInstance( const QString& keyWord );
+
+        static void saveResLibs();
+        static void readResLibs();
         
         virtual ~ResourceIOFactory() {}
         
@@ -120,7 +124,7 @@ public:
         virtual bool parseResource( const QString& itemType, std::istream& is ) = 0;
         virtual void postProcessResource() = 0;
         virtual void pushResource( const ResourceKey& key ) const = 0;
-        virtual void outputResource( const ResourceKey& key, std::ostream& stream ) = 0;
+        virtual void outputResource( const ResourceKey& key, std::ostream& stream ) const = 0;
         
         bool failed() const { return failed_; }
         QString errorString() const { return errorString_; }
@@ -139,10 +143,8 @@ private:
         ResourceIO( const ResourceIO& ) {}
 };
 
-/** \class TResourceIO
- *
- * \brief Implements the interface provided by ResourceIO.
- *
+//! Implements the interface provided by ResourceIO.
+/**
  * Besides implementing the pure virtual functions of ResourceIO it
  * contains the data member resource_ and resourceLib_ of which the
  * former is the Resource handled and the latter is a reference to
@@ -175,7 +177,7 @@ public:
          * \param itemType is a reference to Parser::itemType_.
          * \param is is a reference to Parser::stream_.
          *
-         * The called several times until the Parser finds
+         * The function is called several times until the Parser finds
          * resource_end as a keyword. Each time one line is
          * passed. The first word in itemType and the rest in is.  If
          * the line passed is the first line describing the resource
@@ -191,7 +193,7 @@ public:
         virtual void postProcessResource() {}
 
         //! \b Needs to be specialised
-        void outputResource( const ResourceKey& key, std::ostream& stream );
+        void outputResource( const ResourceKey& key, std::ostream& stream ) const;
 
         //! adds the resource to the resourceLib after having successfully parsed it.
         void pushResource( const ResourceKey& key ) const 
@@ -201,7 +203,7 @@ public:
 
 protected:
         //! \b Needs to be specislised by all types
-        virtual void outputResourceBody( std::ostream& ) {}
+        virtual void outputResourceBody( const Resource&, std::ostream& ) const {}
         
 private:
         ResLib<Resource>& resourceLib_;
@@ -221,16 +223,16 @@ public:
 
 
 template<typename Resource>
-void TResourceIO<Resource>::outputResource( const ResourceKey& key, std::ostream& stream )
+void TResourceIO<Resource>::outputResource( const ResourceKey& key, std::ostream& stream ) const
 {
-        resource_ = resourceLib_[key];
+        const Resource& res = resourceLib_[key];
         
         stream << "resource "
-               << keyWord_ << " "
+               << Res::resourceName<Resource>() << " "
                << key.keyString() << " "
                << hashSum( key ) << " ";
 
-        outputResourceBody( stream );
+        outputResourceBody( res, stream );
 
         stream << "resource_end\n";
 }

@@ -53,12 +53,9 @@
 
         
 
-Dashes parseDashes( std::istringstream& is );
-
-Parser::Parser( QTextStream *ts, Figure *f )
+Parser::Parser( QTextStream& ts  )
         : fileStream_( ts ),
           line_( 0 ),
-          figure_( f ),
           errorReport_( QString() )
 {
 }
@@ -68,10 +65,18 @@ Parser::Parser( QTextStream *ts, Figure *f )
  *  DrawObjects found to the figure and returns an errorreport that
  *  can be displayed to the user.
  */
-QString Parser::parse()
+QString Parser::parse( QTextStream& ts, Figure* f )
 {
-        figure_->takeDrawObjects( parseLoop() );
-        return errorReport_;
+        Parser p( ts );
+        f->takeDrawObjects( p.parseLoop() );
+        return p.errorReport_;
+}
+
+QString Parser::parseResLibs( QTextStream& ts )
+{
+        Parser p( ts );
+        p.resourceParseLoop();
+        return p.errorReport_;
 }
 
 
@@ -119,7 +124,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                 }
                 
                 if ( itemType_ == "compound_begin" ) {
-                        olist.push_back( new Compound( parseLoop( true ), figure_ ) );
+                        olist.push_back( new Compound( parseLoop( true ) ) );
                         continue;
                 }
 
@@ -130,7 +135,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                 }
 
                 if ( itemType_ == "resource" ) {
-                        parseResource();
+                        parseResource( ResourceKey::InFig );
                         continue;
                 }
                 
@@ -144,8 +149,14 @@ ObjectList Parser::parseLoop( bool parsingCompound )
         return olist;
 }
 
+void Parser::resourceParseLoop()
+{
+        while ( readLine() )
+                if ( itemType_ == "resource" )
+                        parseResource( ResourceKey::InLib );
+}
 
-void Parser::parseResource()
+void Parser::parseResource( ResourceKey::Flags flags )
 {
         QString keyWord;
         stream_ >> keyWord;
@@ -174,8 +185,8 @@ void Parser::parseResource()
                 if ( hashsum == savedHashsum ) {
                         QString s;
                         do {
-                                *fileStream_ >> s;
-                                fileStream_->readLine();
+                                fileStream_ >> s;
+                                fileStream_.readLine();
                         } while ( s != "resource_end" );
                         
                         parseit = false;
@@ -196,7 +207,7 @@ void Parser::parseResource()
                 if ( resIO->failed() )
                         parseError( resIO->errorString() );
                 else
-                        resIO->pushResource( ResourceKey::inFig( rks ) );
+                        resIO->pushResource( ResourceKey( rks, flags ) );
         }
 }
 
@@ -208,7 +219,7 @@ void Parser::parseResource()
 bool Parser::readLine()
 {
         QString s;     
-        s = fileStream_->readLine();
+        s = fileStream_.readLine();
         line_++;
 
         while ( s[0] == '#' || s.isEmpty() ) {
@@ -216,8 +227,8 @@ bool Parser::readLine()
                         s.remove( 0, 1 );
                         objectComment_ += s + '\n';
                 }
-                s = fileStream_->readLine();
-                if ( fileStream_->atEnd() )
+                s = fileStream_.readLine();
+                if ( fileStream_.atEnd() )
                         return false;
                 line_++;
         }       
@@ -297,11 +308,9 @@ void Parser::parseStroke( Stroke& s )
                         QString kw;
                         stream_ >> kw;
                         
-                        if ( kw == "color" ) {
+                        if ( kw == "color" ) 
                                 s.setColor( key );
-                                return;
-                        }
-                        if ( kw == "gradient" )
+                        else if ( kw == "gradient" )
                                 s.setGradient( key );
                 }
         }
@@ -358,7 +367,7 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
                 depth = 50;
         }
 
-        DrawObject* o = ObjectHandler::getDrawObject( obType, stream_, figure_ );
+        DrawObject* o = ObjectHandler::getDrawObject( obType, stream_ );
         if ( !o ) {
                 npoints = 0;
                 parseError( invalidObjectData, Discarding );
@@ -401,24 +410,6 @@ void Parser::parseError( QString s, ErrorSeverity sev )
                 errorReport_.append( tr("Object discarded.") );
         }
         errorReport_.append("\n");
-}
-
-Dashes Parser::parseDashLine( const std::string& s )
-{
-        std::istringstream is( s );
-        return parseDashes( is );
-}
-
-Dashes parseDashes( std::istringstream& is )
-{
-        Dashes d( 0 );
-        double val;
-
-        while ( !is.eof() )
-                if ( is >> val && val > 0 )
-                        d.push_back( val );
-        
-        return d;
 }
 
 QString Parser::tr( const char* source )

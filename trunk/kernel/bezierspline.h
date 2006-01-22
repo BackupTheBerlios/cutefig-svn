@@ -22,42 +22,25 @@
 **
 ******************************************************************************/
 
-#ifndef initialiser_h
-#define initialiser_h
+#ifndef bezier_h
+#define bezier_h
 
-#include <QHash>
-#include <QString>
+#include "polyline.h"
 
-namespace Initialiser
+class BezierSpline : public Polyline
 {
-        template<typename T> class AutoHash;
-};
+        Q_OBJECT
+        DRAW_OBJECT( "bezierspline", "&Bezier spline" );
 
-template<typename T> class Initialiser::AutoHash
-{
 public:
-        AutoHash()
-                : hash_() 
-        {
-                init();
-        }
-        
-        T*& operator[]( const QString& keyword )
-        {
-                return hash_[keyword];
-        }
+        explicit BezierSpline( Figure* parent ) : Polyline( parent ) {}
+        BezierSpline( const BezierSpline* other ) : Polyline( other ) {}
 
-        QList<T*> objects() const
-        {
-                return hash_.values();
-        }
+        bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
+        virtual void outputToBackend( OutputBackend* ob );
         
-private:
-        AutoHash( const AutoHash& );
-        
-        QHash<QString, T*> hash_;
-
-        void init();
+protected:
+        virtual void setupPainterPath();
 };
 
 #endif

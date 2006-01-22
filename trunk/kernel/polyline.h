@@ -37,8 +37,7 @@ public:
         ~Polyline() { };
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
-
-        virtual void outputToBackend( OutputBackend *ob );
+        virtual void outputToBackend( OutputBackend* ob );
         
 protected:
         virtual void setupPainterPath();
@@ -46,7 +45,7 @@ protected:
         virtual void passPointFlag( Fig::PointFlag f );
         virtual QPointF* nextPoint();
 
-        QPointF *nextPoint_;
+        bool finished_;
 };
 
 
