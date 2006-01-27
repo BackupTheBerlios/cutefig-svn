@@ -54,13 +54,14 @@ void Polyline::passPointFlag( Fig::PointFlag f )
                 finished_ = true;
 }
 
-QPointF* Polyline::nextPoint()
+int Polyline::nextPointIndex()
 {       
         if (  finished_ )
-                return 0;
-        
+                return -1;
+
+        int s = points_.size();
         points_.append( QPointF() );
-        return &points_.last();
+        return s;
 }
 
 void Polyline::setupPainterPath()

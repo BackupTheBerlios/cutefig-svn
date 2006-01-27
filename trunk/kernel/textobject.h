@@ -143,7 +143,7 @@ private:
         void doSpecificPreparation() {}
         void doDraw( QPainter* p ) const;
 
-        QPointF* nextPoint() { return 0; }
+        int nextPointIndex() { return -1; }
 
         void passPointFlag( Fig::PointFlag ) {}
 

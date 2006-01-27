@@ -37,8 +37,8 @@ DrawObject::DrawObject( Figure* parent )
         : QObject( parent ),
           stroke_( Qt::black ),
           points_( 1 ),
-          currentPoint_( 0 ),
           bRect_( 0,0,0,0 ),
+          currentPointIndex_( 0 ),
           compoundParent_( 0 )
 {
         figure_ = parent;
@@ -53,6 +53,7 @@ DrawObject::DrawObject( const DrawObject* o )
           depth_( o->depth_ ),
           commentString_( o->commentString_ ),
           points_( o->points_ ),
+          currentPointIndex_( -1 ),
           compoundParent_( 0 )
 {
 }
@@ -67,28 +68,28 @@ void DrawObject::move( const QPointF& d )
 
 bool DrawObject::pointSet( const QPointF & pos, Fig::PointFlag f )
 {
-        if ( currentPoint_ ) 
-                *currentPoint_ = pos;             
-        else 
-                points_[0] = pos;
+        if ( currentPointIndex_ < 0 )
+                return false;
+        
+        points_[currentPointIndex_] = pos;
 
         passPointFlag( f );
 
-        QPointF* np = nextPoint();
-        if ( !np ) 
+        currentPointIndex_ = nextPointIndex();
+        if ( currentPointIndex_ < 0 ) { 
                 doSpecificPreparation();
-
-        currentPoint_ = np;
+                return false;
+        }
         
-        return np;
+        return true;
 }
 
 void DrawObject::cursorMove( const QPointF & pos )
 {
-        if ( !currentPoint_ ) 
+        if ( currentPointIndex_ < 0 )
                 return;
 
-        *currentPoint_ = pos;
+        points_[currentPointIndex_] = pos;
 
         getReadyForDraw();
 }

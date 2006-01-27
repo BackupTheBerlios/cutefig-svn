@@ -43,7 +43,7 @@ protected:
         virtual void setupPainterPath();
 
         virtual void passPointFlag( Fig::PointFlag f );
-        virtual QPointF* nextPoint();
+        int nextPointIndex();
 
         bool finished_;
 };

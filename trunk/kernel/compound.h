@@ -67,7 +67,7 @@ public:
         const ObjectList& childObjects() const { return childObjects_; }
 
 protected:
-        virtual QPointF* nextPoint() { return 0; }
+        virtual int nextPointIndex() { return -1; }
         virtual void passPointFlag( Fig::PointFlag ) {}
         
         virtual void getReadyForDraw();

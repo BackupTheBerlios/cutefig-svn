@@ -41,20 +41,20 @@ Rectangloid::Rectangloid( const Rectangloid* r )
 {
 }
 
-QPointF* Rectangloid::nextPoint()
+int Rectangloid::nextPointIndex()
 {
         if ( points_.size() == 1 ) {
                 points_.resize( 2 );
-                return &points_[1];
+                return 1;
         }
 
         if ( !hasAngle_ )
-             return 0;
+             return -1;
         
         calcAngle();
         
         hasAngle_ = false;
-        return &points_[1];
+        return 1;
 }
 
 void Rectangloid::setupRects()

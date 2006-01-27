@@ -25,7 +25,14 @@
 #include "bezierspline.h"
 #include "outputbackend.h"
 
+#include <QPainter>
 #include <QPainterPath>
+
+BezierSpline::BezierSpline( Figure* parent )
+        : DrawObject( parent ),
+          finished_( false ),
+          oppositeControlPoint_( -1 )
+{}
 
 bool BezierSpline::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 {
@@ -40,9 +47,13 @@ void BezierSpline::outputToBackend( OutputBackend *ob )
 void BezierSpline::setupPainterPath()
 {
         int s = points_.size()-1;
+        
+                           
         int m = s % 3;
         s -= m;
 
+//        qDebug() << "setupPainterPath" << s << m;
+        
         painterPath_ = QPainterPath();
         painterPath_.moveTo( points_[0] );
         
@@ -51,4 +62,57 @@ void BezierSpline::setupPainterPath()
 
         if ( m == 2 )
                 painterPath_.quadTo( points_[s++], points_[s++] );
+}
+
+void BezierSpline::drawTentative( QPainter* p, const QPen& auxPen ) const
+{
+        p->drawPath( painterPath_ );
+
+//        qDebug () << "drawTentative" << currentPointIndex() << oppositeControlPoint_;
+        if ( oppositeControlPoint_ == -1 )
+                return;
+        
+        QPen op = p->pen();
+        p->setPen( auxPen );
+        p->drawLine( points_[currentPointIndex()], points_[oppositeControlPoint_] );
+        p->setPen( op );
+}
+
+void BezierSpline::passPointFlag( Fig::PointFlag f )
+{
+        if ( f & Fig::Final )
+                finished_ = true;
+}
+
+int BezierSpline::nextPointIndex()
+{
+        if ( finished_ )
+                return -1;
+
+        points_ << QPointF();        
+
+        findOppositeControlPoint( points_.size() );
+        
+        if ( oppositeControlPoint_ != -1 )
+                points_.insert( oppositeControlPoint_, QPointF() );
+
+        return points_.size() - 1;
+}
+
+
+void BezierSpline::findOppositeControlPoint( int current )
+{
+        qDebug() << "findOppositeControlPoint" << current;
+        if ( current % 3 == 0 ) 
+                oppositeControlPoint_ = -1;
+        
+        else if ( current % 2 )
+                oppositeControlPoint_ = current - 2;
+        else
+                oppositeControlPoint_ = current + 2;
+
+        qDebug() << oppositeControlPoint_ << points_.size();
+        
+        if ( oppositeControlPoint_ > points_.size() )
+                oppositeControlPoint_ = -1;
 }

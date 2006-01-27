@@ -213,7 +213,7 @@ public:
         void setComment( const QString& str ) { commentString_ = str; }
         QString comment() const { return commentString_; }
 
-        void setCurrentPoint( QPointF* p ) { currentPoint_ = p; }
+        void setCurrentPointIndex( int i ) { currentPointIndex_ = i; }
         //!< Tells the object which point is to be edited.
         
         void setPoints( QPolygonF pa ) { points_ = pa; }
@@ -282,8 +282,8 @@ protected:
         //! not meant to be called manually but by #DRAW_OBJECT
         template<typename OT> DrawObject* doCopy( const OT* orig ) const { return new OT( orig ); }
         
-        //! supposed to return the next point to be edited if there is one.
-        virtual QPointF* nextPoint() = 0;
+        //! supposed to return the index of next point to be edited ot -1
+        virtual int nextPointIndex() = 0;
 
         //! supposed to handle the PointFlag appropriately
         virtual void passPointFlag( Fig::PointFlag f ) =0;
@@ -306,6 +306,7 @@ protected:
         //! returns all resourcUsers the object has.
         virtual QList<AbstractResourceUser*> resourceUsers() const;
 
+        int currentPointIndex() const { return currentPointIndex_; }
 
         //! the Figure containing the DrawObject
         Figure* figure_;
@@ -331,12 +332,12 @@ protected:
 
         QPainterPath painterPath_;
         QPolygonF points_;
-        QPointF* currentPoint_;
         QPointF centerPoint_;
 
         QRectF bRect_, cRect_;
 
 private:
+        int currentPointIndex_;
         void setCompoundParent( Compound* p );
         Compound* compoundParent_;
 };

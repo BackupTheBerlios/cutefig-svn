@@ -25,22 +25,35 @@
 #ifndef bezier_h
 #define bezier_h
 
-#include "polyline.h"
+#include "drawobject.h"
 
-class BezierSpline : public Polyline
+class BezierSpline : public DrawObject
 {
         Q_OBJECT
         DRAW_OBJECT( "bezierspline", "&Bezier spline" );
 
 public:
-        explicit BezierSpline( Figure* parent ) : Polyline( parent ) {}
-        BezierSpline( const BezierSpline* other ) : Polyline( other ) {}
+        explicit BezierSpline( Figure* parent );
+        BezierSpline( const BezierSpline* other ) : DrawObject( other ) {}
 
         bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
         virtual void outputToBackend( OutputBackend* ob );
+
+        void drawTentative( QPainter* p, const QPen& auxPen ) const;
         
 protected:
         virtual void setupPainterPath();
+
+        virtual void passPointFlag( Fig::PointFlag f );
+        virtual int nextPointIndex();
+
+private:
+        void findOppositeControlPoint( int current );
+        
+        bool finished_;
+
+        int oppositeControlPoint_;
+
 };
 
 #endif

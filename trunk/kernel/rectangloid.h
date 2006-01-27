@@ -59,7 +59,7 @@ protected:
 
         void setupPainterPath();
         void setupRects();
-        QPointF* nextPoint();
+        int nextPointIndex();
         
         void passPointFlag( Fig::PointFlag f );
         virtual void passPointFlag_private( Fig::PointFlag f ) = 0;

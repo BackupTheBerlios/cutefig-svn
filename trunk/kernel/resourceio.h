@@ -27,7 +27,7 @@
 
 #include "resourcekey.h"
 #include "streamops.h"
-#include "reslib.h"
+//#include "reslib.h"
 
 #include <QString>
 #include <QHash>
@@ -210,6 +210,13 @@ private:
 
         Resource resource_;
 };
+
+
+/*******************************************************************************
+ *                              Implementation                                 *
+ ******************************************************************************/
+
+#include "reslib.h"
 
 template<typename Resource> class TResourceIOFactory : public ResourceIOFactory
 {

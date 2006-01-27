@@ -32,13 +32,7 @@ class PointMoveAction : public InteractiveAction
 {
         Q_OBJECT
 public:
-        PointMoveAction( Controler* parent )
-                : InteractiveAction( parent ),
-                  pointToMove_( 0 ) {
-                setText( tr("Move &Point") );
-                setShortcut( Qt::CTRL+Qt::Key_P );
-                cursor_ = Qt::SizeAllCursor;
-        }
+        PointMoveAction( Controler* parent );
 
         virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
         virtual void move( const QPoint& p, const QMatrix* m );
@@ -51,9 +45,9 @@ public:
         virtual const QString commandName() const { return "move point"; }
 
 private:
-        QPointF* findPointUnderMouse( DrawObject* o, const QPoint& p, const QMatrix* m );
+        //  QPointF* findPointUnderMouse( DrawObject* o, const QPoint& p, const QMatrix* m );
 
-        QPointF* pointToMove_;
+        int pointIndex_;
         DrawObject* wObject_;
 };
 

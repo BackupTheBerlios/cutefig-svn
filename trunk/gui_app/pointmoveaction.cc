@@ -28,6 +28,30 @@
 
 #include <QDebug>
 
+int findPointUnderMouse( DrawObject* o, const QPoint& _p, const QMatrix* m )
+{
+        if ( !o )
+                return -1;
+
+        int i = 0;
+
+        const QPolygonF& pts = o->points();
+        while ( i < pts.size() && !Geom::isNear( m->inverted().map( pts[i] ), _p ) )
+                ++i;
+        
+        return ( i == pts.size() ) ? -1 : i;   
+}
+
+PointMoveAction::PointMoveAction( Controler* parent )
+        : InteractiveAction( parent ),
+          pointIndex_( -1 )
+{
+        setText( tr("Move &Point") );
+        setShortcut( Qt::CTRL+Qt::Key_P );
+        cursor_ = Qt::SizeAllCursor;
+}
+
+
 bool PointMoveAction::wouldHandle( DrawObject* o, const QPoint& p, const QMatrix* m )
 {
         if ( !m )
@@ -35,13 +59,13 @@ bool PointMoveAction::wouldHandle( DrawObject* o, const QPoint& p, const QMatrix
 
         if ( !o )
                 return false;
-
-        return findPointUnderMouse( o, p, m );
+        
+        return findPointUnderMouse( o, p, m ) != -1;
 }
 
 bool PointMoveAction::wouldHandleSelection( const QPoint& p, const QMatrix* m )
 {
-        if ( pointToMove_ )
+        if ( pointIndex_ != -1 )
                 return true;
 
         if ( selection_.objects().count() != 1 ) 
@@ -50,32 +74,16 @@ bool PointMoveAction::wouldHandleSelection( const QPoint& p, const QMatrix* m )
         return wouldHandle( selection_.objects()[0], p, m );
 }
 
-QPointF* PointMoveAction::findPointUnderMouse( DrawObject* o, const QPoint& _p, const QMatrix* m )
-//!++TODO++ the distance value 5 shoudn't be hardcoded
-{
-        if ( !o )
-                return 0;
-
-        QPointF *p, *f = 0;
-        int i = 0;
-        do {
-                p = &o->points()[i++];
-                if ( Geom::distance( m->inverted().map( *p ), _p ) < 5 )
-                        f = p;
-        } while ( !f && i<o->points().size() );
-
-        return f;   
-}
 
 void PointMoveAction::reset()
 {
-        pointToMove_ = 0;
+        pointIndex_ = -1;
         wObject_ = 0;
 }
 
 void PointMoveAction::click( const QPoint& _p, Fig::PointFlag f, const QMatrix* m )
 {
-        if ( pointToMove_ && wObject_ ) {
+        if ( pointIndex_ != -1 && wObject_ ) {
                 QPointF p = m->map( QPointF( _p ) );
                 wObject_->pointSet( p, f );
                 controler_->execAction( new ChangeCommand( selection_ ) );
@@ -83,8 +91,8 @@ void PointMoveAction::click( const QPoint& _p, Fig::PointFlag f, const QMatrix* 
                 reset();
         } else {
                 wObject_ = selection_.objects()[0];
-                pointToMove_ = findPointUnderMouse( wObject_, _p, m );
-                wObject_->setCurrentPoint( pointToMove_ );
+                pointIndex_ = findPointUnderMouse( wObject_, _p, m );
+                wObject_->setCurrentPointIndex( pointIndex_ );
         }
 }
 
