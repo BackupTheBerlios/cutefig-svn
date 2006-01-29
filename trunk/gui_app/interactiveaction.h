@@ -38,6 +38,7 @@
 
 class DrawObject;
 class Selection;
+class ViewBase;
 
 class QKeyEvent;
 
@@ -60,6 +61,8 @@ public:
         virtual bool wouldHandleSelection( const QPoint& p = QPoint(), const QMatrix* m = 0 );
         virtual bool wantsSnap( const QPoint&, const QMatrix* ) { return true; }
         virtual bool acceptsKeyStrokes() { return false; }
+
+        virtual void drawMetaData( QPainter*, const ViewBase* ) const {}
         
         const QCursor& cursor() const { return cursor_; }
 

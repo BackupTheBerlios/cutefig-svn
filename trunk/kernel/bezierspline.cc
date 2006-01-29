@@ -24,21 +24,84 @@
 
 #include "bezierspline.h"
 #include "outputbackend.h"
+#include "geometry.h"
 
 #include <QPainter>
 #include <QPainterPath>
 
-BezierSpline::BezierSpline( Figure* parent )
-        : DrawObject( parent ),
-          finished_( false ),
-          oppositeControlPoint_( -1 )
-{}
-
-bool BezierSpline::pointHitsOutline( const QPointF& p, qreal tolerance ) const
+//! A helper class to find subpaths to add to BezierSpline::painterPath_.
+class BezierSpline::PathFinder 
 {
+public:
+        explicit PathFinder( const BezierSpline& bs );
+
+        //! returns true if there is another QPainterPath to be added.
+        bool findNext();
+
+        //! returns the QPainterPath to be added.
+        QPainterPath currentPath() const { return currentPath_; }
+        
+private:
+        const BezierSpline& bs_;
+
+        QPainterPath currentPath_;
+
+        int max_;
+        int currentIndex_;
+};
+
+BezierSpline::PathFinder::PathFinder( const BezierSpline& bs )
+        : bs_( bs ),
+          currentPath_( bs.points_.first() ),
+          max_( bs.points_.size() - 1 ),
+          currentIndex_( 0 )
+{
+}
+
+bool BezierSpline::PathFinder::findNext() 
+{
+        currentPath_ = QPainterPath( currentPath_.currentPosition() );
+
+        ++currentIndex_;
+
+        if ( currentIndex_ + 1 < max_ ) {
+                currentPath_.cubicTo( bs_.points_[currentIndex_],
+                                      bs_.points_[currentIndex_+1],
+                                      bs_.points_[currentIndex_+2] );
+                currentIndex_ += 2;
+                return true;
+        }
+
+        if ( currentIndex_ < max_ ) {
+                currentPath_.quadTo( bs_.points_[currentIndex_], bs_.points_.last() );
+                return true;
+        }
+        
         return false;
 }
 
+BezierSpline::BezierSpline( Figure* parent )
+        : DrawObject( parent ),
+          finished_( false ),
+          oppositeControlPoint_( 0 )
+{}
+
+BezierSpline::BezierSpline( const BezierSpline* other )
+        : DrawObject( other ),
+          finished_( true ),
+          oppositeControlPoint_( 0 )
+{
+        getReadyForDraw();
+}
+
+bool BezierSpline::pointHitsOutline( const QPointF& p, qreal tolerance ) const
+{
+        QRectF r( Geom::centerRect( p, QSizeF(tolerance, tolerance) ) );
+
+        return !painterPath_.contains( r ) && painterPath_.intersects( r );
+}
+
+                
 void BezierSpline::outputToBackend( OutputBackend *ob )
 {
         ob->outputBezierSpline( this );
@@ -46,36 +109,30 @@ void BezierSpline::outputToBackend( OutputBackend *ob )
 
 void BezierSpline::setupPainterPath()
 {
-        int s = points_.size()-1;
+        painterPath_ = QPainterPath( points_.first() );
         
-                           
-        int m = s % 3;
-        s -= m;
-
-//        qDebug() << "setupPainterPath" << s << m;
-        
-        painterPath_ = QPainterPath();
-        painterPath_.moveTo( points_[0] );
-        
-        for ( int i = 1; i < s; )
-                painterPath_.cubicTo( points_[i++], points_[i++], points_[i++] );
-
-        if ( m == 2 )
-                painterPath_.quadTo( points_[s++], points_[s++] );
+        PathFinder pf( *this );
+        while ( pf.findNext() )
+                painterPath_.addPath( pf.currentPath() );
 }
 
-void BezierSpline::drawTentative( QPainter* p, const QPen& auxPen ) const
+void BezierSpline::cursorMove( const QPointF& pos )
+{
+        QPointF diff = pos - points_[currentPointIndex()];
+        
+        if ( oppositeControlPoint_ > 0 ) 
+                points_[oppositeControlPoint_] -= diff;
+        else if ( oppositeControlPoint_ < 0 ) {
+                points_[currentPointIndex()+1] += diff;
+                points_[currentPointIndex()-1] += diff;
+        }
+        
+        DrawObject::cursorMove( pos );
+}
+
+void BezierSpline::drawTentative( QPainter* p ) const
 {
         p->drawPath( painterPath_ );
-
-//        qDebug () << "drawTentative" << currentPointIndex() << oppositeControlPoint_;
-        if ( oppositeControlPoint_ == -1 )
-                return;
-        
-        QPen op = p->pen();
-        p->setPen( auxPen );
-        p->drawLine( points_[currentPointIndex()], points_[oppositeControlPoint_] );
-        p->setPen( op );
 }
 
 void BezierSpline::passPointFlag( Fig::PointFlag f )
@@ -86,33 +143,66 @@ void BezierSpline::passPointFlag( Fig::PointFlag f )
 
 int BezierSpline::nextPointIndex()
 {
-        if ( finished_ )
+        if ( finished_ ) {
+                int s = points_.size() - 4;
+                if ( s > 0 && (s % 3==1) ) {
+                        points_.pop_back();
+                        oppositeControlPoint_ = 0;
+                        setupPainterPath();
+                }
+                
                 return -1;
+        }
 
-        points_ << QPointF();        
+        int s = points_.size();
+        if ( !(s % 3) ) {
+                points_.insert( --s, points_.last() );
+                oppositeControlPoint_ = s;
+        } else
+                oppositeControlPoint_ = 0;
 
-        findOppositeControlPoint( points_.size() );
+        points_ << points_.last();
         
-        if ( oppositeControlPoint_ != -1 )
-                points_.insert( oppositeControlPoint_, QPointF() );
-
         return points_.size() - 1;
 }
 
-
-void BezierSpline::findOppositeControlPoint( int current )
+/*! 
+ */
+void BezierSpline::setCurrentPointIndex( int i )
 {
-        qDebug() << "findOppositeControlPoint" << current;
-        if ( current % 3 == 0 ) 
-                oppositeControlPoint_ = -1;
+        DrawObject::setCurrentPointIndex( i );
         
-        else if ( current % 2 )
-                oppositeControlPoint_ = current - 2;
-        else
-                oppositeControlPoint_ = current + 2;
+        if ( (i < 2) || (i == points_.size()-1) ) {
+                oppositeControlPoint_ = 0;
+                return;
+        }
 
-        qDebug() << oppositeControlPoint_ << points_.size();
-        
-        if ( oppositeControlPoint_ > points_.size() )
+        if ( (i%3 == 0) ) {
                 oppositeControlPoint_ = -1;
+                return;
+        }
+        
+        if ( (i-1) % 3 )
+                oppositeControlPoint_ = i + 2;
+        else
+                oppositeControlPoint_ = i - 2;
+        
+        if ( oppositeControlPoint_ >= points_.size() )
+                oppositeControlPoint_ = 0;
+}
+
+void BezierSpline::drawMetaData( QPainter* p ) const
+{
+        int max = points_.size() - 1;
+
+        int i = 0;
+
+        while ( i < max ) {
+                p->drawLine( points_[i], points_[i+1] );
+
+                if ( i%3 )
+                        ++i;
+                else
+                        i+=2;
+        }
 }

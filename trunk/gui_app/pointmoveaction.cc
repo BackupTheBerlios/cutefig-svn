@@ -26,6 +26,8 @@
 #include "drawobject.h"
 #include "geometry.h"
 
+#include <QPainter>
+
 #include <QDebug>
 
 int findPointUnderMouse( DrawObject* o, const QPoint& _p, const QMatrix* m )
@@ -101,3 +103,16 @@ void PointMoveAction::move( const QPoint& p, const QMatrix* m )
         wObject_->cursorMove( m->map( QPointF( p ) ) );
 }
 
+
+void PointMoveAction::drawMetaData( QPainter* p, const ViewBase* v ) const
+{
+        if ( selection_.objects().count() != 1 )
+                return;
+
+        const DrawObject* o = selection_.objects()[0];
+
+        p->setPen( Qt::blue );
+        
+        v->drawObjectsPoints( p, o );
+        v->drawObjectsMetaData( p, o );
+}

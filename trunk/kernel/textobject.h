@@ -75,7 +75,7 @@ public:
         virtual uint minPoints() const { return 1; }
         
         virtual void draw( QPainter* p ) const;
-        virtual void drawTentative( QPainter* p, const QPen& auxpen ) const;
+        virtual void drawTentative( QPainter* p ) const;
         
         virtual void outputToBackend( OutputBackend* ob );
         

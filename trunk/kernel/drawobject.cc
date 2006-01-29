@@ -108,12 +108,8 @@ void DrawObject::draw( QPainter* p ) const
  *  while the object is moved with the mouse. The default
  *  implementation just uses #painterPath_ to draw it. So it does not
  *  have to be reimplemented by every subclass.
- *
- *  \e auxpen can be used if the object needs to draw some helpline
- *  while it is being created. See Ellipse::drawTentative for an
- *  example.
  */
-void DrawObject::drawTentative( QPainter *p, const QPen& ) const
+void DrawObject::drawTentative( QPainter *p ) const
 {
         p->drawPath( painterPath_ );
 }
@@ -130,9 +126,6 @@ void DrawObject::mapMatrix( const QMatrix& m )
  */
 bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
 {
-//         if ( !bRect_.intersects( Geom::centerRect( p, QSizeF( tolerance, tolerance ) ) ) )
-//                 return false;
-             
         if ( fill_ )
                 return painterPath_.contains( p );
         else

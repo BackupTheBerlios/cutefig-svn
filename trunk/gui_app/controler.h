@@ -121,6 +121,8 @@ public:
 
         void updateViews();
 
+        void drawActionMetaData( QPainter* p, const ViewBase* v );
+        
 signals:
         void undoPossible( bool );
         void redoPossible( bool );

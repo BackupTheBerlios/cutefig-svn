@@ -89,7 +89,7 @@ void TextObject::draw( QPainter* p ) const
         p->setPen( op );
 }
 
-void TextObject::drawTentative( QPainter* p, const QPen& ) const
+void TextObject::drawTentative( QPainter* p ) const
 {
         doDraw( p );
 }

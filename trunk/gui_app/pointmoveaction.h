@@ -44,6 +44,8 @@ public:
 
         virtual const QString commandName() const { return "move point"; }
 
+        virtual void drawMetaData( QPainter* p, const ViewBase* v ) const;
+        
 private:
         //  QPointF* findPointUnderMouse( DrawObject* o, const QPoint& p, const QMatrix* m );
 

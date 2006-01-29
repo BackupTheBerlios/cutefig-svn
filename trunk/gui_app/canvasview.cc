@@ -31,14 +31,10 @@
 
 #include "fig.h"
 #include "geometry.h"
-//#include "allobjects.h"
 #include "drawobject.h"
 #include "figure.h"
 #include "cutefig.h"
 #include "ruler.h"
-//#include "addcommand.h"
-//#include "deletecommand.h"
-//#include "changecommand.h"
 #include "actions.h"
 #include "interactiveaction.h"
 #include "griddialog.h"
@@ -288,10 +284,9 @@ inline void CanvasView::handleReturnHit()
 // brush but a default pen
 //
 
-void CanvasView::drawSelection( QPainter* p )
+void CanvasView::drawSelection( QPainter* p ) const
 {
         QRectF dr;
-        p->setPen( Qt::blue );
         dr.setSize( QSize( 5,5 ) );
 
         QRectF r;
@@ -358,35 +353,42 @@ void CanvasView::paintEvent( QPaintEvent * e )
 
         p.setMatrix( scaleMatrix_ );
 
-        if ( tentativeDraw_ ) {
-                QPen auxpen( Qt::red );
-                foreach ( DrawObject* o, l )
-                        o->drawTentative( &p, auxpen );
-        } else
+        if ( tentativeDraw_ ) 
+                foreach ( DrawObject* o, l ) 
+                        o->drawTentative( &p );
+        else
                 foreach ( DrawObject* o, l )
                         o->draw( &p );
 
         p.resetMatrix();
 
-        drawObjectsPoints( &p );
-        drawSelection( &p );
-
-        if ( snapped_ )
+//        drawObjectsPoints( &p );
+        controler_->drawActionMetaData( &p, this );
+        
+        if ( snapped_ ) {
+                p.setPen( Qt::green );
                 p.drawEllipse( snapRect() );
- 
+        }
+        
         p.end();
 }
 
-inline void CanvasView::drawObjectsPoints( QPainter* p )
+void CanvasView::drawObjectsMetaData( QPainter* p, const DrawObject* o ) const
 {
-        const QPolygonF pa = controler_->objectsPoints();
-        if ( pa.empty() )
+        p->setMatrix( scaleMatrix_ );
+        o->drawMetaData( p );
+        p->resetMatrix();
+}
+
+void CanvasView::drawObjectsPoints( QPainter* p, const DrawObject* o ) const
+{
+        const QPolygonF& pa = o->points();
+        if ( pa.isEmpty() )
                 return;
 
         QRectF r;
         r.setSize( QSize( 4,4 ) );
         
-        p->setPen( QPen( Qt::SolidPattern, 1.0 ) );
         QPolygonF::const_iterator it = pa.begin();
         for ( ; it != pa.end(); ++it )
                 if ( ! it->isNull() ) {
@@ -608,5 +610,6 @@ Fig::PointFlag calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
 
         return pf;
 }
+
 
 

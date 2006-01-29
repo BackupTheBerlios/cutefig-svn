@@ -26,6 +26,8 @@
 #include "addcommand.h"
 #include "allobjects.h"
 
+#include <QPainter>
+
 void CreateAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
 {
         if ( !cObject_->pointSet( m->map( QPointF( p ) ), f ) ) {
@@ -47,6 +49,19 @@ void CreateAction::handleSelection()
         selection_.setObjectToBeCreated( cObject_ );
 }
 
+void CreateAction::drawMetaData( QPainter* p, const ViewBase* v ) const
+{
+        if ( cObject_ ) {
+                v->drawObjectsPoints( p, cObject_ );
+                p->setPen( Qt::red );
+                v->drawObjectsMetaData( p, cObject_ );
+        }
+}
+
+void CreateAction::reset()
+{
+        cObject_ = 0;
+}
 
 template<> void TCreateAction<Rectangle>::init()
 {

@@ -31,14 +31,23 @@ class DrawObject;
 class Controler;
 class Figure;
 
+class QPainter;
+
 class ViewBase
 {
 public:
         ViewBase( Controler* c, Figure* f ) 
-                : controler_( c ), figure_( f ) {};
-        virtual ~ViewBase() { };
+                : controler_( c ),
+                  figure_( f )
+        {}
+        
+        virtual ~ViewBase() {}
 
         virtual void updateFigure( bool tentative = false ) = 0;
+
+        virtual void drawSelection( QPainter* p ) const = 0;
+        virtual void drawObjectsMetaData( QPainter* p, const DrawObject* o ) const = 0;
+        virtual void drawObjectsPoints( QPainter* p, const DrawObject* o ) const = 0;
         
 protected:
         Controler* controler_;

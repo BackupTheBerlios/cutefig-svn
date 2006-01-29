@@ -39,7 +39,10 @@ public:
         double angle() const { return angle_ * rad; }
         QPointF center() const { return center_; }
 
-        virtual void drawTentative( QPainter* p, const QPen& auxpen ) const;
+        virtual void drawMetaData( QPainter* p ) const;
+        
+
+//        virtual void drawTentative( QPainter* p ) const;
         
         void setAngleNew( double a );
 
@@ -66,8 +69,7 @@ protected:
 
         virtual void setupWidthAndHeight() = 0;
         virtual void addPath() = 0;
-//        virtual drawTentative_private( QPainter* p ) const = 0;
-        
+
         static const double rad = 180/M_PI;
         
 private:

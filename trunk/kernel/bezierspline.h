@@ -22,24 +22,81 @@
 **
 ******************************************************************************/
 
-#ifndef bezier_h
-#define bezier_h
+#ifndef bezierspline_h
+#define bezierspline_h
 
 #include "drawobject.h"
 
+//! Draws connected bezier curves
+/*! To draw itself a BezierSpline needs at least three points. As long
+ *  as there are enough points left, a cubic bezier curve is drawn. If
+ *  in the end there are only two more points left, a quadratic bezier
+ *  curve is added. The case that in the end there is only one point
+ *  left should not occur, i.e. BezierSpline has to take care that it
+ *  does not.
+ *
+ *  
+ *  \section pointkinds Kinds of Points
+ *  BezierSpline knows two different kinds of points.
+ *  
+ *     - Nodes. These are points \em on the spline. Mathematically
+ *       spoken they are start or end points of subsplines.
+ *
+ *     - Directives. These define tangents. The line defined by a
+ *       directive and its node is the tangent on the spline in the
+ *       node.
+ *
+ *  So the first and the last point of a BezierSpline are always
+ *  nodes. Moreover the successor and the preden? of a node are always
+ *  directives. Each directive is bound to exactly one node. Every
+ *  node exept the first and the last one has two directives.
+ *
+ *  
+ *  \section transitions Transitions between two subsplines
+ *  
+ *  A transition between two subsplines can be either \em smooth od
+ *  \em angular. Smooth means that both subsplines are hitting each
+ *  other at their connecting node at the same angle. That means that
+ *  the vector pointing from the node to one directive is the same one
+ *  that points from the node to the other directive exept the sign.
+ *
+ *  By now all transitions are smooth. So if one point is moved by the
+ *  user, other points might be moved as well. This is the case if
+ *
+ *      - a directive is moved. Then the other directive of the node has
+ *        to be moved in the opposite direction.
+ *
+ *      - a node, exept the first and the last, is moved. Then both
+ *        directives have to be moved into the same direction. 
+ *
+ *  It is not yet decided whether it will be possible to make the
+ *  transitions between two curves angular but probably so. 
+ */
 class BezierSpline : public DrawObject
 {
         Q_OBJECT
         DRAW_OBJECT( "bezierspline", "&Bezier spline" );
 
+        class PathFinder;
+        
 public:
         explicit BezierSpline( Figure* parent );
-        BezierSpline( const BezierSpline* other ) : DrawObject( other ) {}
+        BezierSpline( const BezierSpline* other );
 
+        friend class PathFinder;
+
+        virtual uint minPoints() const { return 3; }
+        
+        virtual void cursorMove( const QPointF& pos );
+        
         bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
         virtual void outputToBackend( OutputBackend* ob );
 
-        void drawTentative( QPainter* p, const QPen& auxPen ) const;
+        virtual void setCurrentPointIndex( int i );
+        
+        void drawTentative( QPainter* p ) const;
+
+        void drawMetaData( QPainter* p ) const;
         
 protected:
         virtual void setupPainterPath();
@@ -48,12 +105,24 @@ protected:
         virtual int nextPointIndex();
 
 private:
-        void findOppositeControlPoint( int current );
-        
         bool finished_;
 
+        //! Indicates whether and which other points have to be moved.
+        /*! There are three cases that can occur.
+         *
+         *      - There is no other point to be moved. Indicated by a
+         *        value of 0. This is the case when the first or the
+         *        last node is moved
+         *      
+         *      - There is one other point to be moved. In this case
+         *        the value is the index of the point that is to be
+         *        moved. This is the case when a directive is moded.
+         *
+         *      - There are are two other points to be moved. Indicated
+         *        by a value of -1. This is the case when a node in the
+         *        middle is moved. 
+         */
         int oppositeControlPoint_;
-
 };
 
 #endif

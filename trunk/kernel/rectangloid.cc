@@ -124,18 +124,22 @@ void Rectangloid::setAngleNew( double a )
 }
 
 
-void Rectangloid::drawTentative( QPainter* p, const QPen& auxpen ) const
-{
-        if ( hasAngle_ && !points_[1].isNull() ) {
-                QPen op = p->pen();
-                p->setPen( auxpen );
-                p->drawLine( points_[0], points_[1] );
-                p->setPen( op );
-        } else
-                DrawObject::drawTentative( p, auxpen );
-}
+// void Rectangloid::drawTentative( QPainter* p ) const
+// {
+// //                QPen op = p->pen();
+// //                 p->setPen( auxpen );
+// //                 p->setPen( op );
+//         } else
+//                 DrawObject::drawTentative( p );
+// }
 
 void Rectangloid::calcAngle()
 {
         angle_ = -atan2( points_[1].y() - points_[0].y(), points_[1].x() - points_[0].x() );
+}
+
+void Rectangloid::drawMetaData( QPainter* p ) const
+{
+        if ( hasAngle_ && !points_[1].isNull() ) 
+                p->drawLine( points_[0], points_[1] );
 }

@@ -46,8 +46,8 @@ public:
         virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
         virtual void move( const QPoint& p, const QMatrix* m );
 
-        virtual bool wouldHandle( DrawObject*, const QPoint& = QPoint(), const QMatrix* =0 ) { 
-                return true; }
+        virtual bool wouldHandle( DrawObject*, const QPoint& = QPoint(), const QMatrix* =0 )
+        { return true; }
 
         virtual bool isActive() const { return true; }
 
@@ -57,7 +57,10 @@ public:
 
         virtual const QString commandName() const { return "create"; }
 
+        virtual void drawMetaData( QPainter* p, const ViewBase* v ) const;
 
+        virtual void reset();
+        
 private:
         virtual DrawObject* createObject() = 0;
         DrawObject* cObject_;

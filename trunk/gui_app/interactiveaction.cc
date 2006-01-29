@@ -82,7 +82,9 @@
 
 #include "interactiveaction.h"
 #include "drawobject.h"
+#include "geometry.h"
 #include "controler.h"
+#include "viewbase.h"
 
 #include <QDebug>
 

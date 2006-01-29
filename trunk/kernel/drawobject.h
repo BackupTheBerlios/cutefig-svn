@@ -213,7 +213,7 @@ public:
         void setComment( const QString& str ) { commentString_ = str; }
         QString comment() const { return commentString_; }
 
-        void setCurrentPointIndex( int i ) { currentPointIndex_ = i; }
+        virtual void setCurrentPointIndex( int i ) { currentPointIndex_ = i; }
         //!< Tells the object which point is to be edited.
         
         void setPoints( QPolygonF pa ) { points_ = pa; }
@@ -229,13 +229,16 @@ public:
         virtual void draw( QPainter* p ) const;
 
         //! supposed to draw the object tentatively, i.e. while the user is handling it.
-        virtual void drawTentative( QPainter* p, const QPen& auxPen ) const;
+        virtual void drawTentative( QPainter* p ) const;
 
+        //! supposed to draw object's meta data such as helplines
+        virtual void drawMetaData( QPainter* ) const {}
+        
         //! sets the point just being edited and returns true if another point is needed.
         bool pointSet( const QPointF & pos, Fig::PointFlag f = Fig::Normal ); 
 
         //! moves the point just being edited tentatively.
-        void cursorMove( const QPointF & pos );
+        virtual void cursorMove( const QPointF & pos );
 
         //! moves the object by dx and dy
         virtual void move( const QPointF& d );

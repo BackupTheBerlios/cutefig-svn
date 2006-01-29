@@ -55,14 +55,21 @@ class CanvasView : public QWidget, public ViewBase
 {
         Q_OBJECT
 public:
+        //! The constructor needs a Controler \param c and a Figure \param f.
         CanvasView( Controler* c, Figure* f, CuteFig * parent =0 );
-         //!< The constructor needs a Controler \param c and a Figure \param f.
+
         ~CanvasView() { }
 
+        //! Redraws the whole figure, o is the DrawObject just edited.
         void updateFigure( bool tentative = false );
-        //!< Redraws the whole figure, o is the DrawObject just edited.
+        void drawSelection( QPainter* p ) const;
+        
+        //< Draws the control points of all considerable objects
+        void drawObjectsPoints( QPainter* p, const DrawObject* o ) const; 
 
-        Controler* controler() { return controler_; }
+        void drawObjectsMetaData( QPainter* p, const DrawObject* o ) const;
+
+        const Controler* controler() const { return controler_; }
         CuteFig* mainWindow() { return mainWindow_; }
 
         double paperWidth() const;
@@ -114,11 +121,7 @@ protected:
         
 private:
         void updateFigureImediately();
-        void drawObjectsPoints( QPainter* p ); 
-        //!< Draws the control points of all considerable objects 
-
-        void drawSelection( QPainter* p );
-    
+        
         void drawPaper( QPainter* p ); //!< draws the paper
         void drawGrid( QPainter* p );  //!< draws the snap grid
         QRect snapRect(); //!< emphesizes the point snaped to

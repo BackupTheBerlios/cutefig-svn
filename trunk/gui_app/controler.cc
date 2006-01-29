@@ -357,6 +357,11 @@ void Controler::setToolActionsGroup( ToolActions* ta )
         activeToolActions_.append( ta->move() );
 }
 
+void Controler::drawActionMetaData( QPainter* p, const ViewBase* v )
+{
+        
+        v->drawSelection( p );
 
-
-
+        if ( editAction_ )
+                editAction_->drawMetaData( p,v );
+}
