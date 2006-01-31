@@ -252,51 +252,38 @@ void Controler::resetFigure()
         selectObject( 0 );
 }
 
-void Controler::undo()
-{
-        if ( ! currentCommand_.hasPrevious() ) {
-                qDebug( "*** Oops *** Controler::undo() called without " 
-                        "currentCommand_.hasPrevious() :-(" );
-                return;
-        }
-
-        editActionsGroup_->undo( currentCommand_.peekPrevious()->commandString() );
-
-        currentCommand_.previous()->unexecute();
-        figureChanged_ = currentCommand_.hasPrevious();
-
-        selectObject( 0 );
-        updateViews();
-}
-
-void Controler::redo()
-{
-        if ( ! currentCommand_.hasNext() ) { 
-                qDebug( "*** Oops *** Controler::redo() called without " 
-                        "currentCommand_.hasNext() :-(" );
-                return;
-        }
-
-        editActionsGroup_->redo( currentCommand_.peekNext()->commandString() );
-
-        currentCommand_.next()->execute();
-        figureChanged_ = true;
-
-        selectObject( 0 );
-        updateViews();
-}
 
 
 void Controler::undo( int steps )
 {
-        for ( int i = 0; i < steps; ++i )
-                undo();
+        for ( int i = 0; i < steps; ++i ) {
+                if ( !currentCommand_.hasPrevious() ) {
+                        qDebug() << "*** BUG *** undo on bottom of command stack";
+                        break;
+                }
+                currentCommand_.previous()->unexecute();
+        }
+
+        figureChanged_ = currentCommand_.hasPrevious();
+
+        selectObject( 0 );
+        updateViews();        
 }
 
 void Controler::redo( int steps )
 {
-        for ( int i = 0; i < steps; ++i )
-                redo();
+        for ( int i = 0; i < steps; ++i ) {
+                if ( !currentCommand_.hasNext() ) {
+                        qDebug() << "*** BUG *** redo on top of command stack";
+                        break;
+                }
+                currentCommand_.next()->execute();
+        }
+        
+        figureChanged_ = true;
+
+        selectObject( 0 );
+        updateViews();                
 }
 
 void Controler::appendToCmdList( Command* c )

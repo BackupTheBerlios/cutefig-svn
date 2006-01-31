@@ -100,10 +100,8 @@ public:
 };
 
 
-/** \class EditActions
- *  \brief All the actions of the "Edit" menu
- *
- *  This class has the special functionality to implement an undo and
+//! All the actions of the "Edit" menu
+/** This class has the special functionality to implement an undo and
  *  redo menu. It therefore sets special widgets to be put into
  *  the specialButtons_ QHash. The QSignalMappers undoSignalMapper_
  *  and redoSignalMapper_ map the menu items to an int that is passed
@@ -116,27 +114,27 @@ public:
         EditActions( Controler* parent );
         ~EditActions() {}
 
+        //! Called by the controler when a Command has been executed. 
         void addCommand( const QString& s );
-        //!< Called by the controler when a Command has been executed. 
-
-        void undo( const QString& s );
-        //!< Called by the controler when undo has been called
-
-        void redo( const QString& s );
-        //!< Called by the controler when redo has been called
 
 private:
         QAction *undo_, *redo_;
-        QAction *undoHead_, *redoHead_; //!< pointer to the first entry in the undo/redo menu
         QMenu *undoMenu_, *redoMenu_;
         QSignalMapper *undoSignalMapper_, *redoSignalMapper_;
 
+        Controler* controler_;
+
         void remapUndoSignals(); //!< remap the menu when changed
         void remapRedoSignals(); //!< remap the menu when changed
-
+        
         static const QString undoString_;
         static const QString redoString_;
         static const QString colonSep_;
+
+private slots:
+        void undo( int steps = 1 );
+        void redo( int steps = 1 );
+        
 };
 
 

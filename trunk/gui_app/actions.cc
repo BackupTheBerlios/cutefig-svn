@@ -118,7 +118,8 @@ const QString EditActions::colonSep_ = ": ";
  *  appart from setting up the actions.
  */
 EditActions::EditActions( Controler* parent )
-        : ActionCollection( parent )
+        : ActionCollection( parent ),
+          controler_( parent )
 {
         setText( tr("&Edit") );
         
@@ -126,7 +127,7 @@ EditActions::EditActions( Controler* parent )
         undo_ = new QAction( QIcon(":images/undo.png"), undoString_, this );
         addAction( undo_ );
         undo_->setShortcut( Qt::CTRL+Qt::Key_Z );
-        connect( undo_, SIGNAL( triggered() ), parent, SLOT( undo() ) );
+        connect( undo_, SIGNAL( triggered() ), this, SLOT( undo() ) );
         undo_->setEnabled( false );
 
         QToolButton* undoTB = new QToolButton();
@@ -136,17 +137,17 @@ EditActions::EditActions( Controler* parent )
         specialWidgets_[undo_] = undoTB;
 
         undoSignalMapper_ = new QSignalMapper( this );
-        connect( undoSignalMapper_, SIGNAL( mapped(int) ), parent, SLOT( undo(int) ) );
+        connect( undoSignalMapper_, SIGNAL( mapped(int) ), this, SLOT( undo(int) ) );
 
         redoMenu_ = new QMenu( parent->mainWindow() );
         redo_ = new QAction( QIcon(":images/redo.png"), redoString_, this );
         addAction( redo_ );
         redo_->setShortcut( Qt::CTRL+Qt::Key_R );
-        connect( redo_, SIGNAL( triggered() ), parent, SLOT( redo() ) );
+        connect( redo_, SIGNAL( triggered() ), this, SLOT( redo() ) );
         redo_->setEnabled( false );
 
         redoSignalMapper_ = new QSignalMapper( this );
-        connect( redoSignalMapper_, SIGNAL( mapped(int) ), parent, SLOT( redo(int) ) );
+        connect( redoSignalMapper_, SIGNAL( mapped(int) ), this, SLOT( redo(int) ) );
 
         QToolButton* redoTB = new QToolButton();
         redoTB->setDefaultAction( redo_ );
@@ -176,84 +177,60 @@ void EditActions::addCommand( const QString& s )
 {
         redoMenu_->clear();
         redo_->setEnabled( false );
+        redo_->setText( redoString_ );
 
-        const QString menuString = undoString_ + colonSep_ + s;
-        QAction* newHead = new QAction( menuString, undoMenu_ );
-        undoMenu_->insertAction( undoHead_, newHead );
-        undoHead_ = newHead;
-        
-        undo_->setText( menuString );
-        undo_->setEnabled( true );
-
+        undoMenu_->insertAction( undoMenu_->actions().value( 0 ), new QAction( s, undoMenu_ ) );
         remapUndoSignals();
 }
 
-/** removes the first item of the undo menu, and adds one to the redo
- *  menu
- */
-void EditActions::undo( const QString& s )
+void EditActions::undo( int steps )
 {
-        undoMenu_->removeAction( undoHead_ );
-        delete undoHead_;
+        const QList<QAction*> actions = undoMenu_->actions();
 
-        if ( undoMenu_->actions().isEmpty() ) {
-                undoHead_ = 0;
-                undo_->setText( undoString_ );
-                undo_->setEnabled( false );
-        } else {
-                undoHead_ = undoMenu_->actions().first();
-                undo_->setText( undoHead_->text() );
-                undo_->setEnabled( true );
+        for ( int i = 0; i < steps; ++i ) {
+                QAction* a = actions[i];
+                undoMenu_->removeAction( a );
+                redoMenu_->insertAction( redoMenu_->actions().value( 0 ), a );
         }
-
-        const QString menuString = redoString_ + colonSep_ + s;
-        QAction* newHead = new QAction( menuString, redoMenu_ );
-
-        redoMenu_->insertAction( redoHead_, newHead );
-        redoHead_ = newHead;
-
-        redo_->setText( menuString );
-        redo_->setEnabled( true );
 
         remapUndoSignals();
         remapRedoSignals();
+
+        controler_->undo( steps );
 }
 
-/** removes the first item of the redo menu, and adds one to the undo
- *  menu
- */
-void EditActions::redo( const QString& s )
+void EditActions::redo( int steps )
 {
-        redoMenu_->removeAction( redoHead_ );
-        delete redoHead_;
+        const QList<QAction*> actions = redoMenu_->actions();
 
-        if ( redoMenu_->actions().isEmpty() ) {
-                redoHead_ = 0;
-                redo_->setText( redoString_ );
-                redo_->setEnabled( false );
-        } else {
-                redoHead_ = redoMenu_->actions().first();
-                redo_->setText( redoHead_->text() );
-                redo_->setEnabled( true );
+        for ( int i = 0; i < steps; ++i ) {
+                QAction* a = actions[i];
+                redoMenu_->removeAction( a );
+                undoMenu_->insertAction( undoMenu_->actions().value( 0 ), a );
         }
-
-        const QString menuString = undoString_ + colonSep_ + s;
-        QAction* newHead = new QAction( menuString, undoMenu_ );
-
-        undoMenu_->insertAction( undoHead_, newHead );
-        undoHead_ = newHead;
-        undo_->setEnabled( true );
 
         remapUndoSignals();
         remapRedoSignals();
+
+        controler_->redo( steps );
 }
 
 
 void EditActions::remapUndoSignals()
 {
+        if ( undoMenu_->actions().isEmpty() ) {
+                undo_->setEnabled( false );
+                undo_->setText( undoString_ );
+                return;
+        } 
+
+        undo_->setEnabled( true );
+        undo_->setText( undoString_ + colonSep_ + undoMenu_->actions().first()->text() );
+        
         int i = 0;
         foreach ( QAction* a, undoMenu_->actions() ) {
                 undoSignalMapper_->removeMappings( a );
+                a->disconnect();
                 connect( a, SIGNAL( triggered() ), undoSignalMapper_, SLOT( map() ) );
                 undoSignalMapper_->setMapping( a, ++i );
         }
@@ -261,12 +238,22 @@ void EditActions::remapUndoSignals()
 
 void EditActions::remapRedoSignals()
 {
+        if ( redoMenu_->actions().isEmpty() ) {
+                redo_->setEnabled( false );
+                redo_->setText( redoString_ );
+                return;
+        }
+
+        redo_->setEnabled( true );
+        redo_->setText( redoString_ + colonSep_ + redoMenu_->actions().first()->text() );
+        
         int i = 0;
         foreach ( QAction* a, redoMenu_->actions() ) {
                 redoSignalMapper_->removeMappings( a );
+                a->disconnect();
                 connect( a, SIGNAL( triggered() ), redoSignalMapper_, SLOT( map() ) );
                 redoSignalMapper_->setMapping( a, ++i );
-         }
+        }
 }
 
 
@@ -425,3 +412,4 @@ TextPropActions::TextPropActions( Controler* parent )
 
         parent->setTextPropActions( this );
 }
+

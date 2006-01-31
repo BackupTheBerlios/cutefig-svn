@@ -128,10 +128,7 @@ signals:
         void redoPossible( bool );
 
 public slots:
-        void undo();
         void undo( int steps );
-
-        void redo();
         void redo( int steps );
   
         void newAction( InteractiveAction* a );
