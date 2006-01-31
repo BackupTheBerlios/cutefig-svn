@@ -171,9 +171,9 @@ public:
         virtual DrawObject* copy() const = 0;
         
         //! Usually reimplemented by #DRAW_OBJECT
-        virtual const QString objectname() const =0;
+        virtual const QString& objectname() const =0;
         //! Usually reimplemented by #DRAW_OBJECT
-        virtual const QString objectKeyWord() const =0;
+        virtual const QString& objectKeyWord() const =0;
 
         //! returns the highest Compound the object belongs to or the object itself.
         const DrawObject* ancestor() const;
@@ -358,8 +358,8 @@ public:
                   keyWord_( keyword )
         {}
 
-        QString name() const { return name_; }
-        QString keyWord() const { return keyWord_; }
+        const QString& name() const { return name_; }
+        const QString& keyWord() const { return keyWord_; }
 
 private:
         MetaObject( const MetaObject& );
@@ -392,8 +392,8 @@ private:
 public: \
         static const MetaObject& cuteMetaObject() \
         { static MetaObject mo( oname, okeyword ); return mo; }\
-        const QString objectname() const { return cuteMetaObject().name(); } \
-        const QString objectKeyWord() const { return cuteMetaObject().keyWord(); } \
+        const QString& objectname() const { return cuteMetaObject().name(); } \
+        const QString& objectKeyWord() const { return cuteMetaObject().keyWord(); } \
         DrawObject* copy() const { return doCopy( this ); } \
 private:
 
