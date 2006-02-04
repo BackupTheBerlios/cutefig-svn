@@ -31,7 +31,6 @@
 #include <cmath>
 
 #include <QRect>
-#include <QMatrix>
 
 #include <QDebug>
 
@@ -46,72 +45,60 @@ ScaleAction::ScaleAction( Controler* parent )
 
 /*!
  */
-void ScaleAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
+void ScaleAction::click( const QPoint&, Fig::PointFlag f, const QMatrix* )
 {
         if ( notStarted_ ) {
-                findOpposite( p, m );
-                QRectF br = selection_.boundingRect();
-                aspectRatio_ *= br.height() / br.width();
-                last_ = lastUncorr_ = p;
                 notStarted_ = false;
                 startFlag_ = f;
-                return;
+                if ( f & Fig::Special1 )
+                        opposite_ = selection_.boundingRect().center();
+        } else {
+                controler_->execAction( new ChangeCommand( selection_ ) );
+                selection_.updateBackups();
+                reset();
         }
-
-        controler_->execAction( new ChangeCommand( selection_ ) );
-        selection_.updateBackups();
-        reset();
 }
 
-void ScaleAction::move( const QPoint& _p, const QMatrix* _m )
+void ScaleAction::move( const QPoint& p, const QMatrix* m )
 {
-        QMatrix m;
-        QPointF c = selection_.boundingRect().center();
+        QPointF h = Geom::boundingPoints(selection_.boundingRect())[edgePointIndex_];
+        
+        QPoint handle = m->map( h ).toPoint();
 
-        QPoint p;
 
-        if ( startFlag_ & Fig::Straight ) 
-                p = _p;
-        else {
-                QPoint d = _p - lastUncorr_;
+        QMatrix newMatrix;
 
-                if ( abs(d.x()) >= abs(d.y()) ) 
-                        d.setY( qRound( d.x() * aspectRatio_ ) );
-                else 
-                        d.setX( qRound( d.y() / aspectRatio_ ) );
-
-                p = last_ + d;
-                lastUncorr_ = _p;
-        }
-
-        if ( calcScaleMatrix( p,m ) ) {
+        if ( calcScaleMatrix( p, handle, newMatrix ) ) {
                 foreach ( DrawObject* o, selection_.objects() ) {
-                        o->move( -c );
-                        o->mapMatrix( m );
-                        c += _m->map( diff_ );
-                        o->move( c );
+                        o->move( -opposite_ );
+                        o->mapMatrix( newMatrix );
+                        o->move( opposite_ );
                 }
-                last_ = p;
         }
 }
 
-bool ScaleAction::calcScaleMatrix( const QPoint& p, QMatrix& m )
+bool ScaleAction::calcScaleMatrix( const QPoint& p, const QPoint& handle, QMatrix& m )
 {
         qreal qx = 0;
         qreal qy = 0;
 
-        (this->*scaleValuesFptr)( p, qx,qy );
-
-        if ( startFlag_ & Fig::Special1 ) {
-                qx *= 2.;
-                qy *= 2.;
-                opposite_ -= diff_;
-                diff_ = QPointF( 0., 0. );
-        } else
-                diff_ /= 2;
+        (this->*scaleValuesFptr)( p, handle, &qx, &qy );
 
         qx += 1.;
         qy += 1.;
+
+        if ( qx <= 0 || qy <= 0 )
+                return false;
+
+        if ( !(startFlag_ & Fig::Straight) & edgePointIndex_ < 4 ) {
+                
+                bool isBigger = qx > 1. && qy > 1;
+                
+                if ( (qx < qy) ^ isBigger )
+                        qy = qx;
+                else
+                        qx = qy;
+        }                
 
         if ( fabs(qx * qy) > 1e-12 ) {
                 m.scale( qx, qy );
@@ -121,25 +108,23 @@ bool ScaleAction::calcScaleMatrix( const QPoint& p, QMatrix& m )
 }
 
 
-void ScaleAction::scaleValuesHor( const QPoint& p, qreal& x, qreal& )
+void ScaleAction::scaleValuesHor( const QPoint& p, const QPoint& h, qreal* x, qreal* )
 {
-        int d = p.x() - last_.x();
-        x = qreal( d ) / ( last_.x() - opposite_.x() );
-        diff_.setX( d );
+        int d = p.x() - h.x();
+        *x = qreal( d ) / ( h.x() - opposite_.x() );
 }
 
-void ScaleAction::scaleValuesVer( const QPoint& p, qreal&, qreal& y )
+void ScaleAction::scaleValuesVer( const QPoint& p, const QPoint& h, qreal*, qreal* y )
 {
-        int d = p.y() - last_.y();
-        y = qreal( d ) / ( last_.y() - opposite_.y() );
-        diff_.setY( d );
+        int d = p.y() - h.y();
+        *y = qreal( d ) / ( h.y() - opposite_.y() );
 }
 
 
-void ScaleAction::scaleValuesDiag( const QPoint& p, qreal& x, qreal& y )
+void ScaleAction::scaleValuesDiag( const QPoint& p, const QPoint& h, qreal* x, qreal* y )
 {
-        scaleValuesHor( p, x,y );
-        scaleValuesVer( p, x,y );
+        scaleValuesHor( p,h, x,y );
+        scaleValuesVer( p,h, x,y );
 }
 
 
@@ -149,7 +134,8 @@ bool ScaleAction::findOpposite( const QPoint& p, const QMatrix* m, DrawObject* o
 
         QVector<QPointF> points = Geom::boundingPoints( br );
 
-        int i = 0;
+        int& i = edgePointIndex_ = 0;
+        
         while ( i < 8 && !pointHit( p, points[i], m )  )
                 ++i;
 
@@ -158,16 +144,13 @@ bool ScaleAction::findOpposite( const QPoint& p, const QMatrix* m, DrawObject* o
 
         opposite_ = points[(i%2) ? i-1 : i+1] * m->inverted();
 
-
         if ( i < 4 ) {
                 scaleValuesFptr = &ScaleAction::scaleValuesDiag;
-                if ( i < 2 ) {
-                        aspectRatio_ = 1.;
+                if ( i < 2 )
                         cursor_ = Qt::SizeFDiagCursor;
-                } else {
-                        aspectRatio_ = -1.;
+                else
                         cursor_ = Qt::SizeBDiagCursor;
-                }
+                
         }
         else  if ( i < 6 ) {
                 scaleValuesFptr = &ScaleAction::scaleValuesHor;
@@ -176,7 +159,7 @@ bool ScaleAction::findOpposite( const QPoint& p, const QMatrix* m, DrawObject* o
                 scaleValuesFptr = &ScaleAction::scaleValuesVer;
                 cursor_ = Qt::SizeVerCursor;
         }
-
+        
         return true;
 }
 
@@ -210,6 +193,5 @@ bool ScaleAction::wouldHandleSelection( const QPoint& p, const QMatrix* m )
 void ScaleAction::reset()
 {
         opposite_ = QPoint();
-        last_ = QPoint();
         notStarted_ = true;
 }

@@ -28,7 +28,7 @@
 
 #include "interactiveaction.h"
 
-class QMatrix;
+#include <QMatrix>
 
 //! Scales a DrawObject
 /*! In order to do the scaling the following things have to be implemented:
@@ -60,20 +60,20 @@ private:
         //! Finds the 
         bool findOpposite( const QPoint& p, const QMatrix* m, DrawObject* o = 0 );
         bool pointHit( const QPointF& p1, const QPointF& p2 , const QMatrix* m );
-        bool calcScaleMatrix( const QPoint& p, QMatrix& m );
+        bool calcScaleMatrix( const QPoint& p, const QPoint& handle, QMatrix& m );
 
-        typedef void (ScaleAction::*scaleValuesFptr_t)( const QPoint& d, qreal& x, qreal& y );
+        typedef void (ScaleAction::*scaleValuesFptr_t)( const QPoint& d, const QPoint& handle,
+                                                        qreal* x, qreal* y );
         scaleValuesFptr_t scaleValuesFptr;
 
-        void scaleValuesHor( const QPoint& p, qreal& x, qreal& y );
-        void scaleValuesVer( const QPoint& p, qreal& x, qreal& y );
-        void scaleValuesDiag( const QPoint& p, qreal& x, qreal& y );
+        void scaleValuesHor( const QPoint& p, const QPoint& h, qreal* x, qreal* y );
+        void scaleValuesVer( const QPoint& p, const QPoint& h, qreal* x, qreal* y );
+        void scaleValuesDiag( const QPoint& p, const QPoint& h, qreal* x, qreal* y );
 
-        
-        QPointF opposite_, diff_;
-        qreal aspectRatio_;
-        QPoint last_, lastUncorr_;
-        QPolygonF origPoints_;
+
+        int edgePointIndex_;
+        QPointF opposite_;
+
         bool notStarted_;
 
         Fig::PointFlag startFlag_;
