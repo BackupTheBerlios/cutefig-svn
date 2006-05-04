@@ -41,16 +41,19 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
 {        
         colorButton_ = new ResourceButton<QColor>( Qt::transparent, this );
         gradientButton_ = new ResourceButton<Gradient>( ResourceKey(), this );
+        pixmapButton_ = new ResourceButton<QPixmap>( ResourceKey(), this );
 
         QRadioButton* nostrokeRB = new QRadioButton( tr("None"), this );
         QRadioButton* colorRB    = new QRadioButton( tr("Color"), this );
-        QRadioButton* gradientRB = new QRadioButton( tr("Gradient"), this );        
+        QRadioButton* gradientRB = new QRadioButton( tr("Gradient"), this );
+        QRadioButton* pixmapRB   = new QRadioButton( tr("Pixmap"), this );
 
         strokeType_ = new FlagButtonGroup( this );
 
         strokeType_->addButton( nostrokeRB, int( Stroke::sNone ) );
         strokeType_->addButton( colorRB,    int( Stroke::sColor ) );
         strokeType_->addButton( gradientRB, int( Stroke::sGradient ) );
+        strokeType_->addButton( pixmapRB,   int( Stroke::sPixmap ) );
 
         QGridLayout* layout = new QGridLayout( this );
 
@@ -62,11 +65,17 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         layout->addWidget( gradientRB, 2,0 );
         layout->addWidget( gradientButton_, 2,1 );
         
+        layout->addWidget( pixmapRB, 3,0 );
+        layout->addWidget( pixmapButton_, 3,1 );
+        
         connect( colorRB,    SIGNAL( toggled(bool) ), colorButton_,    SLOT( setEnabled(bool) ) );
         connect( gradientRB, SIGNAL( toggled(bool) ), gradientButton_, SLOT( setEnabled(bool) ) );
+        connect( pixmapRB, SIGNAL( toggled(bool) ), pixmapButton_, SLOT( setEnabled(bool) ) );
 
         connect( colorButton_, SIGNAL( resourceChanged() ), this, SLOT( setColor() ) );
         connect( gradientButton_, SIGNAL(resourceChanged()), this, SLOT(setGradient()) );
+        connect( pixmapButton_, SIGNAL(resourceChanged()), this, SLOT(setPixmap()) );
+        
         connect( strokeType_, SIGNAL( stateChanged(int) ), this, SLOT( changeType(int) ) );
 }
 
@@ -112,5 +121,11 @@ void StrokeWidget::setColor()
 void StrokeWidget::setGradient()
 {
         stroke_->setGradient( gradientButton_->key() );
+        emit strokeChanged();
+}
+
+void StrokeWidget::setPixmap()
+{
+        stroke_->setPixmap( pixmapButton_->key() );
         emit strokeChanged();
 }

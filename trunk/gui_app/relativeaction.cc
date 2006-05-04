@@ -28,7 +28,7 @@
 
 #include <QDebug>
 
-void RelativeAction::click( const QPoint& _p, Fig::PointFlag f, const QMatrix* m )
+void RelativeAction::click( const QPoint& _p, Fig::PointFlags f, const QMatrix* m )
 {
         QPointF p = m->map( QPointF( _p ) );
         if ( last_.isNull() ) {
@@ -36,8 +36,7 @@ void RelativeAction::click( const QPoint& _p, Fig::PointFlag f, const QMatrix* m
                 return;
         }
         
-        foreach ( DrawObject* o, selection_.objects() )
-                relativeClick( o, p - last_, f );
+        relativeClick( p - last_, f );
 
         if ( finished_ ) {
                 controler_->execAction( new ChangeCommand( selection_ ) );
@@ -48,8 +47,7 @@ void RelativeAction::click( const QPoint& _p, Fig::PointFlag f, const QMatrix* m
 void RelativeAction::move( const QPoint& _p, const QMatrix* m )
 {
         QPointF p = m->map( QPointF( _p ) );
-        foreach ( DrawObject* o, selection_.objects() )
-                relativeMove( o, p - last_ );
+        relativeMove( p - last_ );
         last_ = p;
 }
 
@@ -72,4 +70,16 @@ void RelativeAction::reset()
 {
         finished_ = true;
         last_ = QPoint();
+}
+
+void RelativeAction::relativeClick( const QPointF& p, Fig::PointFlags f )
+{
+        foreach ( DrawObject* o, selection_.objects() )
+                relativeClick( o, p, f );
+}
+
+void RelativeAction::relativeMove( const QPointF& p )
+{
+        foreach ( DrawObject* o, selection_.objects() )
+                relativeMove( o, p );
 }

@@ -145,7 +145,7 @@ private:
 
         int nextPointIndex() { return -1; }
 
-        void passPointFlag( Fig::PointFlag ) {}
+        void passPointFlag( Fig::PointFlags ) {}
 
         void trackCharFormat();
         

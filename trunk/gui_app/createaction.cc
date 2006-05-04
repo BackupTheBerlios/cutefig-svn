@@ -28,7 +28,7 @@
 
 #include <QPainter>
 
-void CreateAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
+void CreateAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
 {
         if ( !cObject_->pointSet( m->map( QPointF( p ) ), f ) ) {
                 controler_->execAction( new AddCommand( selection_ ) );

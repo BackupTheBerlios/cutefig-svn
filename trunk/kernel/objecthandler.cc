@@ -29,10 +29,16 @@
 Initialiser::AutoHash<ObjectHandler> ObjectHandler::ohHash_;
 
 ObjectHandler::ObjectHandler( const QString& kw )
+        : guiHandler_( 0 )
 {
         ohHash_[kw] = this;
 }
 
+/*! \param keyWord is the keyword of the DrawObject. \param is is an
+ *  input stream out of which parseDrawObject() is to read the object
+ *  specific data. \param fig is the figure to which the DrawObject
+ *  will belong.
+ */
 DrawObject* ObjectHandler::getDrawObject( const QString& keyWord, std::istream& is, Figure* fig )
 {
         ObjectHandler* h = ohHash_[keyWord];

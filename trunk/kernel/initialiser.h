@@ -28,11 +28,13 @@
 #include <QHash>
 #include <QString>
 
+//! Contains all the stuff that is used to initialise the application.
 namespace Initialiser
 {
         template<typename T> class AutoHash;
 };
 
+//! 
 template<typename T> class Initialiser::AutoHash
 {
 public:

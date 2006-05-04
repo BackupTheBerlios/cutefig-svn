@@ -163,7 +163,7 @@ void Controler::callActionMove( const QPoint& p, const QMatrix* m )
 
 /** Called to pass a mouse click to the editAction_
  */
-const QCursor Controler::callActionClick( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
+const QCursor Controler::callActionClick( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
 {
         editAction_->click( p, f, m );
         actionIsActive_ = editAction_;

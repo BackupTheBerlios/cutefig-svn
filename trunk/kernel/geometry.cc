@@ -35,6 +35,7 @@ qreal Geom::distance( const QPointF& p1, const QPointF& p2 )
         return hypot( xd, yd );
 }
 
+
 /*! Basically needed to show the scaling handles to the user. The
  *  points returned are the four corner points and the four points in
  *  the middle of the edge lines of the rectangle r if the edge line

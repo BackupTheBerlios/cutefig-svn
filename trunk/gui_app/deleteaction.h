@@ -40,7 +40,7 @@ public:
         }
         ~DeleteAction() {}
 
-        virtual void click( const QPoint& p,Fig::PointFlag f, const QMatrix* m );
+        virtual void click( const QPoint& p,Fig::PointFlags f, const QMatrix* m );
 
 
         virtual bool wouldHandle( DrawObject* o, const QPoint& = QPoint(), const QMatrix* = 0) { 

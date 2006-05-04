@@ -39,6 +39,7 @@
 #include "exportgui.h"
 
 #include <QtGui>
+#include <QAssistantClient>
 
 #include <fstream>
 
@@ -143,7 +144,6 @@ void CuteFig::save()
                 return;
         }
 
-
         std::ofstream ts( filename_.toLocal8Bit().constData() );
         if ( !ts ) {
                 statusBar()->showMessage( QString(tr("Could not write to %1"))
@@ -240,6 +240,18 @@ void CuteFig::about()
         QMessageBox::about( this, "CuteFig", s );
 }
 
+void CuteFig::help()
+{
+        QAssistantClient* assi = new QAssistantClient( QString(), this );
+        QSettings s;
+        
+        QString helpFile = s.value("HandBookPath", QDir::currentPath() ).toString() +
+                           "/doc/html/" +
+                           QLocale::system().name().left( 2 ) +
+                           "/index.html";
+        assi->showPage( helpFile );
+}
+
 /** Sets up an AllActions instance and then sets up a menubar entry
  * and a toolbutton (if possible) for each ActionCollection. Finally
  * it adds the help menu by foot.
@@ -282,7 +294,10 @@ void CuteFig::setupActions()
         
         QMenu * helpMenu = new QMenu( tr("&Help"), this );
         menuBar()->addMenu( helpMenu );
-        helpMenu->addAction( "&About", this, SLOT(about()), Qt::Key_F1 );
+        helpMenu->addAction( tr("CuteFig &Handbook"), this, SLOT(help()), Qt::Key_F1 );
+        helpMenu->addAction( tr("&About"), this, SLOT(about()) );
+
+        
         helpMenu->addSeparator();
 
 //        helpMenu->addAction( QWhatsThis::createAction( this ) );

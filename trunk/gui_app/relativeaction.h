@@ -45,7 +45,7 @@ public:
 
         ~RelativeAction() {}
         
-        virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
+        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix* m );
         virtual void move( const QPoint& p, const QMatrix* m );
         virtual bool wouldHandle( DrawObject* o, const QPoint& p = QPoint(), const QMatrix* m=0 );
         virtual bool isActive() const { return false; }
@@ -57,7 +57,10 @@ protected:
         QPointF last_; /*!< absolute point at the last calculation */
 
 private:
-        virtual void relativeClick( DrawObject* o, const QPointF&, Fig::PointFlag f ) = 0;
+        virtual void relativeClick( const QPointF&, Fig::PointFlags f );
+        virtual void relativeMove( const QPointF& );
+
+        virtual void relativeClick( DrawObject* o, const QPointF&, Fig::PointFlags f ) = 0;
         virtual void relativeMove( DrawObject* o, const QPointF& ) = 0;
 };
 
@@ -71,19 +74,21 @@ class MoveAction : public RelativeAction
 public:
         MoveAction( Controler* parent )
                 : RelativeAction( parent ) {
-                setText( tr("&Move Object") );
-                setShortcut( Qt::CTRL+Qt::Key_M );
+                setText( tr("&Move object") );
+                setShortcut( Qt::ALT+Qt::Key_M );
                 cursor_ = Qt::CrossCursor;
         }
 
         virtual const QString commandName() const { return "move"; }
         
 private:        
-        virtual void relativeClick( DrawObject* o, const QPointF& p,
-                                    Fig::PointFlag ) {
+        virtual void relativeClick( DrawObject* o, const QPointF& p, Fig::PointFlags )
+        {
                 o->move( p );
         }
-        virtual void relativeMove( DrawObject* o, const QPointF& p ) {
+        
+        virtual void relativeMove( DrawObject* o, const QPointF& p )
+        {
                 o->move( p );
         }
 };

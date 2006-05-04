@@ -40,7 +40,7 @@ CopyAction::CopyAction( Controler* parent )
         cursor_ = Qt::PointingHandCursor;
 }
 
-void CopyAction::click( const QPoint&, Fig::PointFlag, const QMatrix* )
+void CopyAction::click( const QPoint&, Fig::PointFlags, const QMatrix* )
 {
         handleSelection();
 }
@@ -96,7 +96,7 @@ CutAction::CutAction( Controler* parent )
         cursor_ = Qt::ForbiddenCursor;
 }
 
-void CutAction::click( const QPoint&, Fig::PointFlag, const QMatrix* )
+void CutAction::click( const QPoint&, Fig::PointFlags, const QMatrix* )
 {
         handleSelection();
 }

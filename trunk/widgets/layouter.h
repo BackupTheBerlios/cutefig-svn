@@ -30,6 +30,11 @@ class QBoxLayout;
 class QGridLayout;
 class QWidget;
 
+//! A Conveniance class to layout labeled widgets
+/*! The Layouter can be used to layout labeled widgets side by side in
+ *  very little code lines.  The usual way of using it is the
+ *  following using only one statement.
+ */
 class Layouter
 {
 public:

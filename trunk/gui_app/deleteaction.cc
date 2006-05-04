@@ -27,7 +27,7 @@
 
 #include <QDebug>
 
-void DeleteAction::click( const QPoint&, Fig::PointFlag, const QMatrix* )
+void DeleteAction::click( const QPoint&, Fig::PointFlags, const QMatrix* )
 {
         deleteSelection();
 }

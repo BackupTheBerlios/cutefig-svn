@@ -36,7 +36,7 @@ public:
         CopyAction( Controler* parent );
         ~CopyAction() {}
 
-        void click( const QPoint& p,Fig::PointFlag f, const QMatrix* m );
+        void click( const QPoint& p,Fig::PointFlags f, const QMatrix* m );
         virtual bool isActive() const { return false; }
 
         virtual bool wouldHandle( DrawObject* o, const QPoint& = QPoint(), const QMatrix* =0 ) { 
@@ -58,7 +58,7 @@ public:
         PasteAction( Controler* parent );
         ~PasteAction() {}
 
-        void click( const QPoint&, Fig::PointFlag, const QMatrix* ) {}
+        void click( const QPoint&, Fig::PointFlags, const QMatrix* ) {}
 
         virtual bool isActive() const { return false; }
 
@@ -83,7 +83,7 @@ public:
         CutAction( Controler* parent );
         ~CutAction() {}
 
-        void click( const QPoint& p,Fig::PointFlag f, const QMatrix* m );
+        void click( const QPoint& p,Fig::PointFlags f, const QMatrix* m );
         virtual bool isActive() const { return false; }
 
         virtual bool wouldHandle( DrawObject* o, const QPoint& = QPoint(), const QMatrix* =0 ) { 

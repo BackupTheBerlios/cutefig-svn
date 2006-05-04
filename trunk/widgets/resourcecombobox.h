@@ -36,7 +36,8 @@ class AbstractResourceComboBox : public QComboBox
 public:
         AbstractResourceComboBox( const ResourceKeyList keys, QWidget* parent );
 
-        void setCurrentIndex( const ResourceKey& key );
+        void setCurrentKey( const ResourceKey& key );
+        ResourceKey currentKey() const;
         
 signals:
         void activated( const ResourceKey& );

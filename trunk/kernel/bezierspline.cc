@@ -135,7 +135,7 @@ void BezierSpline::drawTentative( QPainter* p ) const
         p->drawPath( painterPath_ );
 }
 
-void BezierSpline::passPointFlag( Fig::PointFlag f )
+void BezierSpline::passPointFlag( Fig::PointFlags f )
 {
         if ( f & Fig::Final )
                 finished_ = true;
@@ -205,4 +205,21 @@ void BezierSpline::drawMetaData( QPainter* p ) const
                 else
                         i+=2;
         }
+}
+
+QPointF BezierSpline::startAngle() const
+{
+        QPolygonF pol = painterPath_.toSubpathPolygons().first();
+
+        QPointF d = pol[0] - pol[1];
+        return d / hypot( d.x(), d.y() );
+}
+
+QPointF BezierSpline::endAngle() const
+{
+        QPolygonF pol = painterPath_.toSubpathPolygons().last();
+
+        int i = pol.size() -1;
+        QPointF d = pol[i] - pol[i-1];
+        return d / hypot( d.x(), d.y() );
 }

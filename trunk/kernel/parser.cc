@@ -374,6 +374,24 @@ DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
                 return 0;
         }
 
+        if ( o->canHaveArrows() ) {
+                ResourceKey s, e;
+                stream_ >> s;
+                if ( s.isValid() ) {
+                        double w, l;
+                        stream_ >> w >> l;
+                        o->setStartArrow( Arrow( s, w, l ) );
+                }
+
+                stream_ >> s;
+                if ( s.isValid() ) {
+                        double w, l;
+                        stream_ >> w >> l;
+                        o->setEndArrow( Arrow( s, w, l ) );
+                }
+        }
+        
+
         if ( npoints < o->minPoints() ) {
                 parseError( notEnoughPoints.arg(obType).arg(npoints).arg(o->minPoints()),
                             Discarding );

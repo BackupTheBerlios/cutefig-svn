@@ -28,9 +28,13 @@
 #include <QLayout>
 #include <QLabel>
 
+#include <QDebug>
+
+
 Layouter::Layouter( QBoxLayout* layout )
         : layout_( layout )
-{}
+{
+}
 
 Layouter& Layouter::labeledWidget( const QString& text, QWidget* widget )
 {

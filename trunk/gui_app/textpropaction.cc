@@ -39,7 +39,7 @@ TextPropAction::TextPropAction( Controler* parent )
 {
 }
 
-void TextPropAction::click( const QPoint&, Fig::PointFlag, const QMatrix* )
+void TextPropAction::click( const QPoint&, Fig::PointFlags, const QMatrix* )
 {
         handleSelection();
 }

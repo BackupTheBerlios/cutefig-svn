@@ -59,6 +59,7 @@ void CfigOutput::outputPolyline( const Polyline* pl )
 {
         drawObject_ = pl;
         outputGenericData();
+        outputArrows();
         fileStream_ << "\n";
         outputPoints();
 }
@@ -75,6 +76,7 @@ void CfigOutput::outputBezierSpline( const BezierSpline* bs )
 {
         drawObject_ = bs;
         outputGenericData();
+        outputArrows();
         fileStream_ << "\n";
         outputPoints();
 }
@@ -179,3 +181,22 @@ void CfigOutput::outputHeader()
 //                     << "papersize " << 
 }
 
+
+void CfigOutput::outputArrows()
+{
+        const ResourceKey& start = drawObject_->startArrowKey();
+        const ResourceKey& end = drawObject_->endArrowKey();
+        
+        fileStream_ << ' ' << start;
+        if ( start.isValid() ) {
+                const Arrow& a = drawObject_->startArrow();
+                fileStream_ << ' ' << a.width() << ' ' << a.length();
+        }
+
+        fileStream_ << ' ' << end;
+        if ( end.isValid() ) {
+                const Arrow& a = drawObject_->endArrow();
+                fileStream_ << ' ' << a.width() << ' ' << a.length();
+        }
+        
+}

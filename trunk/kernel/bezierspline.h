@@ -101,9 +101,12 @@ public:
 protected:
         virtual void setupPainterPath();
 
-        virtual void passPointFlag( Fig::PointFlag f );
+        virtual void passPointFlag( Fig::PointFlags f );
         virtual int nextPointIndex();
 
+        virtual QPointF startAngle() const;
+        virtual QPointF endAngle() const;
+        
 private:
         bool finished_;
 

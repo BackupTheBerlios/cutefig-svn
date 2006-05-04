@@ -44,16 +44,13 @@ void AbstractResourceComboBox::mapHighlight( int i )
         emit highlighted( keys_[i] );
 }
 
-void AbstractResourceComboBox::setCurrentIndex( const ResourceKey& key )
+void AbstractResourceComboBox::setCurrentKey( const ResourceKey& key )
 {
         QComboBox::setCurrentIndex( keys_.indexOf( key ) );
 }
 
-
-template<>
-void ResourceComboBox<Dashes>::init() 
+ResourceKey AbstractResourceComboBox::currentKey() const
 {
-        setIconSize( QSize( iconSize().width()*3, iconSize().height() ) );
-        insertItem( 0, QIcon( new ResourceIconEngine<WhiteIcon>() ), QString() );
-        keys_.prepend( ResourceKey() );
+        return keys_[currentIndex()];
 }
+

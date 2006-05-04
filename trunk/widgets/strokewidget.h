@@ -52,6 +52,7 @@ private slots:
         void changeType( int type );
         void setColor();
         void setGradient();
+        void setPixmap();
         
 private:
         Stroke* stroke_;
@@ -59,6 +60,7 @@ private:
         FlagButtonGroup* strokeType_;
         ResourceButton<QColor>* colorButton_;
         ResourceButton<Gradient>* gradientButton_;
+        ResourceButton<QPixmap>* pixmapButton_;
 };
 
 #endif

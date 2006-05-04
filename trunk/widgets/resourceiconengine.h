@@ -39,13 +39,15 @@ protected:
         virtual void paintForeground( QPainter* p, const QRect& rect ) = 0;
 };
 
-template<class Resource> class ResourceIconEngine : public AbstractResourceIconEngine 
+template<typename Resource> class ResourceIconEngine : public AbstractResourceIconEngine 
 {
 public:
         ResourceIconEngine<Resource>( const Resource& res )
                 : AbstractResourceIconEngine(),
                   resource_( res )
-        {}
+        {
+        }
+        
         
         ~ResourceIconEngine() {}
 
@@ -55,6 +57,25 @@ protected:
 
         const Resource& resource_;
 };
+
+template<typename Resource> class ResourceIconEngine<Resource*> : public AbstractResourceIconEngine
+{
+public:
+        ResourceIconEngine<Resource*>( Resource* const res )
+                : AbstractResourceIconEngine(),
+                  resource_( res )
+        {
+        }
+        
+        
+        ~ResourceIconEngine() {}
+
+
+protected:
+        void paintForeground( QPainter* p, const QRect& rect );
+
+        Resource* const resource_;
+};      
 
 class WhiteIcon;
 

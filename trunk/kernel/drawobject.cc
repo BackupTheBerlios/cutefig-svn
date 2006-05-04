@@ -1,4 +1,4 @@
- 
+
 /*****************************************************************************
 **
 **  @version $Id$
@@ -39,7 +39,9 @@ DrawObject::DrawObject( Figure* parent )
           points_( 1 ),
           bRect_( 0,0,0,0 ),
           currentPointIndex_( 0 ),
-          compoundParent_( 0 )
+          compoundParent_( 0 ),
+          startArrow_(),
+          endArrow_()
 {
         figure_ = parent;
         depth_ = 50;
@@ -54,10 +56,11 @@ DrawObject::DrawObject( const DrawObject* o )
           commentString_( o->commentString_ ),
           points_( o->points_ ),
           currentPointIndex_( -1 ),
-          compoundParent_( 0 )
+          compoundParent_( 0 ),
+          startArrow_( o->startArrow_ ),
+          endArrow_( o->endArrow_ )
 {
 }
-
 
 void DrawObject::move( const QPointF& d )
 {
@@ -66,7 +69,7 @@ void DrawObject::move( const QPointF& d )
         doSpecificPreparation();
 }
 
-bool DrawObject::pointSet( const QPointF & pos, Fig::PointFlag f )
+bool DrawObject::pointSet( const QPointF & pos, Fig::PointFlags f )
 {
         if ( currentPointIndex_ < 0 )
                 return false;
@@ -102,6 +105,20 @@ void DrawObject::draw( QPainter* p ) const
 {
         fill_.fillPath( painterPath_, p );
         pen_.strikePath( painterPath_, stroke_, p );
+
+//        if ( startArrow_ || endArrow_ )
+                drawArrows( p );
+}
+
+void DrawObject::drawArrows( QPainter* p ) const
+{
+        p->setPen( QPen( stroke_.brush( bRect_ ), pen_.width() ) );
+        p->setBrush( fill_.brush( bRect_ ) );
+        
+        if ( startArrow_.isValid() )
+                startArrow_.draw( points_.first(), startAngle(), p );
+        if ( endArrow_.isValid() )
+                endArrow_.draw( points_.last(), endAngle(), p );
 }
 
 /*! This is useful to avoid that complex patterns have to be rendered
@@ -205,3 +222,23 @@ void DrawObject::setCompoundParent( Compound* p )
                 setParent( p );
         }
 }
+
+QPointF DrawObject::startAngle() const
+{
+        if ( points_.size() < 2 )
+                return QPointF();
+
+        QPointF d = points_[0] - points_[1];
+        return d / hypot( d.x(), d.y() );
+}
+
+QPointF DrawObject::endAngle() const
+{
+        if ( points_.size() < 2 )
+                return QPointF();
+
+        int i = points_.size() -1;
+        QPointF d = points_[i] - points_[i-1];
+        return d / hypot( d.x(), d.y() );
+}
+

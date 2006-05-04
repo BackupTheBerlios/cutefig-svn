@@ -36,6 +36,8 @@ public:
         explicit Rectangloid( Figure* parent = 0 );
         Rectangloid( const Rectangloid* r );
 
+        virtual bool canHaveArrows() const { return false; }
+        
         double angle() const { return angle_ * rad; }
         QPointF center() const { return center_; }
 
@@ -64,8 +66,8 @@ protected:
         void setupRects();
         int nextPointIndex();
         
-        void passPointFlag( Fig::PointFlag f );
-        virtual void passPointFlag_private( Fig::PointFlag f ) = 0;
+        void passPointFlag( Fig::PointFlags f );
+        virtual void passPointFlag_private( Fig::PointFlags f ) = 0;
 
         virtual void setupWidthAndHeight() = 0;
         virtual void addPath() = 0;

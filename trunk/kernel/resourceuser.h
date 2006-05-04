@@ -108,6 +108,8 @@ public:
         
         ResourceUser<Resource>( const ResourceUser<Resource>& other );
 
+        ResourceUser<Resource>& operator= ( const ResourceUser<Resource>& other );
+
         ~ResourceUser();
         
         AbstractResourceUser* clone() const { return new ResourceUser<Resource>( *this ); }
@@ -158,6 +160,21 @@ ResourceUser<Resource>::ResourceUser<Resource>( const ResourceUser<Resource>& ot
         if ( key_.isValid() )
                 resLib_.assignResource( key_, this );
 }
+
+template<typename Resource>
+ResourceUser<Resource>& ResourceUser<Resource>::operator= ( const ResourceUser<Resource>& other )
+{
+        releaseResource();
+        key_ = other.key_;
+        data_ = other.data_;
+        p_data_ = other.p_data_;
+
+        if ( key_.isValid() )
+                resLib_.assignResource( key_, this );
+
+        return *this;
+}
+
 
 /** The user has to be removed from the user list on destruction.
  */

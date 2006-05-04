@@ -101,7 +101,7 @@ void Rectangloid::setupPainterPath()
 
 }
 
-void Rectangloid::passPointFlag( Fig::PointFlag f )
+void Rectangloid::passPointFlag( Fig::PointFlags f )
 {
         hasAngle_ = hasAngle_ || f & Fig::Special1;
         passPointFlag_private( f );

@@ -29,6 +29,7 @@
 #include "figure.h"
 #include "pen.h"
 #include "stroke.h"
+#include "arrow.h"
 #include "typedefs.h"
 
 #include <QRectF>
@@ -47,7 +48,6 @@ class OutputBackend;
 class CanvasView;
 class Compound;
 class AbstractResourceUser;
-
 
 //! The baseclass of all objects that can be drawn.
 /*!
@@ -181,6 +181,9 @@ public:
         //! returns the minimum number of points the objetct need to be defined.
         virtual uint minPoints() const { return 2; }
 
+        //! returns true if the DrawObject type can have arrows.
+        virtual bool canHaveArrows() const { return true; }
+
         //! returns true if point \em p is a point to grasp the object.
         virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
 
@@ -222,8 +225,23 @@ public:
         QPolygonF& points() { return points_; }
         
         const QPolygonF& points() const { return points_; }
+
+        //! returns the central point of the object.
         virtual QPointF center() const { return points_.boundingRect().center(); }
-        //!< returns the central point of the object.
+
+        //! returns
+        const Arrow& startArrow() const { return startArrow_; }
+        const Arrow& endArrow() const { return endArrow_; }
+
+        const ResourceKey& startArrowKey() const { return startArrow_.key(); }
+        const ResourceKey& endArrowKey() const { return endArrow_.key(); }
+        
+        void setStartArrow( const Arrow& a ) { startArrow_ = a; }
+        void setEndArrow( const Arrow& a ) { endArrow_ = a; }
+
+        void setStartArrow( const ResourceKey& k ) { startArrow_.setArrowPainter( k ); }
+        void setEndArrow( const ResourceKey& k ) { endArrow_.setArrowPainter( k ); }
+        
 
         //! supposed to draw the object to the QPainter p.
         virtual void draw( QPainter* p ) const;
@@ -235,7 +253,7 @@ public:
         virtual void drawMetaData( QPainter* ) const {}
         
         //! sets the point just being edited and returns true if another point is needed.
-        bool pointSet( const QPointF & pos, Fig::PointFlag f = Fig::Normal ); 
+        bool pointSet( const QPointF & pos, Fig::PointFlags f = Fig::Normal ); 
 
         //! moves the point just being edited tentatively.
         virtual void cursorMove( const QPointF & pos );
@@ -289,7 +307,7 @@ protected:
         virtual int nextPointIndex() = 0;
 
         //! supposed to handle the PointFlag appropriately
-        virtual void passPointFlag( Fig::PointFlag f ) =0;
+        virtual void passPointFlag( Fig::PointFlags f ) =0;
 
         //! supposed to do all preparations for the drawing.
         virtual void setupPainterPath() = 0;
@@ -311,6 +329,12 @@ protected:
 
         int currentPointIndex() const { return currentPointIndex_; }
 
+
+        void drawArrows( QPainter* p ) const;
+
+        virtual QPointF startAngle() const;
+        virtual QPointF endAngle() const;
+        
         //! the Figure containing the DrawObject
         Figure* figure_;
 
@@ -343,6 +367,9 @@ private:
         int currentPointIndex_;
         void setCompoundParent( Compound* p );
         Compound* compoundParent_;
+
+        Arrow startArrow_;
+        Arrow endArrow_;
 };
 
 //! Small helper class to store the DrawObject's keyword and name

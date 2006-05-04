@@ -68,7 +68,7 @@ public:
 
 protected:
         virtual int nextPointIndex() { return -1; }
-        virtual void passPointFlag( Fig::PointFlag ) {}
+        virtual void passPointFlag( Fig::PointFlags ) {}
         
         virtual void getReadyForDraw();
         virtual void doSpecificPreparation();

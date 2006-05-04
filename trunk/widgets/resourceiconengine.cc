@@ -72,6 +72,12 @@ void ResourceIconEngine<Gradient>::paintForeground( QPainter* p, const QRect& r 
 }
 
 template<>
+void ResourceIconEngine<QPixmap>::paintForeground( QPainter* p, const QRect& r )
+{
+        p->fillRect( r, resource_ );
+}
+
+template<>
 void ResourceIconEngine<Dashes>::paintForeground( QPainter* p, const QRect& r )
 {
         p->fillRect( r, Qt::white );
@@ -90,3 +96,39 @@ void ResourceIconEngine<WhiteIcon>::paintForeground( QPainter* p, const QRect& r
 {
         p->fillRect( r, Qt::white );
 }
+
+
+#include "arrow.h"
+
+template<>
+void ResourceIconEngine<ArrowPainter*>::paintForeground( QPainter* p, const QRect& r )
+{
+        Arrow a( resource_ );
+
+//         double mw = r.width() * .8;
+//         double mh = r.height() * .8;
+        
+//         if ( a.length() > mw ) {
+//                 double f = a.length() / mw;
+//                 a.setLength( mw );
+//                 a.setWidth( a.width() / f );
+//         }
+
+//         if ( a.width() > mh ){
+//                 double f = a.width() / mh;
+//                 a.setWidth( mh );
+//                 a.setLength( a.length() / f );
+//         }
+
+        QPen pen;
+        pen.setWidth( 2 );
+        
+        p->setPen( pen );
+        p->setRenderHint( QPainter::Antialiasing );
+        p->fillRect( r, Qt::white );
+        
+        QPointF pos( r.width() * .1, r.height() / 2 );
+        a.draw( pos, QPointF(-1,0), p );
+        p->drawLine( pos, QPointF( r.width() *.9, r.height() / 2 ) ); 
+}
+

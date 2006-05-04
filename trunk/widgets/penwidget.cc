@@ -113,7 +113,7 @@ void PenWidget::setPen( Pen* pen )
 {
         pen_ = pen;
         lineWidth->setValue( pen->width() );
-        lineDashes->setCurrentIndex( pen->dashesKey() );
+        lineDashes->setCurrentKey( pen->dashesKey() );
         capStyle->setState( int( pen->capStyle() ) );
         joinStyle->setState( int( pen->joinStyle() ) );
 }
@@ -140,5 +140,14 @@ void PenWidget::changeJoin( int key )
 {
         pen_->setJoinStyle( Qt::PenJoinStyle( key ) );
         emit penChanged();
+}
+
+
+template<>
+void ResourceComboBox<Dashes>::init() 
+{
+        setIconSize( QSize( iconSize().width()*3, iconSize().height() ) );
+        insertItem( 0, QIcon( new ResourceIconEngine<WhiteIcon>() ), QString() );
+        keys_.prepend( ResourceKey() );
 }
 

@@ -42,16 +42,38 @@ namespace Initialiser
 }
 
 
-//! Constructs a DrawObject described by a keyword
-/*! 
+//! Resolves a keyword to a registered DrawObject
+/*! There are only static routines in the public interface. Those
+ *  routines take the keyword of an object and react to it
+ *  appropriately.
+ *
+ *  ObjectHandler itself is an abstract base class. Users are to use
+ *  the templated derived class TObjectHandler <ObjectType>.
+ *
+ *  Up to now the class is meant to be used for two ways.
+ *      - to parse the DrawObject (called by Parser)
+ *      - to return an ObjectGUIHandler.
+ *
+ *  For the lookup a static Initialiser::AutoHash is used. Read the
+ *  section about the Singleton pattern in the book by the GoF.
+ *
+ *  The design of returning the ObjectGUIHAndler is somewhat ugly. The
+ *  problem is that the commandline tools have to be able to use
+ *  getDrawObject() without being required to know about GUI related
+ *  stuff.
  */
 class ObjectHandler
 {
 public:
+        //! returns a DrawObject for keyword.
         static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* f=0 );
+
+        //! returns an appropriate ObjectGUIHandler
         static ObjectGUIHandler* guiHandler( const QString& keyWord );
+        
         virtual ~ObjectHandler() {}
 
+        //! registers a ObjectGUIHandler for a keyword.
         static void registerGUIHandler( const QString& keyword, ObjectGUIHandler* );
         
 protected:
@@ -62,11 +84,20 @@ protected:
         virtual DrawObject* parseObject( std::istream& is, Figure* fig ) = 0;
         
 private:
-        ObjectHandler( const ObjectHandler& ) {}
+        ObjectHandler( const ObjectHandler& );
 
         static Initialiser::AutoHash<ObjectHandler> ohHash_;
 };
 
+
+//! Templated concrete class based on ObjectHandler
+/** The constructor registers the DrawObject described by the template
+ *  parameter ObjectType to the ohHash_ by calling
+ *  ObjectHandler::ObjectHandler().
+ *
+ *  The function parseObject is to be specialised for any ObjectTypes
+ *  that need to read specific data.
+ */
 template<typename ObjectType>
 class TObjectHandler : public ObjectHandler
 {

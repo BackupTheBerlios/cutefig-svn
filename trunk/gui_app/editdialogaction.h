@@ -45,7 +45,7 @@ public:
         }
         ~EditdialogAction() {}
 
-        virtual void click( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
+        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix* m );
         virtual void handleSelection();
         virtual bool wouldHandle( DrawObject*, const QPoint& = QPoint(), const QMatrix* =0 ) { 
                 return true; 

@@ -61,5 +61,29 @@ void ResourceDemo<Gradient>::doPainting( QPainter* p )
         p->setPen( Qt::NoPen );
         p->setBrush( *qGrad ); 
         p->drawEllipse( w9,h9, w3,h3 );
+
+        delete qGrad;
+}
+
+
+template<>
+void ResourceDemo<QPixmap>::doPainting( QPainter* p )
+{
+        int w = width();
+        int h = height();
+        int w3 = w/3;
+        int h3 = h/3;
+        int w9 = w3/3;
+        int h9 = h3/3;
+        w3 *=2;
+
+        p->setPen( QPen( QBrush( *resource_ ), 3.0 ) );
+        p->drawEllipse( w9,h9, w3,h3 );
+
+        h9 *= 5;
+
+        p->setPen( Qt::NoPen );
+        p->setBrush( *resource_ ); 
+        p->drawEllipse( w9,h9, w3,h3 );
 }
 

@@ -149,5 +149,9 @@ template<> inline void ResourceButton<QColor>::changeResource()
                 emit resourceChanged();
         }
 }
-        
+
+template<> inline void ResourceButton<QPixmap>::changeResource()
+{
+}
+
 #endif

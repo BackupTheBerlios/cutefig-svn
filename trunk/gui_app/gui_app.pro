@@ -1,7 +1,7 @@
 # @version $Id$
 
 TARGET = cutefig
-CONFIG += thread 
+CONFIG += thread assistant 
 TEMPLATE = app
 
 #QT+=qt3support

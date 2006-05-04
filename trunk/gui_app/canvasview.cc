@@ -54,8 +54,8 @@
  * zoomscale. Drawing the helplines is also planned.
  */
 
-//! calculates the Fig::PointFlag out of m and b. 
-Fig::PointFlag calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m );
+//! calculates the Fig::PointFlags out of m and b. 
+Fig::PointFlags calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m );
 
 /**
  * The constructor needs a Controler and a figure as parameter.
@@ -98,7 +98,7 @@ void CanvasView::mouseDoubleClickEvent( QMouseEvent* e )
  */
 void CanvasView::mouseReleaseEvent( QMouseEvent* e )
 {
-        Fig::PointFlag f = calcPointFlag( e->button(), e->modifiers() );
+        Fig::PointFlags f = calcPointFlag( e->button(), e->modifiers() );
 
         snapped_ = false;
 
@@ -593,20 +593,20 @@ bool CanvasView::snap( QPoint & p )
         return snapped;
 }
 
-Fig::PointFlag calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
+Fig::PointFlags calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
 {
-        Fig::PointFlag pf = Fig::Normal;
+        Fig::PointFlags pf = Fig::Normal;
         if ( b & Qt::RightButton )
-                pf = Fig::PointFlag( pf | Fig::Cancel );
+                pf = Fig::PointFlags( pf | Fig::Cancel );
         if ( b & Qt::MidButton )
-                pf = Fig::PointFlag( pf | Fig::Final );
+                pf = Fig::PointFlags( pf | Fig::Final );
 
         if ( m & Qt::ShiftModifier )
-                pf = Fig::PointFlag( pf | Fig::Straight );
+                pf = Fig::PointFlags( pf | Fig::Straight );
         if ( m & Qt::ControlModifier )
-                pf = Fig::PointFlag( pf | Fig::Special1 );
+                pf = Fig::PointFlags( pf | Fig::Special1 );
         if ( m & Qt::AltModifier )
-                pf = Fig::PointFlag( pf | Fig::Special2 );
+                pf = Fig::PointFlags( pf | Fig::Special2 );
 
         return pf;
 }

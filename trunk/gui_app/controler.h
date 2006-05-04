@@ -104,7 +104,7 @@ public:
         bool actionWantsSnap( const QPoint& p, const QMatrix* m ) const;
         
         void callActionMove( const QPoint& p, const QMatrix* m );
-        const QCursor callActionClick( const QPoint& p, Fig::PointFlag f, const QMatrix* m );
+        const QCursor callActionClick( const QPoint& p, Fig::PointFlags f, const QMatrix* m );
 
         bool callActionKeyStroke( const QKeyEvent* ke );
 

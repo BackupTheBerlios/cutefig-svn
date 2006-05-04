@@ -40,8 +40,9 @@ bool AbstractResLib::containsInFigOrLib( ResourceKey& key )
                         key = k;
                         return true;
                 }
-                key = ResourceKey();
         }
+        
+        key = ResourceKey();
 
         return false;        
 }

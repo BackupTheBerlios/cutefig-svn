@@ -59,10 +59,10 @@ public:
         
         void setNone() { type_ = sNone; }
         void setColor( const QColor& color );
-        void setPixmap( const QPixmap& pixmap );
 
         void setColor( const ResourceKey& key );
         void setGradient( const ResourceKey& key );
+        void setPixmap( const ResourceKey& key );
         
         QColor color() const;
         bool isHardColor() const { return resourceUser_ && type_ == sColor; }

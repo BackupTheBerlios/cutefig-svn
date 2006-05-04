@@ -45,7 +45,7 @@ ScaleAction::ScaleAction( Controler* parent )
 
 /*!
  */
-void ScaleAction::click( const QPoint&, Fig::PointFlag f, const QMatrix* )
+void ScaleAction::click( const QPoint&, Fig::PointFlags f, const QMatrix* )
 {
         if ( notStarted_ ) {
                 notStarted_ = false;

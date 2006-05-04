@@ -42,7 +42,7 @@ public:
 protected:
         virtual void setupPainterPath();
 
-        virtual void passPointFlag( Fig::PointFlag f );
+        virtual void passPointFlag( Fig::PointFlags f );
         int nextPointIndex();
 
         bool finished_;

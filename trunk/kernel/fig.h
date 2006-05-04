@@ -26,6 +26,7 @@
 #define fig_h
 
 #include <QString>
+#include <QFlags>
 
 /** \namespace Fig
  *  \brief contains some global constants and enums
@@ -50,8 +51,13 @@ namespace Fig
                 Special2  = 0x0020
         }; //!< Flags that can be passed to a DrawObject being edited.
 
+        Q_DECLARE_FLAGS( PointFlags, PointFlag );
+        
+        
         const double version = 0.1;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( Fig::PointFlags );
 
 namespace Msgs
 {

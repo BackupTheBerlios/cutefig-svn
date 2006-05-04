@@ -50,7 +50,7 @@ TextAction::TextAction( Controler* parent )
         controler_->setTextAction( this );
 }
 
-void TextAction::click( const QPoint& p, Fig::PointFlag f, const QMatrix* m )
+void TextAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
 {
         if ( textObject_ ) {
                 commitTextObject();
@@ -161,6 +161,7 @@ bool TextAction::inputMethodEvent( const QInputMethodEvent* e )
 void TextAction::reset()
 {
         textObject_ = 0;
+        CreateAction::reset();
 }
 
 

@@ -24,6 +24,7 @@ HEADERS = paintutils.h \
           resourcecombobox.h \
           strokewidget.h \
           penwidget.h \
+          arrowwidget.h \
           errorreporter.h \
           percentvalidator.h \
           zoomcombobox.h \
@@ -47,6 +48,7 @@ SOURCES = paintutils.cc \
           resourcecombobox.cc \
           strokewidget.cc \
           penwidget.cc \
+          arrowwidget.cc \
           errorreporter.cc \
           percentvalidator.cc \
           zoomcombobox.cc \

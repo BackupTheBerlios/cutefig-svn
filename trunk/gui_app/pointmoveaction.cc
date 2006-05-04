@@ -83,7 +83,7 @@ void PointMoveAction::reset()
         wObject_ = 0;
 }
 
-void PointMoveAction::click( const QPoint& _p, Fig::PointFlag f, const QMatrix* m )
+void PointMoveAction::click( const QPoint& _p, Fig::PointFlags f, const QMatrix* m )
 {
         if ( pointIndex_ != -1 && wObject_ ) {
                 QPointF p = m->map( QPointF( _p ) );

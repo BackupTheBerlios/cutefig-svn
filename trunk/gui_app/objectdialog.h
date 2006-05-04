@@ -39,6 +39,8 @@ class QTextEdit;
 
 class LineShowWidget;
 class StrokeWidget;
+class ArrowWidget;
+class Arrow;
 class PenWidget;
 
 #include <QDebug>
@@ -56,7 +58,7 @@ public slots:
         
 protected slots:
         virtual void init();
-
+        
 protected:
         DrawObject* drawObject_;//, *backup_;
         QTabWidget* tabWidget;
@@ -77,9 +79,15 @@ protected:
         PenWidget* penWidget;
         StrokeWidget* lineStroke;
         StrokeWidget* fillStroke;
+        ArrowWidget* arrows;
         LineShowWidget* lineShow;
         QTextEdit* comment;
         QSpinBox* depth;
+
+private slots:
+        void changeStartArrow( const Arrow& a );
+        void changeEndArrow( const Arrow& a );
+
 };
 
 #endif

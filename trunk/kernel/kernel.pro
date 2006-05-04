@@ -21,6 +21,7 @@ HEADERS += fig.h \
            polygon.h \
            bezierspline.h \
            textobject.h \
+           arrow.h \
            objecthandler.h \
            pen.h \
            stroke.h \
@@ -48,6 +49,7 @@ SOURCES += figure.cc \
            polygon.cc \
            bezierspline.cc \
            textobject.cc \
+           arrow.cc \
            objecthandler.cc \
            pen.cc \
            stroke.cc \

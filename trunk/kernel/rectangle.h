@@ -40,7 +40,7 @@ public:
         virtual void outputToBackend( OutputBackend* ob );
 
 private:
-        virtual void passPointFlag_private( Fig::PointFlag ) {}
+        virtual void passPointFlag_private( Fig::PointFlags ) {}
         virtual void setupWidthAndHeight();
         virtual void addPath();
 };

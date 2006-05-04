@@ -100,7 +100,7 @@ void Stroke::setGradient( const ResourceKey& key )
         static_cast<ResourceUser<Gradient>*>( resourceUser_ )->setResource( key );
 }
 
-void Stroke::setPixmap( const QPixmap& pixmap )
+void Stroke::setPixmap( const ResourceKey& key )
 {
         type_ = sPixmap;
         
@@ -109,7 +109,7 @@ void Stroke::setPixmap( const QPixmap& pixmap )
         if ( !resourceUser_ )
                 resourceUser_ = new ResourceUser<QPixmap>();
         
-        static_cast<ResourceUser<QPixmap>*>( resourceUser_ )->setResource( pixmap );
+        static_cast<ResourceUser<QPixmap>*>( resourceUser_ )->setResource( key );
 }
 
 QColor Stroke::color() const

@@ -115,9 +115,11 @@ void TextObject::doDraw( QPainter* p ) const
 
         if ( !doc_.isEmpty() )
                 textLayout_->draw( p, actualPoint_, selection );
-        
-        if ( cursorVisible_ && textLayout_ )
+
+        if ( cursorVisible_ && textLayout_ ) {
+                p->setPen( QPen() );
                 textLayout_->drawCursor( p, actualPoint_, cursor_.position() );
+        }
 }
 
 void TextObject::toggleCursor()

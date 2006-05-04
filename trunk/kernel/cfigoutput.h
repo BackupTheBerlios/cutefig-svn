@@ -51,6 +51,7 @@ public:
 
 private:
         void outputGenericData();
+        void outputArrows();
         void outputPoints();
         void outputHeader();
         void outputResources();

@@ -35,6 +35,7 @@
 #include "layouter.h"
 #include "penwidget.h"
 #include "strokewidget.h"
+#include "arrowwidget.h"
 #include "editdialogaction.h"
 
 
@@ -73,6 +74,10 @@ void ObjectDialog::setUpGeneral()
 
         fillStroke = new StrokeWidget( tr("&Fill"), page );
         layout->addWidget( fillStroke, 1,0 );
+
+        arrows = new ArrowWidget( tr("&Arrows"), page );
+        layout->addWidget( arrows, 1,1 );
+        arrows->setEnabled( drawObject_->canHaveArrows() );
         
         depth = new QSpinBox( page );
         depth->setMinimum(0);
@@ -133,6 +138,8 @@ void ObjectDialog::setDefaultValues()
         lineStroke->setStroke( drawObject_->p_stroke() );
         fillStroke->setStroke( drawObject_->p_fill() );
 
+        arrows->setArrows( drawObject_->startArrow(), drawObject_->endArrow() );
+        
         depth->setValue( drawObject_->depth() );
         comment->setPlainText( drawObject_->comment() );
 
@@ -153,6 +160,11 @@ void ObjectDialog::setUpConnections()
         
         connect( depth, SIGNAL( valueChanged( int ) ), action_, SLOT( wObjectHasChanged() ) );
 
+        connect( arrows, SIGNAL( startArrowChanged( const Arrow& ) ),
+                 this, SLOT( changeStartArrow( const Arrow& ) ) );
+        connect( arrows, SIGNAL( endArrowChanged( const Arrow& ) ),
+                 this, SLOT( changeEndArrow( const Arrow& ) ) );
+        
         setUpConnectionsPrivate();
 }
 
@@ -168,4 +180,16 @@ void ObjectDialog::setDrawObject( DrawObject* o )
 {
         drawObject_ = o;
         castDrawObject();
+}
+
+void ObjectDialog::changeStartArrow( const Arrow& a )
+{
+        drawObject_->setStartArrow( a );
+        action_->wObjectHasChanged();
+}
+
+void ObjectDialog::changeEndArrow( const Arrow& a )
+{
+        drawObject_->setEndArrow( a );
+        action_->wObjectHasChanged();
 }

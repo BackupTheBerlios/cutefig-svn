@@ -64,6 +64,7 @@ private slots:
         void print();
 
         void about();  //!< Displays the about box.
+        void help();
 
 private:
         CanvasView *cview_;        //!< The editing view of the figure

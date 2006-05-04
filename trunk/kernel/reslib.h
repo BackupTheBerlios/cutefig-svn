@@ -171,7 +171,7 @@ private:
         class ResourceData;
 
         //! a default constructed instance of Resource
-        static Resource dummyResource_;
+        static Resource& dummyResource();
         
         //! resolves a ResourceKey to a Resource
         /** Note that the key is resolved to a \e pointer to a
@@ -190,7 +190,11 @@ template<typename Resource>
 /** This is to be returned if a resource is requested by a key that is
  *  not in the ResLib.
  */
-Resource ResLib<Resource>::dummyResource_ = Resource();
+Resource& ResLib<Resource>::dummyResource()
+{
+        static Resource r;
+        return r;
+}
 
 
 /** It therefore first checks whether the resource is not
@@ -260,7 +264,7 @@ int ResLib<Resource>::hashSum( const ResourceKey& key, bool* found ) const
 //         return newsum;
 // }
 
-/*! returns the default constructed dummyResource_ in case the key can
+/*! returns the default constructed dummyResource() in case the key can
  *  not be looked up
  */
 template<typename Resource>
@@ -269,7 +273,7 @@ const Resource& ResLib<Resource>::operator[]( const ResourceKey& key ) const
         if ( map_.contains( key ) ) 
                 return map_[key]->data();
         else 
-                return dummyResource_;
+                return dummyResource();
 }
 
 template<typename Resource>

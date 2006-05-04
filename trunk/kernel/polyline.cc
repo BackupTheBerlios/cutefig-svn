@@ -48,7 +48,7 @@ Polyline::Polyline( const Polyline* o )
         getReadyForDraw();
 }
 
-void Polyline::passPointFlag( Fig::PointFlag f )
+void Polyline::passPointFlag( Fig::PointFlags f )
 {
         if ( f & Fig::Final )
                 finished_ = true;
