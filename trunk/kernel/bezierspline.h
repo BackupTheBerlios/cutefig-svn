@@ -94,7 +94,7 @@ public:
 
         virtual void setCurrentPointIndex( int i );
         
-        void drawTentative( QPainter* p ) const;
+//        void drawTentative( QPainter* p ) const;
 
         void drawMetaData( QPainter* p ) const;
         

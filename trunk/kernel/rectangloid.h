@@ -26,8 +26,9 @@
 #define rectagnloid_h
 
 #include "drawobject.h"
+#include "geometry.h"
 
-#include <cmath>
+//#include <cmath>
 
 class Rectangloid : public DrawObject 
 {
@@ -38,7 +39,7 @@ public:
 
         virtual bool canHaveArrows() const { return false; }
         
-        double angle() const { return angle_ * rad; }
+        double angle() const { return angle_ * Geom::rad; }
         QPointF center() const { return center_; }
 
         virtual void drawMetaData( QPainter* p ) const;
@@ -72,7 +73,7 @@ protected:
         virtual void setupWidthAndHeight() = 0;
         virtual void addPath() = 0;
 
-        static const double rad = 180/M_PI;
+//        static const double rad = 180/M_PI;
         
 private:
         bool hasAngle_;

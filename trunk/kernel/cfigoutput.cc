@@ -72,6 +72,14 @@ void CfigOutput::outputPolygon( const Polygon* pg )
         outputPoints();
 }
 
+void CfigOutput::outputArc( const Arc* arc )
+{
+        drawObject_ = arc;
+        outputGenericData();
+        fileStream_ << "\n";
+        outputPoints();
+}
+
 void CfigOutput::outputBezierSpline( const BezierSpline* bs )
 {
         drawObject_ = bs;

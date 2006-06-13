@@ -66,22 +66,10 @@ bool Arrow::isValid() const
 class StandardArrowPainter : public ArrowPainter 
 {
 public:
-        StandardArrowPainter() {}
-        
-//        virtual ArrowPainter* clone() const;
-
         virtual void draw( const QPointF& pos, const QPointF& angle, QPainter* p,
                            double w, double l ) const;
-
-//        virtual QString type() const { return "std"; }
 };
         
-
-// inline ArrowPainter* StandardArrowPainter::clone() const
-// {
-//         return new StandardArrowPainter();
-// }
-
 void StandardArrowPainter::draw( const QPointF& pos, const QPointF& angle, QPainter* p,
                                  double w, double l ) const 
 {
@@ -109,8 +97,6 @@ void StandardArrowPainter::draw( const QPointF& pos, const QPointF& angle, QPain
 class DotEndArrowPainter : public ArrowPainter
 {
 public:
-        DotEndArrowPainter() : ArrowPainter() {}
-
         virtual void draw( const QPointF& pos, const QPointF& angle, QPainter* p,
                            double w, double l ) const;
 };

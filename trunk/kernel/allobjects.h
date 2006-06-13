@@ -26,6 +26,7 @@
 #include "ellipse.h"
 #include "polyline.h"
 #include "polygon.h"
+#include "arc.h"
 #include "bezierspline.h"
 #include "compound.h"
 #include "textobject.h"

@@ -32,6 +32,8 @@
 #include <QLineF>
 #include <QVector>
 
+#include <cmath>
+
 //! Some geometrical operations
 /*!
  *  Here some geometrical routines are implemented.
@@ -40,6 +42,8 @@ namespace Geom
 {
         //! returns the distance between two points
         qreal distance( const QPointF& p1, const QPointF& p2 );
+
+        double angle( const QPointF& p1, const QPointF& p2 );
 
         //! returns a QVector of six QPointF describing the QRectF r
         QVector<QPointF> boundingPoints( const QRectF& r );
@@ -61,6 +65,10 @@ namespace Geom
         qreal pabs( const QPointF& p );
 
         const double clickTolerance = 5;
+
+        const double rad = 180/M_PI;
+
+        int qangle( double angle );
 };
 
 

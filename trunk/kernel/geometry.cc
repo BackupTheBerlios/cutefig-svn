@@ -24,8 +24,6 @@
 
 #include "geometry.h"
 
-#include <cmath>
-
 #include <QDebug>
 
 qreal Geom::distance( const QPointF& p1, const QPointF& p2 )
@@ -33,6 +31,11 @@ qreal Geom::distance( const QPointF& p1, const QPointF& p2 )
         qreal xd = p1.x() - p2.x();
         qreal yd = p1.y() - p2.y();
         return hypot( xd, yd );
+}
+
+double Geom::angle( const QPointF& p1, const QPointF& p2 )
+{
+        return -atan2( p2.y() - p1.y(), p2.x() - p1.x() );
 }
 
 
@@ -122,4 +125,14 @@ qreal Geom::scalarProduct( const QPointF& p1, const QPointF& p2 )
 qreal Geom::pabs( const QPointF& p )
 {
         return hypot( p.x(), p.y() );
+}
+
+
+int Geom::qangle( double angle )
+{
+        int qa = rint( angle / M_PI * 2880 );
+        if ( qa < 0 )
+                qa += 5760;
+
+        return qa;
 }

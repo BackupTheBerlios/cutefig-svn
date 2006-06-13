@@ -33,6 +33,7 @@ void Initialiser::createGUIHandlers()
         static TObjectGUIHandler<Ellipse> egh;
         static TObjectGUIHandler<Polyline> pgh;
         static TObjectGUIHandler<Polygon> lgh;
+        static TObjectGUIHandler<Arc> agh;
         static TObjectGUIHandler<BezierSpline> bgh;
         static TObjectGUIHandler<TextObject> tgh;
 }

@@ -42,6 +42,7 @@ public:
         virtual void outputEllipse( const Ellipse* el );
         virtual void outputPolyline( const Polyline* pl );
         virtual void outputPolygon( const Polygon* pg );
+        virtual void outputArc( const Arc* arc );
         virtual void outputBezierSpline( const BezierSpline* bs );
         virtual void outputTextObject( const TextObject* to );
 

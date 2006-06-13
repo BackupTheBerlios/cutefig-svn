@@ -35,6 +35,7 @@ void Initialiser::AutoHash<ObjectHandler>::init()
         static TObjectHandler<Ellipse> elf;
         static TObjectHandler<Polyline> plf;
         static TObjectHandler<Polygon> pgf;
+        static TObjectHandler<Arc> agf;
         static TObjectHandler<BezierSpline> bsf;
         static TObjectHandler<TextObject> tgf;
 }

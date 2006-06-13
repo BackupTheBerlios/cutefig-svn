@@ -29,6 +29,8 @@
 #include <QPainter>
 #include <QPainterPath>
 
+#include <cmath>
+
 //! A helper class to find subpaths to add to BezierSpline::painterPath_.
 class BezierSpline::PathFinder 
 {
@@ -130,10 +132,10 @@ void BezierSpline::cursorMove( const QPointF& pos )
         DrawObject::cursorMove( pos );
 }
 
-void BezierSpline::drawTentative( QPainter* p ) const
-{
-        p->drawPath( painterPath_ );
-}
+// void BezierSpline::drawTentative( QPainter* p ) const
+// {
+//         p->drawPath( painterPath_ );
+// }
 
 void BezierSpline::passPointFlag( Fig::PointFlags f )
 {

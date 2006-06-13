@@ -32,6 +32,7 @@ class Rectangle;
 class Ellipse;
 class Polyline;
 class Polygon;
+class Arc;
 class BezierSpline;
 class TextObject;
 class Compound;
@@ -58,7 +59,8 @@ public:
         virtual void outputRectangle( const Rectangle* rc ) = 0;
         virtual void outputEllipse( const Ellipse* el ) = 0;
         virtual void outputPolyline( const Polyline* pl ) = 0;
-        virtual void outputPolygon( const Polygon* pg ) = 0;
+        virtual void outputPolygon( const Polygon* pg ) = 0;;
+        virtual void outputArc( const Arc* arc ) = 0;
         virtual void outputBezierSpline( const BezierSpline* bs ) = 0;
         virtual void outputTextObject( const TextObject* to ) = 0;
 

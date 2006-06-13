@@ -23,7 +23,6 @@
 ******************************************************************************/
 
 #include "rectangloid.h"
-#include "geometry.h"
 
 #include <QPainter>
 
@@ -91,7 +90,7 @@ void Rectangloid::setupPainterPath()
         addPath();
         
         rotation_ = QMatrix();
-        rotation_.rotate( -angle_*rad );        
+        rotation_.rotate( -angle_ * Geom::rad );        
 
         bRect_ = rotation_.mapRect( bRect_ );
 
@@ -109,7 +108,7 @@ void Rectangloid::passPointFlag( Fig::PointFlags f )
 
 void Rectangloid::setAngle( double a )
 {
-        angle_ = a/rad;
+        angle_ = a/Geom::rad;
         getReadyForDraw();
 }
 
@@ -120,7 +119,7 @@ void Rectangloid::setAngle( int a )
 
 void Rectangloid::setAngleNew( double a )
 {
-        angle_ = a/rad;
+        angle_ = a/Geom::rad;
 }
 
 
@@ -135,7 +134,7 @@ void Rectangloid::setAngleNew( double a )
 
 void Rectangloid::calcAngle()
 {
-        angle_ = -atan2( points_[1].y() - points_[0].y(), points_[1].x() - points_[0].x() );
+        angle_ = Geom::angle( points_[0], points_[1] );
 }
 
 void Rectangloid::drawMetaData( QPainter* p ) const
