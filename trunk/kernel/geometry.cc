@@ -130,7 +130,7 @@ qreal Geom::pabs( const QPointF& p )
 
 int Geom::qangle( double angle )
 {
-        int qa = rint( angle / M_PI * 2880 );
+        int qa = qRound( angle / M_PI * 2880 );
         if ( qa < 0 )
                 qa += 5760;
 

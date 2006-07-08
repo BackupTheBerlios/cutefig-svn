@@ -54,7 +54,7 @@
  *  
  *  \section transitions Transitions between two subsplines
  *  
- *  A transition between two subsplines can be either \em smooth od
+ *  A transition between two subsplines can be either \em smooth or
  *  \em angular. Smooth means that both subsplines are hitting each
  *  other at their connecting node at the same angle. That means that
  *  the vector pointing from the node to one directive is the same one
@@ -77,6 +77,7 @@ class BezierSpline : public DrawObject
         Q_OBJECT
         DRAW_OBJECT( "bezierspline", "&Bezier spline" );
 
+        // A helper class to find subpaths 
         class PathFinder;
         
 public:
@@ -85,16 +86,13 @@ public:
 
         friend class PathFinder;
 
-        virtual uint minPoints() const { return 3; }
+        virtual int minPoints() const { return 3; }
         
         virtual void cursorMove( const QPointF& pos );
         
-        bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
         virtual void outputToBackend( OutputBackend* ob );
 
         virtual void setCurrentPointIndex( int i );
-        
-//        void drawTentative( QPainter* p ) const;
 
         void drawMetaData( QPainter* p ) const;
         
@@ -104,8 +102,8 @@ protected:
         virtual void passPointFlag( Fig::PointFlags f );
         virtual int nextPointIndex();
 
-        virtual QPointF startAngle() const;
-        virtual QPointF endAngle() const;
+//        virtual QPointF startAngle() const;
+//        virtual QPointF endAngle() const;
         
 private:
         bool finished_;
@@ -125,7 +123,7 @@ private:
          *        by a value of -1. This is the case when a node in the
          *        middle is moved. 
          */
-        int oppositeControlPoint_;
+        int oppositeDirective_;
 };
 
 #endif

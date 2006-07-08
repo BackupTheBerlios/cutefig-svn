@@ -179,7 +179,7 @@ public:
         const DrawObject* ancestor() const;
 
         //! returns the minimum number of points the objetct need to be defined.
-        virtual uint minPoints() const { return 2; }
+        virtual int minPoints() const { return 2; }
 
         //! returns true if the DrawObject type can have arrows.
         virtual bool canHaveArrows() const { return true; }
@@ -188,7 +188,7 @@ public:
         virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
 
         //! supposed to return true in case point \p hits the outline of the object.
-        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const =0;
+        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
         
         //! Returns the smallest QRectF that bounds the object.
         QRectF boundingRect() const { return bRect_; }
@@ -332,8 +332,8 @@ protected:
 
         void drawArrows( QPainter* p ) const;
 
-        virtual QPointF startAngle() const;
-        virtual QPointF endAngle() const;
+        virtual QPointF startAngle( const QPolygonF& pol ) const;
+        virtual QPointF endAngle( const QPolygonF& pol ) const;
         
         //! the Figure containing the DrawObject
         Figure* figure_;

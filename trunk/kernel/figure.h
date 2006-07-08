@@ -42,6 +42,35 @@ class QPointF;
 class QPoint;
 class QRectF;
 
+
+
+class Paper 
+{
+public:
+        Paper() : unit_(), size_() {}
+        Paper( const QSizeF& size, const Unit& unit )
+                : unit_( unit ),
+                  size_( size )
+        {}
+
+        Paper( const Paper& other )
+                : unit_( other.unit_ ),
+                  size_( other.size_ )
+        {}
+
+        QSizeF pixSize() const { return size_ * unit_; }
+        QSizeF size() const { return size_; }
+        Unit unit() const { return unit_; }
+        
+        Paper& operator=( const Paper& other );
+                
+private:
+        Unit unit_;
+
+        QSizeF size_;
+};
+
+
 //! contains all DrawObject objects of a figure. It is the \e document the user is editing.
 /** The Figure is the Model in the MVC approach. It takes a pointer to
  *  a Controler by setControler() which is usually called by an
@@ -72,13 +101,12 @@ public:
         //! sets the controler_ to c
         //void setControler( Controler* c ) { controler_ = c; }
 
-        QSizeF paperSize() const { return paperSize_; }      
         //! returns the scale_ of the Figure.
         double scale() const { return scale_; }
 
         const Unit& unit() const { return unit_; }
 
-//        const Paper& paper() const { return paper_; }
+        const Paper paper() const { return paper_; }
 
         //! adds all the DrawObjects of the ObjectList l.
         void takeDrawObjects( const ObjectList& l );
@@ -130,8 +158,11 @@ private:
         double scale_;
         Unit unit_;
 
-        QSizeF paperSize_;
+        ValueHash<Paper> paper_;
+        
+//        QSizeF paperSize_;
 
 //        Controler* controler_;
 };
+
 #endif

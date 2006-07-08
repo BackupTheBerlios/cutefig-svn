@@ -53,4 +53,10 @@ class ResourceKey;
 typedef QList<ResourceKey> ResourceKeyList;
 typedef QHash<QString,ResourceKeyList> ResourceSet;
 
+template<typename ValueType> class ValueHash;
+typedef ValueHash<double> Unit;
+
+// class PaperSize;
+// typedef ValueHash<PaperSize> Paper;
+
 #endif

@@ -44,6 +44,7 @@ Arc::Arc( const Arc* other )
           isCircle_( other->isCircle_ )
 {
         getReadyForDraw();
+        doSpecificPreparation();
 }
 
 
@@ -59,8 +60,8 @@ void Arc::setupPainterPath()
         if ( points_.size() < 3 )
                 return;
 
-        startAngle_ = Geom::qangle( Geom::angle( points_[0], points_[1] ) );
-        int endAngle = Geom::qangle( Geom::angle( points_[0], points_[2] ) );
+        startAngle_ = Geom::qangle( points_[0], points_[1] );
+        int endAngle = Geom::qangle( points_[0], points_[2] );
 
         sweepLength_ = endAngle - startAngle_;
 
@@ -76,7 +77,7 @@ void Arc::setupPainterPath()
         if ( points_.size() < 4 )
                 return;
 
-        endAngle =  Geom::qangle( Geom::angle( points_[0], points_[3] ) );
+        endAngle =  Geom::qangle( points_[0], points_[3] );
         sweepLength_ = endAngle - startAngle_;
 
         painterPath_.arcTo( bRect_, double(startAngle_) / 16,
@@ -107,7 +108,7 @@ void Arc::drawMetaData( QPainter* p ) const
 
 void Arc::passPointFlag( Fig::PointFlags f )
 {
-    
+        
 }
 
 int Arc::nextPointIndex()
@@ -120,16 +121,54 @@ int Arc::nextPointIndex()
         return -1;
 }
 
-bool Arc::pointHitsOutline( const QPointF& p, qreal tolerance ) const
-{
-        return false;
-}
+// bool Arc::pointHitsOutline( const QPointF& p, qreal tolerance ) const
+// {
+//         double r1 = Geom::distance( points_[0], p );
+//         double r2 = Geom::distance( points_[0], points_[1] );
+
+// //        qDebug() << r1 << r2;
+
+//         if ( fabs( r1-r2 ) > tolerance )
+//                 return false;
+
+//         int ang = Geom::qangle( points_[0], p );
+
+// //        qDebug() << "angles:" << ang << startAngle_ << startAngle_ + sweepLength_ * direction_; 
+        
+//         return  ang > startAngle_ &&
+//                 ang < startAngle_ + sweepLength_;
+// }
 
 void Arc::getReadyForDraw()
 {
+//        qDebug() << "getReadyForDraw" << this << points_.size();
         if ( points_.size() < 2 )
                 return;
         
-        setupPainterPath();
         setupRects();
+        setupPainterPath();
 }
+
+
+// QPointF Arc::startAngle()
+// {
+//         if ( points_.size() < minPoints() )
+//                 return QPointF();
+
+//         return arrowAngle( startAngle_ );
+// }
+
+// QPointF Arc::endAngle()
+// {
+//         if ( points_.size() < minPoints() )
+//                 return QPointF();
+
+//         return arrowAngle( startAngle_ + sweepLength_ * direction_ );
+// }
+
+// QPointF Arc::arrowAngle( int angle )
+// {
+//         double a = angle * 16 / 360 * M_PI;
+//         return QPointF( sin( a ), cos( a ) );
+// }
+

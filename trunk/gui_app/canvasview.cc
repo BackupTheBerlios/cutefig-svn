@@ -64,9 +64,9 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
         : QWidget( parent ),
           ViewBase( c, f ),
           mainWindow_( parent ),
-          scale_( 1 ),
           hRuler_( 0 ),
           vRuler_( 0 ),
+          scale_( 1 ),
           unit_( Fig::cm2pix ),
           oldRect_(),
           oldSnapPoint_( QPoint(0,0) ),
@@ -515,7 +515,7 @@ void CanvasView::setZoom_private( double z )
 
 void CanvasView::doResizing()
 {
-        QSize s = ( figure_->paperSize() * scale_ * unit_ ).toSize();
+        QSize s = ( figure_->paper().pixSize() * scale_ ).toSize();
         
         if ( hRuler_ )
                 hRuler_->setLength( s.width() );
@@ -526,7 +526,7 @@ void CanvasView::doResizing()
 
 double CanvasView::paperWidth() const
 {
-        return figure_->paperSize().width() * scale_;
+        return figure_->paper().pixSize().width() * scale_;
 }
 
 void CanvasView::setHRuler( Ruler* r )

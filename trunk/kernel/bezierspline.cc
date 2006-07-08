@@ -85,22 +85,15 @@ bool BezierSpline::PathFinder::findNext()
 BezierSpline::BezierSpline( Figure* parent )
         : DrawObject( parent ),
           finished_( false ),
-          oppositeControlPoint_( 0 )
+          oppositeDirective_( 0 )
 {}
 
 BezierSpline::BezierSpline( const BezierSpline* other )
         : DrawObject( other ),
           finished_( true ),
-          oppositeControlPoint_( 0 )
+          oppositeDirective_( 0 )
 {
         getReadyForDraw();
-}
-
-bool BezierSpline::pointHitsOutline( const QPointF& p, qreal tolerance ) const
-{
-        QRectF r( Geom::centerRect( p, QSizeF(tolerance, tolerance) ) );
-
-        return !painterPath_.contains( r ) && painterPath_.intersects( r );
 }
 
                 
@@ -122,9 +115,9 @@ void BezierSpline::cursorMove( const QPointF& pos )
 {
         QPointF diff = pos - points_[currentPointIndex()];
         
-        if ( oppositeControlPoint_ > 0 ) 
-                points_[oppositeControlPoint_] -= diff;
-        else if ( oppositeControlPoint_ < 0 ) {
+        if ( oppositeDirective_ > 0 ) 
+                points_[oppositeDirective_] -= diff;
+        else if ( oppositeDirective_ < 0 ) {
                 points_[currentPointIndex()+1] += diff;
                 points_[currentPointIndex()-1] += diff;
         }
@@ -132,10 +125,6 @@ void BezierSpline::cursorMove( const QPointF& pos )
         DrawObject::cursorMove( pos );
 }
 
-// void BezierSpline::drawTentative( QPainter* p ) const
-// {
-//         p->drawPath( painterPath_ );
-// }
 
 void BezierSpline::passPointFlag( Fig::PointFlags f )
 {
@@ -149,7 +138,7 @@ int BezierSpline::nextPointIndex()
                 int s = points_.size() - 4;
                 if ( s > 0 && (s % 3==1) ) {
                         points_.pop_back();
-                        oppositeControlPoint_ = 0;
+                        oppositeDirective_ = 0;
                         setupPainterPath();
                 }
                 
@@ -159,9 +148,9 @@ int BezierSpline::nextPointIndex()
         int s = points_.size();
         if ( !(s % 3) ) {
                 points_.insert( --s, points_.last() );
-                oppositeControlPoint_ = s;
+                oppositeDirective_ = s;
         } else
-                oppositeControlPoint_ = 0;
+                oppositeDirective_ = 0;
 
         points_ << points_.last();
         
@@ -175,22 +164,22 @@ void BezierSpline::setCurrentPointIndex( int i )
         DrawObject::setCurrentPointIndex( i );
         
         if ( (i < 2) || (i == points_.size()-1) ) {
-                oppositeControlPoint_ = 0;
+                oppositeDirective_ = 0;
                 return;
         }
 
         if ( (i%3 == 0) ) {
-                oppositeControlPoint_ = -1;
+                oppositeDirective_ = -1;
                 return;
         }
         
         if ( (i-1) % 3 )
-                oppositeControlPoint_ = i + 2;
+                oppositeDirective_ = i + 2;
         else
-                oppositeControlPoint_ = i - 2;
+                oppositeDirective_ = i - 2;
         
-        if ( oppositeControlPoint_ >= points_.size() )
-                oppositeControlPoint_ = 0;
+        if ( oppositeDirective_ >= points_.size() )
+                oppositeDirective_ = 0;
 }
 
 void BezierSpline::drawMetaData( QPainter* p ) const
@@ -207,21 +196,4 @@ void BezierSpline::drawMetaData( QPainter* p ) const
                 else
                         i+=2;
         }
-}
-
-QPointF BezierSpline::startAngle() const
-{
-        QPolygonF pol = painterPath_.toSubpathPolygons().first();
-
-        QPointF d = pol[0] - pol[1];
-        return d / hypot( d.x(), d.y() );
-}
-
-QPointF BezierSpline::endAngle() const
-{
-        QPolygonF pol = painterPath_.toSubpathPolygons().last();
-
-        int i = pol.size() -1;
-        QPointF d = pol[i] - pol[i-1];
-        return d / hypot( d.x(), d.y() );
 }

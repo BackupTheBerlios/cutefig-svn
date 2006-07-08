@@ -82,7 +82,7 @@ private:
 //         DrawObject *createPolygon();
         
 //        DrawObject *createObject( QString name );
-        DrawObject *parseGenericData( uint &npoints, QPolygonF*& pa );
+        DrawObject *parseGenericData( int& npoints, QPolygonF*& pa );
 
         QPointF parsePoint();
         void parseResource( ResourceKey::Flags flag );

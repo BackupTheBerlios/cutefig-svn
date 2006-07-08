@@ -32,12 +32,6 @@ const QString ValueHash<double>::defaultName()
 }
 
 template<>
-const double ValueHash<double>::defaultValue()
-{
-        return Fig::inch2pix;
-}
-
-template<>
 void fillHash<double>( QHash<QString,double>& h )
 {
         h["inch"] = Fig::inch2pix;

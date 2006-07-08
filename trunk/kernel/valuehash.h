@@ -31,37 +31,42 @@
 class QSizeF;
 template<typename ValueType> class ValueHash;
 
-typedef ValueHash<double> Unit;
-typedef ValueHash<QSizeF> Paper;
+template<typename ValueType> void fillHash( QHash<QString,ValueType>& );
+
+// typedef ValueHash<double> Unit;
+// typedef ValueHash<QSizeF> Paper;
 
 template<typename ValueType> class ValueHash 
 {
 public:
-        ValueHash( const QString& name );
+        ValueHash( const QString& name = defaultName() );
         ValueHash( const ValueHash<ValueType>& other );
         ~ValueHash() {}
 
-        ValueType value() { return value_; }
-        QString name() { return name_; }
+        ValueType value() const { return value_; }
+        operator ValueType() const { return value_; }
+        QString name() const { return name_; }
 
-private:
         ValueHash<ValueType>& operator=( const ValueHash<ValueType>& other );
 
-        ValueType value_;
+        static QList<QString> names() { return hash().keys(); }
+        
+private:
         QString name_;
+        ValueType value_;
 
         static QHash<QString,ValueType>& hash();
         
         static const QString defaultName();
-        static const ValueType defaultValue();
+//        static const ValueType defaultValue();
 };
 
 
 
 template<typename ValueType>
 ValueHash<ValueType>::ValueHash( const QString& name )
-        : value_( defaultValue() ),
-          name_( defaultName() )
+        : name_( defaultName() ),
+          value_( hash()[name_] )
 {
         if ( hash().contains( name ) ) {
                 value_ = hash()[name];
@@ -71,12 +76,10 @@ ValueHash<ValueType>::ValueHash( const QString& name )
 
 template<typename ValueType>
 ValueHash<ValueType>::ValueHash( const ValueHash<ValueType>& other )
-        : value_( other.value_ ),
-          name_( other.name_ )
+        : name_( other.name_ ),
+          value_( other.value_ )
 {
 }
-
-template<typename ValueType> void fillHash( QHash<QString,ValueType>& );
 
 template<typename ValueType>
 QHash<QString,ValueType>& ValueHash<ValueType>::hash()
@@ -86,6 +89,17 @@ QHash<QString,ValueType>& ValueHash<ValueType>::hash()
                 fillHash( h );
 
         return h;
+}
+
+template<typename ValueType>
+ValueHash<ValueType>& ValueHash<ValueType>::operator=( const ValueHash<ValueType>& other )
+{
+        if ( this != &other ) {
+                name_ = other.name_;
+                value_ = other.value_;
+        }
+
+        return *this;
 }
 
 #endif

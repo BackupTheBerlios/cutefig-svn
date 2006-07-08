@@ -72,7 +72,7 @@ public:
         //! Only one point is necessary to determine the position of the TextObject.
         /*! The rest is determined by its size and #alignment_.
          */
-        virtual uint minPoints() const { return 1; }
+        virtual int minPoints() const { return 1; }
         
         virtual void draw( QPainter* p ) const;
         virtual void drawTentative( QPainter* p ) const;

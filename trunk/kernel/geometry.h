@@ -69,6 +69,9 @@ namespace Geom
         const double rad = 180/M_PI;
 
         int qangle( double angle );
+
+        inline
+        int qangle( const QPointF& p1, const QPointF& p2 ) { return qangle( angle( p1,p2 ) ); }
 };
 
 

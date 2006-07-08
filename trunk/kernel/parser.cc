@@ -87,8 +87,8 @@ QString Parser::parseResLibs( QTextStream& ts )
  */
 ObjectList Parser::parseLoop( bool parsingCompound )
 {
-        uint npoints = 0;
-        uint i = 0;
+        int npoints = 0;
+        int i = 0;
         
         QPolygonF* pa;
         DrawObject* o = 0;
@@ -341,7 +341,7 @@ std::istream& operator>>( std::istream& is, Pen& pen )
  *  to that DrawObject. If an error occurs the DrawObject is deleted
  *  if necessary and a null pointer is returned.
  */
-DrawObject * Parser::parseGenericData( uint &npoints, QPolygonF*& pa )
+DrawObject * Parser::parseGenericData( int &npoints, QPolygonF*& pa )
 {
         QString obType;
         Stroke stroke, fill;

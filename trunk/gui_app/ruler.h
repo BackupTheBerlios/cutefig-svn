@@ -25,6 +25,9 @@
 #ifndef ruler_h
 #define ruler_h
 
+#include "typedefs.h"
+#include "valuehash.h"
+
 #include <QFrame>
 #include <QStringList>
 #include <QPixmap>
@@ -52,7 +55,7 @@ public:
         void setLength( int l );   //!< Sets the length of the ruler
 
         void setScale( double s ); //!< Sets the zoom scale 
-        void setUnit( double u );  //!< Sets the length unit
+        void setUnit( Unit u );   //!< Sets the length unit
 
         void setIndicating( bool indicating );
         
@@ -62,6 +65,9 @@ public slots:
 protected:
         void paintEvent( QPaintEvent *e );
 
+        void contextMenuEvent( QContextMenuEvent* e );
+        
+
 private:
         void updateRuler();
         void calcTickMarks();       //<! calculates the tick marks smartly
@@ -70,7 +76,7 @@ private:
         int value_, oldValue_;
         int length_;
         double scale_;
-        double unit_;
+        Unit unit_;
         double tickVal_;
 
         double ticks_, subTicks_, startTick_;

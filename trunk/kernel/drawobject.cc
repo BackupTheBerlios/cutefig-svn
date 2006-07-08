@@ -103,6 +103,7 @@ void DrawObject::cursorMove( const QPointF & pos )
  */
 void DrawObject::draw( QPainter* p ) const
 {
+//        qDebug() << "draw" << this;
         fill_.fillPath( painterPath_, p );
         pen_.strikePath( painterPath_, stroke_, p );
 
@@ -112,13 +113,43 @@ void DrawObject::draw( QPainter* p ) const
 
 void DrawObject::drawArrows( QPainter* p ) const
 {
+        if ( painterPath_.isEmpty() )
+                return;
+        
         p->setPen( QPen( stroke_.brush( bRect_ ), pen_.width() ) );
         p->setBrush( fill_.brush( bRect_ ) );
         
+        QList<QPolygonF> pols = painterPath_.toSubpathPolygons();
+
+        const QPolygonF& first = pols.first();
+        const QPolygonF& last = pols.last();
+        
+
         if ( startArrow_.isValid() )
-                startArrow_.draw( points_.first(), startAngle(), p );
+                startArrow_.draw( first.first(), startAngle( first ), p );
         if ( endArrow_.isValid() )
-                endArrow_.draw( points_.last(), endAngle(), p );
+                endArrow_.draw( last.last(), endAngle( last ), p );
+}
+
+
+QPointF DrawObject::startAngle( const QPolygonF& pol ) const
+{
+        if ( pol.isEmpty() )
+                return QPointF();
+
+        QPointF d = pol[0] - pol[1];
+        return d / hypot( d.x(), d.y() );
+}
+
+
+QPointF DrawObject::endAngle( const QPolygonF& pol ) const
+{
+        if ( pol.isEmpty() )
+                return QPointF();
+
+        int i = pol.size() -1;
+        QPointF d = pol[i] - pol[i-1];
+        return d / hypot( d.x(), d.y() );
 }
 
 /*! This is useful to avoid that complex patterns have to be rendered
@@ -128,6 +159,7 @@ void DrawObject::drawArrows( QPainter* p ) const
  */
 void DrawObject::drawTentative( QPainter *p ) const
 {
+//        qDebug() << this;// << painterPath_;
         p->drawPath( painterPath_ );
 }
 
@@ -149,9 +181,17 @@ bool DrawObject::pointHits( const QPointF& p, qreal tolerance ) const
                 return pointHitsOutline( p, tolerance );
 }
 
+bool DrawObject::pointHitsOutline( const QPointF& p, qreal tolerance ) const
+{
+        QRectF r( Geom::centerRect( p, QSizeF(tolerance, tolerance) ) );
+
+        return !painterPath_.contains( r ) && painterPath_.intersects( r );
+}
+
+
 void DrawObject::getReadyForDraw()
 {
-        if ( points_.size() >= (int)minPoints() ) {
+        if ( points_.size() >= minPoints() ) {
                 setupPainterPath();
                 setupRects();
         }
@@ -166,7 +206,7 @@ void DrawObject::setupRects()
 void DrawObject::setPen( const Pen& p )
 {
         pen_ = p;
-        setupRects();
+//        setupRects();
 }
 
 const ResourceSet DrawObject::usedResources() const
@@ -223,22 +263,4 @@ void DrawObject::setCompoundParent( Compound* p )
         }
 }
 
-QPointF DrawObject::startAngle() const
-{
-        if ( points_.size() < 2 )
-                return QPointF();
-
-        QPointF d = points_[0] - points_[1];
-        return d / hypot( d.x(), d.y() );
-}
-
-QPointF DrawObject::endAngle() const
-{
-        if ( points_.size() < 2 )
-                return QPointF();
-
-        int i = points_.size() -1;
-        QPointF d = points_[i] - points_[i-1];
-        return d / hypot( d.x(), d.y() );
-}
 

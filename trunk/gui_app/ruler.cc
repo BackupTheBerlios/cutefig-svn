@@ -25,6 +25,7 @@
 
 #include "ruler.h"
 #include "cutefig.h"
+#include "vhashmenu.h"
 
 #include <cmath>
 #include <QPaintEvent>
@@ -42,7 +43,7 @@ Ruler::Ruler( int l, Qt::Orientation o, QWidget * parent )
           value_( 0 ),
           oldValue_( 0 ),
           scale_( 1.0 ),
-          unit_( CuteFig::unit ),
+          unit_(),
           startTick_( -2 ),
           startVal_( 0 ),
           tickMarks_( 0 ),
@@ -67,7 +68,7 @@ void Ruler::setScale( double s )
         updateRuler();
 }
 
-void Ruler::setUnit( double u )
+void Ruler::setUnit( Unit u )
 {
         unit_ = u;
         calcTickMarks();
@@ -236,4 +237,9 @@ void Ruler::setStart( int v )
 
         calcTickMarks();
         updateRuler();
+}
+
+void Ruler::contextMenuEvent( QContextMenuEvent* )
+{
+        setUnit( ValueHashMenu<double>::getValue( unit_ ) );
 }

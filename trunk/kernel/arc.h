@@ -36,7 +36,7 @@ public:
         explicit Arc( Figure* parent );
         Arc( const Arc* other );
 
-        virtual uint minPoints() const { return 4; }
+        virtual int minPoints() const { return 4; }
 
         virtual void outputToBackend( OutputBackend* ob );
 
@@ -53,17 +53,19 @@ protected:
         virtual void passPointFlag( Fig::PointFlags f );
         virtual int nextPointIndex();
 
-        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
+//        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
         
 
-        //virtual QPointF startAngle();
-        //virtual QPointF endAngle();
+//        virtual QPointF startAngle();
+//        virtual QPointF endAngle();
         
 private:
         bool isCircle_;
 
         int startAngle_, sweepLength_;
         int direction_;
+
+        QPointF arrowAngle( int angle );
 
 //         void calcDirection( int& startAngle, int& sweepLength, int& direction ) const;
 //         void calcAngles( int& startAngle, int& sweepLength ) const;
