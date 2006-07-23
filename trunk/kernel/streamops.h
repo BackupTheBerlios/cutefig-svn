@@ -30,15 +30,17 @@
 class QTextStream;
 class QString;
 class QColor;
+class QSizeF;
 class ResourceKey;
 class Stroke;
 class Pen;
+class Paper;
 
 std::istream& operator>> ( std::istream&, QString& );
 std::istream& operator>> ( std::istream&, QColor& );
 
 std::ostream& operator<< ( std::ostream&, const QString& );
 std::ostream& operator<< ( std::ostream&, const QColor& );
-
-
+std::ostream& operator<< ( std::ostream&, const QSizeF& );
+std::ostream& operator<< ( std::ostream&, const Paper& );
 #endif

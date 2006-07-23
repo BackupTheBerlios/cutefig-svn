@@ -102,4 +102,12 @@ ValueHash<ValueType>& ValueHash<ValueType>::operator=( const ValueHash<ValueType
         return *this;
 }
 
+
+template<typename ValueType>
+std::ostream& operator<< ( std::ostream& st, const ValueHash<ValueType>& vh )
+{
+        st << vh.name() << " " << vh.value();
+        return st;
+}
+
 #endif

@@ -23,6 +23,7 @@
 ******************************************************************************/
 
 #include "resourcekey.h"
+#include "figure.h"
 // #include "pen.h"
 // #include "stroke.h"
 // #include "reslib.h"
@@ -31,6 +32,7 @@
 #include <QString>
 #include <QColor>
 #include <QUrl>
+#include <QSizeF>
 
 #include <iostream>
 #include <sstream>
@@ -128,3 +130,15 @@ std::ostream& operator<< ( std::ostream& ts, const QColor& c )
         return ts;
 }
 
+
+std::ostream& operator<< ( std::ostream& ts, const QSizeF& s ) 
+{
+        ts << s.width() << ' ' << s.height();
+        return ts;
+}
+
+std::ostream& operator<< ( std::ostream& ts, const Paper& p )
+{
+        ts << p.unit().name() << ' ' << p.size();
+        return ts;
+}

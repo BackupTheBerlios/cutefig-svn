@@ -476,6 +476,7 @@ void CanvasView::newSnapGrid()
         GridDialog dlg( gridWidth_, snapWidth_, this );
         if ( dlg.exec() == QDialog::Rejected ) {
                 gridWidth_ = ogw;
+
                 snapWidth_ = osw;
                 calcGrid();        
         }
@@ -515,7 +516,7 @@ void CanvasView::setZoom_private( double z )
 
 void CanvasView::doResizing()
 {
-        QSize s = ( figure_->paper().pixSize() * scale_ ).toSize();
+        QSize s = ( figure_->paper().value().pixSize() * scale_ ).toSize();
         
         if ( hRuler_ )
                 hRuler_->setLength( s.width() );
@@ -526,7 +527,7 @@ void CanvasView::doResizing()
 
 double CanvasView::paperWidth() const
 {
-        return figure_->paper().pixSize().width() * scale_;
+        return figure_->paper().value().pixSize().width() * scale_;
 }
 
 void CanvasView::setHRuler( Ruler* r )

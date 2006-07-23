@@ -27,6 +27,7 @@
 #include "allobjects.h"
 #include "resourceio.h"
 #include "streamops.h"
+#include "valuehash.h"
 
 #include <QPolygonF>
 #include <ostream>
@@ -113,6 +114,7 @@ void CfigOutput::outputCompound( const Compound* cd )
 
 void CfigOutput::processOutput()
 {
+        outputHeader();
         outputResources();
         figure_.outputObjects( this );
 }
@@ -183,10 +185,11 @@ void CfigOutput::outputResources()
 
 void CfigOutput::outputHeader()
 {
-//         fileStream_ << "CuteFig version " << Fig::version << "\n"
-//                     << "unit      " << figure_.unit().unitname() << "\n"
-//                     << "scale     " << figure_.scale() << "\n"
-//                     << "papersize " << 
+        fileStream_ << "CuteFig version " << Fig::version << "\n"
+                    << "unit      " << figure_.unit() << "\n"
+                    << "scale     " << figure_.scale() << "\n"
+                    << "paper     " << figure_.paper() << "\n"
+                    << "end_header\n";
 }
 
 

@@ -106,7 +106,7 @@ public:
 
         const Unit& unit() const { return unit_; }
 
-        const Paper paper() const { return paper_; }
+        const ValueHash<Paper>& paper() const { return paper_; }
 
         //! adds all the DrawObjects of the ObjectList l.
         void takeDrawObjects( const ObjectList& l );
