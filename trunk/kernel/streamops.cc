@@ -24,6 +24,7 @@
 
 #include "resourcekey.h"
 #include "figure.h"
+#include "valuehash.h"
 // #include "pen.h"
 // #include "stroke.h"
 // #include "reslib.h"
@@ -95,6 +96,32 @@ std::istream &operator>> ( std::istream &is, QColor &color )
         
         return is;
 }
+
+std::istream& operator>> ( std::istream& is, QSizeF& size ) 
+{
+        double w,h;
+        is >> w >> h;
+
+        size.setWidth( w );
+        size.setHeight( h );
+
+        return is;
+}
+
+
+std::istream& operator>> ( std::istream& is, Paper& paper )
+{
+        Unit u;
+        QSizeF s;
+
+        is >> u >> s;
+
+        paper = Paper( s,u );
+
+        return is;
+}
+
+
 
 //// output
 

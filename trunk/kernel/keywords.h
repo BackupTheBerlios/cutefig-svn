@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  $Id$
+**  @version $Id: parser.cc 112 2006-07-08 08:36:17Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,27 +22,18 @@
 **
 ******************************************************************************/
 
-#ifndef streamops_h
-#define streamops_h
+#ifndef keywords_h
+#define keywords_h
 
-#include <iostream>
+namespace KWds
+{
+        const char* appName   = "CuteFig";
+        const char* version   = "version";
+        const char* endHeader = "end_header";
+        const char* unitHead  = "unitHead";
+        const char* scale     = "scale";
+        const char* paper     = "paper";
+}
 
-class QTextStream;
-class QString;
-class QColor;
-class QSizeF;
-class ResourceKey;
-class Stroke;
-class Pen;
-class Paper;
 
-std::istream& operator>> ( std::istream&, QString& );
-std::istream& operator>> ( std::istream&, QColor& );
-std::istream& operator>> ( std::istream&, QSizeF& );
-std::istream& operator>> ( std::istream&, Paper& );
-
-std::ostream& operator<< ( std::ostream&, const QString& );
-std::ostream& operator<< ( std::ostream&, const QColor& );
-std::ostream& operator<< ( std::ostream&, const QSizeF& );
-std::ostream& operator<< ( std::ostream&, const Paper& );
 #endif

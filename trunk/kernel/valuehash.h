@@ -25,6 +25,8 @@
 #ifndef valuehash_h
 #define valuehash_h
 
+#include "streamops.h"
+
 #include <QString>
 #include <QHash>
 
@@ -40,6 +42,10 @@ template<typename ValueType> class ValueHash
 {
 public:
         ValueHash( const QString& name = defaultName() );
+        ValueHash( const QString& name, const ValueType& value );
+
+        explicit ValueHash( std::istream& is );
+        
         ValueHash( const ValueHash<ValueType>& other );
         ~ValueHash() {}
 
@@ -47,6 +53,8 @@ public:
         operator ValueType() const { return value_; }
         QString name() const { return name_; }
 
+        bool isValid() const { return valid_; }
+        
         ValueHash<ValueType>& operator=( const ValueHash<ValueType>& other );
 
         static QList<QString> names() { return hash().keys(); }
@@ -59,6 +67,8 @@ private:
         
         static const QString defaultName();
 //        static const ValueType defaultValue();
+
+        bool valid_;
 };
 
 
@@ -66,18 +76,45 @@ private:
 template<typename ValueType>
 ValueHash<ValueType>::ValueHash( const QString& name )
         : name_( defaultName() ),
-          value_( hash()[name_] )
+          value_( hash()[name_] ),
+          valid_( false )
 {
         if ( hash().contains( name ) ) {
                 value_ = hash()[name];
                 name_ = name;
+                valid_ = true;
         }
 }
 
 template<typename ValueType>
+ValueHash<ValueType>::ValueHash( const QString& name, const ValueType& value )
+        : name_( name ),
+          value_( value ),
+          valid_( true )
+{
+        if ( hash().contains( name ) && hash()[name] != value_ )
+                valid_ = false;
+}
+
+
+template<typename ValueType>
+ValueHash<ValueType>::ValueHash( std::istream& is )
+        : name_(),
+          value_(),
+          valid_( true )
+{
+        is >> name_ >> value_;
+        if ( is.fail() || ( hash().contains( name_ ) && hash()[name_] != value_ ) )
+                valid_ = false;
+}
+
+
+
+template<typename ValueType>
 ValueHash<ValueType>::ValueHash( const ValueHash<ValueType>& other )
         : name_( other.name_ ),
-          value_( other.value_ )
+          value_( other.value_ ),
+          valid_( other.valid_ )
 {
 }
 
@@ -97,6 +134,7 @@ ValueHash<ValueType>& ValueHash<ValueType>::operator=( const ValueHash<ValueType
         if ( this != &other ) {
                 name_ = other.name_;
                 value_ = other.value_;
+                valid_ = other.valid_;
         }
 
         return *this;
@@ -104,10 +142,24 @@ ValueHash<ValueType>& ValueHash<ValueType>::operator=( const ValueHash<ValueType
 
 
 template<typename ValueType>
-std::ostream& operator<< ( std::ostream& st, const ValueHash<ValueType>& vh )
+std::ostream& operator<< ( std::ostream& os, const ValueHash<ValueType>& vh )
 {
-        st << vh.name() << " " << vh.value();
-        return st;
+        os << vh.name() << " " << vh.value();
+        return os;
 }
+
+
+template<typename ValueType>
+std::istream& operator>> ( std::istream& is, ValueHash<ValueType>& vh ) 
+{
+        QString n;
+        is >> n;
+        vh = ValueHash<ValueType>( n );
+        if ( !vh.isValid() )
+                is.setstate( is.rdstate() | std::istream::failbit );
+
+        return is;
+}
+
 
 #endif

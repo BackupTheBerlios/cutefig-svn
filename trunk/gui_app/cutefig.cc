@@ -39,7 +39,7 @@
 #include "exportgui.h"
 
 #include <QtGui>
-#include <QAssistantClient>
+//#include <QAssistantClient>
 
 #include <fstream>
 
@@ -242,14 +242,14 @@ void CuteFig::about()
 
 void CuteFig::help()
 {
-        QAssistantClient* assi = new QAssistantClient( QString(), this );
-        QSettings s;
+//         QAssistantClient* assi = new QAssistantClient( QString(), this );
+//         QSettings s;
         
-        QString helpFile = s.value("HandBookPath", QDir::currentPath() ).toString() +
-                           "/doc/html/" +
-                           QLocale::system().name().left( 2 ) +
-                           "/index.html";
-        assi->showPage( helpFile );
+//         QString helpFile = s.value("HandBookPath", QDir::currentPath() ).toString() +
+//                            "/doc/html/" +
+//                            QLocale::system().name().left( 2 ) +
+//                            "/index.html";
+//         assi->showPage( helpFile );
 }
 
 /** Sets up an AllActions instance and then sets up a menubar entry

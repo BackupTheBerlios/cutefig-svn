@@ -46,7 +46,6 @@ class Figure;
 
 
 
-enum ErrorSeverity { Warning, Discarding, Fatal };
 
 class Parser 
 {
@@ -57,8 +56,15 @@ public:
         static Dashes parseDashLine( const std::string& s );
         
 private:
-        Parser( QTextStream& ts );
+        enum ErrorSeverity { Warning=0x0000, Discarding=0x0001, Fatal=0x0002 };
+        //Q_DECLARE_FLAGS( ErrorSeverities, ErrorSeverity );
+        
+        Parser( QTextStream& ts, Figure* f = 0 );
 
+        
+        QString parseVersionLine();
+        QString parseHeader();
+        
         ObjectList parseLoop( bool parsingCompound = false );
         void resourceParseLoop();
         QPolygonF getPoints( uint n );
@@ -68,6 +74,9 @@ private:
 //         QHash<QString, creatorType> registeredTypes_;
         
         QTextStream& fileStream_;
+
+        Figure* figure_;
+
         std::istringstream stream_;
         
         QString itemType_;
@@ -98,7 +107,9 @@ private:
         static QString tr( const char* source );
         
         QPen setUpPen( int w, int s, int cs, int js, QColor c );
-        void parseError( QString s, ErrorSeverity sev = Warning );
+
+        QString makeErrorLine( const QString& s, ErrorSeverity sev = Warning );
+        void parseError( const QString& s, ErrorSeverity sev = Warning );
 
         static const QString unknownItemType;
         static const QString unknownResourceType;
@@ -120,5 +131,8 @@ private:
         static const QString invalidGradientLine;
         static const QString invalidGradStopLine;
 };
+
+//Q_DECLARE_OPERATORS_FOR_FLAGS( Parser::ErrorSeverity );
+
 
 #endif

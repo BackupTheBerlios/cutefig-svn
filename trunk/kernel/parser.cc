@@ -33,6 +33,7 @@
  */
  
 #include "parser.h"
+#include "keywords.h"
 #include "figure.h"
 #include "reslib.h"
 //#include "strokelib.h"
@@ -53,8 +54,9 @@
 
         
 
-Parser::Parser( QTextStream& ts  )
+Parser::Parser( QTextStream& ts, Figure* f  )
         : fileStream_( ts ),
+          figure_( f ),
           line_( 0 ),
           errorReport_( QString() )
 {
@@ -67,10 +69,89 @@ Parser::Parser( QTextStream& ts  )
  */
 QString Parser::parse( QTextStream& ts, Figure* f )
 {
-        Parser p( ts );
+        Parser p( ts, f );
+
+        QString e = p.parseVersionLine();
+        if ( !e.isNull() )
+                return e;
+
+        e = p.parseHeader();
+        if ( !e.isNull() )
+                return e;
+        
         f->takeDrawObjects( p.parseLoop() );
         return p.errorReport_;
 }
+
+
+QString Parser::parseVersionLine()
+{
+        if ( !readLine() ) 
+                return makeErrorLine( tr("File does not contain any uncommented data.") );
+
+        
+        if ( itemType_ !=  KWds::appName )
+                return makeErrorLine( tr("File does not seem to be a CuteFig file.") );
+
+        QString vs;
+        double version;
+
+        stream_ >> vs >> version;
+        
+        if ( stream_.fail() || vs != KWds::version )
+                return makeErrorLine( tr("Could not find a valid version line.") );
+
+        if ( version > Fig::version )
+                return makeErrorLine( tr("This file needs CuteFig %1 or higher."
+                                         "Get an update from your software vendor or directly from"
+                                         "http://cutefig.berlios.de")
+                                      .arg( version ) );
+
+        return QString();
+}
+
+QString Parser::parseHeader()
+{
+        while ( itemType_ != KWds::endHeader ) {
+                if ( !readLine() )
+                        return makeErrorLine( tr("File ended unexpectedly during the header.") );
+
+                if ( itemType_ == KWds::unitHead ) {
+                        Unit u( stream_ );
+                        if ( !u.isValid() )
+                                parseError( tr("Invalid unit line.") );
+                        else
+                                figure_->setUnit( u );
+                        
+                        continue;
+                }
+
+                if ( itemType_ == KWds::scale ) {
+                        double s;
+                        stream_ >> s;
+
+                        if ( stream_.fail() )
+                                parseError( tr("Invalid scale line." ) );
+                        else
+                                figure_->setScale( s );
+
+                        continue;
+                }
+
+                if ( itemType_ == KWds::paper ) {
+                        ValueHash<Paper> vhp( stream_ );
+                        if ( !vhp.isValid() )
+                                parseError( tr("Invalid paper line.") );
+                        else
+                                figure_->setPaper( vhp );
+
+                        continue;
+                }
+        }
+
+        return QString();
+}
+
 
 QString Parser::parseResLibs( QTextStream& ts )
 {
@@ -411,7 +492,12 @@ DrawObject * Parser::parseGenericData( int &npoints, QPolygonF*& pa )
         return o;
 }               
 
-void Parser::parseError( QString s, ErrorSeverity sev )
+void Parser::parseError( const QString& s, ErrorSeverity sev )
+{
+        errorReport_ += makeErrorLine( s, sev ) += "\n";
+}
+
+QString Parser::makeErrorLine( const QString& s, ErrorSeverity sev )
 {
         QString t;
         if ( sev == Fatal ) 
@@ -421,14 +507,20 @@ void Parser::parseError( QString s, ErrorSeverity sev )
         t.append( tr(" in line %1: ").arg( line_ ) );
         t.append("\n    *** ");
         t.append( s );        
-        errorReport_.append( t );
         
-        if ( sev == Discarding ) {
-                errorReport_.append(" ");
-                errorReport_.append( tr("Object discarded.") );
+        if ( sev & Discarding ) {
+                t.append(" ");
+                t.append( tr("Object discarded.") );
         }
-        errorReport_.append("\n");
+
+        if ( sev & Fatal ) {
+                t.append(" ");
+                t.append( tr("Exiting") );
+        }
+
+        return t;
 }
+
 
 QString Parser::tr( const char* source )
 {
@@ -454,6 +546,5 @@ const QString Parser::compound_end_without_compound = tr("Received compound end 
 const QString Parser::unexpectedEnd = tr("Unexpected end of file.");
 const QString Parser::invalidGradientLine = tr("Invalid gradient line.");
 const QString Parser::invalidGradStopLine = tr("Invalid gradient stop line.");
-
 
 

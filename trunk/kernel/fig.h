@@ -55,7 +55,7 @@ namespace Fig
         
         
         const double version = 0.1;
-};
+}
 
 Q_DECLARE_OPERATORS_FOR_FLAGS( Fig::PointFlags );
 

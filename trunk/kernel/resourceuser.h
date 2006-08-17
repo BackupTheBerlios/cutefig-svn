@@ -152,7 +152,7 @@ ResLib<Resource>& ResourceUser<Resource>::resLib_ = ResLib<Resource>::instance()
 /** Needs to add itself to the userlist in case the key is valid.
  */
 template<typename Resource>
-ResourceUser<Resource>::ResourceUser<Resource>( const ResourceUser<Resource>& other )
+ResourceUser<Resource>::ResourceUser( const ResourceUser<Resource>& other )
         : AbstractResourceUser( other ),
           data_( other.data_ ),
           p_data_( other.p_data_ )

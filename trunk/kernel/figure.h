@@ -63,7 +63,10 @@ public:
         Unit unit() const { return unit_; }
         
         Paper& operator=( const Paper& other );
-                
+        
+        bool operator==( const Paper& other ) const
+        { return unit_ == other.unit_ && size_ == other.size_; }
+        bool operator!=( const Paper& other ) const { return ! ( *this == other ); }
 private:
         Unit unit_;
 
@@ -103,10 +106,13 @@ public:
 
         //! returns the scale_ of the Figure.
         double scale() const { return scale_; }
-
+        void setScale( double s ) { scale_ = s; }
+        
         const Unit& unit() const { return unit_; }
+        void setUnit( const Unit& u ) { unit_ = u; }
 
         const ValueHash<Paper>& paper() const { return paper_; }
+        void setPaper( const ValueHash<Paper>& p ) { paper_ = p; }
 
         //! adds all the DrawObjects of the ObjectList l.
         void takeDrawObjects( const ObjectList& l );
