@@ -45,9 +45,9 @@ void EditdialogAction::editObject()
 {
         QWidget* p = controler_->mainWindow();
         ObjectDialog* dlg = ObjectGUIHandler::editDialog( selection_.objects()[0], this, p );
-
-        wObjectChanged_ = false;
-        if ( dlg->exec() == QDialog::Rejected || !wObjectChanged_ ) 
+        connect( dlg, SIGNAL( changeHappened() ), controler_, SLOT( updateViews() ) );
+        
+        if ( dlg->exec() == QDialog::Rejected || !dlg->editeeChanged() ) 
                 controler_->cancelAction();
         else {
                 controler_->execAction( new ChangeCommand( selection_ ) );
@@ -60,16 +60,15 @@ void EditdialogAction::editObject()
 DrawObject* EditdialogAction::restoreWObject()
 {
         selection_.restoreBackups();        
-        wObjectChanged_ = false;
         controler_->updateViews();
         return selection_.objects()[0];
 }
 
-void EditdialogAction::wObjectHasChanged()
-{
-        wObjectChanged_ = true;
-        controler_->updateViews();
-}
+// void EditdialogAction::wObjectHasChanged()
+// {
+//         wObjectChanged_ = true;
+//         controler_->updateViews();
+// }
 
 bool EditdialogAction::wouldHandleSelection( const QPoint&, const QMatrix* )
 {

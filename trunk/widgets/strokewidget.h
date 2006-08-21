@@ -25,6 +25,8 @@
 #ifndef strokewidget_h
 #define strokewidget_h
 
+#include "stroke.h"
+
 #include <QGroupBox>
 
 template<class Resource> class ResourceButton;
@@ -34,7 +36,6 @@ class QColor;
 
 class FlagButtonGroup;
 
-class Stroke;
 
 class StrokeWidget : public QGroupBox 
 {
@@ -43,7 +44,8 @@ public:
         StrokeWidget( const QString& title, QWidget* parent = 0 );
         ~StrokeWidget() {}
 
-        void setStroke( Stroke* stroke );
+        void setStroke( const Stroke& stroke );
+        Stroke stroke() const { return stroke_; }
         
 signals:
         void strokeChanged();
@@ -55,7 +57,7 @@ private slots:
         void setPixmap();
         
 private:
-        Stroke* stroke_;
+        Stroke stroke_;
 
         FlagButtonGroup* strokeType_;
         ResourceButton<QColor>* colorButton_;

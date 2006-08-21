@@ -32,37 +32,38 @@
 
 
 PropDialog::PropDialog( Figure* f )
-        : figure_( f )
+        : figure_( f ),
+          oldMetaData_( figure_->metaData() )
 {
         length_ = new ResourceComboBox<Length>( this );
         paper_ = new ResourceComboBox<Paper>( this );
 
+        connect( length_, SIGNAL(valueChanged(int)), this, SLOT(noticeChange()) );
+        connect( paper_, SIGNAL(valueChanged(int)), this, SLOT(noticeChange()) );
+        
         Layouter( new QHBoxLayout() )
                 .labeledWidget( tr("Unit length"), length_ )
                 .stretch()
                 .labeledWidget( tr("Paper format"), paper_ )
-                .finishTo( dialogLayout_, 0 );
+                .finishTo( dialogLayout(), 0 );
 
         updateValues();
 }
 
-void PropDialog::reset()
+void PropDialog::doReset()
 {
-//        figure_->setMetaData( oldMetaData_ );
+        figure_->setMetaData( oldMetaData_ );
         updateValues();
 }
 
 void PropDialog::updateValues()
 {
-        const Figure::MetaData& md = figure_->metaData();
-        length_->setCurrentKey( md.unit().key() );
-        paper_->setCurrentKey( md.paper().key() );
+        length_->setCurrentKey( figure_->unitKey() );
+        paper_->setCurrentKey( figure_->paperKey() );
 }
 
-void PropDialog::accept()
+void PropDialog::commitChanges( QObject* )
 {
         figure_->setUnit( length_->currentKey() );
         figure_->setPaper( paper_->currentKey() );
-
-        QDialog::accept();
 }

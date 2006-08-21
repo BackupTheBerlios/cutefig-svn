@@ -48,7 +48,7 @@ ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent 
         drawObject_ = o;
 
         tabWidget = new QTabWidget( this );
-        dialogLayout_->insertWidget( 0, tabWidget );
+        dialogLayout()->insertWidget( 0, tabWidget );
 
         setUpGeneral();
         
@@ -101,17 +101,17 @@ void ObjectDialog::setUpGeneral()
 }
 
 
-void ObjectDialog::accept()
-{
-        if ( comment->document()->isModified() ) {
-                drawObject_->setComment( comment->toPlainText() );
-                action_->wObjectHasChanged();
-        }
+// void ObjectDialog::accept()
+// {
+//         if ( comment->document()->isModified() ) {
+//                 drawObject_->setComment( comment->toPlainText() );
+//                 action_->wObjectHasChanged();
+//         }
 
-        QDialog::accept();
-}
+//         QDialog::accept();
+// }
 
-void ObjectDialog::reset()
+void ObjectDialog::doReset()
 {
         DrawObject* o = action_->restoreWObject();
         if ( !o ) {
@@ -134,9 +134,9 @@ void ObjectDialog::setDefaultValues()
 //        fillPattern->disconnect();
         depth->disconnect();
 
-        penWidget->setPen( drawObject_->p_pen() );
-        lineStroke->setStroke( drawObject_->p_stroke() );
-        fillStroke->setStroke( drawObject_->p_fill() );
+        penWidget->setPen( drawObject_->pen() );
+        lineStroke->setStroke( drawObject_->stroke() );
+        fillStroke->setStroke( drawObject_->fill() );
 
         arrows->setArrows( drawObject_->startArrow(), drawObject_->endArrow() );
         
@@ -147,25 +147,30 @@ void ObjectDialog::setDefaultValues()
 }
 
 
+void ObjectDialog::commitChanges( QObject* )
+{        
+        drawObject_->setPen( penWidget->pen() );
+        drawObject_->setStroke( lineStroke->stroke() );
+        drawObject_->setFill( fillStroke->stroke() );
+        drawObject_->setDepth( depth->value() );
+        drawObject_->setStartArrow( arrows->startArrow() );
+        drawObject_->setEndArrow( arrows->endArrow() );
+}
+
 
 void ObjectDialog::setUpConnections()
 {
         qDebug("ObjectDialog::setUpConnections");
 
-        connect( penWidget, SIGNAL( penChanged() ), action_, SLOT( wObjectHasChanged() ) );
-        connect( lineStroke, SIGNAL( strokeChanged() ), action_, SLOT( wObjectHasChanged() ) );
-        connect( fillStroke, SIGNAL( strokeChanged() ), action_, SLOT( wObjectHasChanged() ) );
+        connect( penWidget, SIGNAL( penChanged() ), this, SLOT( noticeChange() ) );
+        connect( lineStroke, SIGNAL( strokeChanged() ), this, SLOT( noticeChange() ) );
+        connect( fillStroke, SIGNAL( strokeChanged() ), this, SLOT( noticeChange() ) );
         
-        connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );
-        
-        connect( depth, SIGNAL( valueChanged( int ) ), action_, SLOT( wObjectHasChanged() ) );
+//        connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );        
+        connect( depth, SIGNAL( valueChanged( int ) ), this, SLOT( noticeChange() ) );
 
-        connect( arrows, SIGNAL( startArrowChanged( const Arrow& ) ),
-                 this, SLOT( changeStartArrow( const Arrow& ) ) );
-        connect( arrows, SIGNAL( endArrowChanged( const Arrow& ) ),
-                 this, SLOT( changeEndArrow( const Arrow& ) ) );
-        
-        setUpConnectionsPrivate();
+        connect( arrows, SIGNAL( startArrowChanged(const Arrow&) ), this, SLOT( noticeChange() ) );
+        connect( arrows, SIGNAL( endArrowChanged(const Arrow&) ), this, SLOT( noticeChange() ) );
 }
 
 void ObjectDialog::init()
@@ -182,14 +187,14 @@ void ObjectDialog::setDrawObject( DrawObject* o )
         castDrawObject();
 }
 
-void ObjectDialog::changeStartArrow( const Arrow& a )
-{
-        drawObject_->setStartArrow( a );
-        action_->wObjectHasChanged();
-}
+// void ObjectDialog::changeStartArrow( const Arrow& a )
+// {
+//         drawObject_->setStartArrow( a );
+//         this->noticeChange();
+// }
 
-void ObjectDialog::changeEndArrow( const Arrow& a )
-{
-        drawObject_->setEndArrow( a );
-        action_->wObjectHasChanged();
-}
+// void ObjectDialog::changeEndArrow( const Arrow& a )
+// {
+//         drawObject_->setEndArrow( a );
+//         this->noticeChange();
+// }

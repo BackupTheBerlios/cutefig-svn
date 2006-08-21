@@ -28,21 +28,21 @@
  *
  * \section resource_rationale Rationale
  * 
- * The CuteFig has the concept of resources and resource libraries. A
+ * CuteFig has the concept of resources and resource libraries. A
  * resource can be any data that is used in a figure. Resources of a
  * certain type can be stored in a resource library ResLib. A resource
  * can be accessed out of the ResLib by a ResourceKey.
  *
  * The purpose of resources is to store data that is used in several
  * figures or in one figure several times. Examples of those types are
- * Dashes a Gradient.
+ * Dashes or a Gradient.
  *
  * Resources can be either built into the CuteFig, stored in a local
  * library or brought up by a figure file. Builtin resources are
  * garantueed to be available identically on all installations of the
  * CuteFig of the same version. So they cannot be changed or removed
  * from the ResLib. The way resources are known is stored internally
- * in the ResourceKey by the peivate member ResourceKey::flags_. The
+ * in the ResourceKey by the private member ResourceKey::flags_. The
  * function ResourceKey::isBuiltIn() can be used to determine whether
  * a resource is a built in one.
  *

@@ -29,7 +29,8 @@
 
 EditDialog::EditDialog( QWidget* parent )
         : QDialog( parent ),
-          dialogLayout_( new QVBoxLayout( this ) )
+          dialogLayout_( new QVBoxLayout( this ) ),
+          changed_( false )
 {
         QHBoxLayout* bottomLayout = new QHBoxLayout();
 
@@ -40,14 +41,36 @@ EditDialog::EditDialog( QWidget* parent )
         QPushButton* cancel = new QPushButton( tr("Cancel"), this );
         connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
 
-        QPushButton* reset = new QPushButton( tr("&Reset"), this );
-        connect( reset, SIGNAL( clicked() ), this, SLOT( reset() ) );
+        reset_ = new QPushButton( tr("&Reset"), this );
+        connect( reset_, SIGNAL( clicked() ), this, SLOT( resetChanges() ) );
+        reset_->setEnabled( false );
         
-        bottomLayout->addWidget( reset );
+        bottomLayout->addWidget( reset_ );
         bottomLayout->addStretch();
         bottomLayout->addWidget( ok );
         bottomLayout->addWidget( cancel );
 
         dialogLayout_->setSpacing( 6 );
         dialogLayout_->insertLayout( 1, bottomLayout );
+}
+
+void EditDialog::resetChanges()
+{
+        doReset();
+        changed_ = false;
+        reset_->setEnabled( false );
+}
+
+void EditDialog::noticeChange()
+{
+        changed_ = true;
+        commitChanges( sender() );
+        reset_->setEnabled( true );
+        emit changeHappened();
+}
+
+void EditDialog::reject()
+{
+        resetChanges();
+        QDialog::reject();
 }

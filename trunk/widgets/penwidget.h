@@ -26,10 +26,9 @@
 #define penwidget_h
 
 #include "reslib.h"
+#include "pen.h"
 
 #include <QGroupBox>
-
-class Pen;
 
 class QDoubleSpinBox;
 template<typename Resource> class ResourceComboBox;
@@ -42,7 +41,8 @@ public:
         PenWidget( const QString& title, QWidget* parent = 0 );
         ~PenWidget() {}
 
-        void setPen( Pen* pen );
+        void setPen( const Pen& pen );
+        Pen pen() const { return pen_; }
         
 signals:
         void penChanged();
@@ -54,7 +54,7 @@ private slots:
         void changeJoin( int key );
         
 private:
-        Pen* pen_;
+        Pen pen_;
 
         QDoubleSpinBox* lineWidth;
         ResourceComboBox<Dashes>* lineDashes;

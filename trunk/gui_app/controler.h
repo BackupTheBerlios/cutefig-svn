@@ -119,8 +119,6 @@ public:
         ActionGroups actionGroups() const { return actionGroups_; }
         void addActionGroup( ActionCollection* ag ) { actionGroups_.append( ag ); }
 
-        void updateViews();
-
         void drawActionMetaData( QPainter* p, const ViewBase* v );
         
 signals:
@@ -132,6 +130,9 @@ public slots:
         void redo( int steps );
   
         void newAction( InteractiveAction* a );
+
+        void updateViews();
+
         
 //         void setPenWidth( const qreal& pw ) { toolPen_.setWidth( pw ); }
 //         void setPenColor( const QColor& pc ) { toolPen_.setColor( pc ); }

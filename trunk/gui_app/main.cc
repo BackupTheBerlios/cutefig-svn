@@ -33,12 +33,15 @@
  *  (http://www.trolltech.com/) to do the GUI-stuff, the rendering and
  *  the necessary abstractions to be platform independent.
  *
- *  The source is split up into three directories:
+ *  The source is split up into several directories:
  *      - kernel, this is the non-gui stuff
+ *      - widgets, some widgets and dialogs
+ *      - exportfilters, code for exporting the figures to other formats
+ *        resides here
  *      - gui_app, the userfrontend
  *
  *  In the kernel-directory there is stuff like the classes for the
- *  drawing objects, the IO-stuff (parsers, import/export filters)
+ *  drawing objects, the IO-stuff
  * 
  *
  *  \section desing_sec Design issues

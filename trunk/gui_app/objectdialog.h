@@ -52,9 +52,9 @@ public:
         ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent=0 );
         ~ObjectDialog() {};
         
-public slots:
-        virtual void reset();
-        virtual void accept();
+// public slots:
+//         virtual void reset();
+//         virtual void accept();
         
 protected slots:
         virtual void init();
@@ -62,7 +62,13 @@ protected slots:
 protected:
         DrawObject* drawObject_;//, *backup_;
         QTabWidget* tabWidget;
-        
+
+        virtual void doReset();
+
+
+        virtual void commitChanges( QObject* sender = 0 );
+        virtual void commitChangesPrivate() {}
+                
         virtual void setUpConnections();
         virtual void setUpConnectionsPrivate() {}
         
@@ -84,9 +90,9 @@ protected:
         QTextEdit* comment;
         QSpinBox* depth;
 
-private slots:
-        void changeStartArrow( const Arrow& a );
-        void changeEndArrow( const Arrow& a );
+// private slots:
+//         void changeStartArrow( const Arrow& a );
+//         void changeEndArrow( const Arrow& a );
 
 };
 

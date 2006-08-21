@@ -96,6 +96,11 @@ EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,
 
 }
 
+void EllipseDialog::commitChangesPrivate()
+{
+        ellipse_->setAngle( angleSlider->value() );
+}
+
 
 void EllipseDialog::setDefaultValuesPrivate()
 {
@@ -108,8 +113,7 @@ void EllipseDialog::setUpConnectionsPrivate()
         
         connect( angleSpin, SIGNAL( valueChanged(int) ), angleSlider, SLOT( setValue(int) ) );
         connect( angleSlider, SIGNAL( valueChanged(int) ), angleSpin, SLOT( setValue(int) ) );
-        connect( angleSlider, SIGNAL( valueChanged(int) ), ellipse_, SLOT( setAngle(int) ) );
-        connect( angleSlider, SIGNAL( valueChanged(int) ), action_, SLOT( wObjectHasChanged() ) );
+        connect( angleSlider, SIGNAL( valueChanged(int) ), this, SLOT( noticeChange() ) );
 }
 
 
@@ -124,3 +128,4 @@ ObjectDialog* TObjectGUIHandler<Ellipse>::makeEditDialog( DrawObject* o, Editdia
 {
         return new EllipseDialog( o, a, parent );
 }
+

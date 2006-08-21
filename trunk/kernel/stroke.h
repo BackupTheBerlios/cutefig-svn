@@ -56,7 +56,10 @@ public:
         Stroke( const Stroke& other );
 
         ~Stroke();
-        
+
+        Stroke& operator= ( const Stroke& other );
+                
+
         void setNone() { type_ = sNone; }
         void setColor( const QColor& color );
 
@@ -82,8 +85,7 @@ public:
 
         AbstractResourceUser* resourceUser() const { return resourceUser_; }
 
-        Stroke& operator= ( const Stroke& other );
-                
+        
 private:
         StrokeType type_;
 

@@ -81,14 +81,13 @@ void AbstractReslibEditor::init()
         QWidget* resDem = resourceDemo();
         mainLayout->addWidget( resDem );
         
-        dialogLayout_->insertLayout( 0, mainLayout );
+        dialogLayout()->insertLayout( 0, mainLayout );
 
         setResource( resourceKey_ );
-        
-        reset();
+        setResource( oldResourceKey_ );
 }
 
-void AbstractReslibEditor::reset()
+void AbstractReslibEditor::doReset()
 {
         setResource( oldResourceKey_ );
 }

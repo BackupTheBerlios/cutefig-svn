@@ -368,6 +368,7 @@ bool GradientWidget::initialClick( QMouseEvent* e )
                         c.setAlpha( qAlpha( rgb ) ); 
                         gradient_->setColorAt( uiHandler_->calcOffset( p ), c );
                         update();
+                        emit gradientChanged();
                         repaint();
                 }
                 return false;
@@ -378,6 +379,7 @@ bool GradientWidget::initialClick( QMouseEvent* e )
                         gradient_->colorStops().remove( colorStopIndex_ );
                         colorStopIndex_ = -1;
                         update();
+                        emit gradientChanged();
                         repaint();
                         return false;
                 }
@@ -390,6 +392,7 @@ bool GradientWidget::initialClick( QMouseEvent* e )
                                 color = QColor( rgb );
                                 color.setAlpha( qAlpha( rgb ) );
                                 update();
+                                emit gradientChanged();
                                 repaint();
                         }
                         return false;
@@ -407,6 +410,8 @@ bool GradientWidget::finalClick()
         colorStopIndex_ = -1;
 
         setCursor( QCursor( Qt::ArrowCursor ) );
+
+        emit gradientChanged();
 
         return false;
 }

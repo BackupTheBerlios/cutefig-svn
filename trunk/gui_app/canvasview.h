@@ -77,6 +77,8 @@ public:
         void setHRuler( Ruler* r );
         void setVRuler( Ruler* r ); 
 
+
+        
 public slots:
         void zoomIn();   //!< Zooms in by 10% of the original size
         void zoomOut();  //!< Zooms out by 10% of the original size

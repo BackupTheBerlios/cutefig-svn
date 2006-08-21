@@ -58,7 +58,7 @@ public:
         
 protected:
         void init();
-        virtual void reset();
+        virtual void doReset();
 
 private slots:
         virtual void resourceChanged( const QModelIndex& index, const QModelIndex& prev ) = 0;

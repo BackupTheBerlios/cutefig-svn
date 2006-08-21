@@ -61,6 +61,10 @@ public:
         //! reimplemented from QWidget
         virtual void update();
 
+signals:
+        void gradientChanged();
+
+
 protected:
         virtual void paintEvent( QPaintEvent* e );
         virtual void mouseReleaseEvent( QMouseEvent* e );

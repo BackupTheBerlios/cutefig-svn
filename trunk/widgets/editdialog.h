@@ -28,6 +28,8 @@
 #include <QDialog>
 
 class QVBoxLayout;
+class QPushButton;
+
 
 //! Provides a dialog with three standard buttons at the bottom
 /** To edit the properties of some object I need a dialog with three
@@ -48,11 +50,29 @@ public:
         EditDialog( QWidget* parent = 0 );
         ~EditDialog() {}
 
-protected slots:
-        virtual void reset() = 0;
+        bool editeeChanged() const { return changed_; }
 
+signals:
+        void changeHappened();
+
+        
 protected:
+        QVBoxLayout* dialogLayout() { return dialogLayout_; }
+
+        virtual void doReset() = 0;
+        virtual void commitChanges( QObject* sender = 0 ) { Q_UNUSED ( sender ) }
+        
+protected slots:
+        void resetChanges();
+        void noticeChange();
+        void reject();
+
+private:
         QVBoxLayout* dialogLayout_;
+
+        QPushButton* reset_;
+
+        bool changed_;
 };
 
 #endif

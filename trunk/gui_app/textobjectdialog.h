@@ -39,6 +39,7 @@ public:
         ~TextObjectDialog() {}
 
 private:
+        virtual void commitChangesPrivate();
         virtual void setUpConnectionsPrivate();
         virtual void setDefaultValuesPrivate();
         virtual void castDrawObject();

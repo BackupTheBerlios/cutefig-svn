@@ -240,7 +240,6 @@ void ResourceUser<Resource>::releaseResource()
         if ( !key_.isValid() )
                 return;
         
-        qDebug() << "release" << key_ << p_data_;
         data_ = p_data_ ? *p_data_ : Resource();
         unassignResource();
 }

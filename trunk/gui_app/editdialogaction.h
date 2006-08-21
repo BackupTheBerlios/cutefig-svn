@@ -57,13 +57,13 @@ public:
 
         bool isActive() const { return false; } 
 
-private slots:
-        void wObjectHasChanged();
+// private slots:
+//         void wObjectHasChanged();
 
 private:
         void editObject();
 
-        bool wObjectChanged_;
+//        bool wObjectChanged_;
 
         DrawObject* restoreWObject();
 };

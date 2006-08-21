@@ -79,18 +79,18 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
         connect( strokeType_, SIGNAL( stateChanged(int) ), this, SLOT( changeType(int) ) );
 }
 
-void StrokeWidget::setStroke( Stroke* stroke )
+void StrokeWidget::setStroke( const Stroke& stroke )
 {
         stroke_ = stroke;
-        colorButton_->setEnabled( stroke->type() == Stroke::sColor );
-        gradientButton_->setEnabled( stroke->type() == Stroke::sGradient );
-        strokeType_->setState( int( stroke->type() ) );
+        colorButton_->setEnabled( stroke.type() == Stroke::sColor );
+        gradientButton_->setEnabled( stroke.type() == Stroke::sGradient );
+        strokeType_->setState( int( stroke.type() ) );
 
-        switch( stroke->type() ) {
+        switch( stroke.type() ) {
             case Stroke::sColor:
-                    colorButton_->setResource( stroke->color() ); break;
+                    colorButton_->setResource( stroke.color() ); break;
             case Stroke::sGradient:
-                    gradientButton_->setResource( stroke->key() ); break;
+                    gradientButton_->setResource( stroke.key() ); break;
             default:
                     break;
         }
@@ -100,9 +100,9 @@ void StrokeWidget::changeType( int type )
 {
         switch( Stroke::StrokeType( type ) ) {
             case Stroke::sNone:
-                    stroke_->setNone(); break;
+                    stroke_.setNone(); break;
             case Stroke::sColor:
-                    stroke_->setColor( colorButton_->getResource() ); break;
+                    stroke_.setColor( colorButton_->getResource() ); break;
             case Stroke::sGradient: 
                     setGradient(); break;
             default:
@@ -114,18 +114,18 @@ void StrokeWidget::changeType( int type )
 
 void StrokeWidget::setColor()
 {
-        stroke_->setColor( colorButton_->getResource() );
+        stroke_.setColor( colorButton_->getResource() );
         emit strokeChanged();
 }
 
 void StrokeWidget::setGradient()
 {
-        stroke_->setGradient( gradientButton_->key() );
+        stroke_.setGradient( gradientButton_->key() );
         emit strokeChanged();
 }
 
 void StrokeWidget::setPixmap()
 {
-        stroke_->setPixmap( pixmapButton_->key() );
+        stroke_.setPixmap( pixmapButton_->key() );
         emit strokeChanged();
 }

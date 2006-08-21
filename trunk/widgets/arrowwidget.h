@@ -42,8 +42,8 @@ public:
         ~ArrowWidget() {}
 
         void setArrows( const Arrow& start, const Arrow& end );
-        Arrow startArrow() const;
-        Arrow endArrow() const;
+        Arrow startArrow() const { return start_; }
+        Arrow endArrow() const { return end_; }
 
 signals:
         void startArrowChanged( const Arrow& );

@@ -195,23 +195,26 @@ public:
 
         //! returns the smallest QRectF that contains all #points_
         QRectF controlPointRect() const { return cRect_; }
+
         
         const Pen& pen() const { return pen_; }
-
-        //! FIXME: returning handles to private member objects is "ineffective"
-        Pen* p_pen() { return &pen_; }
+        //! sets the #pen_
+        void setPen( const Pen& p );
         
         const Stroke& stroke() const { return stroke_; }
+        //! sets the outline #stroke_
+        void setStroke( const Stroke& s ) { stroke_ = s; }
 
-        //! FIXME: returning handles to private member objects is "ineffective"
-        Stroke* p_stroke() { return &stroke_; }
         
         const Stroke& fill() const { return fill_; }
+        //! sets the fill_ #stroke
+        void setFill( const Stroke& s ) { fill_ = s; }
 
-        //! FIXME: returning handles to private member objects is "ineffective"
-        Stroke* p_fill() { return &fill_; }
         
         int depth() const { return depth_; }
+        //! sets the #depth_
+        void setDepth( int d ) { depth_ = d; }
+
 
         void setComment( const QString& str ) { commentString_ = str; }
         QString comment() const { return commentString_; }
@@ -286,19 +289,8 @@ public:
                 return o1->depth() > o2->depth();
         }
 
-public slots:
-        //! sets the #pen_
-        void setPen( const Pen& p );
-
-        //! sets the outline stroke_
-        void setStroke( const Stroke& s ) { stroke_ = s; }
-
-        //! sets the fill_ stroke
-        void setFill( const Stroke& s ) { fill_ = s; }
-
-        //! sets the depth_
-        void setDepth( int d ) { depth_ = d; }
-
+//public slots:
+  
 protected:
         //! not meant to be called manually but by #DRAW_OBJECT
         template<typename OT> DrawObject* doCopy( const OT* orig ) const { return new OT( orig ); }

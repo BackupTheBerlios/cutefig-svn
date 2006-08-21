@@ -42,7 +42,8 @@ public:
 
 private:
         Ellipse* ellipse_;
-
+        
+        virtual void commitChangesPrivate();
         virtual void setDefaultValuesPrivate();
         virtual void setUpConnectionsPrivate();
         virtual void castDrawObject();

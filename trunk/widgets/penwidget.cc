@@ -23,7 +23,6 @@
 ******************************************************************************/
 
 #include "penwidget.h"
-#include "pen.h"
 #include "resourcecombobox.h"
 #include "flagbuttongroup.h"
 
@@ -109,36 +108,36 @@ PenWidget::PenWidget( const QString& title, QWidget* parent )
         connect( joinStyle, SIGNAL( stateChanged(int) ), this, SLOT( changeJoin(int) ) );
 }
 
-void PenWidget::setPen( Pen* pen )
+void PenWidget::setPen( const Pen& pen )
 {
         pen_ = pen;
-        lineWidth->setValue( pen->width() );
-        lineDashes->setCurrentKey( pen->dashesKey() );
-        capStyle->setState( int( pen->capStyle() ) );
-        joinStyle->setState( int( pen->joinStyle() ) );
+        lineWidth->setValue( pen.width() );
+        lineDashes->setCurrentKey( pen.dashesKey() );
+        capStyle->setState( int( pen.capStyle() ) );
+        joinStyle->setState( int( pen.joinStyle() ) );
 }
 
 void PenWidget::changeWidth( double width )
 {
-        pen_->setWidth( width );
+        pen_.setWidth( width );
         emit penChanged();
 }
 
 void PenWidget::changeDashes( const ResourceKey& key )
 {
-        pen_->setDashes( key );
+        pen_.setDashes( key );
         emit penChanged();
 }
 
 void PenWidget::changeCap( int key )
 {
-        pen_->setCapStyle( Qt::PenCapStyle( key ) );
+        pen_.setCapStyle( Qt::PenCapStyle( key ) );
         emit penChanged();
 }
 
 void PenWidget::changeJoin( int key )
 {
-        pen_->setJoinStyle( Qt::PenJoinStyle( key ) );
+        pen_.setJoinStyle( Qt::PenJoinStyle( key ) );
         emit penChanged();
 }
 

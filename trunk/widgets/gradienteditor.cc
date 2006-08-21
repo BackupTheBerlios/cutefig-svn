@@ -39,7 +39,7 @@
 
 template<> ResourceEditor* ResourceDialog<Gradient>::createEditor()
 {
-        return new GradientEditor( editee_, this, dialogLayout_, parent() );
+        return new GradientEditor( editee_, this, dialogLayout(), parent() );
 }
 
 GradientEditor::GradientEditor( Gradient& gradient,  EditDialog* dlg, QVBoxLayout* layout,
@@ -53,6 +53,8 @@ GradientEditor::GradientEditor( Gradient& gradient,  EditDialog* dlg, QVBoxLayou
         gradWidget_ = new GradientWidget( &gradient_, dlg );
         gradWidget_->setMinimumSize( QSize( 300,200 ) );
         mainLayout->addWidget( gradWidget_ );
+
+        connect( gradWidget_, SIGNAL( gradientChanged() ), this, SIGNAL( changeHappened() ) );
 
         QGroupBox* typeGroupBox = new QGroupBox( tr("Gradient &type"), dlg );
         mainLayout->addWidget( typeGroupBox );

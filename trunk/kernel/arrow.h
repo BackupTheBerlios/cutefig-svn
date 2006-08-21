@@ -1,6 +1,3 @@
-#ifndef arrow_h
-#define arrow_h
- 
 /*****************************************************************************
 **
 **  @version $Id$
@@ -23,6 +20,10 @@
 **  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 **
 ******************************************************************************/
+
+#ifndef arrow_h
+#define arrow_h
+ 
 
 #include "typedefs.h"
 #include "resourceuser.h"

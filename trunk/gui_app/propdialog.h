@@ -40,12 +40,12 @@ public:
 private:
         Figure* figure_;
 
-        virtual void reset();
-        virtual void accept();
+        virtual void doReset();
+        virtual void commitChanges( QObject* sender );
         
         void updateValues();
 
-//        Figure::MetaData oldMetaData_;
+        Figure::MetaData oldMetaData_;
 
         ResourceComboBox<Length>* length_;
         ResourceComboBox<Paper>* paper_;

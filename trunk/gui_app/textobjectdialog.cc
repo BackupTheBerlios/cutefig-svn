@@ -57,12 +57,14 @@ TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget*
         fillStroke->setEnabled( false );
 }
 
+void TextObjectDialog::commitChangesPrivate()
+{
+        textObject_->setFont( fontButton_->font() );
+}
+
 void TextObjectDialog::setUpConnectionsPrivate()
 {
-        connect( fontButton_, SIGNAL( fontChanged(const QFont&) ),
-                 textObject_, SLOT( setFont(const QFont& ) ) );
-        connect( fontButton_, SIGNAL( fontChanged(const QFont&) ),
-                 action_, SLOT( wObjectHasChanged() ) );
+        connect( fontButton_, SIGNAL( fontChanged(const QFont&) ), this, SLOT( noticeChange() ) );
 }
 
 void TextObjectDialog::setDefaultValuesPrivate()
@@ -81,4 +83,5 @@ ObjectDialog* TObjectGUIHandler<TextObject>::makeEditDialog( DrawObject* o, Edit
 {
         return new TextObjectDialog( o, a, parent );
 }
+
 

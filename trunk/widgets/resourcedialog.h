@@ -39,21 +39,20 @@ public:
         }
 
         virtual void updateData() = 0;
-        
+
+signals:
+        void changeHappened();
+
 protected:
         EditDialog* dialog_;
         QVBoxLayout* layout_;
 };
 
 
-template<class Resource> class ResourceDialog : public EditDialog
+template<class Resource>
+class ResourceDialog : public EditDialog
 {
-public:
-//         ~ResourceDialog() 
-//         {
-//                 delete editor_;
-//         }
-        
+public:        
         static int execute( Resource& editee, QWidget* parent = 0 ) 
         {
                 ResourceDialog<Resource> dlg( editee, parent );
@@ -72,12 +71,12 @@ public:
                 return res;
         }       
                 
-        virtual void reset()
+        virtual void doReset()
         {
                 editee_ = oldData_;
                 editor_->updateData();
         }
-        
+
         
 protected:
         ResourceDialog<Resource>( Resource& editee, QWidget* parent = 0 )
@@ -91,6 +90,7 @@ protected:
         void init() 
         {
                 editor_ = createEditor();
+                connect( editor_, SIGNAL( changeHappened() ), this, SLOT( noticeChange() ) );
         }
 
         ResourceEditor* createEditor();
