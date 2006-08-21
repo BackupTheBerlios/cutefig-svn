@@ -56,6 +56,7 @@ private:
         void outputPoints();
         void outputHeader();
         void outputResources();
+        void outputMetaData();
 
         static const char* objectString;
 

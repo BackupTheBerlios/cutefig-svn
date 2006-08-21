@@ -115,6 +115,7 @@ void CfigOutput::processOutput()
 {
         outputHeader();
         outputResources();
+        outputMetaData();
         figure_.outputObjects( this );
 }
 
@@ -167,8 +168,15 @@ void CfigOutput::outputGenericData()
 
 void CfigOutput::outputPoints()
 {
+        double u = figure_.unit();
+        
         foreach ( QPointF p, drawObject_->points() )
-                fileStream_ << KWds::point() << ' ' << p.x() << ' ' << p.y() << "\n";
+                fileStream_ << KWds::point() << ' ' << p.x()/u << ' ' << p.y()/u << "\n";
+}
+
+void CfigOutput::outputHeader()
+{
+        fileStream_ << KWds::CuteFig() << ' ' << KWds::version() << ' ' << Fig::version << "\n";
 }
 
 void CfigOutput::outputResources()
@@ -180,15 +188,16 @@ void CfigOutput::outputResources()
                 foreach ( const ResourceKey& key, it.value() )
                         rIO->outputResource( key, fileStream_ );
         }
+
+        fileStream_ << KWds::no_more_resources() << "\n";
 }
 
-void CfigOutput::outputHeader()
+void CfigOutput::outputMetaData()
 {
-        fileStream_ << KWds::CuteFig()    << ' ' << KWds::version() << ' ' << Fig::version << "\n"
-                    << KWds::unitHead()   << ' ' << figure_.unitKey() << "\n"
+        fileStream_ << KWds::unit()       << ' ' << figure_.unitKey() << "\n"
                     << KWds::scale()      << ' ' << figure_.scale() << "\n"
                     << KWds::paper()      << ' ' << figure_.paperKey() << "\n"
-                    << KWds::end_header() << "\n";
+                    << KWds::metaData_end() << "\n";
 }
 
 

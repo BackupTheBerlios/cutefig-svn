@@ -57,6 +57,7 @@
 Parser::Parser( QTextStream& ts, Figure* f  )
         : fileStream_( ts ),
           figure_( f ),
+          figureUnit_( 1.0 ),
           line_( 0 ),
           errorReport_( QString() )
 {
@@ -71,11 +72,13 @@ QString Parser::parse( QTextStream& ts, Figure* f )
 {
         Parser p( ts, f );
 
-        QString e = p.parseVersionLine();
+        QString e = p.parseHeader();
         if ( !e.isNull() )
                 return e;
 
-        e = p.parseHeader();
+        p.resourceParseLoop();
+        
+        e = p.parseMetaData();
         if ( !e.isNull() )
                 return e;
         
@@ -84,7 +87,7 @@ QString Parser::parse( QTextStream& ts, Figure* f )
 }
 
 
-QString Parser::parseVersionLine()
+QString Parser::parseHeader()
 {
         if ( !readLine() ) 
                 return makeErrorLine( tr("File does not contain any uncommented data.") );
@@ -110,19 +113,22 @@ QString Parser::parseVersionLine()
         return QString();
 }
 
-QString Parser::parseHeader()
+QString Parser::parseMetaData()
 {
-        while ( itemType_ != KWds::end_header() ) {
+        while ( itemType_ != KWds::metaData_end() ) {
                 if ( !readLine() )
-                        return makeErrorLine( tr("File ended unexpectedly during the header.") );
-
-                if ( itemType_ == KWds::unitHead() ) {
+                        return makeErrorLine( tr("File ended unexpectedly "
+                                                 "while parsing meta data.") );
+                
+                if ( itemType_ == KWds::unit() ) {
                         ResourceKey key;
                         stream_ >> key;
                         if ( stream_.fail() )
                                 parseError( tr("Invalid unit line.") );
-                        else
+                        else {
                                 figure_->setUnit( key );
+                                figureUnit_ = figure_->unit();
+                        }
                         
                         continue;
                 }
@@ -235,7 +241,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
 
 void Parser::resourceParseLoop()
 {
-        while ( readLine() )
+        while ( readLine() && itemType_ != KWds::no_more_resources() )
                 if ( itemType_ == KWds::resource() )
                         parseResource( ResourceKey::InLib );
 }
@@ -333,7 +339,7 @@ QPointF Parser::parsePoint()
         QPointF p;
         
         if ( (stream_ >> x >> y) )
-                p = QPointF( x,y );
+                p = QPointF( x*figureUnit_, y*figureUnit_ );
         else
                 parseError( invalidPoint );
 

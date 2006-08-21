@@ -29,13 +29,16 @@ struct KWds
 {
         static char* CuteFig() { return "CuteFig"; }
         static char* version() { return "version"; }
-        static char* end_header() { return "end_header"; }
-        static char* unitHead() { return "unitHead"; }
+
+        static char* metaData_end() { return "metaData_end"; }
         static char* scale() { return "scale"; }
         static char* paper() { return "paper"; }
-
+        static char* unit() { return "unit"; }
+        
         static char* resource() { return "resource"; }
         static char* resource_end() { return "resource_end"; }
+        static char* no_more_resources() { return "no_more_resources"; }
+        
         static char* object() { return "object"; }
         static char* compound_begin() { return "compound_begin"; }
         static char* compound_end() { return "compound_end"; }
