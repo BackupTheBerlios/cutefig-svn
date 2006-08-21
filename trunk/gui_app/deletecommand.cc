@@ -29,7 +29,7 @@
 #include <QDebug>
 
 DeleteCommand::DeleteCommand( const Selection& s ) 
-        : Command( s ),
+        : ObjectCommand( s ),
           actualObjects_( s.backups() )
 {
 }

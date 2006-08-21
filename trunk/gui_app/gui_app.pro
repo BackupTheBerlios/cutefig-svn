@@ -45,6 +45,7 @@ HEADERS += cutefig.h \
            cutnpaste.h \
            groupungroup.h \
            editdialogaction.h \
+           propdialogaction.h \
            command.h \
            objectcommand.h \
            addcommand.h \
@@ -81,6 +82,7 @@ SOURCES += cutefig.cc \
            cutnpaste.cc \
            groupungroup.cc \
            editdialogaction.cc \
+           propdialogaction.cc \
            command.cc \
            addcommand.cc \
            deletecommand.cc \

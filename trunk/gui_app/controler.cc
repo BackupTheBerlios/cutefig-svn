@@ -352,3 +352,9 @@ void Controler::drawActionMetaData( QPainter* p, const ViewBase* v )
         if ( editAction_ )
                 editAction_->drawMetaData( p,v );
 }
+
+void Controler::updateFigureMetaData() const
+{
+        foreach( ViewBase* vb, viewList_ )
+                vb->updateFigureMetaData();
+}

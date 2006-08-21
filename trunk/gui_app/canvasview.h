@@ -77,9 +77,10 @@ public:
         void setHRuler( Ruler* r );
         void setVRuler( Ruler* r ); 
 
-
         
 public slots:
+        void updateFigureMetaData();
+
         void zoomIn();   //!< Zooms in by 10% of the original size
         void zoomOut();  //!< Zooms out by 10% of the original size
         void zoomOrig();
@@ -152,6 +153,7 @@ private:
         qreal snapScaled_;
 
         double unit_;
+        QSizeF paperSize_;
 
         QPoint offset_;
         QRect oldRect_;

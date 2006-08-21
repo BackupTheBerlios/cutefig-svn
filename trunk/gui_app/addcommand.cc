@@ -29,7 +29,7 @@
 #include <QDebug>
 
 AddCommand::AddCommand( const Selection& s )
-        : Command( s )
+        : ObjectCommand( s )
 {
         setCommandName( tr("Add") );
 }

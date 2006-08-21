@@ -22,35 +22,32 @@
 **
 ******************************************************************************/
 
-#ifndef propdialog_h
-#define propdialog_h
+#ifndef propdialogaction_h
+#define propdialogaction_h
 
-#include "editdialog.h"
-#include "figure.h"
+#include "interactiveaction.h"
 
-
-template<typename Resource> class ResourceComboBox;
-
-class PropDialog : public EditDialog
+class PropDialogAction : public InteractiveAction
 {
+        Q_OBJECT
 public:
-        PropDialog( Figure* f, QWidget* parent = 0 );
-        
-private:
-        Figure* figure_;
+        PropDialogAction( Controler* parent )
+                : InteractiveAction( parent ) {
+                setText( tr("Edit figure p&roperties") );
+                setIcon( QIcon(":images/info.png") );
+                setWhatsThis( tr("Edit the figures properties") );
+        }
 
-        virtual void doReset();
-        virtual void commitChanges( QObject* sender );
-        
-        void updateValues();
+        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix* ) {}
+        virtual void handleSelection();
+        virtual bool isActive() const { return false; }
 
-        Figure::MetaData oldMetaData_;
+        virtual bool wouldHandle( DrawObject*, const QPoint& = QPoint(), const QMatrix* = 0 ) 
+        {
+                return true;
+        }
 
-        ResourceComboBox<Length>* length_;
-        ResourceComboBox<Paper>* paper_;
-        
+        virtual const QString commandName() const { return "Edit figure properties"; }
 };
-
-
 
 #endif

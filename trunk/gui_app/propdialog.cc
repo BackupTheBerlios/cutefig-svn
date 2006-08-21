@@ -31,15 +31,16 @@
 #include <QDebug>
 
 
-PropDialog::PropDialog( Figure* f )
-        : figure_( f ),
+PropDialog::PropDialog( Figure* f, QWidget* parent )
+        : EditDialog( parent ),
+          figure_( f ),
           oldMetaData_( figure_->metaData() )
 {
         length_ = new ResourceComboBox<Length>( this );
         paper_ = new ResourceComboBox<Paper>( this );
 
-        connect( length_, SIGNAL(valueChanged(int)), this, SLOT(noticeChange()) );
-        connect( paper_, SIGNAL(valueChanged(int)), this, SLOT(noticeChange()) );
+        connect( length_, SIGNAL(activated(int)), this, SLOT(noticeChange()) );
+        connect( paper_, SIGNAL(activated(int)), this, SLOT(noticeChange()) );
         
         Layouter( new QHBoxLayout() )
                 .labeledWidget( tr("Unit length"), length_ )
@@ -67,3 +68,7 @@ void PropDialog::commitChanges( QObject* )
         figure_->setUnit( length_->currentKey() );
         figure_->setPaper( paper_->currentKey() );
 }
+
+
+
+

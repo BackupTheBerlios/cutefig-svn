@@ -94,10 +94,8 @@ FileActions::FileActions( CuteFig* parent )
         connect( print, SIGNAL( triggered() ), parent, SLOT( print() ) );
 
         addSeparator();
-
-        QAction* props = new QAction( QIcon(":images/info.png"),tr("Document P&roperties"), this );
-        addAction( props );
-        connect( props, SIGNAL( triggered() ), parent, SLOT( editProperties() ) );
+        
+        addAction( new PropDialogAction( parent->controler() ) );
 
         addSeparator();
 

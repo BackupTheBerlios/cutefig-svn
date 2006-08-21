@@ -34,6 +34,7 @@
 #include "cutnpaste.h"
 #include "groupungroup.h"
 #include "editdialogaction.h"
+#include "propdialogaction.h"
 #include "textaction.h"
 #include "textpropaction.h"
 #include "texttagaction.h"

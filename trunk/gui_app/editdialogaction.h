@@ -37,7 +37,7 @@ public:
 
         EditdialogAction( Controler* parent )
                 : InteractiveAction( parent ) {
-                setText("Edit Object");
+                setText( tr("Edit Object") );
                 setIcon( QIcon(":images/edit.png") );
                 setWhatsThis( tr("Edit the object's properties") );
                 setShortcut( Qt::CTRL+Qt::Key_E );

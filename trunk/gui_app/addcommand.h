@@ -25,11 +25,10 @@
 #ifndef addcommand_h
 #define addcommand_h
 
-#include "command.h"
+#include "objectcommand.h"
 
-class AddCommand : public Command
+class AddCommand : public ObjectCommand
 {
-        Q_OBJECT
 public:
         AddCommand( const Selection& s );
         ~AddCommand() {}

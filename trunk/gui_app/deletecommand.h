@@ -25,11 +25,10 @@
 #ifndef deletecommand_h
 #define deletecommand_h
 
-#include "command.h"
+#include "objectcommand.h"
 
-class DeleteCommand : public Command
+class DeleteCommand : public ObjectCommand
 {
-        Q_OBJECT
 public:
         DeleteCommand( const Selection& s );
         ~DeleteCommand() {}

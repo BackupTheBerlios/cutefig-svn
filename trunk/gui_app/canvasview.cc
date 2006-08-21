@@ -67,7 +67,8 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
           hRuler_( 0 ),
           vRuler_( 0 ),
           scale_( 1 ),
-          unit_( Fig::cm2pix ),
+          unit_( f->unit() ),
+          paperSize_( f->paper().size() ),
           oldRect_(),
           oldSnapPoint_( QPoint(0,0) ),
           snapped_( false ),
@@ -496,6 +497,16 @@ void CanvasView::corsenGrid()
         calcGrid();
 }
 
+
+void CanvasView::updateFigureMetaData()
+{
+        unit_ = figure_->unit();
+        paperSize_ = figure_->paper().size();
+        calcGrid();
+        vRuler_->setUnit( figure_->unitKey() );
+        hRuler_->setUnit( figure_->unitKey() );
+}
+
 void CanvasView::setZoom_private( double z )
 {
         zoom_ = z;
@@ -611,6 +622,5 @@ Fig::PointFlags calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
 
         return pf;
 }
-
 
 

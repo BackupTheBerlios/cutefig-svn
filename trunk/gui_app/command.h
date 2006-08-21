@@ -27,17 +27,14 @@
 
 #include <QObject>
 
-#include "selection.h"
-
 class Controler;
 class Figure;
 
 class Command : public QObject
 {
-        Q_OBJECT
 public: 
-        Command( const Selection& s ) : QObject(), objects_( s.objects() ) {}
-        ~Command() {};
+        Command() : QObject() {}
+        virtual ~Command() {};
 
         virtual void execute() = 0;
         virtual void unexecute() = 0;
@@ -48,7 +45,6 @@ public:
         void setControler( Controler* cnt );
 
 protected:
-        ObjectList objects_;
         Controler* controler_;
         Figure* figure_;
 

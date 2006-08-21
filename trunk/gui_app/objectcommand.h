@@ -22,35 +22,21 @@
 **
 ******************************************************************************/
 
-#ifndef propdialog_h
-#define propdialog_h
+#ifndef objectcommand_h
+#define objectcommand_h
 
-#include "editdialog.h"
-#include "figure.h"
+#include "command.h"
+#include "selection.h"
 
 
-template<typename Resource> class ResourceComboBox;
-
-class PropDialog : public EditDialog
+class ObjectCommand : public Command
 {
 public:
-        PropDialog( Figure* f, QWidget* parent = 0 );
-        
-private:
-        Figure* figure_;
+        ObjectCommand( const Selection& s ) : Command(), objects_( s.objects() ) {}
 
-        virtual void doReset();
-        virtual void commitChanges( QObject* sender );
-        
-        void updateValues();
-
-        Figure::MetaData oldMetaData_;
-
-        ResourceComboBox<Length>* length_;
-        ResourceComboBox<Paper>* paper_;
-        
+protected:
+        ObjectList objects_;
 };
-
 
 
 #endif

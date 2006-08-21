@@ -62,7 +62,6 @@ private slots:
         void saveAs();
         void exportFigure();
         void print();
-        void editProperties();
 
         void about();  //!< Displays the about box.
         void help();
@@ -81,6 +80,11 @@ private:
 
         void readSettings();
         void writeSettings();
+
+// private slots:
+//         void metaDataChanged()
+//                ;
+        
         
 public:
         static int rulerWidth;

@@ -59,6 +59,7 @@ void EditDialog::resetChanges()
         doReset();
         changed_ = false;
         reset_->setEnabled( false );
+        emit changeHappened();
 }
 
 void EditDialog::noticeChange()

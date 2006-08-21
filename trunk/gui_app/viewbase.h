@@ -48,6 +48,8 @@ public:
         virtual void drawSelection( QPainter* p ) const = 0;
         virtual void drawObjectsMetaData( QPainter* p, const DrawObject* o ) const = 0;
         virtual void drawObjectsPoints( QPainter* p, const DrawObject* o ) const = 0;
+
+        virtual void updateFigureMetaData() = 0;
         
 protected:
         Controler* controler_;

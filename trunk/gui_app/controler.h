@@ -70,7 +70,7 @@ public:
 
         void clearCommandList();
         void resetFigure();
-        
+
         void addView( ViewBase* v ) { viewList_.push_back( v ); }
 
         void setEditActionsGroup( EditActions* ea ) { editActionsGroup_ = ea; }
@@ -133,7 +133,8 @@ public slots:
 
         void updateViews();
 
-        
+        void updateFigureMetaData() const;
+
 //         void setPenWidth( const qreal& pw ) { toolPen_.setWidth( pw ); }
 //         void setPenColor( const QColor& pc ) { toolPen_.setColor( pc ); }
     

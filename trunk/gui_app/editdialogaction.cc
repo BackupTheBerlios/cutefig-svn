@@ -60,7 +60,7 @@ void EditdialogAction::editObject()
 DrawObject* EditdialogAction::restoreWObject()
 {
         selection_.restoreBackups();        
-        controler_->updateViews();
+//        controler_->updateViews();
         return selection_.objects()[0];
 }
 

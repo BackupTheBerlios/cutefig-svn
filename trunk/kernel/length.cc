@@ -74,8 +74,8 @@ template<>
 void ResLib<Length>::init()
 {
         insertBuiltIn( "inch", Length( 72. ) );
-        insertBuiltIn( "mm", Length( 0.18288 ) );
-        insertBuiltIn( "cm", Length( 182.88 ) );//2.54 ResourceUser("inch" ) );
+        insertBuiltIn( "mm", Length( 2.83 ) );
+        //insertBuiltIn( "cm", Length( 10.0, ResourceKey::builtIn("mm") ) );
 }
 
 template<>

@@ -25,14 +25,13 @@
 #ifndef changecommand_h
 #define changecommand_h
 
-#include "command.h"
+#include "objectcommand.h"
 
-class ChangeCommand : public Command
+class ChangeCommand : public ObjectCommand
 {
-        Q_OBJECT
 public:
         ChangeCommand( const Selection& s )
-                : Command( s ),
+                : ObjectCommand( s ),
                   oldObjects_( s.backups() ) {}
                 
         ~ChangeCommand() { }

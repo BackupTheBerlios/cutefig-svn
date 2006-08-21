@@ -198,12 +198,6 @@ void CuteFig::print()
         }
 }
 
-void CuteFig::editProperties()
-{
-        PropDialog dlg( figure_ );
-
-        dlg.exec(); 
-}
 
 /** Asks the obligated areyousure-question before accepting the close
  * event. This might sometimes be skiped in development versions. :-)
