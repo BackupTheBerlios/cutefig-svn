@@ -34,11 +34,11 @@
 
 #include <QDebug>
 
+
+
 Figure::Figure( QObject *parent ) :
         QObject( parent ),
-        scale_( 1.0 ),
-        unit_("inch"),
-        paper_("A4")
+        metaData_()
 {
 }
 
@@ -218,26 +218,3 @@ const ResourceSet Figure::usedResources() const
         return resSet;
 }
 
-
-template<>
-const QString ValueHash<Paper>::defaultName()
-{
-        return "Letter";
-}
-
-template<>
-void fillHash<Paper>( QHash<QString,Paper>& h ) 
-{
-        h.insert("Letter", Paper( QSizeF( 8.5, 11 ), Unit("inch") ) );
-}
-
-
-Paper& Paper::operator=( const Paper& other )
-{
-        if ( this != &other ) {
-                unit_ = other.unit_;
-                size_ = other.size_;
-        }
-
-        return *this;
-}

@@ -95,12 +95,18 @@ FileActions::FileActions( CuteFig* parent )
 
         addSeparator();
 
-        QAction* close = new QAction( QIcon(":images/fileclose.png"), "&Close", this );
+        QAction* props = new QAction( QIcon(":images/info.png"),tr("Document P&roperties"), this );
+        addAction( props );
+        connect( props, SIGNAL( triggered() ), parent, SLOT( editProperties() ) );
+
+        addSeparator();
+
+        QAction* close = new QAction( QIcon(":images/fileclose.png"), tr("&Close"), this );
         addAction( close );
         close->setShortcut( Qt::CTRL+Qt::Key_W );
         connect( close, SIGNAL( triggered() ), parent, SLOT( close() ) );
 
-        QAction* quit = new QAction( QIcon(":images/exit.png"), "&Quit", this );
+        QAction* quit = new QAction( QIcon(":images/exit.png"), tr("&Quit"), this );
         addAction( quit );
         quit->setShortcut( Qt::CTRL+Qt::Key_Q );
         connect( quit, SIGNAL( triggered() ), qApp, SLOT( closeAllWindows() ) );

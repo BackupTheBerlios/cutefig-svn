@@ -62,6 +62,7 @@ private slots:
         void saveAs();
         void exportFigure();
         void print();
+        void editProperties();
 
         void about();  //!< Displays the about box.
         void help();

@@ -74,6 +74,7 @@ class QMouseEvent;
 class AbstractMouseEventDispatcher
 {
 public:
+        virtual ~AbstractMouseEventDispatcher() {}
         //! The QMouseEvent initiating the "drag"
         /*! Supposed to return true in case a dragging really occurs
          *  after the mouse event.
@@ -110,6 +111,9 @@ public:
                   dragging_( false )
         {}
 
+        virtual ~AbstractMouseEventHandler() {}
+
+        
         //! To be called by MyWidget::mousePressEvent()
         virtual void mousePressEvent( QMouseEvent* e ) = 0;
 

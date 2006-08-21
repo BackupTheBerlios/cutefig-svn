@@ -35,6 +35,7 @@
 #include "guiinit.h"
 #include "actions.h"
 #include "errorreporter.h"
+#include "propdialog.h"
 
 #include "exportgui.h"
 
@@ -195,6 +196,13 @@ void CuteFig::print()
                 QPainter p( &printer );
                 figure_->drawElements( &p );
         }
+}
+
+void CuteFig::editProperties()
+{
+        PropDialog dlg( figure_ );
+
+        dlg.exec(); 
 }
 
 /** Asks the obligated areyousure-question before accepting the close

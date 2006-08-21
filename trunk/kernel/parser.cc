@@ -90,7 +90,7 @@ QString Parser::parseVersionLine()
                 return makeErrorLine( tr("File does not contain any uncommented data.") );
 
         
-        if ( itemType_ !=  KWds::appName )
+        if ( itemType_ !=  KWds::CuteFig() )
                 return makeErrorLine( tr("File does not seem to be a CuteFig file.") );
 
         QString vs;
@@ -98,7 +98,7 @@ QString Parser::parseVersionLine()
 
         stream_ >> vs >> version;
         
-        if ( stream_.fail() || vs != KWds::version )
+        if ( stream_.fail() || vs != KWds::version() )
                 return makeErrorLine( tr("Could not find a valid version line.") );
 
         if ( version > Fig::version )
@@ -112,21 +112,22 @@ QString Parser::parseVersionLine()
 
 QString Parser::parseHeader()
 {
-        while ( itemType_ != KWds::endHeader ) {
+        while ( itemType_ != KWds::end_header() ) {
                 if ( !readLine() )
                         return makeErrorLine( tr("File ended unexpectedly during the header.") );
 
-                if ( itemType_ == KWds::unitHead ) {
-                        Unit u( stream_ );
-                        if ( !u.isValid() )
+                if ( itemType_ == KWds::unitHead() ) {
+                        ResourceKey key;
+                        stream_ >> key;
+                        if ( stream_.fail() )
                                 parseError( tr("Invalid unit line.") );
                         else
-                                figure_->setUnit( u );
+                                figure_->setUnit( key );
                         
                         continue;
                 }
 
-                if ( itemType_ == KWds::scale ) {
+                if ( itemType_ == KWds::scale() ) {
                         double s;
                         stream_ >> s;
 
@@ -138,12 +139,14 @@ QString Parser::parseHeader()
                         continue;
                 }
 
-                if ( itemType_ == KWds::paper ) {
-                        ValueHash<Paper> vhp( stream_ );
-                        if ( !vhp.isValid() )
+                if ( itemType_ == KWds::paper() ) {
+                        ResourceKey key;
+                        stream_ >> key;
+
+                        if ( stream_.fail() )
                                 parseError( tr("Invalid paper line.") );
                         else
-                                figure_->setPaper( vhp );
+                                figure_->setPaper( key );
 
                         continue;
                 }
@@ -177,7 +180,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
 
         while ( readLine() ) {
 
-                if ( itemType_ == "point" ) {
+                if ( itemType_ == KWds::point() ) {
                         if ( !o ) {
                                 parseError( ignoringPoint );
                                 continue;
@@ -198,24 +201,24 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                         delete o;
                 }
 
-                if ( itemType_ == "object" ) {
+                if ( itemType_ == KWds::object() ) {
                         o = parseGenericData( npoints, pa );
                         i = 0;
                         continue;
                 }
                 
-                if ( itemType_ == "compound_begin" ) {
+                if ( itemType_ == KWds::compound_begin() ) {
                         olist.push_back( new Compound( parseLoop( true ) ) );
                         continue;
                 }
 
-                if ( itemType_ == "compound_end" ) {
+                if ( itemType_ == KWds::compound_end() ) {
                         if ( !parsingCompound )
                                 parseError( compound_end_without_compound );
                         break;
                 }
 
-                if ( itemType_ == "resource" ) {
+                if ( itemType_ == KWds::resource() ) {
                         parseResource( ResourceKey::InFig );
                         continue;
                 }
@@ -224,7 +227,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
 
         }
 
-        if ( itemType_ != "compound_end" && parsingCompound )
+        if ( itemType_ != KWds::compound_end() && parsingCompound )
                 parseError( unexpectedEnd );
         
         return olist;
@@ -233,7 +236,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
 void Parser::resourceParseLoop()
 {
         while ( readLine() )
-                if ( itemType_ == "resource" )
+                if ( itemType_ == KWds::resource() )
                         parseResource( ResourceKey::InLib );
 }
 
@@ -268,7 +271,7 @@ void Parser::parseResource( ResourceKey::Flags flags )
                         do {
                                 fileStream_ >> s;
                                 fileStream_.readLine();
-                        } while ( s != "resource_end" );
+                        } while ( s != KWds::resource_end() );
                         
                         parseit = false;
                 }
@@ -277,7 +280,7 @@ void Parser::parseResource( ResourceKey::Flags flags )
         if ( parseit ) {
                 if ( resIO->parseResource( QString(), stream_ ) ) {
                         readLine();
-                        while ( itemType_ != "resource_end" && !resIO->failed() ) {
+                        while ( itemType_ != KWds::resource_end() && !resIO->failed() ) {
                                 resIO->parseResource( itemType_, stream_ );
                                 readLine();
                         } 
@@ -337,35 +340,6 @@ QPointF Parser::parsePoint()
         return p;
 }
 
-std::istream& operator>> ( std::istream &is, ResourceKey& key )
-{
-        char c;
-        do
-                c = is.get();
-        while ( isspace(c) );
-
-        if ( c == '%' ) {
-                key = ResourceKey();
-                return is;
-        }
-                
-        QString keyString;
-        is >> keyString;
-        
-        switch ( c ) {
-            case '&':
-                    key = ResourceKey::builtIn( keyString );
-                    break;
-            case '*':
-                    key = ResourceKey::inFig( keyString );
-                    break;
-            default:
-                    is.setstate( is.rdstate() | std::istream::failbit );
-                    key = ResourceKey();
-        }
-        
-        return is;
-}
 
 void Parser::parseStroke( Stroke& s )
 {
@@ -389,9 +363,9 @@ void Parser::parseStroke( Stroke& s )
                         QString kw;
                         stream_ >> kw;
                         
-                        if ( kw == "color" ) 
+                        if ( kw == Res::resourceName<QColor>() ) 
                                 s.setColor( key );
-                        else if ( kw == "gradient" )
+                        else if ( kw == Res::resourceName<Gradient>() )
                                 s.setGradient( key );
                 }
         }

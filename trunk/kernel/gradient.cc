@@ -159,6 +159,12 @@ void ResLib<Gradient>::init()
         insertBuiltIn( "radialBuiltIn",   radGrad );
 }
 
+template<>
+ResourceKey ResLib<Gradient>::defaultKey()
+{
+        return ResourceKey::builtIn("defaultGradient");
+}
+
 
 QDebug operator<<(QDebug dbg, const Gradient& g)
 {

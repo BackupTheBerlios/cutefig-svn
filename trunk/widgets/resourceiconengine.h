@@ -27,6 +27,7 @@
 
 #include <QIconEngine>
 
+
 class AbstractResourceIconEngine : public QIconEngine 
 {
 public:
@@ -39,7 +40,8 @@ protected:
         virtual void paintForeground( QPainter* p, const QRect& rect ) = 0;
 };
 
-template<typename Resource> class ResourceIconEngine : public AbstractResourceIconEngine 
+template<typename Resource>
+class ResourceIconEngine : public AbstractResourceIconEngine 
 {
 public:
         ResourceIconEngine<Resource>( const Resource& res )
@@ -58,7 +60,8 @@ protected:
         const Resource& resource_;
 };
 
-template<typename Resource> class ResourceIconEngine<Resource*> : public AbstractResourceIconEngine
+template<typename Resource>
+class ResourceIconEngine<Resource*> : public AbstractResourceIconEngine
 {
 public:
         ResourceIconEngine<Resource*>( Resource* const res )
@@ -77,6 +80,34 @@ protected:
         Resource* const resource_;
 };      
 
+
+template<typename Resource>
+class IconEngineFactory
+{
+public:
+        static AbstractResourceIconEngine* orderEngine( const Resource& res ) 
+        {
+                return new ResourceIconEngine<Resource>( res );
+        }
+        
+};
+
+class Paper;
+template<>
+inline AbstractResourceIconEngine* IconEngineFactory<Paper>::orderEngine( const Paper& )
+{
+        return 0;
+}
+
+class Length;
+template<>
+inline AbstractResourceIconEngine* IconEngineFactory<Length>::orderEngine( const Length& ) 
+{
+        return 0;
+}
+
+
+
 class WhiteIcon;
 
 template<>
@@ -85,6 +116,5 @@ class ResourceIconEngine<WhiteIcon> : public AbstractResourceIconEngine
 public:
         void paintForeground( QPainter* p, const QRect& r );
 };
-
 
 #endif

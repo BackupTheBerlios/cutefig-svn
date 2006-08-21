@@ -41,8 +41,9 @@ public:
         explicit Layouter( QBoxLayout* layout );
 
         Layouter& labeledWidget( const QString& text, QWidget* widget );
-        Layouter& stretch();
+        Layouter& stretch( int strech = 0 );
         void finishTo( QBoxLayout* target );
+        void finishTo( QBoxLayout* target, int index );
         void finishTo( QGridLayout* target, int row, int col );
         
 private:

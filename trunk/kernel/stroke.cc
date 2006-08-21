@@ -34,6 +34,29 @@
 
 #include <QDebug>
 
+
+// The following specialisations have to be defined before their instantation.
+template<> void ResLib<QColor>::init()
+{
+}
+
+template<> ResourceKey ResLib<QColor>::defaultKey()
+{
+        return ResourceKey();
+}
+
+
+template<> void ResLib<QPixmap>::init()
+{
+}
+
+template<> ResourceKey ResLib<QPixmap>::defaultKey()
+{
+        return ResourceKey();
+}
+
+
+
 Stroke::Stroke()
         : type_( sNone ),
           resourceUser_( 0 )
@@ -199,10 +222,3 @@ const ResourceKey Stroke::key() const
 }
 
 
-template<> void ResLib<QColor>::init()
-{
-}
-
-template<> void ResLib<QPixmap>::init()
-{
-}

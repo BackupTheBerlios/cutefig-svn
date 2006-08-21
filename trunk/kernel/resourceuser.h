@@ -43,7 +43,7 @@
 class AbstractResourceUser
 {
 public:
-        AbstractResourceUser() : key_() {}
+        AbstractResourceUser( const ResourceKey& key = ResourceKey() ) : key_( key ) {}
         AbstractResourceUser( const  AbstractResourceUser& o ) : key_( o.key_ ) {}
 
         virtual ~AbstractResourceUser() {}
@@ -90,15 +90,12 @@ protected:
  *  A ResourceUser can also contain a Resource that is not in a
  *  ResLib, i.e. that has no ResourceKey. So far that is only used by
  *  Stroke in case a Stroke contains a color.
+ *
  */
 template<typename Resource> class ResourceUser : public AbstractResourceUser
 {
 public:
-        ResourceUser<Resource>()
-                : AbstractResourceUser(),
-                  data_(),
-                  p_data_( 0 )
-        {}
+        ResourceUser<Resource>( const ResourceKey& key = ResLib<Resource>::defaultKey() );
 
         ResourceUser<Resource>( const Resource& r )
                 : AbstractResourceUser(),
@@ -116,6 +113,8 @@ public:
 
         //! returns a reference to the Resource data.
         const Resource& data() const;
+        operator const Resource&() const { return data(); }
+        
 
         //! sets the resource to data.
         void setResource( const Resource& data );
@@ -148,6 +147,16 @@ private:
 
 template<typename Resource>
 ResLib<Resource>& ResourceUser<Resource>::resLib_ = ResLib<Resource>::instance();
+
+
+template<typename Resource>
+ResourceUser<Resource>::ResourceUser( const ResourceKey& key )
+        : AbstractResourceUser(),
+          data_(),
+          p_data_( 0 )
+{
+        setResource( key );
+}
 
 /** Needs to add itself to the userlist in case the key is valid.
  */
@@ -230,8 +239,9 @@ void ResourceUser<Resource>::releaseResource()
 {
         if ( !key_.isValid() )
                 return;
-
-        data_ = *p_data_;
+        
+        qDebug() << "release" << key_ << p_data_;
+        data_ = p_data_ ? *p_data_ : Resource();
         unassignResource();
 }
 

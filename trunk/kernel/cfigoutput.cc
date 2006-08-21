@@ -25,9 +25,9 @@
 
 #include "cfigoutput.h"
 #include "allobjects.h"
+#include "keywords.h"
 #include "resourceio.h"
 #include "streamops.h"
-#include "valuehash.h"
 
 #include <QPolygonF>
 #include <ostream>
@@ -35,7 +35,6 @@
 
 #include <QDebug>
 
-const char* CfigOutput::objectString = "object ";
 
 void CfigOutput::outputRectangle( const Rectangle* r )
 {
@@ -106,10 +105,10 @@ void CfigOutput::outputTextObject( const TextObject* to )
 void CfigOutput::outputCompound( const Compound* cd )
 {
         const ObjectList& objects = cd->childObjects();
-        fileStream_ << "compound_begin\n";
+        fileStream_ << KWds::compound_begin() << "\n";
         foreach ( DrawObject* o, objects ) 
                 o->outputToBackend( this );
-        fileStream_ << "compound_end\n";
+        fileStream_ << KWds::compound_end() << "\n";
 }
 
 void CfigOutput::processOutput()
@@ -152,12 +151,12 @@ void CfigOutput::outputGenericData()
         const Pen& p = drawObject_->pen();
 
         if ( !drawObject_->comment().isEmpty() ) {
-                QStringList comments = drawObject_->comment().split('\n');
+                QStringList comments = drawObject_->comment().split("\n");
                 foreach ( QString s, comments ) 
-                        fileStream_ << "# " << s << '\n';
+                        fileStream_ << "# " << s << "\n";
         }
         
-        fileStream_ << "object " << drawObject_->objectKeyWord() << ' '
+        fileStream_ << KWds::object() << ' ' << drawObject_->objectKeyWord() << ' '
                     << drawObject_->points().size() << ' ';
         
         fileStream_ << p.width() << ' ' << p.dashesKey() << ' '
@@ -169,7 +168,7 @@ void CfigOutput::outputGenericData()
 void CfigOutput::outputPoints()
 {
         foreach ( QPointF p, drawObject_->points() )
-                fileStream_ << "point " << p.x() << ' ' << p.y() << "\n";
+                fileStream_ << KWds::point() << ' ' << p.x() << ' ' << p.y() << "\n";
 }
 
 void CfigOutput::outputResources()
@@ -185,11 +184,11 @@ void CfigOutput::outputResources()
 
 void CfigOutput::outputHeader()
 {
-        fileStream_ << "CuteFig version " << Fig::version << "\n"
-                    << "unit      " << figure_.unit() << "\n"
-                    << "scale     " << figure_.scale() << "\n"
-                    << "paper     " << figure_.paper() << "\n"
-                    << "end_header\n";
+        fileStream_ << KWds::CuteFig()    << ' ' << KWds::version() << ' ' << Fig::version << "\n"
+                    << KWds::unitHead()   << ' ' << figure_.unitKey() << "\n"
+                    << KWds::scale()      << ' ' << figure_.scale() << "\n"
+                    << KWds::paper()      << ' ' << figure_.paperKey() << "\n"
+                    << KWds::end_header() << "\n";
 }
 
 

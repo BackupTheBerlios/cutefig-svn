@@ -516,8 +516,8 @@ void CanvasView::setZoom_private( double z )
 
 void CanvasView::doResizing()
 {
-        QSize s = ( figure_->paper().value().pixSize() * scale_ ).toSize();
-        
+        QSize s = ( figure_->paper().size() * scale_ ).toSize();
+        qDebug() << "doResizing()" << s << figure_->paper().size() << scale_;
         if ( hRuler_ )
                 hRuler_->setLength( s.width() );
         if ( vRuler_ )
@@ -527,7 +527,7 @@ void CanvasView::doResizing()
 
 double CanvasView::paperWidth() const
 {
-        return figure_->paper().value().pixSize().width() * scale_;
+        return figure_->paper().size().width() * scale_;
 }
 
 void CanvasView::setHRuler( Ruler* r )

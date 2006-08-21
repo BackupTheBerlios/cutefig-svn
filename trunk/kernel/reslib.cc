@@ -41,8 +41,27 @@ bool AbstractResLib::containsInFigOrLib( ResourceKey& key )
                         return true;
                 }
         }
-        
-        key = ResourceKey();
 
+        key.makeInvalid();
+        
         return false;        
+}
+
+ResourceKey AbstractResLib::findKeyImpl( const QString& keyString )
+{
+        ResourceKey key;
+        
+        key = ResourceKey::builtIn( keyString );
+        if ( contains( key ) ) 
+                return key;
+
+        key = ResourceKey::inLib( keyString );
+        if ( contains( key ) )
+                return key;
+
+        key = ResourceKey::inFig( keyString );
+        if ( contains( key ) ) 
+                return key; 
+
+        return ResourceKey( keyString, ResourceKey::Invalid );
 }

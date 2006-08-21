@@ -26,7 +26,7 @@
 #define ruler_h
 
 #include "typedefs.h"
-#include "valuehash.h"
+#include "length.h"
 
 #include <QFrame>
 #include <QStringList>
@@ -55,7 +55,7 @@ public:
         void setLength( int l );   //!< Sets the length of the ruler
 
         void setScale( double s ); //!< Sets the zoom scale 
-        void setUnit( Unit u );   //!< Sets the length unit
+        void setUnit( const ResourceKey& k );   //!< Sets the length unit
 
         void setIndicating( bool indicating );
         
@@ -76,7 +76,7 @@ private:
         int value_, oldValue_;
         int length_;
         double scale_;
-        Unit unit_;
+        ResourceUser<Length> unit_;
         double tickVal_;
 
         double ticks_, subTicks_, startTick_;

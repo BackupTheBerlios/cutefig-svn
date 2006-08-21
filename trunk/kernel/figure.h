@@ -27,7 +27,8 @@
 #define figure_h
 
 #include "typedefs.h"
-#include "valuehash.h"
+#include "length.h"
+#include "paper.h"
 
 #include <QList>
 #include <QObject>
@@ -41,37 +42,6 @@ class QPainter;
 class QPointF;
 class QPoint;
 class QRectF;
-
-
-
-class Paper 
-{
-public:
-        Paper() : unit_(), size_() {}
-        Paper( const QSizeF& size, const Unit& unit )
-                : unit_( unit ),
-                  size_( size )
-        {}
-
-        Paper( const Paper& other )
-                : unit_( other.unit_ ),
-                  size_( other.size_ )
-        {}
-
-        QSizeF pixSize() const { return size_ * unit_; }
-        QSizeF size() const { return size_; }
-        Unit unit() const { return unit_; }
-        
-        Paper& operator=( const Paper& other );
-        
-        bool operator==( const Paper& other ) const
-        { return unit_ == other.unit_ && size_ == other.size_; }
-        bool operator!=( const Paper& other ) const { return ! ( *this == other ); }
-private:
-        Unit unit_;
-
-        QSizeF size_;
-};
 
 
 //! contains all DrawObject objects of a figure. It is the \e document the user is editing.
@@ -101,18 +71,45 @@ public:
         explicit Figure( QObject * parent = 0 );
         ~Figure() {};
 
+
+        //! Contains the Figures meta data
+        /** All the metadata is put into one class so that it can be
+         *  copied or referenced to easily in one statement.
+         */
+        class MetaData
+        {
+        public:
+                friend class Figure;
+                
+                MetaData() : scale_( 1 ), unit_(), paper_() {}
+                
+                double scale() const { return scale_; }
+                const ResourceUser<Length>& unit() const { return unit_; }
+                const ResourceUser<Paper>& paper() const { return paper_; }
+                
+        private:
+                double scale_;
+                ResourceUser<Length> unit_;
+                ResourceUser<Paper> paper_;
+        };
+
         //! sets the controler_ to c
         //void setControler( Controler* c ) { controler_ = c; }
 
-        //! returns the scale_ of the Figure.
-        double scale() const { return scale_; }
-        void setScale( double s ) { scale_ = s; }
+        const MetaData& metaData() const { return metaData_; }
+        void setMetaData( const MetaData& md ) { metaData_ = md; }
         
-        const Unit& unit() const { return unit_; }
-        void setUnit( const Unit& u ) { unit_ = u; }
+        //! returns the scale_ of the Figure.
+        double scale() const { return metaData_.scale_; }
+        void setScale( double s ) { metaData_.scale_ = s; }
+        
+        const Length& unit() const { return metaData_.unit_; }
+        const ResourceKey& unitKey() const { return metaData_.unit_.key(); }
+        void setUnit( const ResourceKey& k ) { metaData_.unit_.setResource( k ); }
 
-        const ValueHash<Paper>& paper() const { return paper_; }
-        void setPaper( const ValueHash<Paper>& p ) { paper_ = p; }
+        const Paper& paper() const { return metaData_.paper_; }
+        const ResourceKey& paperKey() const { return metaData_.paper_.key(); } 
+        void setPaper( const ResourceKey& k ) { metaData_.paper_.setResource( k ); }
 
         //! adds all the DrawObjects of the ObjectList l.
         void takeDrawObjects( const ObjectList& l );
@@ -151,6 +148,7 @@ public:
         //! returns the objects of the figure
         const ObjectList& objects() { return objectList_; }
 
+        
 private:
         void addObjectToDrawingList( DrawObject* o );
         void removeObjectFromDrawingList( DrawObject* o );
@@ -158,17 +156,11 @@ private:
         
         ObjectList objectList_, drawingList_;
 
+        MetaData metaData_; 
+        
         /** The scale that is used internally. Not to be mixed up with
          *  the zoom, that is only used by a CanvasView.
          */
-        double scale_;
-        Unit unit_;
-
-        ValueHash<Paper> paper_;
-        
-//        QSizeF paperSize_;
-
-//        Controler* controler_;
 };
 
 #endif

@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: cutefig.cc 114 2006-08-17 18:31:18Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,18 +22,35 @@
 **
 ******************************************************************************/
 
-#include "valuehash.h"
-#include "fig.h"
+#ifndef propdialog_h
+#define propdialog_h
 
-template<>
-const QString ValueHash<double>::defaultName()
-{
-        return "inch";
-}
+#include "editdialog.h"
+#include "figure.h"
 
-template<>
-void fillHash<double>( QHash<QString,double>& h )
+template<typename Resource> class ResourceComboBox;
+
+class PropDialog : public EditDialog
 {
-        h["inch"] = Fig::inch2pix;
-        h["cm"]   = Fig::cm2pix;
-}
+public:
+        PropDialog( Figure* f );
+
+        
+        
+private:
+        Figure* figure_;
+
+        virtual void reset();
+        virtual void accept();
+        
+        void updateValues();
+
+//        Figure::MetaData oldMetaData_;
+
+        ResourceComboBox<Length>* length_;
+        ResourceComboBox<Paper>* paper_;
+        
+};
+
+
+#endif

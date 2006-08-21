@@ -67,8 +67,13 @@ ResourceComboBox<Resource>::ResourceComboBox( QWidget* parent )
         : AbstractResourceComboBox( ResLib<Resource>::instance().keys(), parent )
 {
         ResLib<Resource>& rl = ResLib<Resource>::instance();
-        foreach( ResourceKey key , keys_ ) 
-                addItem( QIcon( new ResourceIconEngine<Resource>( rl[key] ) ), QString() );
+        foreach ( ResourceKey key , keys_ ) {
+                AbstractResourceIconEngine* eng = IconEngineFactory<Resource>::orderEngine( rl[key] );
+                if ( eng )
+                        addItem( QIcon( eng ), QString() );
+                else
+                        addItem( key.keyString() );
+        }
 
         init();
 }

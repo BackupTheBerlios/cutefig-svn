@@ -132,3 +132,34 @@ void ResourceIconEngine<ArrowPainter*>::paintForeground( QPainter* p, const QRec
         p->drawLine( pos, QPointF( r.width() *.9, r.height() / 2 ) ); 
 }
 
+
+//class Length;
+//class Paper;
+
+#include "length.h"
+#include "paper.h"
+
+// template<>
+// void ResourceIconEngine<Length>::paintForeground( QPainter* p, const QRect& r )
+// {
+// }
+
+// template<>
+// void ResourceIconEngine<Paper>::paintForeground( QPainter* p, const QRect& r )
+// {
+// }
+
+// template<>
+// AbstractResourceIconEngine* IconEngineFactory<Length>::orderEngine( const Length& )
+// {
+//         qDebug() << "orderEngine<Length>";
+        
+//         return 0;
+// }
+
+// template<>
+// AbstractResourceIconEngine* IconEngineFactory<Paper>::orderEngine( const Paper& )
+// {
+//         qDebug() << "orderEngine<Paper>";
+//         return 0;
+// }

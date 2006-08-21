@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: cutefig.cc 114 2006-08-17 18:31:18Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,47 +22,49 @@
 **
 ******************************************************************************/
 
-#include "layouter.h"
-
-#include <QString>
-#include <QLayout>
-#include <QLabel>
+#include "paper.h"
 
 #include <QDebug>
 
-
-Layouter::Layouter( QBoxLayout* layout )
-        : layout_( layout )
+Paper::Paper()
+        : size_( QSizeF( 8.5, 11 ) ),
+          unit_( ResourceKey::builtIn("inch") )
 {
 }
 
-Layouter& Layouter::labeledWidget( const QString& text, QWidget* widget )
+Paper::Paper( QSizeF size, const ResourceKey& key )
+        : size_( size ),
+          unit_( key )
 {
-        QLabel* label = new QLabel( text, widget->parentWidget() );
-        label->setBuddy( widget );
-        layout_->addWidget( label );
-        layout_->addWidget( widget );
-
-        return *this;
 }
 
-Layouter& Layouter::stretch( int stretch )
+Paper::Paper( const Paper& other )
+        : size_( other.size_ ),
+          unit_( other.unit_ )
 {
-        layout_->addStretch( stretch );
-        return *this;
 }
 
-void Layouter::finishTo( QBoxLayout* target )
+QSizeF Paper::size() const
 {
-        target->addLayout( layout_ );
+        return size_ * unit_.data();
 }
 
-void Layouter::finishTo( QBoxLayout* target, int index )
+template<>
+void ResLib<Paper>::init()
 {
-        target->insertLayout( index, layout_ );
+        insertBuiltIn( "Letter", Paper( QSizeF( 8.5, 11 ), ResourceKey::builtIn("inch") ) );
+        insertBuiltIn( "ISO A4", Paper( QSizeF( 210, 297 ), ResourceKey::builtIn("mm") ) );
 }
 
-void Layouter::finishTo( QGridLayout* target, int row, int col )
+template<>
+ResourceKey ResLib<Paper>::defaultKey()
 {
-        target->addLayout( layout_, row, col );
+        return ResourceKey::builtIn("Letter");
 }
+
+
+namespace Res
+{
+        template<> const QString resourceName<Paper>() { return "paper"; } 
+}
+

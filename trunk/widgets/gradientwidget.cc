@@ -46,6 +46,8 @@ public:
         //! Takes a reference to the GradientWidget.
         UIHandler( GradientWidget* w ) : s( w ) {}
 
+        virtual ~UIHandler() {}
+
         void setGradWidget( GradientWidget* w ) { s = w; }
         //! Called when the user clicks at a certain point.
         /*! Supposed to return true when a mouse dragging follows.

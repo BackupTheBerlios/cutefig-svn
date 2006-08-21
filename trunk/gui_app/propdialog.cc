@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: cutefig.cc 114 2006-08-17 18:31:18Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,47 +22,47 @@
 **
 ******************************************************************************/
 
+#include "propdialog.h"
 #include "layouter.h"
+#include "resourcecombobox.h"
 
-#include <QString>
 #include <QLayout>
-#include <QLabel>
 
 #include <QDebug>
 
 
-Layouter::Layouter( QBoxLayout* layout )
-        : layout_( layout )
+PropDialog::PropDialog( Figure* f )
+        : figure_( f )
 {
+        length_ = new ResourceComboBox<Length>( this );
+        paper_ = new ResourceComboBox<Paper>( this );
+
+        Layouter( new QHBoxLayout() )
+                .labeledWidget( tr("Unit length"), length_ )
+                .stretch()
+                .labeledWidget( tr("Paper format"), paper_ )
+                .finishTo( dialogLayout_, 0 );
+
+        updateValues();
 }
 
-Layouter& Layouter::labeledWidget( const QString& text, QWidget* widget )
+void PropDialog::reset()
 {
-        QLabel* label = new QLabel( text, widget->parentWidget() );
-        label->setBuddy( widget );
-        layout_->addWidget( label );
-        layout_->addWidget( widget );
-
-        return *this;
+//        figure_->setMetaData( oldMetaData_ );
+        updateValues();
 }
 
-Layouter& Layouter::stretch( int stretch )
+void PropDialog::updateValues()
 {
-        layout_->addStretch( stretch );
-        return *this;
+        const Figure::MetaData& md = figure_->metaData();
+        length_->setCurrentKey( md.unit().key() );
+        paper_->setCurrentKey( md.paper().key() );
 }
 
-void Layouter::finishTo( QBoxLayout* target )
+void PropDialog::accept()
 {
-        target->addLayout( layout_ );
-}
+        figure_->setUnit( length_->currentKey() );
+        figure_->setPaper( paper_->currentKey() );
 
-void Layouter::finishTo( QBoxLayout* target, int index )
-{
-        target->insertLayout( index, layout_ );
-}
-
-void Layouter::finishTo( QGridLayout* target, int row, int col )
-{
-        target->addLayout( layout_, row, col );
+        QDialog::accept();
 }

@@ -24,11 +24,6 @@
 
 #include "resourcekey.h"
 #include "figure.h"
-#include "valuehash.h"
-// #include "pen.h"
-// #include "stroke.h"
-// #include "reslib.h"
-// #include "strokelib.h"
 
 #include <QString>
 #include <QColor>
@@ -108,18 +103,36 @@ std::istream& operator>> ( std::istream& is, QSizeF& size )
         return is;
 }
 
-
-std::istream& operator>> ( std::istream& is, Paper& paper )
+std::istream& operator>> ( std::istream &is, ResourceKey& key )
 {
-        Unit u;
-        QSizeF s;
+        char c;
+        do
+                c = is.get();
+        while ( isspace(c) );
 
-        is >> u >> s;
-
-        paper = Paper( s,u );
-
+        if ( c == '%' ) {
+                key = ResourceKey();
+                return is;
+        }
+                
+        QString keyString;
+        is >> keyString;
+        
+        switch ( c ) {
+            case '&':
+                    key = ResourceKey::builtIn( keyString );
+                    break;
+            case '*':
+                    key = ResourceKey::inFig( keyString );
+                    break;
+            default:
+                    is.setstate( is.rdstate() | std::istream::failbit );
+                    key = ResourceKey();
+        }
+        
         return is;
 }
+
 
 
 
@@ -161,11 +174,5 @@ std::ostream& operator<< ( std::ostream& ts, const QColor& c )
 std::ostream& operator<< ( std::ostream& ts, const QSizeF& s ) 
 {
         ts << s.width() << ' ' << s.height();
-        return ts;
-}
-
-std::ostream& operator<< ( std::ostream& ts, const Paper& p )
-{
-        ts << p.unit().name() << ' ' << p.size();
         return ts;
 }

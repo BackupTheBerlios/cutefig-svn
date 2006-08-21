@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id$
+**  @version $Id: cutefig.cc 114 2006-08-17 18:31:18Z joh $
 **
 **  This file is part of CuteFig
 **
@@ -22,47 +22,31 @@
 **
 ******************************************************************************/
 
-#include "layouter.h"
+#ifndef paper_h
+#define paper_h
 
-#include <QString>
-#include <QLayout>
-#include <QLabel>
+#include "length.h"
 
-#include <QDebug>
+#include <QSizeF>
 
 
-Layouter::Layouter( QBoxLayout* layout )
-        : layout_( layout )
+class Paper
 {
-}
+public:
+        Paper();
+        Paper( QSizeF size, const ResourceKey& key );
+        Paper( const Paper& other );
 
-Layouter& Layouter::labeledWidget( const QString& text, QWidget* widget )
-{
-        QLabel* label = new QLabel( text, widget->parentWidget() );
-        label->setBuddy( widget );
-        layout_->addWidget( label );
-        layout_->addWidget( widget );
+        QSizeF size() const;
+        QSizeF sizeInUnit() const { return size_; }
 
-        return *this;
-}
+private:
+        QSizeF size_;
+        ResourceUser<Length> unit_;
+};
 
-Layouter& Layouter::stretch( int stretch )
-{
-        layout_->addStretch( stretch );
-        return *this;
-}
+inline
+unsigned int qHash( const Paper& ) { return 0; }
 
-void Layouter::finishTo( QBoxLayout* target )
-{
-        target->addLayout( layout_ );
-}
 
-void Layouter::finishTo( QBoxLayout* target, int index )
-{
-        target->insertLayout( index, layout_ );
-}
-
-void Layouter::finishTo( QGridLayout* target, int row, int col )
-{
-        target->addLayout( layout_, row, col );
-}
+#endif

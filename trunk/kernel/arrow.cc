@@ -23,45 +23,10 @@
 ******************************************************************************/
 
 #include "arrow.h"
+#include "reslib.h"
 
 #include <QPainter>
 
-Arrow::Arrow( ArrowPainter* ap, double l, double w )
-        : arrowPainter_( ap ),
-          width_( w ),
-          length_( l )
-{    
-}
-
-Arrow::Arrow( const ResourceKey& k, double w, double l )
-        : arrowPainter_(),
-          width_( w ),
-          length_( l )
-{
-        arrowPainter_.setResource( k );
-}
-
-Arrow& Arrow::operator= ( const Arrow& other )
-{
-        width_ = other.width_;
-        length_ = other.length_;
-        
-        arrowPainter_ = other.arrowPainter_;
-
-        return *this;
-}
-
-void Arrow::draw( const QPointF& pos, const QPointF& angle, QPainter* p ) const
-{
-        if ( arrowPainter_.data() )
-                arrowPainter_.data()->draw( pos, angle, p, width_, length_ );
-}
-
-
-bool Arrow::isValid() const
-{
-        return arrowPainter_.data();
-}
 
 class StandardArrowPainter : public ArrowPainter 
 {
@@ -115,9 +80,6 @@ public:
         p->setBrush( b );
 }
 
-        
-
-#include "reslib.h"
 
 template<>
 void ResLib<ArrowPainter*>::init()
@@ -129,6 +91,54 @@ void ResLib<ArrowPainter*>::init()
         insertBuiltIn( "STD", new StandardArrowPainter() );
         insertBuiltIn( "dot", new DotEndArrowPainter() );
 }
+
+template<>
+ResourceKey ResLib<ArrowPainter*>::defaultKey()
+{
+        return ResourceKey::builtIn("STD");
+}
+
+
+
+Arrow::Arrow( ArrowPainter* ap, double l, double w )
+        : arrowPainter_( ap ),
+          width_( w ),
+          length_( l )
+{    
+}
+
+Arrow::Arrow( const ResourceKey& k, double w, double l )
+        : arrowPainter_(),
+          width_( w ),
+          length_( l )
+{
+        arrowPainter_.setResource( k );
+}
+
+Arrow& Arrow::operator= ( const Arrow& other )
+{
+        width_ = other.width_;
+        length_ = other.length_;
+        
+        arrowPainter_ = other.arrowPainter_;
+
+        return *this;
+}
+
+void Arrow::draw( const QPointF& pos, const QPointF& angle, QPainter* p ) const
+{
+        if ( arrowPainter_.data() )
+                arrowPainter_.data()->draw( pos, angle, p, width_, length_ );
+}
+
+
+bool Arrow::isValid() const
+{
+        return arrowPainter_.data();
+}
+
+        
+
 
 // uint qHash( const Arrow& a ) 
 // {

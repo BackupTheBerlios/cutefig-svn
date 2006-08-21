@@ -25,7 +25,6 @@
 
 #include "ruler.h"
 #include "cutefig.h"
-#include "vhashmenu.h"
 
 #include <cmath>
 #include <QPaintEvent>
@@ -68,9 +67,9 @@ void Ruler::setScale( double s )
         updateRuler();
 }
 
-void Ruler::setUnit( Unit u )
+void Ruler::setUnit( const ResourceKey& k )
 {
-        unit_ = u;
+        unit_.setResource( k );
         calcTickMarks();
         updateRuler();
 }
@@ -79,7 +78,7 @@ void Ruler::setUnit( Unit u )
  */
 void Ruler::calcTickMarks()
 {
-        double u = unit_ * scale_;
+        double u = unit_.data() * scale_;
         double t = 1/u;
 
         while ( u > 50.0 ) u /= 2.0;
@@ -241,5 +240,4 @@ void Ruler::setStart( int v )
 
 void Ruler::contextMenuEvent( QContextMenuEvent* )
 {
-        setUnit( ValueHashMenu<double>::getValue( unit_ ) );
 }

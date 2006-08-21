@@ -8,10 +8,21 @@ CONFIG += staticlib
 
 # Input
 HEADERS += fig.h \
+           allobjects.h \
+           keywords.h \
            typedefs.h \
-           valuehash.h \
+           length.h \
+           paper.h \
            geometry.h \
-           figure.h \
+           figure.h \  
+           resourcekey.h \
+           resourceuser.h \
+           reslib.h \
+           initialiser.h \
+           streamops.h \
+           resourceio.h \
+           parser.h \
+           cfigoutput.h \
            drawobject.h \
            compound.h \
            rectangloid.h \
@@ -27,20 +38,23 @@ HEADERS += fig.h \
            pen.h \
            stroke.h \
            gradient.h \
-           resourcekey.h \
-           resourceuser.h \
-           reslib.h \
-           initialiser.h \
-           streamops.h \
-           resourceio.h \
-           parser.h \
-           cfigoutput.h \
            outputbackend.h \
 #           xfigoutput.h \
            progutils.h 
 SOURCES += figure.cc \
-           valuehash.cc \
+           length.cc \
+           paper.cc \
            geometry.cc \
+           reslib.cc \
+           initialiser.cc \
+           resourceio.cc \
+           stdresio.cc \
+           streamops.cc \
+           parser.cc \
+           cfigoutput.cc \
+           pen.cc \
+           stroke.cc \
+           gradient.cc \
            drawobject.cc \
            compound.cc \
            rectangloid.cc \
@@ -53,16 +67,6 @@ SOURCES += figure.cc \
            textobject.cc \
            arrow.cc \
            objecthandler.cc \
-           pen.cc \
-           stroke.cc \
-           gradient.cc \
-           reslib.cc \
-           initialiser.cc \
-           resourceio.cc \
-           stdresio.cc \
-           streamops.cc \
-           parser.cc \
-           cfigoutput.cc \
 #           xfigoutput.cc \
            progutils.cc
 

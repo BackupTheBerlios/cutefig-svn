@@ -25,15 +25,22 @@
 #ifndef keywords_h
 #define keywords_h
 
-namespace KWds
+struct KWds
 {
-        const char* appName   = "CuteFig";
-        const char* version   = "version";
-        const char* endHeader = "end_header";
-        const char* unitHead  = "unitHead";
-        const char* scale     = "scale";
-        const char* paper     = "paper";
-}
+        static char* CuteFig() { return "CuteFig"; }
+        static char* version() { return "version"; }
+        static char* end_header() { return "end_header"; }
+        static char* unitHead() { return "unitHead"; }
+        static char* scale() { return "scale"; }
+        static char* paper() { return "paper"; }
+
+        static char* resource() { return "resource"; }
+        static char* resource_end() { return "resource_end"; }
+        static char* object() { return "object"; }
+        static char* compound_begin() { return "compound_begin"; }
+        static char* compound_end() { return "compound_end"; }
+        static char* point() { return "point"; }
+};
 
 
 #endif

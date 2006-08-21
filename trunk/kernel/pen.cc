@@ -35,6 +35,32 @@ const int NoPen = -2;
 const int SolidLine = -1;
 
 
+template<>
+ResourceKey ResLib<Dashes>::defaultKey()
+{
+        return ResourceKey::builtIn("S");
+}
+
+template<>
+void ResLib<Dashes>::init()
+{
+        typedef QVector<double> dsh;
+        insertBuiltIn( "S",           dsh() );
+        insertBuiltIn( "Dot",         dsh() << 1 << 3 );
+        insertBuiltIn( "Dash",        dsh() << 3 << 3 );
+        insertBuiltIn( "DashDot",     dsh() << 3 << 3 << 1 << 3 );
+        insertBuiltIn( "DashDotDot",  dsh() << 3 << 3 << 1 << 3 << 1 << 3 );
+        insertBuiltIn( "DashDashDot", dsh() << 3 << 3 << 3 << 3 << 1 << 3 );
+//         insertBuiltIn( "DashDotDotDot",
+//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 1 3 1 3 1 3") );
+//         insertBuiltIn( "DashDashDashDot",
+//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 3 3 3 3 1 3") );
+//         insertBuiltIn( "DashDashDotDot",
+//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 3 3 1 3 1 3") );
+}
+
+
+
 Pen::Pen() 
         : lineWidth_( 1. ),
           capStyle_( Qt::FlatCap ),
@@ -122,21 +148,3 @@ int qHash( const Dashes& dashes )
         return qHash( data );
 }
 
-
-template<>
-void ResLib<Dashes>::init()
-{
-        typedef QVector<double> dsh;
-        insertBuiltIn( "S",           dsh() );
-        insertBuiltIn( "Dot",         dsh() << 1 << 3 );
-        insertBuiltIn( "Dash",        dsh() << 3 << 3 );
-        insertBuiltIn( "DashDot",     dsh() << 3 << 3 << 1 << 3 );
-        insertBuiltIn( "DashDotDot",  dsh() << 3 << 3 << 1 << 3 << 1 << 3 );
-        insertBuiltIn( "DashDashDot", dsh() << 3 << 3 << 3 << 3 << 1 << 3 );
-//         insertBuiltIn( "DashDotDotDot",
-//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 1 3 1 3 1 3") );
-//         insertBuiltIn( "DashDashDashDot",
-//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 3 3 3 3 1 3") );
-//         insertBuiltIn( "DashDashDotDot",
-//                        TResourceIO<Dashes>::parseResource( QString(), "3 3 3 3 1 3 1 3") );
-}

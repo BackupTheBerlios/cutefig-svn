@@ -31,6 +31,7 @@ class ExportFilter;
 class FilterFactory
 {
 public:
+        virtual ~FilterFactory() {}
         virtual ExportFilter* filter() = 0;
         virtual ExportDialog* dialog( ExportFilter* filter, QWidget* parent=0 ) = 0;
 };

@@ -29,6 +29,18 @@
 
 class QVBoxLayout;
 
+//! Provides a dialog with three standard buttons at the bottom
+/** To edit the properties of some object I need a dialog with three
+ *  standard buttons at the bottom. These are "Ok" "Cancel" and "Reset"
+ *
+ *  The buttons "Ok" and "Cancel" are connected to the standart slots
+ *  of QDialog which are QDialog::accept() and QDialog::reject(). The
+ *  button "Reset" is connected to the pure virtual slot reset() which
+ *  is to be implemented by the actual dialog.
+ *
+ *  The widgets needed by the actual dialog can be put into
+ *  dialogLayout_
+ */
 class EditDialog : public QDialog
 {
         Q_OBJECT

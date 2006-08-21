@@ -62,11 +62,14 @@ public:
         virtual void save( ResourceIO* rio, std::ostream& ts ) = 0;
 
         virtual bool contains( const ResourceKey& key ) const =0;
+
         
 protected:
         AbstractResLib() {};
 
         bool containsInFigOrLib( ResourceKey& key );
+
+        ResourceKey findKeyImpl( const QString& keyString );
         
 private:
         AbstractResLib( const AbstractResLib& );
@@ -113,7 +116,7 @@ public:
 
         //! true if ResLib contains a resource of the key key
         bool contains( const ResourceKey& key ) const { return map_.contains( key ); }
-
+                
         //! true if the Resource of key is used by a ResourceUser
         bool isBeingUsed( const ResourceKey& key ) const { return !map_[key]->users.isEmpty(); }
 
@@ -139,6 +142,10 @@ public:
         void unassignResource( const ResourceKey& key, AbstractResourceUser* u );
 
         void save( ResourceIO* rio, std::ostream& ts );
+
+        static ResourceKey findKey( const QString& ks ) { return instance().findKeyImpl( ks ); }
+
+        static ResourceKey defaultKey();
         
 private:
         /*! Private to enforce singularity according to the Singleton
@@ -342,6 +349,9 @@ void ResLib<Resource>::save( ResourceIO* rIO, std::ostream& ts )
                         rIO->outputResource( key, ts );
 }
 
+
+// template<typename Resource>
+// ResourceKey ResLib<Resource>::findKey( const QString& keyString )
 
 //! Contains the data of the Resource, the hash sum and the user list.
 /** and keeps all consistent

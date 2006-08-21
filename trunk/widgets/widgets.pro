@@ -34,8 +34,7 @@ HEADERS = paintutils.h \
           resourcedialog.h \
           gradienteditor.h \
           resourcemodel.h \
-          reslibeditor.h \
-          vhashmenu.h
+          reslibeditor.h
 
 
 SOURCES = paintutils.cc \
