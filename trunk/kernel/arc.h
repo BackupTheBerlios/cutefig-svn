@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id: bezierspline.cc 110 2006-05-04 20:38:38Z joh $
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **

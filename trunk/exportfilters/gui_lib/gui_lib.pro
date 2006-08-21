@@ -1,4 +1,4 @@
-# @version $Id: exportfilters.pro 8 2005-06-21 06:30:27Z joh $
+# @version $Id$
 
 TEMPLATE = lib
 
