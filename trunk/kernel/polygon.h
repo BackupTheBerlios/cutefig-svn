@@ -42,7 +42,7 @@ public:
 private:
         virtual void setupPainterPath();
 
-        virtual void outputToBackend( OutputBackend* ob );
+        virtual void outputToBackend( OutputBackend* ob ) const;
         
 };
 

@@ -38,7 +38,7 @@ public:
 
         virtual int minPoints() const { return 4; }
 
-        virtual void outputToBackend( OutputBackend* ob );
+        virtual void outputToBackend( OutputBackend* ob ) const;
 
         void drawMetaData( QPainter* p ) const;
 

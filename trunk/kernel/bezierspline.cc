@@ -97,7 +97,7 @@ BezierSpline::BezierSpline( const BezierSpline* other )
 }
 
                 
-void BezierSpline::outputToBackend( OutputBackend *ob )
+void BezierSpline::outputToBackend( OutputBackend* ob ) const
 {
         ob->outputBezierSpline( this );
 }

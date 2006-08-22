@@ -281,7 +281,7 @@ public:
         
         //! supposed to pass all the data to the OubputBackend ob.
         /*! This is to be done by calling ob->output<DerivedClass>(). */
-        virtual void outputToBackend( OutputBackend* ob ) = 0;
+        virtual void outputToBackend( OutputBackend* ob ) const = 0;
 
         //! used to sort the DrawObjects according to their #depth_
         static bool isLessThan( const DrawObject* o1, const DrawObject* o2 )

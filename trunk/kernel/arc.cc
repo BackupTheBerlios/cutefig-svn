@@ -48,7 +48,7 @@ Arc::Arc( const Arc* other )
 }
 
 
-void Arc::outputToBackend( OutputBackend* ob )
+void Arc::outputToBackend( OutputBackend* ob ) const
 {
         ob->outputArc( this );
 }

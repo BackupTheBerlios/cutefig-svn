@@ -77,7 +77,7 @@ public:
         virtual void draw( QPainter* p ) const;
         virtual void drawTentative( QPainter* p ) const;
         
-        virtual void outputToBackend( OutputBackend* ob );
+        virtual void outputToBackend( OutputBackend* ob ) const;
         
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 

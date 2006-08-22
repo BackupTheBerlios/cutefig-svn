@@ -60,7 +60,7 @@ Fig::PointFlags calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m );
 /**
  * The constructor needs a Controler and a figure as parameter.
  */
-CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
+CanvasView::CanvasView( Controler* c, const Figure* f,  CuteFig* parent )
         : QWidget( parent ),
           ViewBase( c, f ),
           mainWindow_( parent ),
@@ -76,7 +76,6 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
 {
         setFocusPolicy( Qt::StrongFocus );
         offset_ = QPoint( 0,0 );
-//        setAttribute( Qt::WA_NoBackground );
         setAttribute( Qt::WA_InputMethodEnabled );
         setAttribute( Qt::WA_KeyCompression );
         setAttribute( Qt::WA_NoSystemBackground );
@@ -85,8 +84,6 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
         doResizing();
         setGridWidth( .5 );
         setSnapWidth( 1.0 );
-
-//        updateFigure();
 }
 
 void CanvasView::mouseDoubleClickEvent( QMouseEvent* e )
@@ -360,8 +357,13 @@ void CanvasView::paintEvent( QPaintEvent * e )
         
         p.setRenderHint( QPainter::Antialiasing, true );
         p.setMatrix( scaleMatrix_ );
-        
-        figure_->drawElements( &p, controler_->backups() );
+
+        foreach( const DrawObject* o, figure_->objectsToBeDrawn() ) 
+                if ( !controler_->backups().contains( const_cast<DrawObject*>(o->ancestor()) ) &&
+                     e->region().contains( o->boundingRect().toRect() ) ) 
+                        o->draw( &p );
+
+
         p.setBrush( Qt::NoBrush );
         p.setPen( QPen() );
 

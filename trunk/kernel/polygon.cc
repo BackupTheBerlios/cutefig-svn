@@ -42,7 +42,7 @@ Polygon::Polygon( const Polygon* o )
         getReadyForDraw();
 }
 
-void Polygon::outputToBackend( OutputBackend* ob )
+void Polygon::outputToBackend( OutputBackend* ob ) const
 {
         ob->outputPolygon( this );
 }

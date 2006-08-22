@@ -155,19 +155,17 @@ DrawObject* Figure::findContainingObject( const QPointF& p ) const
  *  in backups. These are drawn while drawing the Selection.
  *  I know about the uglieness of const_cast. Any better ideas?
  */
-void Figure::drawElements( QPainter* p, const ObjectList& backups ) const
+void Figure::drawElements( QPainter* p ) const
 {
-        foreach ( DrawObject* o, drawingList_ ) 
-                if ( !backups.contains( const_cast<DrawObject*>(o->ancestor()) ) &&
-                     p->clipRegion().contains( o->boundingRect().toRect() ) ) 
-                        o->draw( p );
+        foreach ( const DrawObject* o, drawingList_ )
+                o->draw( p );        
 } 
 
 /*! Outputs the DrawObjects to the OutputBackend ob.
  */
 void Figure::outputObjects( OutputBackend* ob ) const
 {
-        foreach ( DrawObject* o, objectList_ )
+        foreach ( const DrawObject* o, objectList_ )
                 o->outputToBackend( ob );
 }
 
@@ -204,7 +202,7 @@ const ResourceSet Figure::usedResources() const
 {
         ResourceSet resSet;
 
-        foreach ( DrawObject* o, drawingList_ ) {
+        foreach ( const DrawObject* o, drawingList_ ) {
                 ResourceSet rs = o->usedResources();
 
                 for ( ResourceSet::const_iterator it = rs.begin(); it != rs.end(); ++it ) {

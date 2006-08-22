@@ -90,7 +90,7 @@ public:
         
         virtual void cursorMove( const QPointF& pos );
         
-        virtual void outputToBackend( OutputBackend* ob );
+        virtual void outputToBackend( OutputBackend* ob ) const;
 
         virtual void setCurrentPointIndex( int i );
 

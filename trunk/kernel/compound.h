@@ -62,7 +62,7 @@ public:
         virtual void releaseResources();
         virtual void reclaimResources();
 
-        virtual void outputToBackend( OutputBackend* ob );
+        virtual void outputToBackend( OutputBackend* ob ) const;
 
         const ObjectList& childObjects() const { return childObjects_; }
 

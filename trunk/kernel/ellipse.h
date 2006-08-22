@@ -48,7 +48,7 @@ public:
         bool isCircle() const { return circle_; }
         bool isSpecifiedByRadii() const { return specByRadii_; }
 
-        virtual void outputToBackend( OutputBackend* ob );
+        virtual void outputToBackend( OutputBackend* ob ) const;
         
 
 public slots:

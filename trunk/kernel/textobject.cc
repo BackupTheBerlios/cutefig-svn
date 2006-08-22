@@ -69,7 +69,7 @@ TextObject::~TextObject()
         delete textLayout_;
 }
 
-void TextObject::outputToBackend( OutputBackend* ob )
+void TextObject::outputToBackend( OutputBackend* ob ) const
 {
         ob->outputTextObject( this );
 }

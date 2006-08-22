@@ -36,7 +36,7 @@ class QPainter;
 class ViewBase
 {
 public:
-        ViewBase( Controler* c, Figure* f ) 
+        ViewBase( Controler* c, const Figure* f ) 
                 : controler_( c ),
                   figure_( f )
         {}
@@ -53,7 +53,7 @@ public:
         
 protected:
         Controler* controler_;
-        Figure* figure_;
+        const Figure* figure_;
 };
 
 #endif

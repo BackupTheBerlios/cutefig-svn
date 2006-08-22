@@ -93,7 +93,7 @@ void Compound::move( const QPointF& d )
         getReadyForDraw();
 }
 
-void Compound::outputToBackend( OutputBackend* ob )
+void Compound::outputToBackend( OutputBackend* ob ) const
 {
         ob->outputCompound( this );
 }

@@ -85,7 +85,7 @@ bool Polyline::pointHitsOutline( const QPointF& p, qreal tolerance ) const
         return false;
 }
 
-void Polyline::outputToBackend( OutputBackend* ob )
+void Polyline::outputToBackend( OutputBackend* ob ) const
 {
         ob->outputPolyline( this );
 }

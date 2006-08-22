@@ -69,7 +69,7 @@ bool Rectangle::pointHitsOutline( const QPointF& p, qreal tol ) const
         return false;
 }                              
 
-void Rectangle::outputToBackend( OutputBackend* ob )
+void Rectangle::outputToBackend( OutputBackend* ob ) const
 {
         ob->outputRectangle( this );
 }

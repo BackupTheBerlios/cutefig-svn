@@ -124,7 +124,7 @@ public:
         void sortObjects(); 
 
         //! draws all DrawObjects exept the bakups
-        void drawElements( QPainter* p, const ObjectList& backups = ObjectList() ) const; 
+        void drawElements( QPainter* p ) const; 
 
         //! returns a pointer tho the DrawObject under the point p
         DrawObject* findContainingObject( const QPointF& p  ) const;
@@ -146,7 +146,10 @@ public:
         const ResourceSet usedResources() const;
         
         //! returns the objects of the figure
-        const ObjectList& objects() { return objectList_; }
+        const ObjectList& objects() const { return objectList_; }
+
+
+        const ObjectList& objectsToBeDrawn() const { return drawingList_; }
 
         
 private:

@@ -123,7 +123,7 @@ void Ellipse::passPointFlag_private( Fig::PointFlags f )
         specByRadii_ = specByRadii_ || ( f & Fig::Special2 );
 }
 
-void Ellipse::outputToBackend( OutputBackend* ob )
+void Ellipse::outputToBackend( OutputBackend* ob ) const
 {
         ob->outputEllipse( this );
 }

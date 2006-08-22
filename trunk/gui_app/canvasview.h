@@ -56,7 +56,7 @@ class CanvasView : public QWidget, public ViewBase
         Q_OBJECT
 public:
         //! The constructor needs a Controler \param c and a Figure \param f.
-        CanvasView( Controler* c, Figure* f, CuteFig * parent =0 );
+        CanvasView( Controler* c, const Figure* f, CuteFig * parent =0 );
 
         ~CanvasView() { }
 

@@ -37,7 +37,7 @@ public:
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
-        virtual void outputToBackend( OutputBackend* ob );
+        virtual void outputToBackend( OutputBackend* ob ) const;
 
 private:
         virtual void passPointFlag_private( Fig::PointFlags ) {}
