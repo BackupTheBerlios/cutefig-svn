@@ -158,7 +158,8 @@ DrawObject* Figure::findContainingObject( const QPointF& p ) const
 void Figure::drawElements( QPainter* p, const ObjectList& backups ) const
 {
         foreach ( DrawObject* o, drawingList_ ) 
-                if ( !backups.contains( const_cast<DrawObject*>(o->ancestor()) ) )
+                if ( !backups.contains( const_cast<DrawObject*>(o->ancestor()) ) &&
+                     p->clipRegion().contains( o->boundingRect().toRect() ) ) 
                         o->draw( p );
 } 
 

@@ -4,7 +4,7 @@ TARGET = cutefig
 CONFIG += thread #assistant 
 TEMPLATE = app
 
-#QT+=qt3support
+#QT += opengl
 
 include(../cutefig_base.pri)
 

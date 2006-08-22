@@ -35,6 +35,7 @@
 #include "controler.h"
 
 #include <QPixmap>
+//#include <QGLWidget>
 #include <QScrollArea>
 #include <QPaintEvent>
 #include <QPainter>
@@ -50,8 +51,7 @@ class QRectF;
 
 typedef QList<InteractiveAction*> ActionList;
 
-class CanvasView : public QWidget, public ViewBase 
-
+class CanvasView : public QWidget, public ViewBase
 {
         Q_OBJECT
 public:
@@ -123,8 +123,6 @@ protected:
         virtual void leaveEvent( QEvent* e );
         
 private:
-        void updateFigureImediately();
-        
         void drawPaper( QPainter* p ); //!< draws the paper
         void drawGrid( QPainter* p );  //!< draws the snap grid
         QRect snapRect(); //!< emphesizes the point snaped to
@@ -139,6 +137,8 @@ private:
         //!< snaps p to the grid if the oldsnappoint_ is different from p
 
         void handleReturnHit();
+
+        QRegion drawingRegion() const;
 
         CuteFig* mainWindow_;
 
@@ -156,7 +156,7 @@ private:
         QSizeF paperSize_;
 
         QPoint offset_;
-        QRect oldRect_;
+        QRegion oldRegion_;
 
         QPoint snapPoint_, oldSnapPoint_;
         bool snapped_;

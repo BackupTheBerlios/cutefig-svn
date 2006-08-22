@@ -199,7 +199,7 @@ void DrawObject::getReadyForDraw()
 
 void DrawObject::setupRects()
 {
-        cRect_ = painterPath_.controlPointRect();
+        cRect_ = points_.boundingRect();
         bRect_ = pen_.pathRect( painterPath_ );
 }
 

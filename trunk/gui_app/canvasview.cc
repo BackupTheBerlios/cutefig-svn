@@ -69,7 +69,7 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
           scale_( 1 ),
           unit_( f->unit() ),
           paperSize_( f->paper().size() ),
-          oldRect_(),
+          oldRegion_(),
           oldSnapPoint_( QPoint(0,0) ),
           snapped_( false ),
           tentativeDraw_( false )
@@ -79,7 +79,8 @@ CanvasView::CanvasView( Controler* c, Figure* f,  CuteFig* parent )
 //        setAttribute( Qt::WA_NoBackground );
         setAttribute( Qt::WA_InputMethodEnabled );
         setAttribute( Qt::WA_KeyCompression );
-        
+        setAttribute( Qt::WA_NoSystemBackground );
+        setAutoFillBackground( false );
         setMouseTracking( true );
         doResizing();
         setGridWidth( .5 );
@@ -230,10 +231,10 @@ bool CanvasView::event( QEvent* e )
                         ke->accept();
         }
 
-        if ( e->type() == QEvent::User ) {
-                updateFigureImediately();
-                return true;
-        }
+//         if ( e->type() == QEvent::User ) {
+//                 updateFigureImediately();
+//                 return true;
+//         }
 
         return QWidget::event( e );
 }
@@ -306,54 +307,66 @@ void CanvasView::drawSelection( QPainter* p ) const
 void CanvasView::updateFigure( bool tentative )
 {
         tentativeDraw_ = tentative;
-        QApplication::postEvent( this, new QEvent( QEvent::User ) );
-}
 
-// redraws the whole figure
-//
-void CanvasView::updateFigureImediately()
-{        
-        if ( !tentativeDraw_ ) {
-                QPainter p;
-                QPixmap b( size() );
-                p.begin( &b );
-                drawPaper( &p );
-                drawGrid( &p );
-                p.setRenderHint( QPainter::Antialiasing, true );
-                p.setMatrix( scaleMatrix_ );
-                figure_->drawElements( &p, controler_->backups() );
-                p.end();
+        QRegion clipRegion = drawingRegion();
 
-                QPalette pal;
-                pal.setBrush( QPalette::Window, b );
-                setPalette( pal );
-        }
+        if ( snapped_ ) 
+                clipRegion |= snapRect();
 
-        if ( !controler_->selectedObjects().isEmpty() ) {
-                QRect r = scaleMatrix_.mapRect( controler_->selection().boundingRect().toRect() );
-                update();// r | oldRect_ );
-                oldRect_ = r;
-        }
-        else {
+        clipRegion |= oldRegion_;
+        oldRegion_ = clipRegion;
+                
+        if ( clipRegion.isEmpty()  )
                 update();
-                oldRect_ = QRect();
-        }
+        else
+                update( clipRegion );
 }
+
+
+QRegion CanvasView::drawingRegion() const
+{
+        QRegion region;
+        
+        foreach ( DrawObject* o, controler_->selection().objects() ) {
+                QRect r = scaleMatrix_.mapRect( o->controlPointRect() ).toRect();
+                r.setLeft( r.left()-3 );
+                r.setRight( r.right()+3 );
+                r.setTop( r.top()-3 );
+                r.setBottom( r.bottom()+3 );
+
+                region |= r;
+        }
+
+        return region;
+}
+
 
 void CanvasView::paintEvent( QPaintEvent * e )
 {
         const ObjectList& l = controler_->selectedObjects();
-
-        if ( l.isEmpty() && !snapped_ )
-                return;
         
         QPainter p;
         p.begin( this );
+        
+        p.setClipRegion( e->region() );
+        
+        QTime stopWatch;
+        stopWatch.start();
+
+        drawPaper(&p);
+        drawGrid(&p);
+
+        int papgrid = stopWatch.elapsed();
+        
         p.setRenderHint( QPainter::Antialiasing, true );
-        p.setClipRect( e->rect() );
-
         p.setMatrix( scaleMatrix_ );
+        
+        figure_->drawElements( &p, controler_->backups() );
+        p.setBrush( Qt::NoBrush );
+        p.setPen( QPen() );
 
+        int elements = stopWatch.elapsed() - papgrid;
+        
         if ( tentativeDraw_ ) 
                 foreach ( DrawObject* o, l ) 
                         o->drawTentative( &p );
@@ -363,7 +376,8 @@ void CanvasView::paintEvent( QPaintEvent * e )
 
         p.resetMatrix();
 
-//        drawObjectsPoints( &p );
+        int selection = stopWatch.elapsed() - elements - papgrid;
+
         controler_->drawActionMetaData( &p, this );
         
         if ( snapped_ ) {
@@ -372,6 +386,13 @@ void CanvasView::paintEvent( QPaintEvent * e )
         }
         
         p.end();
+
+        int total = stopWatch.elapsed();
+        int meta = total - selection - elements;
+        
+        qDebug() << "papgrid: " << papgrid << ", elements: " << elements
+                 << ", selection: " << selection << ", meta: " << meta
+                 << ", total: " << total;
 }
 
 void CanvasView::drawObjectsMetaData( QPainter* p, const DrawObject* o ) const
@@ -426,11 +447,7 @@ inline void CanvasView::drawGrid( QPainter* p )
 //
 QRect CanvasView::snapRect()
 {
-        QRect r;
-        r.setSize( QSize( 9,9 ) );
-        r.moveCenter( snapPoint_ );
-
-        return r;
+        return Geom::centerRect( snapPoint_, QSize( 9,9 ) );
 }
 
 
@@ -592,12 +609,11 @@ bool CanvasView::snap( QPoint & p )
         p.setX( qRound( qRound(qreal(p.x())/snapScaled_) * snapScaled_ ) );
         p.setY( qRound( qRound(qreal(p.y())/snapScaled_) * snapScaled_ ) );
 
-        bool snapped = ( p != oldSnapPoint_ );
-        
-        snapPoint_ = p;
+        bool snapped = ( p != snapPoint_ );
 
         if ( snapped ) {
                 oldSnapPoint_ = snapPoint_;
+                snapPoint_ = p;
                 snapped_ = true;
                 update();
         }
