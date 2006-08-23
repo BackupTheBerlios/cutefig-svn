@@ -36,7 +36,7 @@
 #include <QDebug>
 
 PixfilterApp::PixfilterApp( int& argc, char* argv[] )
-        : QCoreApplication( argc, argv ),
+        : QApplication( argc, argv, false ),
           format_(),
           toStdout_( false ),
           infileList_(),

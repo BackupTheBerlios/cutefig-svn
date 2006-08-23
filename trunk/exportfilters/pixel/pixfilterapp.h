@@ -24,7 +24,7 @@
 
 #include "pixoutput.h"
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
@@ -32,7 +32,7 @@
 
 class Figure;
 
-class PixfilterApp : public QCoreApplication
+class PixfilterApp : public QApplication
 {
 public:
         PixfilterApp( int& argc, char* argv[] );

@@ -49,11 +49,8 @@ public:
 
         QSize viewportSize() const { return viewport_->size(); }
 
-protected:
-        void closeEvent( QCloseEvent* );
 
-
-private slots:
+public slots:
         void init(); //! performs the initialisation that cannot be done in the constructor
         void newDoc(); //!< a new document has been opened 
         void choose(); //!< lets the user choose a document to open
@@ -65,6 +62,10 @@ private slots:
 
         void about();  //!< Displays the about box.
         void help();
+
+
+protected:
+        void closeEvent( QCloseEvent* );
 
 private:
         CanvasView *cview_;        //!< The editing view of the figure

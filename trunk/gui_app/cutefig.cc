@@ -26,6 +26,7 @@
 
 #include "cutefig.h"
 
+#include "recentfiles.h"
 #include "cfigoutput.h"
 #include "centralwidget.h"
 #include "canvasview.h"
@@ -123,6 +124,7 @@ void CuteFig::load( const QString& fileName )
                 return;
 
         filename_ = fileName;
+        RecentFiles::addFile( fileName );
         
         controler_->resetFigure();
         
@@ -144,7 +146,7 @@ void CuteFig::save()
                 saveAs();
                 return;
         }
-
+        
         std::ofstream ts( filename_.toLocal8Bit().constData() );
         if ( !ts ) {
                 statusBar()->showMessage( QString(tr("Could not write to %1"))
@@ -181,6 +183,7 @@ void CuteFig::saveAs()
                                                    "*.cig" );
         if ( !fn.isEmpty() ) {
                 filename_ = fn;
+                RecentFiles::addFile( fn );
                 save();
         } else {
                 statusBar()->showMessage( tr("Saving aborted"), 2000 );
@@ -267,16 +270,21 @@ void CuteFig::setupActions()
                 QMenu* menu = new QMenu( ac->text(), this );
                 QToolBar* toolBar = new QToolBar( ac->text(), this );
 
+                bool lastWasSep = true;
                 foreach ( QAction* a, ac->actions() ) {
                         menu->addAction( a );
                         QWidget* tbw = ac->toolBarWidget( a );
                         if ( tbw ) {
                                 tbw->setParent( toolBar );
                                 toolBar->addWidget( tbw );
-                        } else if ( !a->icon().isNull() ) 
+                                lastWasSep = false;
+                        } else if ( !a->icon().isNull() ) { 
                                 toolBar->addAction( a );
-                        else if ( a->isSeparator() )
+                                lastWasSep = false;
+                        } else if ( a->isSeparator() && !lastWasSep ) {
                                 toolBar->addSeparator();
+                                lastWasSep = true;
+                        }
                 }
 
                 if ( toolBar->actions().isEmpty() )

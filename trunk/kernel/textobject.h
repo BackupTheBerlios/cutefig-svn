@@ -35,6 +35,7 @@
 #include <QTextCursor>
 #include <QTextCharFormat>
 #include <QPixmap>
+#include <QPicture>
 #include <QList>
 
 //! The DrawObject representing text elements.
@@ -152,7 +153,7 @@ private:
         QTextDocument doc_;
         mutable QTextCursor cursor_;
         QTextCharFormat charFormat_;
-        QPixmap dummyPaintDevice_;
+        QPicture dummyPaintDevice_;
         QTextLayout* textLayout_;
         QFont font_;
         QPointF actualPoint_;

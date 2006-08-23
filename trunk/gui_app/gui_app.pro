@@ -31,6 +31,7 @@ HEADERS += cutefig.h \
            actioncollection.h \
            actions.h \
            allactions.h\
+           recentfiles.h \
            allodialogs.h\
            objectguihandler.h \
            interactiveaction.h \
@@ -69,6 +70,7 @@ SOURCES += cutefig.cc \
            selection.cc \
            actioncollection.cc \
            actions.cc \
+           recentfiles.cc \
            objectguihandler.cc \
            interactiveaction.cc \
            relativeaction.cc \

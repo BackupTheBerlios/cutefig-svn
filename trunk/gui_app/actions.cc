@@ -28,7 +28,7 @@
 #include "cutefig.h"
 #include "canvasview.h"
 #include "objectguihandler.h"
-
+#include "recentfiles.h"
 #include "zoomcombobox.h"
 
 #include <QObject>
@@ -98,6 +98,8 @@ FileActions::FileActions( CuteFig* parent )
         addAction( new PropDialogAction( parent->controler() ) );
 
         addSeparator();
+
+        RecentFiles::getActions( this, parent );
 
         QAction* close = new QAction( QIcon(":images/fileclose.png"), tr("&Close"), this );
         addAction( close );
