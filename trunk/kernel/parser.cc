@@ -156,6 +156,39 @@ QString Parser::parseMetaData()
 
                         continue;
                 }
+
+                if ( itemType_ == KWds::author() ) {
+                        QString ath;
+                        stream_ >> ath;
+                        figure_->setAuthor( ath );
+
+                        continue;
+                }
+
+                if ( itemType_ == KWds::description() ) {
+                        QString dsc;
+                        stream_ >> dsc;
+                        figure_->setDescription( dsc );
+
+                        continue;
+                }
+
+                if ( itemType_ == KWds::created() ) {
+                        QDate date;
+                        stream_ >> date;
+                        figure_->setCreationDate( date );
+
+                        continue;
+                }
+
+                if ( itemType_ == KWds::last_modified() ) {
+                        QDate date;
+                        stream_ >> date;
+                        figure_->setModificationDate( date );
+
+                        continue;
+                }
+                
         }
 
         return QString();
@@ -347,55 +380,6 @@ QPointF Parser::parsePoint()
 }
 
 
-void Parser::parseStroke( Stroke& s )
-{
-        char c;
-        do 
-                c = stream_.get();
-        while ( isspace(c) );
-
-        stream_.putback( c );
-        
-        if ( c == '#' ) {
-                QColor color;
-                if (stream_ >> color)
-                        s = Stroke( color );
-        } else {
-                ResourceKey key;
-                
-                s = Stroke();
-                if ( (stream_ >> key) && key.isValid() ) {
-                
-                        QString kw;
-                        stream_ >> kw;
-                        
-                        if ( kw == Res::resourceName<QColor>() ) 
-                                s.setColor( key );
-                        else if ( kw == Res::resourceName<Gradient>() )
-                                s.setGradient( key );
-                }
-        }
-}
-
-std::istream& operator>>( std::istream& is, Pen& pen )
-{
-        double lw;
-        ResourceKey dashKey;
-        int cs, js;
-        
-        is >> lw >> dashKey >> cs >> js;
-
-        if ( !is.fail() ) {
-                pen.setWidth( lw );
-                pen.setCapStyle( (Qt::PenCapStyle) cs );
-                pen.setJoinStyle( (Qt::PenJoinStyle) js );
-                pen.setDashes( dashKey );
-        }
-
-        return is;
-}
-
- 
 
 /** Parses the generic line of itemType_ == "object". It creates the
  *  DrawObject and sets its genereic data. Finally it returns a poiter
@@ -420,8 +404,8 @@ DrawObject * Parser::parseGenericData( int &npoints, QPolygonF*& pa )
         if ( !( stream_ >> pen ) ) 
                 parseError( tr("Invalid pen.") );
 
-        parseStroke( stroke );
-        parseStroke( fill );
+        if ( ! (stream_ >> stroke >> fill) )
+                parseError( tr("Invalid strokes, courious what happens") );
         
         if ( !( stream_ >> depth ) ) {
                 parseError( tr("Invalid depth, assuming 50") );

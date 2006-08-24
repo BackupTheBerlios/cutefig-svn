@@ -24,6 +24,8 @@
 
 #include "resourcekey.h"
 #include "figure.h"
+#include "pen.h"
+#include "stroke.h"
 
 #include <QString>
 #include <QColor>
@@ -134,6 +136,69 @@ std::istream& operator>> ( std::istream &is, ResourceKey& key )
 }
 
 
+std::istream& operator>>( std::istream& is, Pen& pen )
+{
+        double lw;
+        ResourceKey dashKey;
+        int cs, js;
+        
+        is >> lw >> dashKey >> cs >> js;
+
+        if ( !is.fail() ) {
+                pen.setWidth( lw );
+                pen.setCapStyle( (Qt::PenCapStyle) cs );
+                pen.setJoinStyle( (Qt::PenJoinStyle) js );
+                pen.setDashes( dashKey );
+        }
+
+        return is;
+}
+
+std::istream& operator>> ( std::istream &is, Stroke& s )
+{
+        char c;
+        do 
+                c = is.get();
+        while ( isspace(c) );
+
+        is.putback( c );
+        
+        if ( c == '#' ) {
+                QColor color;
+                if (is >> color)
+                        s = Stroke( color );
+        } else {
+                ResourceKey key;
+                
+                s = Stroke();
+                if ( (is >> key) && key.isValid() ) {
+                
+                        QString kw;
+                        is >> kw;
+                        
+                        if ( kw == Res::resourceName<QColor>() ) 
+                                s.setColor( key );
+                        else if ( kw == Res::resourceName<Gradient>() )
+                                s.setGradient( key );
+                }
+        }
+
+        return is;
+}
+ 
+
+std::istream& operator>> ( std::istream &is, QDate& d ) 
+{
+        QString ds;
+        is >> ds;
+        d = QDate::fromString( ds, Qt::ISODate );
+        if ( !d.isValid() && !d.isNull() )
+                is.setstate( is.rdstate() | std::istream::failbit );
+
+        return is;
+}
+
+
 
 
 //// output
@@ -175,4 +240,39 @@ std::ostream& operator<< ( std::ostream& ts, const QSizeF& s )
 {
         ts << s.width() << ' ' << s.height();
         return ts;
+}
+
+
+std::ostream& operator<< ( std::ostream& ts, const ResourceKey& key )
+{
+        if ( !key.isValid() ) {
+                ts << '%';
+                return ts;
+        }
+        
+        if ( key.isBuiltIn() )
+                ts << '&';
+        else
+                ts << '*';
+
+        ts << key.keyString();
+
+        return ts;
+}
+
+std::ostream& operator<< ( std::ostream& ts, const Stroke& st )
+{
+        if ( st.isHardColor() )
+                ts << st.color();
+        else
+                ts << st.key() << ' ' << st.typeString();
+
+        return ts;
+}
+
+
+std::ostream& operator<< ( std::ostream& os, const QDate& d ) 
+{
+        os << d.toString( Qt::ISODate );
+        return os;
 }

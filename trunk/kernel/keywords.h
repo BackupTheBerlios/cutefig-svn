@@ -34,6 +34,12 @@ struct KWds
         static char* scale() { return "scale"; }
         static char* paper() { return "paper"; }
         static char* unit() { return "unit"; }
+
+        static char* author() { return "author"; }
+        static char* description() { return "description"; }
+
+        static char* created() { return "created"; }
+        static char* last_modified() { return "last_modified"; }
         
         static char* resource() { return "resource"; }
         static char* resource_end() { return "resource_end"; }

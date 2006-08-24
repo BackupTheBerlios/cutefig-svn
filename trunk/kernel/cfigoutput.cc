@@ -30,6 +30,8 @@
 #include "streamops.h"
 
 #include <QPolygonF>
+#include <QDate>
+
 #include <ostream>
 #include <iomanip>
 
@@ -120,33 +122,6 @@ void CfigOutput::processOutput()
 }
 
 
-std::ostream& operator<< ( std::ostream& ts, const ResourceKey& key )
-{
-        if ( !key.isValid() ) {
-                ts << '%';
-                return ts;
-        }
-        
-        if ( key.isBuiltIn() )
-                ts << '&';
-        else
-                ts << '*';
-
-        ts << key.keyString();
-
-        return ts;
-}
-
-std::ostream& operator<< ( std::ostream& ts, const Stroke& st )
-{
-        if ( st.isHardColor() )
-                ts << st.color();
-        else
-                ts << st.key() << ' ' << st.typeString();
-
-        return ts;
-}
-
 void CfigOutput::outputGenericData()
 {
         const Pen& p = drawObject_->pen();
@@ -192,12 +167,24 @@ void CfigOutput::outputResources()
         fileStream_ << KWds::no_more_resources() << "\n";
 }
 
+
 void CfigOutput::outputMetaData()
 {
-        fileStream_ << KWds::unit()       << ' ' << figure_.unitKey() << "\n"
-                    << KWds::scale()      << ' ' << figure_.scale() << "\n"
-                    << KWds::paper()      << ' ' << figure_.paperKey() << "\n"
-                    << KWds::metaData_end() << "\n";
+        fileStream_ << KWds::unit()          << ' ' << figure_.unitKey() << "\n"
+                    << KWds::scale()         << ' ' << figure_.scale() << "\n"
+                    << KWds::paper()         << ' ' << figure_.paperKey() << "\n";
+        
+        const QString& ath = figure_.author();
+        if ( !ath.isEmpty() )
+                fileStream_ << KWds::author() << ' ' << figure_.author() << "\n";
+        
+        const QString& dsc = figure_.description();
+        if ( !dsc.isEmpty() )
+                fileStream_ << KWds::description() << ' ' << dsc << "\n";
+        
+        fileStream_ << KWds::created()       << ' ' << figure_.creationDate() << "\n"
+                    << KWds::last_modified() << ' ' << figure_.modificationDate() << "\n"
+                    << KWds::metaData_end()  << "\n";
 }
 
 

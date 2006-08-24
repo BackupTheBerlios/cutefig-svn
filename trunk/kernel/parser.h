@@ -89,9 +89,6 @@ private:
 
         QPointF parsePoint();
         void parseResource( ResourceKey::Flags flag );
-        void parseStroke( Stroke& stroke );
-        void parsePen( Pen& pen );
-        
 
         static QString tr( const char* source );
         

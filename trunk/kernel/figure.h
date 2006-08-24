@@ -33,6 +33,7 @@
 #include <QList>
 #include <QObject>
 #include <QSizeF>
+#include <QDate>
 
 class DrawObject;
 class OutputBackend;
@@ -81,16 +82,27 @@ public:
         public:
                 friend class Figure;
                 
-                MetaData() : scale_( 1 ), unit_(), paper_() {}
+                MetaData();
                 
                 double scale() const { return scale_; }
                 const ResourceUser<Length>& unit() const { return unit_; }
                 const ResourceUser<Paper>& paper() const { return paper_; }
+                const QString& author() const { return author_; }
+                const QString& description() const { return description_; }
+
+                QDate creationDate() const { return creationDate_; }
+                QDate modificationDate() const { return modDate_; }
                 
         private:
                 double scale_;
                 ResourceUser<Length> unit_;
                 ResourceUser<Paper> paper_;
+
+                QString author_;
+                QString description_;
+
+                QDate creationDate_;
+                QDate modDate_;
         };
 
         //! sets the controler_ to c
@@ -111,6 +123,20 @@ public:
         const ResourceKey& paperKey() const { return metaData_.paper_.key(); } 
         void setPaper( const ResourceKey& k ) { metaData_.paper_.setResource( k ); }
 
+        const QString& author() const { return metaData_.author(); }
+        void setAuthor( const QString& a ) { metaData_.author_ = a; }
+        
+        const QString& description() const { return metaData_.description(); }
+        void setDescription( const QString& d ) { metaData_.description_ = d; }
+
+        QDate creationDate() const { return metaData_.creationDate(); }
+        void setCreationDate( const QDate& d ) { metaData_.creationDate_ = d; }
+        
+        QDate modificationDate() const { return metaData_.modificationDate(); }
+        void setModificationDate( const QDate& d ) { metaData_.modDate_ = d; }
+        
+        void updateModificationDate();
+        
         //! adds all the DrawObjects of the ObjectList l.
         void takeDrawObjects( const ObjectList& l );
 

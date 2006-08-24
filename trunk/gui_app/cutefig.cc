@@ -146,6 +146,8 @@ void CuteFig::save()
                 saveAs();
                 return;
         }
+
+        figure_->updateModificationDate();
         
         std::ofstream ts( filename_.toLocal8Bit().constData() );
         if ( !ts ) {
@@ -158,9 +160,6 @@ void CuteFig::save()
         QString suffix = filename_.right( slen );
 
         OutputBackend* b;
-//         if ( suffix == ".fig" )
-//                 b = new XFigOutput( ts );
-//         else
         b = new CfigOutput( ts, *figure_ );
                 
         b->processOutput();

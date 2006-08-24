@@ -32,6 +32,9 @@
 #include <QRectF>
 #include <QtAlgorithms>
 
+#include <cstdlib>
+#include <pwd.h>
+
 #include <QDebug>
 
 
@@ -215,5 +218,37 @@ const ResourceSet Figure::usedResources() const
         }
 
         return resSet;
+}
+
+void Figure::updateModificationDate()
+{
+        metaData_.modDate_ = QDate::currentDate();
+}
+
+
+static QString getUserName() 
+{
+        QString name;
+        
+        struct passwd* udat = getpwnam( getenv("USER") );
+        if ( udat ) {
+                name = udat->pw_gecos;
+                name = name.left( name.indexOf(',') );
+        }
+
+        return name;
+}
+
+                
+
+Figure::MetaData::MetaData()
+        : scale_( 1 ),
+          unit_(),
+          paper_(),
+          author_( getUserName() ),
+          description_(),
+          creationDate_( QDate::currentDate() ),
+          modDate_()
+{
 }
 

@@ -64,6 +64,9 @@ void EditDialog::resetChanges()
 
 void EditDialog::noticeChange()
 {
+        if ( blindForChanges_ )
+                return;
+        
         changed_ = true;
         commitChanges( sender() );
         reset_->setEnabled( true );

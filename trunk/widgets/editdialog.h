@@ -61,6 +61,8 @@ protected:
 
         virtual void doReset() = 0;
         virtual void commitChanges( QObject* sender = 0 ) { Q_UNUSED ( sender ) }
+
+        void doNoticeChanges( bool doit ) { blindForChanges_ = !doit; }
         
 protected slots:
         void resetChanges();
@@ -73,6 +75,8 @@ private:
         QPushButton* reset_;
 
         bool changed_;
+
+        bool blindForChanges_;
 };
 
 #endif

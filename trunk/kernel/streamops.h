@@ -34,13 +34,24 @@ class QSizeF;
 class ResourceKey;
 class Stroke;
 class Pen;
+class QDate;
+
 
 std::istream& operator>> ( std::istream&, QString& );
 std::istream& operator>> ( std::istream&, QColor& );
 std::istream& operator>> ( std::istream&, QSizeF& );
 std::istream& operator>> ( std::istream&, ResourceKey& );
+std::istream& operator>> ( std::istream&, Pen& );
+std::istream& operator>> ( std::istream&, Stroke& );
+std::istream& operator>> ( std::istream&, QDate& );
 
 std::ostream& operator<< ( std::ostream&, const QString& );
 std::ostream& operator<< ( std::ostream&, const QColor& );
 std::ostream& operator<< ( std::ostream&, const QSizeF& );
+std::ostream& operator<< ( std::ostream&, const Stroke& );
+std::ostream& operator<< ( std::ostream&, const ResourceKey& );
+std::ostream& operator<< ( std::ostream&, const QDate& d );
+
+
+
 #endif
