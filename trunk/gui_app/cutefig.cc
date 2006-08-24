@@ -85,7 +85,7 @@ void CuteFig::init()
         char** argv = qApp->argv();
         
         if ( argc > 1) {
-                filename_ = argv[1];
+                filename_ = QFileInfo( argv[1] ).absoluteFilePath();
                 load( filename_ );
         }
 
