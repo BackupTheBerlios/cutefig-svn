@@ -78,7 +78,8 @@ void CfigOutput::outputArc( const Arc* arc )
 {
         drawObject_ = arc;
         outputGenericData();
-        fileStream_ << "\n";
+        fileStream_ << ' ' << arc->rectSize()/2/figure_.unit() << ' ' << arc->angle()
+                    << ' ' << (int)arc->arcFlag()  << ' ' << (int)arc->sweepFlag() << "\n";
         outputPoints();
 }
 

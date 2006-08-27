@@ -24,6 +24,7 @@
 
 #include "arc.h"
 #include "outputbackend.h"
+#include "objecthandler.h"
 #include "geometry.h"
 
 
@@ -33,7 +34,8 @@
 
 Arc::Arc( Figure* parent )
         : DrawObject( parent ),
-          isCircle_( true )
+          isCircle_( true ),
+          rotation_()
 {
 }
 
@@ -53,43 +55,10 @@ void Arc::outputToBackend( OutputBackend* ob ) const
         ob->outputArc( this );
 }
 
-void Arc::setupPainterPath()
-{
-        painterPath_ = points_.size() < 2 ? QPainterPath() : QPainterPath( points_[1] );
-        
-        if ( points_.size() < 3 )
-                return;
-
-        startAngle_ = Geom::qangle( points_[0], points_[1] );
-        int endAngle = Geom::qangle( points_[0], points_[2] );
-
-        sweepLength_ = endAngle - startAngle_;
-
-        direction_ = ( sweepLength_ > 2880 ) ? -1 : +1;    
-
-        if ( sweepLength_ > 2880 ) {
-                direction_ = -1;
-                sweepLength_ -= 5760;
-        } else
-                direction_ = +1;
-        
-        
-        if ( points_.size() < 4 )
-                return;
-
-        endAngle =  Geom::qangle( points_[0], points_[3] );
-        sweepLength_ = endAngle - startAngle_;
-
-        painterPath_.arcTo( bRect_, double(startAngle_) / 16,
-                            double(sweepLength_) / 16 * direction_ );
-        
-}
 
 void Arc::setupRects()
 {
-        double d = 2 * Geom::distance( points_[0],points_[1] );
-        bRect_ = Geom::centerRect( points_[0], QSizeF( d,d ) );
-        cRect_ = points_.boundingRect() | bRect_;
+        DrawObject::setupRects();
 }
 
 void Arc::doSpecificPreparation()
@@ -99,11 +68,6 @@ void Arc::doSpecificPreparation()
 
 void Arc::drawMetaData( QPainter* p ) const
 {
-        switch ( points_.size() ) {
-            case 2: p->drawEllipse( bRect_ ); break;
-            case 3: p->drawArc( bRect_, startAngle_, sweepLength_ ); break;
-            default: break;
-        }
 }
 
 void Arc::passPointFlag( Fig::PointFlags f )
@@ -121,54 +85,115 @@ int Arc::nextPointIndex()
         return -1;
 }
 
-// bool Arc::pointHitsOutline( const QPointF& p, qreal tolerance ) const
-// {
-//         double r1 = Geom::distance( points_[0], p );
-//         double r2 = Geom::distance( points_[0], points_[1] );
 
-// //        qDebug() << r1 << r2;
 
-//         if ( fabs( r1-r2 ) > tolerance )
-//                 return false;
-
-//         int ang = Geom::qangle( points_[0], p );
-
-// //        qDebug() << "angles:" << ang << startAngle_ << startAngle_ + sweepLength_ * direction_; 
-        
-//         return  ang > startAngle_ &&
-//                 ang < startAngle_ + sweepLength_;
-// }
-
-void Arc::getReadyForDraw()
+template<>
+DrawObject* TObjectHandler<Arc>::parseObject( std::istream& is, Figure* fig )
 {
-//        qDebug() << "getReadyForDraw" << this << points_.size();
-        if ( points_.size() < 2 )
-                return;
-        
-        setupRects();
-        setupPainterPath();
+        QSizeF rs;
+        double angle;
+        int af, sf;
+
+        is >> rs >> angle >> af >> sf;
+
+        if ( is.fail() )
+                return 0;
+
+        Arc* arc = new Arc( fig );
+        arc->setRectSize( rs*2*fig->unit() );
+        arc->setAngle( angle );
+        arc->setArcFlag( af );
+        arc->setSweepFlag( sf );
+
+        return arc;
 }
 
 
-// QPointF Arc::startAngle()
-// {
-//         if ( points_.size() < minPoints() )
-//                 return QPointF();
+void Arc::setRectSize( const QSizeF& s )
+{
+        rectSize_.setWidth( fabs(s.width() ) );
+        rectSize_.setHeight( fabs(s.height() ) );
 
-//         return arrowAngle( startAngle_ );
-// }
+        isCircle_ = ( rectSize_.width() == rectSize_.height() );
+        getReadyForDraw();
+}
 
-// QPointF Arc::endAngle()
-// {
-//         if ( points_.size() < minPoints() )
-//                 return QPointF();
+void Arc::calcCenterParameters()
+{
+        const QPointF& s = points_[0];
+        const QPointF& e = points_[1];
+ 
+        QPointF d = (s+e)/2;
+        QMatrix mat = rotation_.inverted().translate( -d.x(), -d.y() );
+        QPointF sp = s * mat;
+        QPointF ep = e * mat;
 
-//         return arrowAngle( startAngle_ + sweepLength_ * direction_ );
-// }
+        const double& spx = sp.rx(); const double& spy = sp.ry();
+        double rx = rectSize_.width()/2; double ry = rectSize_.height()/2;
 
-// QPointF Arc::arrowAngle( int angle )
-// {
-//         double a = angle * 16 / 360 * M_PI;
-//         return QPointF( sin( a ), cos( a ) );
-// }
+        double gamma = spx*spx/(rx*rx) + spy*spy/(ry*ry);
+        if ( gamma > 1 ) {
+                double sg = sqrt( gamma );
+                rx *= sg; ry *= sg;
+                rectSize_ = QSizeF( 2*rx,2*ry );
+        }
 
+        double rx2 = rx*rx; double ry2 = ry*ry;
+        double rxspy = rx*spy; double ryspx = ry*spx;
+        double rxspy2 = rxspy*rxspy; double ryspx2 = ryspx*ryspx;
+        
+        QPointF cp;
+        double square = (rx2*ry2-rxspy2-ryspx2);
+        if ( square > 0 ) {
+                cp = sqrt( square / (rxspy2+ryspx2) ) * QPointF( rxspy/ry, -ryspx/rx );
+                if ( arcFlag_ == sweepFlag_ )
+                        cp *= -1;
+        }
+
+        center_ = cp * mat.inverted();
+                
+        startAngle_       = -atan2( (sp.y()-cp.y())/ry, (sp.x()-cp.x())/rx ) * Geom::rad;
+        if ( startAngle_ < 0 )
+                startAngle_ += 360;
+        
+        double endAngle   = -atan2( (-sp.y()-cp.y())/ry, (-sp.x()-cp.x())/rx ) * Geom::rad;
+        sweepLength_ = endAngle - startAngle_;
+
+        if ( sweepLength_ < 0 ) {
+                if ( !sweepFlag_ ) 
+                        sweepLength_ = 360 + sweepLength_;
+        } else {
+                if ( sweepFlag_ )
+                        sweepLength_ = 360 - sweepLength_;
+        }
+}
+
+
+void Arc::calcEndPointParameters()
+{
+        double rx = rectSize_.width()/2;
+        double ry = rectSize_.height()/2;
+
+        double th = startAngle_/Geom::rad;
+        double sl = sweepLength_/Geom::rad;
+        
+        QPointF s = QPointF( rx*cos(th), -ry*sin(th) ) * rotation_ + center_;
+        QPointF e = QPointF( rx*cos(th+sl), -ry*sin(th+sl) ) * rotation_ + center_;
+}
+
+
+void Arc::setupPainterPath()
+{
+        calcCenterParameters();
+        calcEndPointParameters();
+        painterPath_ = QPainterPath( rotation_.inverted().map(points_[0]-center_) );
+        painterPath_.arcTo( Geom::centerRect( QPointF(), rectSize_ ), startAngle_, sweepLength_ );
+        painterPath_ = rotation_.map( painterPath_ );
+        painterPath_ = QMatrix().translate( center_.x(), center_.y() ).map( painterPath_ );
+}
+
+void Arc::setAngle( double a )
+{
+        angle_ = a;
+        rotation_ = QMatrix().rotate( a );
+}

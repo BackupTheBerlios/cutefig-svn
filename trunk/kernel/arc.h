@@ -31,22 +31,34 @@ class Arc : public DrawObject
 {
         Q_OBJECT
         DRAW_OBJECT( "arc", "&Arc" );
-
+                
 public:
         explicit Arc( Figure* parent );
         Arc( const Arc* other );
 
-        virtual int minPoints() const { return 4; }
+        virtual int minPoints() const { return 2; }
 
         virtual void outputToBackend( OutputBackend* ob ) const;
 
         void drawMetaData( QPainter* p ) const;
+        QSizeF rectSize() const { return rectSize_; }
+        void setRectSize( const QSizeF& s );
 
+        double angle() const { return angle_; }
+        void setAngle( double a );
+
+        bool arcFlag() const { return arcFlag_; }
+        void setArcFlag( bool af ) { arcFlag_ = af; }
+
+        bool sweepFlag() const { return sweepFlag_; }
+        void setSweepFlag( bool sf ) { sweepFlag_ = sf; }
+        
+        
 protected:
         virtual void setupPainterPath();
         virtual void setupRects();
 
-        virtual void getReadyForDraw();
+//        virtual void getReadyForDraw();
 
         virtual void doSpecificPreparation();
         
@@ -62,11 +74,27 @@ protected:
 private:
         bool isCircle_;
 
-        int startAngle_, sweepLength_;
+        // common parameters
+        QSizeF rectSize_;
+
+        
+        // endpoint parameters
+        double angle_;
+        bool arcFlag_, sweepFlag_;
+        
+
+        // center parameters
+        QPointF center_;
+        double startAngle_, sweepLength_;
         int direction_;
+
 
         QPointF arrowAngle( int angle );
 
+        void calcCenterParameters();
+        void calcEndPointParameters();
+        
+        QMatrix rotation_;
 //         void calcDirection( int& startAngle, int& sweepLength, int& direction ) const;
 //         void calcAngles( int& startAngle, int& sweepLength ) const;
 };

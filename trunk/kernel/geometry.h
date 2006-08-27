@@ -43,6 +43,7 @@ namespace Geom
         //! returns the distance between two points
         qreal distance( const QPointF& p1, const QPointF& p2 );
 
+        //! returns between the line P1P2 and the x-axis in rad
         double angle( const QPointF& p1, const QPointF& p2 );
 
         //! returns a QVector of six QPointF describing the QRectF r

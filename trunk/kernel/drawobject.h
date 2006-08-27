@@ -222,7 +222,7 @@ public:
         virtual void setCurrentPointIndex( int i ) { currentPointIndex_ = i; }
         //!< Tells the object which point is to be edited.
         
-        void setPoints( QPolygonF pa ) { points_ = pa; }
+        void setPoints( const QPolygonF& pa ) { points_ = pa; }
 
         //! FIXME: returning handles to private member objects is "ineffective"
         QPolygonF& points() { return points_; }
@@ -416,4 +416,5 @@ public: \
         DrawObject* copy() const { return doCopy( this ); } \
 private:
 
+        
 #endif

@@ -115,6 +115,8 @@ QString Parser::parseHeader()
 
 QString Parser::parseMetaData()
 {
+        figure_->setCreationDate( QDate() );
+        
         while ( itemType_ != KWds::metaData_end() ) {
                 if ( !readLine() )
                         return makeErrorLine( tr("File ended unexpectedly "
@@ -412,7 +414,7 @@ DrawObject * Parser::parseGenericData( int &npoints, QPolygonF*& pa )
                 depth = 50;
         }
 
-        DrawObject* o = ObjectHandler::getDrawObject( obType, stream_ );
+        DrawObject* o = ObjectHandler::getDrawObject( obType, stream_, figure_ );
         if ( !o ) {
                 npoints = 0;
                 parseError( invalidObjectData, Discarding );

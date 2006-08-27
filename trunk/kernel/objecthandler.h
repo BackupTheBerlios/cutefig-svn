@@ -66,7 +66,7 @@ class ObjectHandler
 {
 public:
         //! returns a DrawObject for keyword.
-        static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* f=0 );
+        static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* f );
 
         //! returns an appropriate ObjectGUIHandler
         static ObjectGUIHandler* guiHandler( const QString& keyWord );
