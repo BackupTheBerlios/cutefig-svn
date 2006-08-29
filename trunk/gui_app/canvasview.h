@@ -98,9 +98,8 @@ signals:
         void status( const QString& ); 
         //!< emits the status of the view for a window's status bar 
 
-        void posX( int );
-        void posY( int );
-        //!< emits the coordinates of the cursor to be recieved by a Ruler.
+        void cursorMovedTo( const QPoint& );
+        void cursorIsIn( bool );
         
         void scaleChanged( double ); 
         //!< To be emitted when the zoom scale changes.

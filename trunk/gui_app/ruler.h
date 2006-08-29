@@ -57,9 +57,9 @@ public:
         void setScale( double s ); //!< Sets the zoom scale 
         void setUnit( const ResourceKey& k );   //!< Sets the length unit
 
-        void setIndicating( bool indicating );
         
 public slots:
+        void setIndicating( bool indicating );
         void setStart( int v );    //!< Sets the lowest visible position
 
 protected:

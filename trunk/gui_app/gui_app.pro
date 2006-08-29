@@ -25,6 +25,7 @@ HEADERS += cutefig.h \
            centralwidget.h \
            viewbase.h \
            canvasview.h \
+           statuswidgets.h \
            controler.h \
            clipboard.h \
            selection.h \
@@ -66,6 +67,7 @@ SOURCES += cutefig.cc \
            guiinit.cc \
            centralwidget.cc \
            canvasview.cc \
+           statuswidgets.cc \
            controler.cc \
            selection.cc \
            actioncollection.cc \

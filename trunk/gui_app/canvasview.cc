@@ -133,20 +133,15 @@ void CanvasView::mouseReleaseEvent( QMouseEvent* e )
 void CanvasView::mouseMoveEvent( QMouseEvent* e )
 {
         QPoint p = e->pos();
-        if ( hRuler_ )
-                hRuler_->setValue( p.x() );
-        if ( vRuler_ )
-                vRuler_->setValue( p.y() );
+//         if ( hRuler_ )
+//                 hRuler_->setValue( p.x() );
+//         if ( vRuler_ )
+//                 vRuler_->setValue( p.y() );
 
         QPointF pf( QPointF( p ) * scaleMatrixInv_ );
         
-        QString s;
-        QTextStream st( &s );
-        st.setRealNumberPrecision( 2 );
-        st.setRealNumberNotation( QTextStream::FixedNotation );
-        st << pf.x()/unit_ << " : " << pf.y()/unit_ << "  -  " << p.x() << " : " << p.y();
-        mainWindow_->statusBar()->showMessage( s );
-
+        emit cursorMovedTo( p );
+        
         if ( controler_->wouldAcceptClick( p, &scaleMatrixInv_ ) ) {
                 if ( snap( p ) ) 
                         controler_->callActionMove( p, &scaleMatrixInv_ );
@@ -246,18 +241,12 @@ void CanvasView::inputMethodEvent( QInputMethodEvent* e )
 
 void CanvasView::enterEvent( QEvent* )
 {
-        if ( hRuler_ )
-                hRuler_->setIndicating( true );
-        if ( vRuler_ )
-                vRuler_->setIndicating( true );
+        emit cursorIsIn( true );
 }
 
 void CanvasView::leaveEvent( QEvent* )
 {
-        if ( hRuler_ )
-                hRuler_->setIndicating( false );
-        if ( vRuler_ )
-                vRuler_->setIndicating( false );
+        emit cursorIsIn( false );
 }
 
 QVariant CanvasView::inputMethodQuery( Qt::InputMethodQuery q )

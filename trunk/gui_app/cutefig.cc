@@ -37,7 +37,7 @@
 #include "actions.h"
 #include "errorreporter.h"
 #include "propdialog.h"
-
+#include "statuswidgets.h"
 #include "exportgui.h"
 
 #include <QtGui>
@@ -74,6 +74,13 @@ CuteFig::CuteFig()
 
         viewport_ = cw->viewport();
 
+        CoordWidget* crd = new CoordWidget( *figure_ );
+        connect( cview_, SIGNAL(cursorMovedTo(const QPoint&)),
+                 crd, SLOT(setCoords(const QPoint&)) );
+        connect( cview_, SIGNAL(cursorIsIn(bool)), crd, SLOT(setIndicating(bool)) );
+        
+        statusBar()->addPermanentWidget( crd );
+        
         QTimer::singleShot( 0, this, SLOT( init() ) );
 }
 
@@ -211,20 +218,18 @@ void CuteFig::closeEvent( QCloseEvent* ce )
         
         switch( QMessageBox::information( this, "CuteFig",
                                           tr("The document has been changed "
-                                          "since the last save."),
+                                             "since the last save."),
                                           tr("Save Now"), 
                                           tr("Cancel"), tr("Leave Anyway"),
                                           0, 1 ) ) {
             case 0:
                     save();
-                    goto finish;
                     break;
             case 1:
             default: // just for sanity
                     ce->ignore();
                     return;
             case 2:
-                    goto finish;
                     break;
         }
 

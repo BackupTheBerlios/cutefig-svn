@@ -22,37 +22,30 @@
 **
 ******************************************************************************/
 
+#ifndef statuswidgets_h
+#define statuswidgets_h
 
-#ifndef centralwidget_h
-#define centralwidget_h
 
-#include <QWidget>
+#include <QLabel>
 
-class QMainWindow;
+class Figure;
 
-class Ruler;
-class CanvasView;
-
-/** \class CentralWidget
- *  \brief The central widget of the CuteFig.  
- */
-
-class CentralWidget : public QWidget
+class CoordWidget : public QLabel
 {
         Q_OBJECT
 public:
-        CentralWidget( CanvasView* cv, QMainWindow * parent =0 );
-        ~CentralWidget() {}
-
-        QWidget* viewport() const { return viewport_; }
-
-private slots:
-        void dispatchCursorPos( const QPoint& ); 
+        CoordWidget( const Figure& fig, QWidget* parent = 0 );
+        
+public slots:
+        void setCoords( const QPoint& p );
+        void setIndicating( bool ind );
 
 private:
-        Ruler *hRuler_, *vRuler_;  //!< Two rulers to indicate the position
-        QWidget* viewport_;        //!< The scroll views's viewport
-        
+        const Figure& figure_;
+        QPoint pos_;
+        bool indicating_;
+
+        void updateContents();
 };
 
 #endif

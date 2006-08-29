@@ -55,14 +55,20 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
         cv->setHRuler( hRuler_ );
         cv->setVRuler( vRuler_ );
 
-//         connect( cv, SIGNAL( scaleChanged( double ) ), hRuler_, SLOT( setScale( double ) ) );
-//         connect( cv, SIGNAL( scaleChanged( double ) ), vRuler_, SLOT( setScale( double ) ) );
         connect( sa->horizontalScrollBar(), SIGNAL( valueChanged(int) ), 
                  hRuler_, SLOT( setStart( int ) ) );
         connect( sa->verticalScrollBar(), SIGNAL( valueChanged(int) ),
-                 vRuler_, SLOT( setStart( int ) ) );    
+                 vRuler_, SLOT( setStart( int ) ) );
+
+        connect( cv, SIGNAL( cursorMovedTo(const QPoint&) ),
+                 this, SLOT( dispatchCursorPos(const QPoint&) ) );
+
+        connect( cv, SIGNAL( cursorIsIn(bool) ), hRuler_, SLOT( setIndicating(bool) ) );
+        connect( cv, SIGNAL( cursorIsIn(bool) ), vRuler_, SLOT( setIndicating(bool) ) );
+        
 
         QGridLayout* l = new QGridLayout( this );
+        l->setMargin( 0 );
         QWidget* corner = new QWidget( this );
         corner->setFixedSize( 30, 30 );
         l->addWidget( corner );
@@ -70,11 +76,11 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
         l->addWidget( vRuler_, 1,0 );
         l->addWidget( sa, 1,1 );
 
-//        QTimer::singleShot( 0, this, SLOT( resizeRulers() ) );
 }
 
-// void CentralWidget::resizeRulers()
-// {
-//         hRuler_->setLength( viewport_->width() );
-//         vRuler_->setLength( viewport_->height() );    
-// }
+
+void CentralWidget::dispatchCursorPos( const QPoint& p )
+{
+        hRuler_->setValue( p.x() );
+        vRuler_->setValue( p.y() );
+}
