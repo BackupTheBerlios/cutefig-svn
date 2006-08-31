@@ -36,6 +36,7 @@ HEADERS += cutefig.h \
            allodialogs.h\
            objectguihandler.h \
            interactiveaction.h \
+           actionstatus.h \
            relativeaction.h \
            scaleaction.h \
            createaction.h \
@@ -53,7 +54,6 @@ HEADERS += cutefig.h \
            addcommand.h \
            deletecommand.h \
            changecommand.h \
-#           colortableitem.h \
            lineshowwidget.h \
            ruler.h \
            propdialog.h \
@@ -75,6 +75,7 @@ SOURCES += cutefig.cc \
            recentfiles.cc \
            objectguihandler.cc \
            interactiveaction.cc \
+           actionstatus.cc \
            relativeaction.cc \
            scaleaction.cc \
            createaction.cc \
@@ -91,7 +92,6 @@ SOURCES += cutefig.cc \
            addcommand.cc \
            deletecommand.cc \
            changecommand.cc \
-#           colortableitem.cc \
            lineshowwidget.cc \
            ruler.cc \
            propdialog.cc \

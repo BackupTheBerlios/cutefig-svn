@@ -80,6 +80,11 @@ CuteFig::CuteFig()
         connect( cview_, SIGNAL(cursorIsIn(bool)), crd, SLOT(setIndicating(bool)) );
         
         statusBar()->addPermanentWidget( crd );
+
+        ActionStatusIndicator* asi = new ActionStatusIndicator( statusBar() );
+        connect( controler_, SIGNAL( actionStatusChanged(const ActionStatus&) ),
+                 asi, SLOT( showStatus(const ActionStatus&) ) );
+        connect( controler_, SIGNAL( actionIsHere(bool) ), asi, SLOT( beActive(bool) ) );
         
         QTimer::singleShot( 0, this, SLOT( init() ) );
 }
@@ -342,3 +347,4 @@ void CuteFig::writeSettings()
         s.setValue("state", saveState() );
         s.endGroup();   
 }
+

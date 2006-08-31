@@ -62,11 +62,11 @@ public slots:
 
         void about();  //!< Displays the about box.
         void help();
-
+        
 
 protected:
         void closeEvent( QCloseEvent* );
-
+        
 private:
         CanvasView *cview_;        //!< The editing view of the figure
         Controler *controler_;     //!< The controler editing the figure

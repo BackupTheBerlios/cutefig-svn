@@ -29,7 +29,12 @@
 #include <QLabel>
 
 class Figure;
+class ActionStatus;
 
+class QStatusBar;
+
+
+//! QLabel that indicates the cursor coordinates in CanvasView in a QStatusBar
 class CoordWidget : public QLabel
 {
         Q_OBJECT
@@ -46,6 +51,36 @@ private:
         bool indicating_;
 
         void updateContents();
+};
+
+//! Sets up and maintains QLabels to display an ActionStatus.
+class ActionStatusIndicator : public QObject 
+{
+        Q_OBJECT
+public:
+        ActionStatusIndicator( QStatusBar* parent );
+
+public slots:
+        void showStatus( const ActionStatus& st );
+        void beActive( bool a );
+        
+private:
+        QLabel* left_;
+        QLabel* middle_;
+        QLabel* right_;
+        QLabel* help_;
+        QLabel* status_;
+
+        QLabel* ctrl_;
+        QLabel* alt_;
+        QLabel* shift_;
+
+        void disableAndClear();
+        void enable();
+        
+        QString leftString();
+        QString middleString();
+        QString rightString();
 };
 
 #endif

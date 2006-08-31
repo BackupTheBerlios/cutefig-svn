@@ -27,6 +27,7 @@
 #include "changecommand.h"
 #include "drawobject.h"
 #include "geometry.h"
+#include "controler.h"
 
 #include <cmath>
 

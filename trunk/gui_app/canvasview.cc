@@ -39,20 +39,6 @@
 #include "interactiveaction.h"
 #include "griddialog.h"
 
-/** \class CanvasView
- *
- * This class is responsible to display the figure to the user and to
- * handle user interaction. It accepts key and mouse events, figures
- * out whether they are to be handled and tells the Controler to call
- * InteractiveAction::click(), InteractiveAction::move() or
- * InteractiveAction::keyStroke() respectively.
- *
- * The second job of CanvasView is to pass a QPainter to the Figure to
- * which the DrawObjects can be painted to. Furthermore it draws the
- * paper and the snap grid. It communicates with the two instances of
- * Ruler to tell them about mouse moves and changes of the
- * zoomscale. Drawing the helplines is also planned.
- */
 
 //! calculates the Fig::PointFlags out of m and b. 
 Fig::PointFlags calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m );
@@ -84,6 +70,7 @@ CanvasView::CanvasView( Controler* c, const Figure* f,  CuteFig* parent )
         doResizing();
         setGridWidth( .5 );
         setSnapWidth( 1.0 );
+        qApp->installEventFilter( this );
 }
 
 void CanvasView::mouseDoubleClickEvent( QMouseEvent* e )
@@ -133,10 +120,6 @@ void CanvasView::mouseReleaseEvent( QMouseEvent* e )
 void CanvasView::mouseMoveEvent( QMouseEvent* e )
 {
         QPoint p = e->pos();
-//         if ( hRuler_ )
-//                 hRuler_->setValue( p.x() );
-//         if ( vRuler_ )
-//                 vRuler_->setValue( p.y() );
 
         QPointF pf( QPointF( p ) * scaleMatrixInv_ );
         
@@ -195,6 +178,11 @@ void CanvasView::contextMenuEvent( QContextMenuEvent* e )
 
 void CanvasView::keyPressEvent( QKeyEvent* e )
 {
+        if ( e->modifiers() != kbdModifiers_ ) {
+                kbdModifiers_ = e->modifiers();
+                controler_->modifierChange( kbdModifiers_ );
+        }
+        
         if ( controler_->callActionKeyStroke( e ) ) {
                 e->accept();
                 return;
@@ -214,21 +202,52 @@ void CanvasView::keyPressEvent( QKeyEvent* e )
         e->accept();
 }
 
+void CanvasView::keyReleaseEvent( QKeyEvent* e )
+{
+        if ( e->modifiers() != kbdModifiers_ ) {
+                kbdModifiers_ = e->modifiers();
+                controler_->modifierChange( kbdModifiers_ );
+        }    
+}
+
 bool CanvasView::event( QEvent* e )
 {
         if ( e->type() == QEvent::ShortcutOverride ) {
-                QKeyEvent* ke = (QKeyEvent*) e;
+                QKeyEvent* ke = static_cast<QKeyEvent*>( e );
                 if ( controler_->willAcceptKeyStroke() &&
                      ke->modifiers() <= int(Qt::ShiftModifier) )
                         ke->accept();
         }
 
-//         if ( e->type() == QEvent::User ) {
-//                 updateFigureImediately();
-//                 return true;
-//         }
-
         return QWidget::event( e );
+}
+
+/** As QMenuBar snatches away the focus, when the user hits the
+ *  Alt-key we sometimes need to be faster and snatch the
+ *  corresponding QKeyEvent before. This is done by installing this
+ *  into the eventfilter list of QApplication. Then we snatch away the
+ *  event in this function.
+ */
+bool CanvasView::eventFilter( QObject*, QEvent* e )
+{
+        if ( !controler_->actionIsActive() )
+                return false;
+        
+        switch ( e->type() ) {
+            case QEvent::KeyPress:
+            case QEvent::KeyRelease:
+            case QEvent::ShortcutOverride:
+            {
+                    QKeyEvent* kev = static_cast<QKeyEvent*>( e );
+                    if (kev->key() == Qt::Key_Alt || kev->key() == Qt::Key_Meta) {
+                            event( kev );
+                            return true;
+                    }
+            }
+            default: break;
+        }        
+        
+        return false;
 }
 
 void CanvasView::inputMethodEvent( QInputMethodEvent* e )
@@ -629,5 +648,4 @@ Fig::PointFlags calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
 
         return pf;
 }
-
 

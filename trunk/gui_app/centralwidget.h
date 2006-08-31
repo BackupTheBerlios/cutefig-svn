@@ -46,6 +46,7 @@ public:
 
         QWidget* viewport() const { return viewport_; }
 
+        
 private slots:
         void dispatchCursorPos( const QPoint& ); 
 

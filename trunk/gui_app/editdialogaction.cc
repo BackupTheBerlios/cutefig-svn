@@ -28,6 +28,7 @@
 #include "objectdialog.h"
 #include "changecommand.h"
 #include "drawobject.h"
+#include "controler.h"
 
 #include <QWidget>
 

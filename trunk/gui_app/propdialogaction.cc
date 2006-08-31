@@ -25,6 +25,7 @@
 #include "propdialogaction.h"
 #include "propdialog.h"
 #include "figure.h"
+#include "controler.h"
 
 
 class PropCommand : public Command

@@ -30,6 +30,8 @@
 
 void CreateAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
 {
+        firstClick_ = true;
+        
         if ( !cObject_->pointSet( m->map( QPointF( p ) ), f ) ) {
                 controler_->execAction( new AddCommand( selection_ ) );
                 selection_.updateBackups();
@@ -38,13 +40,17 @@ void CreateAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
 
 
 void CreateAction::move( const QPoint& p, const QMatrix* m )
-{
+{        
         cObject_->cursorMove( m->map( QPointF( p ) ) );
+        if ( firstClickDone() )
+                changeStatusMove();
 }
 
 
 void CreateAction::handleSelection()
 {
+        setInitialStatus();
+        
         cObject_ = createObject();
         selection_.setObjectToBeCreated( cObject_ );
 }
@@ -61,6 +67,7 @@ void CreateAction::drawMetaData( QPainter* p, const ViewBase* v ) const
 void CreateAction::reset()
 {
         cObject_ = 0;
+        firstClick_ = false;
 }
 
 template<> void TCreateAction<Rectangle>::init()
@@ -68,10 +75,65 @@ template<> void TCreateAction<Rectangle>::init()
         setShortcut( Qt::Key_R );
 }
 
+
+
 template<> void TCreateAction<Ellipse>::init()
 {
+        qDebug() << "TCreateAction<Ellipse>::init()";
         setShortcut( Qt::Key_E );
 }
+
+template<> void TCreateAction<Ellipse>::setInitialStatus_private()
+{
+        status_.setInformation( Qt::NoModifier,
+                                ActionStatus::Information()
+                                .setLeft( tr("corner point") )
+                                .setHelp( tr("ellipse by diameter") ) );
+        
+        status_.setInformation( Qt::AltModifier,
+                                ActionStatus::Information()
+                                .setLeft( tr("center point") )
+                                .setHelp( tr("ellipse by radii") ) );
+
+        status_.setInformation( Qt::ShiftModifier,
+                                ActionStatus::Information()
+                                .setLeft( tr("point on circle") )
+                                .setHelp( tr("circle by diameter") ) );
+        
+        status_.setInformation( Qt::AltModifier,
+                                ActionStatus::Information()
+                                .setLeft( tr("center point") )
+                                .setHelp( tr("circle by radius") ) );
+
+        status_.setInformation( Qt::ControlModifier,
+                                ActionStatus::Information()
+                                .setLeft( tr("axis point") )
+                                .setHelp( tr("angled ellipse") ) );
+}
+
+template<> void TCreateAction<Ellipse>::changeStatusClick() 
+{
+}
+
+template<> void TCreateAction<Ellipse>::changeStatusMove() 
+{
+        QRectF r = drawObject()->controlPointRect();
+        double u = drawObject()->figure().unit();
+        QString s;
+        QTextStream ts( &s );
+        ts.setRealNumberPrecision( 2 );
+        ts.setRealNumberNotation( QTextStream::FixedNotation );
+
+        ts << tr("W: ") << r.width()/u << tr(" H: ") << r.height()/u;
+
+        status_.setStatus( s );
+        emit statusChanged( status_ );
+}
+
+
+
+
+
 
 template<> void TCreateAction<Polygon>::init()
 {

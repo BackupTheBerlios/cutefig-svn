@@ -112,7 +112,14 @@ const QCursor Controler::findToolAction( const QPoint& p, const QMatrix* m )
  */
 void Controler::newAction( InteractiveAction* a )
 {
+        actionGone();
         editAction_ = a;
+
+        connect( a, SIGNAL(statusChanged(const ActionStatus&)),
+                 this, SIGNAL(actionStatusChanged(const ActionStatus&)) );
+
+        emit actionIsHere( true );
+
         explicitEAction_ = true;
         actionIsActive_ = a->isActive();
         updateViews();
@@ -123,6 +130,7 @@ void Controler::cancelAction()
         if ( !editAction_ )
                 return;
 
+        actionGone();
         editAction_->reset();
         editAction_ = 0;
         explicitEAction_ = false;
@@ -142,7 +150,8 @@ void Controler::execAction( Command* cmd )
 
         if ( editAction_ )
                 editAction_->reset();
-        
+
+        actionGone();
         editAction_ = 0;
         actionIsActive_ = false;
         explicitEAction_ = false;
@@ -199,6 +208,12 @@ bool Controler::callInputMethodHandler( const QInputMethodEvent* e )
         }
 
         return false;
+}
+
+void Controler::modifierChange( Qt::KeyboardModifiers mods )
+{
+        if ( editAction_ )
+                editAction_->modifierChange( mods );
 }
 
 bool Controler::willAcceptClick( const QPoint& p, const QMatrix* m ) const
@@ -357,4 +372,11 @@ void Controler::updateFigureMetaData() const
 {
         foreach( ViewBase* vb, viewList_ )
                 vb->updateFigureMetaData();
+}
+
+void Controler::actionGone()
+{
+        if ( editAction_ )
+                disconnect( editAction_, SIGNAL(statusChanged(const ActionStatus&)) );
+        emit actionIsHere( false );    
 }

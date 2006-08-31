@@ -25,6 +25,7 @@
 #include "pointmoveaction.h"
 #include "drawobject.h"
 #include "geometry.h"
+#include "controler.h"
 
 #include <QPainter>
 

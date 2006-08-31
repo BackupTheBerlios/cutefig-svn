@@ -84,3 +84,4 @@ void CentralWidget::dispatchCursorPos( const QPoint& p )
         hRuler_->setValue( p.x() );
         vRuler_->setValue( p.y() );
 }
+

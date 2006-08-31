@@ -27,6 +27,7 @@
 #include "cutnpaste.h"
 #include "addcommand.h"
 #include "deletecommand.h"
+#include "controler.h"
 
 #include <QDebug>
 

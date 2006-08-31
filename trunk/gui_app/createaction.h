@@ -27,6 +27,7 @@
 
 #include "interactiveaction.h"
 #include "typedefs.h"
+#include "controler.h"
 
 /** \class CreateAction
  *  \brief A base class for create actions of DrawObjects
@@ -39,7 +40,11 @@ class CreateAction : public InteractiveAction
 {
 protected:
         CreateAction( Controler* parent ) 
-                : InteractiveAction( parent ) {}
+                : InteractiveAction( parent ),
+                  cObject_( 0 ),
+                  firstClick_( false )
+        {}
+        
 public:
         ~CreateAction() {}
 
@@ -60,10 +65,20 @@ public:
         virtual void drawMetaData( QPainter* p, const ViewBase* v ) const;
 
         virtual void reset();
+
+        const DrawObject* drawObject() const { return cObject_; }
+
+protected:
+        bool firstClickDone() const { return firstClick_; }
         
 private:
         virtual DrawObject* createObject() = 0;
+        virtual void changeStatusClick() = 0;
+        virtual void changeStatusMove() = 0;
+        
         DrawObject* cObject_;
+
+        bool firstClick_;
 };
 
 
@@ -73,11 +88,14 @@ class TCreateAction : public CreateAction
 public:
         TCreateAction<ObjectType>( Controler* parent );
 
-protected:
-        DrawObject* createObject() { return new ObjectType( controler_->figure() ); }
-
 private:
+        DrawObject* createObject() { return new ObjectType( controler_->figure() ); }
         void init();
+        void setInitialStatus_private() {}
+        void changeStatusClick() {}
+        void changeStatusMove() {}
+
+//        void modifierChange_private( Qt::KeyboardModifiers ) {}
 };
 
 template<typename ObjectType>

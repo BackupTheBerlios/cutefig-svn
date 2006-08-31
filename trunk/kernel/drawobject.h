@@ -178,6 +178,9 @@ public:
         //! returns the highest Compound the object belongs to or the object itself.
         const DrawObject* ancestor() const;
 
+        //! retrurns a reference to the figure
+        const Figure& figure() const { return *figure_; }
+
         //! returns the minimum number of points the objetct need to be defined.
         virtual int minPoints() const { return 2; }
 

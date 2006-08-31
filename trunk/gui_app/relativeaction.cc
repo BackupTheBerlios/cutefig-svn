@@ -25,6 +25,7 @@
 #include "relativeaction.h"
 #include "drawobject.h"
 #include "changecommand.h"
+#include "controler.h"
 
 #include <QDebug>
 

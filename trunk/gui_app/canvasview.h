@@ -51,6 +51,19 @@ class QRectF;
 
 typedef QList<InteractiveAction*> ActionList;
 
+//! Main user interaction widget
+/** This class is responsible to display the figure to the user and to
+ *  handle user interaction. It accepts key and mouse events, figures
+ *  out whether they are to be handled and tells the Controler to call
+ *  InteractiveAction::click(), InteractiveAction::move() or
+ *  InteractiveAction::keyStroke() respectively.
+ *
+ *  The second job of CanvasView is to pass a QPainter to the Figure
+ *  to which the DrawObjects can be painted to. Furthermore it draws
+ *  the paper and the snap grid. It communicates with the two
+ *  instances of Ruler to tell them about mouse moves and changes of
+ *  the zoomscale. Drawing the helplines is also planned.
+ */
 class CanvasView : public QWidget, public ViewBase
 {
         Q_OBJECT
@@ -112,6 +125,8 @@ protected:
         virtual void contextMenuEvent( QContextMenuEvent* e );
 
         virtual void keyPressEvent( QKeyEvent* e );
+        virtual void keyReleaseEvent( QKeyEvent* e );
+        
         virtual bool event( QEvent* e );
         virtual void inputMethodEvent( QInputMethodEvent* e );
         virtual QVariant inputMethodQuery( Qt::InputMethodQuery q );
@@ -120,6 +135,8 @@ protected:
 
         virtual void enterEvent( QEvent* e );
         virtual void leaveEvent( QEvent* e );
+
+        virtual bool eventFilter( QObject* watched, QEvent* event );
         
 private:
         void drawPaper( QPainter* p ); //!< draws the paper
@@ -161,6 +178,8 @@ private:
         bool snapped_;
 
         bool tentativeDraw_;
+
+        Qt::KeyboardModifiers kbdModifiers_;
 };
 
 #endif

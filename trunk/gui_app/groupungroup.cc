@@ -25,6 +25,7 @@
 #include "groupungroup.h"
 #include "compound.h"
 #include "changecommand.h"
+#include "controler.h"
 
 #include <QDebug>
 

@@ -66,7 +66,10 @@ public:
         
 protected:
         virtual DrawObject* createObject() { return 0; }
-
+        virtual void setInitialStatus() {}
+        virtual void changeStatusClick() {}
+        virtual void changeStatusMove() {}
+        
 private slots:
         void dispatchFormat();
 

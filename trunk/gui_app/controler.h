@@ -35,6 +35,7 @@
 #include "viewbase.h"
 #include "pen.h"
 #include "selection.h"
+#include "interactiveaction.h"
 
 #include <QPointF>
 #include <QCursor>
@@ -48,7 +49,6 @@
 class Figure;
 class DrawObject;
 class ActionCollection;
-class InteractiveAction;
 class EditActions;
 class ToolActions;
 class TextAction;
@@ -100,7 +100,7 @@ public:
         bool wouldAcceptClick( const QPoint&, const QMatrix* m ) const;
 
         bool willAcceptKeyStroke() const;
-
+        bool actionIsActive() const { return actionIsActive_; }
         bool actionWantsSnap( const QPoint& p, const QMatrix* m ) const;
         
         void callActionMove( const QPoint& p, const QMatrix* m );
@@ -109,10 +109,12 @@ public:
         bool callActionKeyStroke( const QKeyEvent* ke );
 
         bool callInputMethodHandler( const QInputMethodEvent* e );
+
+        void modifierChange( Qt::KeyboardModifiers mods );
         
         void cancelAction();
         void execAction( Command* cmd );
-        
+
         bool figureChanged() const { return figureChanged_; }
         void figureSaved() { figureChanged_ = false; }
 
@@ -124,6 +126,9 @@ public:
 signals:
         void undoPossible( bool );
         void redoPossible( bool );
+
+        void actionStatusChanged( const ActionStatus& st );
+        void actionIsHere( bool );
 
 public slots:
         void undo( int steps );
@@ -149,6 +154,8 @@ private:
 
         void setToolProperties();
         void appendToCmdList( Command* c );
+
+        void actionGone();
 
         Figure* figure_;
         QMainWindow* mainWindow_;

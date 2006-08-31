@@ -24,6 +24,7 @@
 
 #include "deleteaction.h"
 #include "deletecommand.h"
+#include "controler.h"
 
 #include <QDebug>
 
@@ -43,5 +44,4 @@ void DeleteAction::deleteSelection()
                 controler_->execAction( new DeleteCommand( selection_ ) );
                 selection_.clear();
         }
-//        controler_->updateViews();
 }
