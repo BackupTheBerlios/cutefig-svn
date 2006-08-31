@@ -94,8 +94,6 @@ private:
         void setInitialStatus_private() {}
         void changeStatusClick() {}
         void changeStatusMove() {}
-
-//        void modifierChange_private( Qt::KeyboardModifiers ) {}
 };
 
 template<typename ObjectType>

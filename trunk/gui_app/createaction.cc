@@ -25,12 +25,15 @@
 #include "createaction.h"
 #include "addcommand.h"
 #include "allobjects.h"
+#include "geometry.h"
 
+#include <QCoreApplication>
 #include <QPainter>
 
 void CreateAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
 {
         firstClick_ = true;
+        changeStatusClick();
         
         if ( !cObject_->pointSet( m->map( QPointF( p ) ), f ) ) {
                 controler_->execAction( new AddCommand( selection_ ) );
@@ -79,7 +82,6 @@ template<> void TCreateAction<Rectangle>::init()
 
 template<> void TCreateAction<Ellipse>::init()
 {
-        qDebug() << "TCreateAction<Ellipse>::init()";
         setShortcut( Qt::Key_E );
 }
 
@@ -132,6 +134,50 @@ template<> void TCreateAction<Ellipse>::changeStatusMove()
 
 
 
+class PolygonlineMessages
+{
+public:
+        static void initial( ActionStatus& s );
+        static void click( ActionStatus& );
+        static void move( ActionStatus&, const DrawObject& o );
+
+private:
+        static QString tr( const char* s );
+};
+
+void PolygonlineMessages::initial( ActionStatus& s )
+{
+        s.setInformation( Qt::NoModifier, ActionStatus::Information().setLeft(tr("first point")) );
+}
+
+void PolygonlineMessages::click( ActionStatus& s )
+{
+        s.setInformation( Qt::NoModifier,
+                          ActionStatus::Information()
+                          .setLeft( tr("next point") ).setMid( tr("last point") ) );
+}
+
+void PolygonlineMessages::move( ActionStatus& s, const DrawObject& o ) 
+{
+        QPolygonF::const_iterator it = o.points().constEnd();
+        QPointF d = *--it;
+        d -= *--it;
+        d /= o.figure().unit();
+        double angle = -atan2( d.y(), d.x() ) * Geom::rad;
+
+        QString m;
+        QTextStream ts( &m );
+        ts.setRealNumberPrecision( 2 );
+        ts.setRealNumberNotation( QTextStream::FixedNotation );
+
+        ts << tr("dx: %1, dy: %2, %3").arg( d.x() ).arg( d.y() ).arg( angle );
+        s.setStatus( m );
+}
+
+QString PolygonlineMessages::tr( const char* s )
+{
+        return QCoreApplication::translate("PLM", s );
+}
 
 
 
@@ -140,10 +186,48 @@ template<> void TCreateAction<Polygon>::init()
         setShortcut( Qt::Key_P );
 }
 
+template<> void TCreateAction<Polygon>::setInitialStatus_private()
+{
+        PolygonlineMessages::initial( status_ );
+}
+
+template<> void TCreateAction<Polygon>::changeStatusClick()
+{
+        PolygonlineMessages::click( status_ );
+        emit statusChanged( status_ );
+}
+
+template<> void TCreateAction<Polygon>::changeStatusMove()
+{
+        PolygonlineMessages::move( status_, *drawObject() );
+        emit statusChanged( status_ );
+}
+
+
+
 template<> void TCreateAction<Polyline>::init()
 {
         setShortcut( Qt::Key_L );
 }
+
+template<> void TCreateAction<Polyline>::setInitialStatus_private()
+{
+        PolygonlineMessages::initial( status_ );
+}
+
+template<> void TCreateAction<Polyline>::changeStatusClick()
+{
+        PolygonlineMessages::click( status_ );
+        emit statusChanged( status_ );
+}
+
+template<> void TCreateAction<Polyline>::changeStatusMove()
+{
+        PolygonlineMessages::move( status_, *drawObject() );
+        emit statusChanged( status_ );
+}
+
+
 
 template<> void TCreateAction<Arc>::init()
 {
