@@ -32,6 +32,7 @@
 template<typename Resource> class ResourceComboBox;
 class QLineEdit;
 class QTextEdit;
+class QCheckBox;
 
 
 class PropDialog : public EditDialog
@@ -52,6 +53,7 @@ private:
         ResourceComboBox<Length>* length_;
         ResourceComboBox<Paper>* paper_;
 
+	QCheckBox* saveAuthor_;
         QLineEdit* author_;
         QTextEdit* description_;
 };

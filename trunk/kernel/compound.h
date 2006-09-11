@@ -30,7 +30,7 @@
 
 #include <QList>
 
-/** \class Compound
+/*! \class Compound
  * 
  *  \brief Implements a Compound object for Group/Ungroup
  *  functionality.

@@ -53,7 +53,7 @@ void Controler::setFigure( Figure* f )
         clearCommandList();
 }
 
-/** Resets the selection_. 
+/*! Resets the selection_. 
  */
 void Controler::selectObject( DrawObject* o )
 {
@@ -62,7 +62,7 @@ void Controler::selectObject( DrawObject* o )
 }
 
 
-/** Asks the editAction_ whether it will handle the DrawObject o or
+/*! Asks the editAction_ whether it will handle the DrawObject o or
  *  the current selection_ respectively, if the user clicks at p, and
  *  passes a suitable QCursor back to the view to appear.
 */
@@ -77,7 +77,7 @@ const QCursor Controler::considerObject( DrawObject* o, const QPoint& p, const Q
                 return QCursor( Qt::ArrowCursor );
 }
 
-/** Finds the first InteractiveAction of acticeToolActions_ that will
+/*! Finds the first InteractiveAction of acticeToolActions_ that will
  *  handle the current selection and activates it.
  */
 const QCursor Controler::findToolAction( const QPoint& p, const QMatrix& m )
@@ -106,7 +106,7 @@ const QCursor Controler::findToolAction( const QPoint& p, const QMatrix& m )
         return Qt::ArrowCursor;
 }
 
-/** Usually called by InteractiveAction::wakeup(). 
+/*! Usually called by InteractiveAction::wakeup(). 
  */
 void Controler::newAction( InteractiveAction* a )
 {
@@ -158,7 +158,7 @@ void Controler::execAction( Command* cmd )
         updateViews();
 }
 
-/** 
+/*! 
  */
 void Controler::callActionMove( const QPoint& p, const QMatrix& m )
 {
@@ -169,7 +169,7 @@ void Controler::callActionMove( const QPoint& p, const QMatrix& m )
         updateViewsImediately( true );
 }
 
-/** 
+/*! 
  */
 const QCursor Controler::callActionClick( const QPoint& p, Fig::PointFlags f, const QMatrix& m )
 {
@@ -216,7 +216,7 @@ void Controler::modifierChange( Qt::KeyboardModifiers mods )
 }
 
 
-/** If the user has already clicked we just ask the editAction_
+/*! If the user has already clicked we just ask the editAction_
  *  whether it is interested in that mouse click.
  */
 bool Controler::willAcceptClick( const QPoint& p, const QMatrix& m ) const
@@ -225,7 +225,7 @@ bool Controler::willAcceptClick( const QPoint& p, const QMatrix& m ) const
 }
 
 
-/** As the user has not already clicked we need to check for actionIsActive_.
+/*! As the user has not already clicked we need to check for actionIsActive_.
  */
 bool Controler::wouldAcceptClick( const QPoint& p, const QMatrix& m ) const
 {
@@ -242,7 +242,7 @@ bool Controler::willAcceptKeyStroke() const
         return editAction_ && editAction_->acceptsKeyStrokes();
 }
 
-/** Returns all controlpoints of all DrawObjects that can be handled
+/*! Returns all controlpoints of all DrawObjects that can be handled
  * by editingAction_. If there is already a wObject_ registered only
  * this one is considered handelable.
  */

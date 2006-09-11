@@ -28,7 +28,7 @@
 #include <QString>
 #include <QFlags>
 
-/** \namespace Fig
+/*! \namespace Fig
  *  \brief contains some global constants and enums
  */
 

@@ -32,7 +32,7 @@ class QPushButton;
 
 
 //! Provides a dialog with three standard buttons at the bottom
-/** To edit the properties of some object I need a dialog with three
+/*! To edit the properties of some object I need a dialog with three
  *  standard buttons at the bottom. These are "Ok" "Cancel" and "Reset"
  *
  *  The buttons "Ok" and "Cancel" are connected to the standart slots

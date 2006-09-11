@@ -22,7 +22,7 @@
 **
 ******************************************************************************/
 
-/** \class CanvasView 
+/*! \class CanvasView 
  *  
  *  \brief This is the widget used to display the figure. It also
  *  handles mouse and keyboard events.
@@ -54,7 +54,7 @@ class QRectF;
 typedef QList<InteractiveAction*> ActionList;
 
 //! Main user interaction widget
-/** This class is responsible to display the figure to the user and to
+/*! This class is responsible to display the figure to the user and to
  *  handle user interaction. It accepts key and mouse events, figures
  *  out whether they are to be handled and tells the Controler to call
  *  InteractiveAction::click(), InteractiveAction::move() or

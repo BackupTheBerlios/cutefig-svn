@@ -30,7 +30,7 @@
 #include <QHash>
 #include <QAction>
 
-/** \class ActionCollection 
+/*! \class ActionCollection 
  *
  * \brief Actions belonging semantically * together are put into one
  * ActionCollection

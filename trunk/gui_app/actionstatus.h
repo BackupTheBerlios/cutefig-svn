@@ -33,7 +33,7 @@
 
 
 //! Information that an InteractiveAction can display to the user when active.
-/** As CuteFig makes big use of keyboard modifiers to determine in
+/*! As CuteFig makes big use of keyboard modifiers to determine in
  *  which way an InteractiveAction is carried out, we need a way to
  *  display to the user which modifier and which mouse button will
  *  have which effect at a particular time. We store this information
@@ -67,7 +67,7 @@ public:
         friend class CanvasView;
         
         //! Contains the modifier dependend information for ActionStatus.
-        /** Information can be filled by setters that return
+        /*! Information can be filled by setters that return
          *  refenrences to the Information itself. That way we can
          *  fill the Information without putting it into a variable just by
          *

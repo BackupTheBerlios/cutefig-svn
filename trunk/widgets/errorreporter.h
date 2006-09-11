@@ -28,7 +28,7 @@
 
 #include <QDialog>
 
-/** \class ErrorReporter
+/*! \class ErrorReporter
  * \brief Small dialog to report an error message in a scrollable text view
  *
  * Basically you only need the static function report() to present

@@ -22,7 +22,7 @@
 **
 ******************************************************************************/
 
-/** \page action_system The action system
+/*! \page action_system The action system
  *
  * Almost all the user interaction is initiated by actions. An action
  * is a class that is derived from QAction. There is one abstract
@@ -62,7 +62,7 @@ class ZoomComboBox;
 typedef QList<ActionCollection*> ActionGroups;
 
 
-/** \class AllActions
+/*! \class AllActions
  *  \brief Contains all actions of the application.
  *
  *  At the moment AllActions sets up all the actions that are
@@ -88,7 +88,7 @@ private:
 
 /******************************************************************************************/
 
-/** \class FileActions
+/*! \class FileActions
  *  \brief All the actions of the "File" menu.
  */
 class FileActions : public ActionCollection
@@ -101,7 +101,7 @@ public:
 
 
 //! All the actions of the "Edit" menu
-/** This class has the special functionality to implement an undo and
+/*! This class has the special functionality to implement an undo and
  *  redo menu. It therefore sets special widgets to be put into
  *  the specialButtons_ QHash. The QSignalMappers undoSignalMapper_
  *  and redoSignalMapper_ map the menu items to an int that is passed
@@ -138,7 +138,7 @@ private slots:
 };
 
 
-/** \class ViewActions
+/*! \class ViewActions
  *  \brief All the actions of the View menu.
  */
 class ViewActions : public ActionCollection
@@ -162,7 +162,7 @@ private slots:
         void setZoom( double zoom );
 };
 
-/** \class FormatActions
+/*! \class FormatActions
  *  \brief All the actions of the Format menu (like group/ungroup)
  */
 class FormatActions : public ActionCollection 
@@ -173,7 +173,7 @@ public:
         ~FormatActions() {}
 };
 
-/** \class ToolActions
+/*! \class ToolActions
  *  \brief All the actions that need mouse interaction
  *
  *  Pointers of the actions which must inherit InteractiveAction are
@@ -196,7 +196,7 @@ private:
 };
 
 
-/** \class CreateActions
+/*! \class CreateActions
  *  \brief All the actions that create DrawObjects
  *
  *  They are not set up manually but by the list of ObjectMapper

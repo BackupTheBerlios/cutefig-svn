@@ -28,6 +28,7 @@
 #include "interactiveaction.h"
 #include "changecommand.h"
 
+//! Moves one controlpoint of the DrawObject.
 class PointMoveAction : public InteractiveAction
 {
         Q_OBJECT
@@ -47,9 +48,10 @@ public:
         virtual void drawMetaData( QPainter* p, const ViewBase* v ) const;
         
 private:
-        //  QPointF* findPointUnderMouse( DrawObject* o, const QPoint& p, const QMatrix* m );
-
+	//! the index of the point to be moved
         int pointIndex_;
+
+	//! the DrawObject to be handeled
         DrawObject* wObject_;
 };
 

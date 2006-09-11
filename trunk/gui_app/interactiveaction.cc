@@ -33,7 +33,7 @@
 
 #include <QDebug>
 
-/** The constructor takes a Controler a parameter.
+/*! The constructor takes a Controler a parameter.
  * 
  */
 InteractiveAction::InteractiveAction( Controler* parent )
@@ -46,7 +46,7 @@ InteractiveAction::InteractiveAction( Controler* parent )
         connect( &selection_, SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
 }
 
-/** 
+/*! 
  * Will announce the action to the Controler. Usually called by the
  * signal triggered(). Can be reimplemented by actions that do not
  * want to register themselves to the Controler in every case. Any
@@ -107,7 +107,7 @@ void InteractiveAction::selectionChanged()
                 setChecked( false );
 }
 
-/** Returns true, if the action handles the DrawObject o in case the
+/*! Returns true, if the action handles the DrawObject o in case the
  * user clicks at point p. If o is the same object that is already
  * handled we always return true.
  */

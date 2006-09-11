@@ -43,7 +43,7 @@
 
 
 
-/**
+/*!
  * The constructor needs a Controler and a figure as parameter.
  */
 CanvasView::CanvasView( Controler* c, ActionStatusIndicator* si, const Figure* f, CuteFig* parent )
@@ -89,7 +89,7 @@ void CanvasView::mouseDoubleClickEvent( QMouseEvent* e )
         mouseReleaseEvent( e );
 }
 
-/**  
+/*!  
  */
 void CanvasView::mouseReleaseEvent( QMouseEvent* e )
 {
@@ -124,7 +124,7 @@ void CanvasView::mouseReleaseEvent( QMouseEvent* e )
 }
 
 
-/** 
+/*! 
  */
 void CanvasView::mouseMoveEvent( QMouseEvent* e )
 {
@@ -236,7 +236,7 @@ bool CanvasView::event( QEvent* e )
         return QWidget::event( e );
 }
 
-/** As QMenuBar snatches away the focus, when the user hits the
+/*! As QMenuBar snatches away the focus, when the user hits the
  *  Alt-key we sometimes need to be faster and snatch the
  *  corresponding QKeyEvent before. This is done by installing this
  *  into the eventfilter list of QApplication. Then we snatch away the

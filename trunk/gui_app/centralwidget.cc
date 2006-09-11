@@ -31,13 +31,13 @@
 #include <QLayout>
 #include <QTimer>
 
-/** \class CentralWidget
+/*! \class CentralWidget
  *
  *  It basically hosts the two Rulers and the CanvasView. Maybe a
  *  QSplitter will be added together with some sort of structure view.
  */
 
-/** Constructs all the child widgets, connects signals and slots and
+/*! Constructs all the child widgets, connects signals and slots and
  * then resizes the rulers by calling resize rulers by a QTimer.
  */
 CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )

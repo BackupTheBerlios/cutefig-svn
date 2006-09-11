@@ -25,7 +25,7 @@
 #include "reslib.h"
 
 //! Changes flags of key to InLib, if the resource is in the lib
-/*  As Resources coming from a data file, that are identically in the
+/*! As Resources coming from a data file, that are identically in the
  *  ResLib are not added again. Therefore #ResourceKey::flags_ have to
  *  be changed from InFig to InLib.
  */

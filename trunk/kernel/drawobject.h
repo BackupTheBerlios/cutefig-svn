@@ -1,4 +1,4 @@
- 
+
 /*****************************************************************************
 **
 **  @version $Id$
@@ -155,7 +155,7 @@ class AbstractResourceUser;
  */
 class DrawObject : public QObject
 {
-        Q_OBJECT
+	Q_OBJECT
 public:
         explicit DrawObject( Figure* parent = 0 );
         DrawObject( const DrawObject* );
@@ -370,7 +370,7 @@ private:
 };
 
 //! Small helper class to store the DrawObject's keyword and name
-/** This class is not meant to be instaciated manually but by the
+/*! This class is not meant to be instaciated manually but by the
  *  compiler macro #DRAW_OBJECT. It is inspired by the Q_OBJECT macro
  *  of Qt.
  */

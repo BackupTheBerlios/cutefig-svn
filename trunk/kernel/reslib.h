@@ -32,7 +32,7 @@
 namespace Res
 {
         //! returns the key word of Resource used in the figure file
-        /** The actual functions ar to be sepecialised.
+        /*! The actual functions ar to be sepecialised.
          */
         template<typename Resource> const QString resourceName();
 }
@@ -49,7 +49,7 @@ namespace Res
 class AbstractResourceUser;
 class ResourceIO;
 //! Abstract base class of ResLib
-/** Used to put all the different ResLibs of different Resource type in
+/*! Used to put all the different ResLibs of different Resource type in
  *  one container class.
  */
 class AbstractResLib
@@ -181,7 +181,7 @@ private:
         static Resource& dummyResource();
         
         //! resolves a ResourceKey to a Resource
-        /** Note that the key is resolved to a \e pointer to a
+        /*! Note that the key is resolved to a \e pointer to a
          *  ResourceData instance. The reason for that is, that we can
          *  use const T QMap::operator[key] const for the lookup which
          *  returns by value.
@@ -194,7 +194,7 @@ template<> class ResLib<Stroke>;
 
 template<typename Resource>
 
-/** This is to be returned if a resource is requested by a key that is
+/*! This is to be returned if a resource is requested by a key that is
  *  not in the ResLib.
  */
 Resource& ResLib<Resource>::dummyResource()
@@ -204,7 +204,7 @@ Resource& ResLib<Resource>::dummyResource()
 }
 
 
-/** It therefore first checks whether the resource is not
+/*! It therefore first checks whether the resource is not
  *  builtIn.
  */
 template<typename Resource>
@@ -218,7 +218,7 @@ bool ResLib<Resource>::insert( const ResourceKey& key, const Resource& data )
         return true;
 }
 
-/** It therefore first checks whether the resource is not builtIn. The
+/*! It therefore first checks whether the resource is not builtIn. The
  *  instance of ResourceData is deleted before the entry is removed.
  */
 template<typename Resource>
@@ -231,7 +231,7 @@ bool ResLib<Resource>::remove( const ResourceKey& key )
         return map_.remove( key );
 }
 
-/** If found is nonnull it is used to tell whether the resource has
+/*! If found is nonnull it is used to tell whether the resource has
  * been found in the lib or not.
  */
 template<typename Resource>
@@ -295,7 +295,7 @@ bool ResLib<Resource>::setResource( const ResourceKey& key, const Resource& res 
 }
 
 
-/** All users of the resource are informed of the name change.
+/*! All users of the resource are informed of the name change.
  */
 template<typename Resource>
 bool ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceKey& newKey )
@@ -313,7 +313,7 @@ bool ResLib<Resource>::changeKeyName( const ResourceKey& oldKey, const ResourceK
         return true;
 }
 
-/** Does nothing if the key could not be looked up or if the user is
+/*! Does nothing if the key could not be looked up or if the user is
  *  already in the userlist.
  */
 template<typename Resource>
@@ -329,7 +329,7 @@ const Resource* ResLib<Resource>::assignResource( ResourceKey& key, AbstractReso
         return &d->data();
 }
 
-/** does nothing if the key could not be looked up
+/*! does nothing if the key could not be looked up
  */
 template<typename Resource>
 void ResLib<Resource>::unassignResource( const ResourceKey& key, AbstractResourceUser* u ) 
@@ -354,7 +354,7 @@ void ResLib<Resource>::save( ResourceIO* rIO, std::ostream& ts )
 // ResourceKey ResLib<Resource>::findKey( const QString& keyString )
 
 //! Contains the data of the Resource, the hash sum and the user list.
-/** and keeps all consistent
+/*! and keeps all consistent
  */
 template<typename Resource>
 class ResLib<Resource>::ResourceData

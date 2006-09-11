@@ -34,7 +34,7 @@ class CuteFig;
 class QActionGroup;
 
 //! Maintains instances of QAction for FileActions, that will load recently visited files.
-/** RecentFiles is implemented as a singleton whose instance is not
+/*! RecentFiles is implemented as a singleton whose instance is not
  *  accessible directly but only through the two static functions
  *  getActions() and addFile().
  *
@@ -81,7 +81,7 @@ private:
 
 
 //! A small helper class to translate signal QAction::triggered() to a function call to CuteFig
-/** One problem in RecentFiles is, that a QAction has only the signal
+/*! One problem in RecentFiles is, that a QAction has only the signal
  *  triggered() that can not parse an argument. So translateSignal()
  *  extracts the file name to open out of QAction::data() and calls
  *  then CuteFig::load().

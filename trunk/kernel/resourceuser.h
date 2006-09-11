@@ -30,7 +30,7 @@
 #include <QDebug>
 
 //! Abstract base class for ResourceUser
-/** Used to put several different ResourceUsers into one container
+/*! Used to put several different ResourceUsers into one container
  *  class. This is useful for example to make a
  *  QList<AbstractResourceUser> of all the Resources a Figure
  *  uses. Therefore DrawObject::resourceUsers() is used.
@@ -72,7 +72,7 @@ protected:
 #include "reslib.h"
 
 //! Acts a little bit like a refcount for a Resource
-/** The \ref resource_system of the CuteFig, arises the following
+/*! The \ref resource_system of the CuteFig, arises the following
  *  problem: What happens if a Resource, that is in use in the Figure
  *  is removed from the ResLib?
  *
@@ -158,7 +158,7 @@ ResourceUser<Resource>::ResourceUser( const ResourceKey& key )
         setResource( key );
 }
 
-/** Needs to add itself to the userlist in case the key is valid.
+/*! Needs to add itself to the userlist in case the key is valid.
  */
 template<typename Resource>
 ResourceUser<Resource>::ResourceUser( const ResourceUser<Resource>& other )
@@ -185,7 +185,7 @@ ResourceUser<Resource>& ResourceUser<Resource>::operator= ( const ResourceUser<R
 }
 
 
-/** The user has to be removed from the user list on destruction.
+/*! The user has to be removed from the user list on destruction.
  */
 template<typename Resource>
 ResourceUser<Resource>::~ResourceUser()
@@ -193,7 +193,7 @@ ResourceUser<Resource>::~ResourceUser()
         unassignResource();
 }
 
-/** Returns the "hard stored" data in case the key is *
+/*! Returns the "hard stored" data in case the key is *
  *  invalid. Otherwise a pointer to the Resource instance in the ResLib
  *  is returned.
  */
@@ -205,7 +205,7 @@ template<typename Resource> const Resource& ResourceUser<Resource>::data() const
                 return data_;
 }
 
-/** unassigns the Resource first.
+/*! unassigns the Resource first.
  */
 template<typename Resource>
 void ResourceUser<Resource>::setResource( const Resource& data )
@@ -215,7 +215,7 @@ void ResourceUser<Resource>::setResource( const Resource& data )
         data_ = data;
 }
 
-/** Looks up the resource in ResLib by assigning it. If the Resource
+/*! Looks up the resource in ResLib by assigning it. If the Resource
  *  could be looked up the old one is unassigned before setting the
  *  data.
  */
@@ -231,7 +231,7 @@ void ResourceUser<Resource>::setResource( const ResourceKey& key )
         }
 }
 
-/** The data is copied out of the ResLib so that it can be readded
+/*! The data is copied out of the ResLib so that it can be readded
  *  later.
  */
 template<typename Resource>
@@ -244,7 +244,7 @@ void ResourceUser<Resource>::releaseResource()
         unassignResource();
 }
 
-/** Of course the user is added to the ResLibs userlist.
+/*! Of course the user is added to the ResLibs userlist.
  */
 template<typename Resource>
 void ResourceUser<Resource>::reclaimResource()
@@ -264,7 +264,7 @@ void ResourceUser<Resource>::unassignResource()
                 resLib_.unassignResource( key_, this );
 }
 
-/** Auxilliary function. Mainly used to save typing and to avoid long
+/*! Auxilliary function. Mainly used to save typing and to avoid long
  *  statemants and thus enhance readability of code.
  *
  *  Compare:

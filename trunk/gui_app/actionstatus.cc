@@ -28,7 +28,7 @@
 #include <QCoreApplication>
 
 
-/** Calls clear() in order to fill infoHash_ to contain all valid
+/*! Calls clear() in order to fill infoHash_ to contain all valid
  *  Qt::KeyboardModifier.
  */
 ActionStatus::ActionStatus()
@@ -60,7 +60,7 @@ void ActionStatus::setInformation( const Fig::PointFlags& f, const QString& b, c
 }
 
 //! Sets the information for the modifiers.
-/** The code of this function looks a bit confusing on the first
+/*! The code of this function looks a bit confusing on the first
  *  view. This is due to the problem that we need to make several
  *  modifier combination resolve to the same Information. For example
  *  if one InteractiveAction only understands the Ctrl-key the same
@@ -102,7 +102,7 @@ const ActionStatus::Information& ActionStatus::information() const
         return *infoMap_[modifiers_];
 }
 
-/** The infoMap_ needs to be filled so that every valid modifier
+/*! The infoMap_ needs to be filled so that every valid modifier
  *  combination actually resolves to a valid pointer to Information.
  *  So all modifier combinations are made resolve to the first item of
  *  infos_.
@@ -136,7 +136,7 @@ QString ActionStatus::tr( const char* s )
 }
 
 
-/** Initialises everything to QString() except the right click rection
+/*! Initialises everything to QString() except the right click rection
  *  which is initialised to tr("Cancel") as this is the default
  *  behaviour.
  */

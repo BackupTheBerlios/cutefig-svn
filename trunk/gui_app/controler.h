@@ -53,7 +53,7 @@ typedef QList<ActionCollection*> ActionGroups;
 
 
 //! The Controler is the connection between the views (ViewBase) and the Figure.
-/** A Controler handles all the user interaction and manipulates the
+/*! A Controler handles all the user interaction and manipulates the
  *  Figure. After it changed the Figure all the views of viewList_ get
  *  the ViewBase::updateFigure() command. The Controler keeps track of
  *  all user interaction by storing all the commands in the

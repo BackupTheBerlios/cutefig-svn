@@ -74,7 +74,7 @@ void Ruler::setUnit( const ResourceKey& k )
         updateRuler();
 }
 
-/** Calculates the tickmarks in a way that they can be displayed properly.
+/*! Calculates the tickmarks in a way that they can be displayed properly.
  */
 void Ruler::calcTickMarks()
 {
@@ -104,7 +104,7 @@ void Ruler::calcTickMarks()
         } while ( i < length_ );
 }
 
-/** sets the value of the pointer position and repaints the area that
+/*! sets the value of the pointer position and repaints the area that
  * needs to be repainted.
  */
 void Ruler::setValue( int v )
@@ -161,7 +161,7 @@ void Ruler::setLength( int l )
         updateRuler();
 }
 
-/** All the coordinates ticks are to be drawn at and so are stored in
+/*! All the coordinates ticks are to be drawn at and so are stored in
  * pointers. This allows to draw use the same drawing loop for both
  * orientations.
  */

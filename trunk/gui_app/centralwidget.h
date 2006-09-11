@@ -33,7 +33,7 @@ class QMainWindow;
 class Ruler;
 class CanvasView;
 
-/** \class CentralWidget
+/*! \class CentralWidget
  *  \brief The central widget of the CuteFig.  
  */
 

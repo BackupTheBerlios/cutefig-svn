@@ -120,7 +120,7 @@ const QString EditActions::undoString_ = tr("&Undo");
 const QString EditActions::redoString_ = tr("&Redo");
 const QString EditActions::colonSep_ = ": ";
 
-/** The constructor has to setup the signal mapper and the undo redo menus 
+/*! The constructor has to setup the signal mapper and the undo redo menus 
  *  appart from setting up the actions.
  */
 EditActions::EditActions( Controler* parent )
@@ -176,7 +176,7 @@ EditActions::EditActions( Controler* parent )
         parent->addActionGroup( this );
 }
 
-/** Clears the redo menu, modifys the text of undo_ and adds an item
+/*! Clears the redo menu, modifys the text of undo_ and adds an item
  * to the undo menu.
  */
 void EditActions::addCommand( const QString& s )

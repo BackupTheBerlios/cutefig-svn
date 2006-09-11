@@ -23,7 +23,7 @@
 ******************************************************************************/
 
 
-/** \mainpage The CuteFig source documentation
+/*! \mainpage The CuteFig source documentation
  *  \version 0.1
  *  \author Johannes Mueller <joh@users.berlios.de>
  *

@@ -22,7 +22,7 @@
 **
 ******************************************************************************/
 
-/** \class Compound
+/*! \class Compound
  *
  *  A compound has a list of DrawObjects called children. They are
  *  stored in childObjects_. Those DrawObjects are also the Compound's
@@ -39,7 +39,7 @@
 
 #include <QDebug>
 
-/** Creates a Compound object of the DrawObjects in l. Those
+/*! Creates a Compound object of the DrawObjects in l. Those
  *  DrawObjects are made the children of the Compund.
  */
 Compound::Compound( const ObjectList& l, Figure* parent )
@@ -63,7 +63,7 @@ Compound::Compound( const Compound* c )
         doSpecificPreparation();
 }
 
-/** Makes the children children of the Compounds parent. So the
+/*! Makes the children children of the Compounds parent. So the
  *  children are adopted by their grandparent so to speak. This parent
  *  can either the Figure or, if we deal with nested Compounds,
  *  another Compound.

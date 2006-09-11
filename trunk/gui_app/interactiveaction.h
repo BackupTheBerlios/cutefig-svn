@@ -42,7 +42,7 @@ class QKeyEvent;
 
 
 //! Abstract baseclass for all unseractions
-/** CuteFig uses classes that are derived InteractiveAction for every
+/*! CuteFig uses classes that are derived InteractiveAction for every
  *  user action, that needs user interaction. The InteractiveActions
  *  announce themselves to the Controler, and the Controler calls them
  *  back as soon as the userinteraction takes place. All operations

@@ -22,13 +22,14 @@
 **
 ******************************************************************************/
 
-#include <cmath>
 
 #include "drawobject.h"
 #include "geometry.h"
 #include "compound.h"
 
 #include <QPainter>
+
+#include <cmath>
 
 #include <QDebug>
 

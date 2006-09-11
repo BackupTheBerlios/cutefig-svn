@@ -176,7 +176,7 @@ void CfigOutput::outputMetaData()
                     << KWds::paper()         << ' ' << figure_.paperKey() << "\n";
         
         const QString& ath = figure_.author();
-        if ( !ath.isEmpty() )
+        if ( figure_.authorIsToBeSaved() && !ath.isEmpty() )
                 fileStream_ << KWds::author() << ' ' << figure_.author() << "\n";
         
         const QString& dsc = figure_.description();

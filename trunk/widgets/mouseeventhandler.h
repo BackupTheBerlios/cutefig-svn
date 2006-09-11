@@ -22,7 +22,7 @@
 **
 ******************************************************************************/
 
-/** \page mouse_interaction Handling of mouse interaction
+/*! \page mouse_interaction Handling of mouse interaction
  *
  *  As the CuteFig is inspired by the XFig drawing programmme, it
  *  handles the mouse interaction similar as XFig does, i.e. it more

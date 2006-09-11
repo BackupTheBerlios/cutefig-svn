@@ -32,7 +32,7 @@ class Figure;
 class CanvasView;
 class Controler;
 
-/** \class CuteFig
+/*! \class CuteFig
  *  \brief The \e actual application. It inherits from QMainWindow.
  */
 

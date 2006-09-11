@@ -28,23 +28,28 @@
 
 #include <QDebug>
 
-template<>
-void Initialiser::AutoHash<ObjectHandler>::init()
+namespace Initialiser 
 {
-        static TObjectHandler<Rectangle> rcf;
-        static TObjectHandler<Ellipse> elf;
-        static TObjectHandler<Polyline> plf;
-        static TObjectHandler<Polygon> pgf;
-        static TObjectHandler<Arc> agf;
-        static TObjectHandler<BezierSpline> bsf;
-        static TObjectHandler<TextObject> tgf;
+        
+template<>
+void AutoHash<ObjectHandler>::init()
+{
+	static TObjectHandler<Rectangle> rcf;
+	static TObjectHandler<Ellipse> elf;
+	static TObjectHandler<Polyline> plf;
+	static TObjectHandler<Polygon> pgf;
+	static TObjectHandler<Arc> agf;
+	static TObjectHandler<BezierSpline> bsf;
+	static TObjectHandler<TextObject> tgf;
 }
 
 template<>
-void Initialiser::AutoHash<ResourceIOFactory>::init()
+void AutoHash<ResourceIOFactory>::init()
 {
-        static TResourceIOFactory<QColor> ciof;
-        static TResourceIOFactory<Gradient> giof;
-        static TResourceIOFactory<Dashes> diof;
+	static TResourceIOFactory<QColor> ciof;
+	static TResourceIOFactory<Gradient> giof;
+	static TResourceIOFactory<Dashes> diof;
+}
+
 }
 

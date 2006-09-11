@@ -25,7 +25,7 @@
 #ifndef parser_h
 #define parser_h
 
-/** \class Parser
+/*! \class Parser
  *  \brief Parses a input file.
  */
 #include <QObject>

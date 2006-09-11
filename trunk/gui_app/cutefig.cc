@@ -48,7 +48,7 @@
 int CuteFig::rulerWidth = 30;
 double CuteFig::unit = Fig::cm2pix;
 
-/** The constructor of CuteFig. It constructs all the three items
+/*! The constructor of CuteFig. It constructs all the three items
  *  which are needed for the MVC design pattern. Then it triggers the
  *  initialisation by calling init() via the delayed initialisation
  *  idiom described in http://www.codeskipper.org/.
@@ -122,7 +122,7 @@ void CuteFig::choose()
                statusBar()->showMessage( tr("Loading aborted"), 2000 );
 }
 
-/** Loads the file filename. Then it parses its contents into
+/*! Loads the file filename. Then it parses its contents into
  * the figure_. If any errors occour a report is shown. Finally cview_
  * gets an update message so that the figure is displayed.
  */
@@ -146,7 +146,7 @@ void CuteFig::load( const QString& fileName )
         cview_->updateFigure();
 }
 
-/** Uses an OutputBackend to store the figure into a file. The
+/*! Uses an OutputBackend to store the figure into a file. The
  *  OutputBackand is chosen depending on the filename extension.
  */
 void CuteFig::save()
@@ -210,7 +210,7 @@ void CuteFig::print()
 }
 
 
-/** Asks the obligated areyousure-question before accepting the close
+/*! Asks the obligated areyousure-question before accepting the close
  * event. This might sometimes be skiped in development versions. :-)
  */
 void CuteFig::closeEvent( QCloseEvent* ce )
@@ -263,7 +263,7 @@ void CuteFig::help()
 //         assi->showPage( helpFile );
 }
 
-/** Sets up an AllActions instance and then sets up a menubar entry
+/*! Sets up an AllActions instance and then sets up a menubar entry
  * and a toolbutton (if possible) for each ActionCollection. Finally
  * it adds the help menu by foot.
  */

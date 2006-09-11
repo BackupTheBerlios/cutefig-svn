@@ -22,7 +22,7 @@
 **
 ******************************************************************************/
 
-/** \class Parser
+/*! \class Parser
  *
  *  The Parser is there to parse input files containing data of a
  *  figure. It therefore uses std::istringstream, as QTextStream does not
@@ -64,7 +64,7 @@ Parser::Parser( QTextStream& ts, Figure* f  )
 }
 
 
-/** The main function of the Parser. Parses the input file, gives the
+/*! The main function of the Parser. Parses the input file, gives the
  *  DrawObjects found to the figure and returns an errorreport that
  *  can be displayed to the user.
  */
@@ -163,6 +163,7 @@ QString Parser::parseMetaData()
                         QString ath;
                         stream_ >> ath;
                         figure_->setAuthor( ath );
+			figure_->setAuthorToBeSaved( true );
 
                         continue;
                 }
@@ -205,7 +206,7 @@ QString Parser::parseResLibs( QTextStream& ts )
 }
 
 
-/** The parsing loop. Parses the input file until eof or the end of a
+/*! The parsing loop. Parses the input file until eof or the end of a
  *  compound is found and returns the DrawObjects in an ObjecList. If
  *  the begining of a compound is found, a compound is created and
  *  filled with the ObjectList that a recursive call returned.
@@ -336,7 +337,7 @@ void Parser::parseResource( ResourceKey::Flags flags )
         }
 }
 
-/** Takes the next line of the input file and puts it into the
+/*! Takes the next line of the input file and puts it into the
  *  sstream_. Comments are removed and put into objectComment_. The
  *  first word of the input line is put into itemType_ If the
  *  fileStream_ is finished false is returned, otherwise true;
@@ -365,7 +366,7 @@ bool Parser::readLine()
         return true;
 }
 
-/** Tries to interpret the next two words of sstream_ as to
+/*! Tries to interpret the next two words of sstream_ as to
  *  doubles. If that succeeds these values are put intp pa[i].
  */
 QPointF Parser::parsePoint()
@@ -383,7 +384,7 @@ QPointF Parser::parsePoint()
 
 
 
-/** Parses the generic line of itemType_ == "object". It creates the
+/*! Parses the generic line of itemType_ == "object". It creates the
  *  DrawObject and sets its genereic data. Finally it returns a poiter
  *  to that DrawObject. If an error occurs the DrawObject is deleted
  *  if necessary and a null pointer is returned.

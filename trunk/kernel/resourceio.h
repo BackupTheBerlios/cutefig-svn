@@ -44,7 +44,7 @@ class ResourceIO;
 class AbstractResLib;
 template<typename Resource> class ResLib;
 
-/** \class ResourceIOFactory
+/*! \class ResourceIOFactory
  * \brief Used to lookup a suitable ResourceIO for a given Resource.
  *
  * In order to handle the IO of a certain resource a ResourceIO is
@@ -99,7 +99,7 @@ private:
 };
 
 
-/** \class ResourceIO
+/*! \class ResourceIO
  *
  * \brief Abstract base class of TResourceIO.
  *
@@ -144,7 +144,7 @@ private:
 };
 
 //! Implements the interface provided by ResourceIO.
-/**
+/*!
  * Besides implementing the pure virtual functions of ResourceIO it
  * contains the data member resource_ and resourceLib_ of which the
  * former is the Resource handled and the latter is a reference to

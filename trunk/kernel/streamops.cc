@@ -35,7 +35,7 @@
 #include <iostream>
 #include <sstream>
 
-/** Puts the next word of the a std::istream into a QString. 
+/*! Puts the next word of the a std::istream into a QString. 
  *
  */
 std::istream &operator>> ( std::istream &is, QString &_s ) 
@@ -66,7 +66,7 @@ int get_colorPart( std::istream& is )
 }
         
 
-/** Tries to interpret the next word of an std::istream as a
+/*! Tries to interpret the next word of an std::istream as a
  * QColor. On failure the failbit of the std::istream is set to true.
  */
 std::istream &operator>> ( std::istream &is, QColor &color )

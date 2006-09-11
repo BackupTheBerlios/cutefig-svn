@@ -29,7 +29,7 @@
 #include "typedefs.h"
 #include "controler.h"
 
-/** \class CreateAction
+/*! \class CreateAction
  *  \brief A base class for create actions of DrawObjects
  *
  *  Each DrawObject that can be createt from skratch must come up with

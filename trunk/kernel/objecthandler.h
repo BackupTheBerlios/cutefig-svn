@@ -91,7 +91,7 @@ private:
 
 
 //! Templated concrete class based on ObjectHandler
-/** The constructor registers the DrawObject described by the template
+/*! The constructor registers the DrawObject described by the template
  *  parameter ObjectType to the ohHash_ by calling
  *  ObjectHandler::ObjectHandler().
  *

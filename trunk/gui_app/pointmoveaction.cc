@@ -31,6 +31,8 @@
 
 #include <QDebug>
 
+
+//! Finds the index of o->points() that is near the point _p and returns it or -1 if none is found.
 int findPointUnderMouse( DrawObject* o, const QPoint& _p, const QMatrix& m )
 {
         if ( !o )
@@ -44,6 +46,8 @@ int findPointUnderMouse( DrawObject* o, const QPoint& _p, const QMatrix& m )
         
         return ( i == pts.size() ) ? -1 : i;   
 }
+
+
 
 PointMoveAction::PointMoveAction( Controler* parent )
         : InteractiveAction( parent ),

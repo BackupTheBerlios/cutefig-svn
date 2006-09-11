@@ -24,7 +24,7 @@
 
 #include "actioncollection.h"
 
-/** This was suggested by the QT4 docs in order to replace the QT3
+/*! This was suggested by the QT4 docs in order to replace the QT3
  * function.
  */
 void ActionCollection::addSeparator()

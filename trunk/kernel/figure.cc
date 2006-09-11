@@ -45,7 +45,7 @@ Figure::Figure( QObject *parent ) :
 {
 }
 
-/** Then tells them to recalculate. Usually called by a Parser.
+/*! Then tells them to recalculate. Usually called by a Parser.
  */
 void Figure::takeDrawObjects( const ObjectList& l )
 {
@@ -246,6 +246,7 @@ Figure::MetaData::MetaData()
           unit_(),
           paper_(),
           author_( getUserName() ),
+	  authorToBeSaved_( false ),
           description_(),
           creationDate_( QDate::currentDate() ),
           modDate_()

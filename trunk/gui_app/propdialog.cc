@@ -57,6 +57,7 @@ PropDialog::PropDialog( Figure* f, QWidget* parent )
         QGroupBox* metaDatGrp = new QGroupBox( tr("&Meta data") );
 
         author_ = new QLineEdit;
+	saveAuthor_ = new QCheckBox( tr("&Save author's name") );
         description_ = new QTextEdit;
         description_->setAcceptRichText( false );
 
@@ -67,6 +68,8 @@ PropDialog::PropDialog( Figure* f, QWidget* parent )
         metaLt->addWidget( authorLab );
         metaLt->addWidget( author_ );
 
+	metaLt->addWidget( saveAuthor_ );
+
         QLabel* descLab = new QLabel( tr("&Description") );
         descLab->setBuddy( description_ );
         metaLt->addWidget( descLab );
@@ -76,6 +79,8 @@ PropDialog::PropDialog( Figure* f, QWidget* parent )
 
         connect( author_, SIGNAL(textEdited(const QString&)), this, SLOT(noticeChange()) );
         connect( description_, SIGNAL(textChanged()), this, SLOT(noticeChange()) );
+	connect( saveAuthor_, SIGNAL( clicked() ), this, SLOT( noticeChange() ) ); 
+	connect( saveAuthor_, SIGNAL( clicked(bool) ), author_, SLOT( setEnabled(bool) ) ); 
 
         
         QGroupBox* dateGrp = new QGroupBox( tr("Dates") );
@@ -117,6 +122,8 @@ void PropDialog::updateValues()
         paper_->setCurrentKey( figure_->paperKey() );
         author_->setText( figure_->author() );
         description_->setPlainText( figure_->description() );
+	saveAuthor_->setChecked( figure_->authorIsToBeSaved() );
+	author_->setEnabled( figure_->authorIsToBeSaved() );
         qDebug() << "updateValues end" << description_->toPlainText();
         doNoticeChanges( true );
 }
@@ -127,6 +134,7 @@ void PropDialog::commitChanges( QObject* )
         figure_->setUnit( length_->currentKey() );
         figure_->setPaper( paper_->currentKey() );
         figure_->setAuthor( author_->text() );
+	figure_->setAuthorToBeSaved( saveAuthor_->isChecked() );
         figure_->setDescription( description_->toPlainText() );
 }
 

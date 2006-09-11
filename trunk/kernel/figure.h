@@ -46,7 +46,7 @@ class QRectF;
 
 
 //! contains all DrawObject objects of a figure. It is the \e document the user is editing.
-/** The Figure is the Model in the MVC approach. It takes a pointer to
+/*! The Figure is the Model in the MVC approach. It takes a pointer to
  *  a Controler by setControler() which is usually called by an
  *  instance of a Controler. The Controler tells the Figure about
  *  updates the user made. This is done by using the routines
@@ -66,7 +66,7 @@ class QRectF;
  */
 class Figure : public QObject
 {
-        Q_OBJECT
+Q_OBJECT
 
 public:
         explicit Figure( QObject * parent = 0 );
@@ -74,7 +74,7 @@ public:
 
 
         //! Contains the Figures meta data
-        /** All the metadata is put into one class so that it can be
+        /*! All the metadata is put into one class so that it can be
          *  copied or referenced to easily in one statement.
          */
         class MetaData
@@ -88,6 +88,7 @@ public:
                 const ResourceUser<Length>& unit() const { return unit_; }
                 const ResourceUser<Paper>& paper() const { return paper_; }
                 const QString& author() const { return author_; }
+		bool authorToBeSaved() const { return authorToBeSaved_; }
                 const QString& description() const { return description_; }
 
                 QDate creationDate() const { return creationDate_; }
@@ -99,6 +100,7 @@ public:
                 ResourceUser<Paper> paper_;
 
                 QString author_;
+		bool authorToBeSaved_;
                 QString description_;
 
                 QDate creationDate_;
@@ -125,6 +127,9 @@ public:
 
         const QString& author() const { return metaData_.author(); }
         void setAuthor( const QString& a ) { metaData_.author_ = a; }
+
+	bool authorIsToBeSaved() const { return metaData_.authorToBeSaved(); }
+	void setAuthorToBeSaved( bool s ) { metaData_.authorToBeSaved_ = s; }
         
         const QString& description() const { return metaData_.description(); }
         void setDescription( const QString& d ) { metaData_.description_ = d; }
@@ -185,11 +190,7 @@ private:
         
         ObjectList objectList_, drawingList_;
 
-        MetaData metaData_; 
-        
-        /** The scale that is used internally. Not to be mixed up with
-         *  the zoom, that is only used by a CanvasView.
-         */
+        MetaData metaData_;        
 };
 
 #endif

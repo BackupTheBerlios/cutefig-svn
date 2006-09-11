@@ -25,7 +25,7 @@
 #ifndef typedefs_h
 #define typedefs_h
 
-/** Some type definitions used by several classes.
+/*! Some type definitions used by several classes.
  */
 
 template<class T> class QList;

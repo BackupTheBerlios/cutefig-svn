@@ -24,7 +24,7 @@
 
 #include "mouseeventhandler.h"
 
-/** Is not reimplemeted by the two MouseEventHandlers shipped...
+/*! Is not reimplemeted by the two MouseEventHandlers shipped...
  */
 void AbstractMouseEventHandler::mouseMoveEvent( QMouseEvent* e )
 {

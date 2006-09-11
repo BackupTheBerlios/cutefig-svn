@@ -29,7 +29,7 @@
 
 #include <QDebug>
 
-/** Unselects everything on receiving a null pointer. Otherwise the
+/*! Unselects everything on receiving a null pointer. Otherwise the
  *  DrawObject o is added to the Selection if it is not yet in it. If
  *  it is it is unselected. The SelectMode mode states whether the
  *  prior selected objects are to be kept in the Selection.
@@ -59,7 +59,7 @@ bool Selection::select( DrawObject* o, SelectMode mode )
         return true;
 }
 
-/** To be called if a new object is created, e.g by a CreateAction. In
+/*! To be called if a new object is created, e.g by a CreateAction. In
  *  this case the backups_ are empty because it doesn't make sense to
  *  copy a DrawObject, that is not yet in the Figure. ClearMode mode
  *  states whether backups are to be kept or not.
@@ -76,7 +76,7 @@ void Selection::setObjectToBeCreated( DrawObject* o, ClearMode mode )
         emit selectionChanged();
 }
 
-/** Similar to setObjectToBeCreated() but it takes a ObjectList. It's
+/*! Similar to setObjectToBeCreated() but it takes a ObjectList. It's
  *  useful if several DrawObjects are to be inserted at once, e.g. by
  *  a PasteAction. ClearMode mode states whether backups are to be
  *  kept or not.
@@ -93,7 +93,7 @@ void Selection::setListToBeInserted( const ObjectList& l, ClearMode mode )
         emit selectionChanged();
 }
 
-/** Clears the selection. If destructive is true (default), the
+/*! Clears the selection. If destructive is true (default), the
  *  selected objects (not the backups) are really deleted. ClearMode
  *  mode states whether prior selected objects are to be destroyed or
  *  not.
@@ -106,7 +106,7 @@ void Selection::clear( ClearMode mode )
         objects_.clear();
 }
 
-/** Deletes the objects and copies it again from the backups
+/*! Deletes the objects and copies it again from the backups
  */
 void Selection::restoreBackups()
 {
@@ -116,7 +116,7 @@ void Selection::restoreBackups()
                 objects_.append( o->copy() );
 }
 
-/** Copies the backups_ to objects_. Useful after an InteractiveAction
+/*! Copies the backups_ to objects_. Useful after an InteractiveAction
  *  is completed.
  */
 void Selection::updateBackups()
@@ -125,7 +125,7 @@ void Selection::updateBackups()
         renewBackups();
 }
 
-/** regenerates the objects_ out of the backups_
+/*! regenerates the objects_ out of the backups_
  */
 void Selection::renewBackups()
 {
@@ -146,7 +146,7 @@ const QString Selection::objectname() const
         }
 }
 
-/** Returns the boundingRect of all objects.
+/*! Returns the boundingRect of all objects.
  */
 const QRectF Selection::boundingRect() const
 {

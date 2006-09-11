@@ -41,7 +41,7 @@ class QRectF;
 class OutputBackend;
 
 //! Represents the possibilities of patterns that can used to draw or fill an object.
-/** So far it can contain a QColor or a Gradient. Pixmaps and vector
+/*! So far it can contain a QColor or a Gradient. Pixmaps and vector
  *  patterns are to be implemented. The data is kept in an ResourceUser. 
  */
 class Stroke 
