@@ -50,14 +50,14 @@ TextAction::TextAction( Controler* parent )
         controler_->setTextAction( this );
 }
 
-void TextAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
+void TextAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix& m )
 {
         if ( textObject_ ) {
                 commitTextObject();
                 return;
         }
 
-        QPoint point = m->map( p );
+        QPoint point = m.map( p );
 
         TextObject* to = textObjectUnderPoint( point );
         

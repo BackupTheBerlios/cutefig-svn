@@ -129,8 +129,10 @@ void CfigOutput::outputGenericData()
 
         if ( !drawObject_->comment().isEmpty() ) {
                 QStringList comments = drawObject_->comment().split("\n");
-                foreach ( QString s, comments ) 
-                        fileStream_ << "# " << s << "\n";
+		if ( comments.last().isEmpty() )
+			comments.removeLast();
+                foreach ( QString s, comments )
+			fileStream_ << "# " << s.toUtf8().data() << "\n";
         }
         
         fileStream_ << KWds::object() << ' ' << drawObject_->objectKeyWord() << ' '

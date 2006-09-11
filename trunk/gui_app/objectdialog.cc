@@ -130,8 +130,6 @@ void ObjectDialog::setDefaultValues()
 { 
         qDebug("ObjectDialog::setDefaultValues");
         
-//        lineShow->disconnect();
-//        fillPattern->disconnect();
         depth->disconnect();
 
         penWidget->setPen( drawObject_->pen() );
@@ -155,6 +153,7 @@ void ObjectDialog::commitChanges( QObject* )
         drawObject_->setDepth( depth->value() );
         drawObject_->setStartArrow( arrows->startArrow() );
         drawObject_->setEndArrow( arrows->endArrow() );
+	drawObject_->setComment( comment->toPlainText() );
 }
 
 
@@ -166,9 +165,9 @@ void ObjectDialog::setUpConnections()
         connect( lineStroke, SIGNAL( strokeChanged() ), this, SLOT( noticeChange() ) );
         connect( fillStroke, SIGNAL( strokeChanged() ), this, SLOT( noticeChange() ) );
         
-//        connect( depth, SIGNAL( valueChanged(int) ), drawObject_, SLOT( setDepth(int) ) );        
         connect( depth, SIGNAL( valueChanged( int ) ), this, SLOT( noticeChange() ) );
-
+	connect( comment, SIGNAL( textChanged() ), this, SLOT( noticeChange() ) );
+	
         connect( arrows, SIGNAL( startArrowChanged(const Arrow&) ), this, SLOT( noticeChange() ) );
         connect( arrows, SIGNAL( endArrowChanged(const Arrow&) ), this, SLOT( noticeChange() ) );
 }
@@ -186,15 +185,3 @@ void ObjectDialog::setDrawObject( DrawObject* o )
         drawObject_ = o;
         castDrawObject();
 }
-
-// void ObjectDialog::changeStartArrow( const Arrow& a )
-// {
-//         drawObject_->setStartArrow( a );
-//         this->noticeChange();
-// }
-
-// void ObjectDialog::changeEndArrow( const Arrow& a )
-// {
-//         drawObject_->setEndArrow( a );
-//         this->noticeChange();
-// }

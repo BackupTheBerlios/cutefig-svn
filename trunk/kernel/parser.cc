@@ -36,8 +36,6 @@
 #include "keywords.h"
 #include "figure.h"
 #include "reslib.h"
-//#include "strokelib.h"
-// #include "gradient.h"
 #include "resourceio.h"
 #include "objecthandler.h"
 #include "drawobject.h"
@@ -346,17 +344,19 @@ bool Parser::readLine()
 {
         QString s;     
         s = fileStream_.readLine();
-        line_++;
+        ++line_;
 
-        while ( s[0] == '#' || s.isEmpty() ) {
+        while ( s.isEmpty() || s[0] == '#' ) {
                 if ( !s.isEmpty() ) {
                         s.remove( 0, 1 );
+			if ( s[0] == ' ' )
+				s.remove( 0,1 );
                         objectComment_ += s + '\n';
                 }
                 s = fileStream_.readLine();
                 if ( fileStream_.atEnd() )
                         return false;
-                line_++;
+                ++line_;
         }       
         
         stream_.clear();

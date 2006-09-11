@@ -37,7 +37,6 @@ class QGroupBox;
 class QSpinBox;
 class QTextEdit;
 
-class LineShowWidget;
 class StrokeWidget;
 class ArrowWidget;
 class Arrow;
@@ -86,7 +85,6 @@ protected:
         StrokeWidget* lineStroke;
         StrokeWidget* fillStroke;
         ArrowWidget* arrows;
-        LineShowWidget* lineShow;
         QTextEdit* comment;
         QSpinBox* depth;
 
