@@ -32,7 +32,7 @@
 
 #include <QWidget>
 
-void EditdialogAction::click( const QPoint&, Fig::PointFlags, const QMatrix* )
+void EditdialogAction::click( const QPoint&, Fig::PointFlags, const QMatrix& )
 {
         editObject();
 }

@@ -136,10 +136,14 @@ void Selection::renewBackups()
 
 const QString Selection::objectname() const
 {
-        if ( objects_.count() == 1 )
-                return objects_[0]->objectname();
-        else
-                return "selection";
+        switch ( objects_.count() ) {
+            case 0:
+                    return tr("object");
+            case 1:
+                    return objects_[0]->objectname();
+            default:
+                    return tr("selection");
+        }
 }
 
 /** Returns the boundingRect of all objects.

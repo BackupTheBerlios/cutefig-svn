@@ -33,6 +33,7 @@
 
 #include "viewbase.h"
 #include "controler.h"
+#include "actionstatus.h"
 
 #include <QPixmap>
 //#include <QGLWidget>
@@ -44,6 +45,7 @@
 class DrawObject;
 class CuteFig;
 class Ruler;
+class ActionStatusIndicator;
 
 class QPainter;
 class QPointF;
@@ -69,7 +71,7 @@ class CanvasView : public QWidget, public ViewBase
         Q_OBJECT
 public:
         //! The constructor needs a Controler \param c and a Figure \param f.
-        CanvasView( Controler* c, const Figure* f, CuteFig * parent =0 );
+        CanvasView( Controler* c, ActionStatusIndicator* si, const Figure* f, CuteFig* parent =0 );
 
         ~CanvasView() { }
 
@@ -108,7 +110,7 @@ public slots:
         void setSnapWidth( double snapWidth );  //!< sets the width of the snapgrid
 
 signals:
-        void status( const QString& ); 
+        void status( const ActionStatus& ); 
         //!< emits the status of the view for a window's status bar 
 
         void cursorMovedTo( const QPoint& );
@@ -137,6 +139,9 @@ protected:
         virtual void leaveEvent( QEvent* e );
 
         virtual bool eventFilter( QObject* watched, QEvent* event );
+
+private slots:
+        void takeOverStatusIndicator( bool takeIt );
         
 private:
         void drawPaper( QPainter* p ); //!< draws the paper
@@ -155,6 +160,10 @@ private:
         void handleReturnHit();
 
         QRegion drawingRegion() const;
+
+        void setupStatus();
+
+        void dispatchModifierChange( const QKeyEvent* e );
 
         CuteFig* mainWindow_;
 
@@ -179,7 +188,9 @@ private:
 
         bool tentativeDraw_;
 
-        Qt::KeyboardModifiers kbdModifiers_;
+        ActionStatus status_;
+
+        ActionStatusIndicator* statusIndicator_;
 };
 
 #endif

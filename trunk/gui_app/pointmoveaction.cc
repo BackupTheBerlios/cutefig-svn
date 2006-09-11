@@ -31,7 +31,7 @@
 
 #include <QDebug>
 
-int findPointUnderMouse( DrawObject* o, const QPoint& _p, const QMatrix* m )
+int findPointUnderMouse( DrawObject* o, const QPoint& _p, const QMatrix& m )
 {
         if ( !o )
                 return -1;
@@ -39,7 +39,7 @@ int findPointUnderMouse( DrawObject* o, const QPoint& _p, const QMatrix* m )
         int i = 0;
 
         const QPolygonF& pts = o->points();
-        while ( i < pts.size() && !Geom::isNear( m->inverted().map( pts[i] ), _p ) )
+        while ( i < pts.size() && !Geom::isNear( m.inverted().map( pts[i] ), _p ) )
                 ++i;
         
         return ( i == pts.size() ) ? -1 : i;   
@@ -63,7 +63,7 @@ bool PointMoveAction::wouldHandle( DrawObject* o, const QPoint& p, const QMatrix
         if ( !o )
                 return false;
         
-        return findPointUnderMouse( o, p, m ) != -1;
+        return findPointUnderMouse( o, p, *m ) != -1;
 }
 
 bool PointMoveAction::wouldHandleSelection( const QPoint& p, const QMatrix* m )
@@ -84,10 +84,10 @@ void PointMoveAction::reset()
         wObject_ = 0;
 }
 
-void PointMoveAction::click( const QPoint& _p, Fig::PointFlags f, const QMatrix* m )
+void PointMoveAction::click( const QPoint& _p, Fig::PointFlags f, const QMatrix& m )
 {
         if ( pointIndex_ != -1 && wObject_ ) {
-                QPointF p = m->map( QPointF( _p ) );
+                QPointF p = m.map( QPointF( _p ) );
                 wObject_->pointSet( p, f );
                 controler_->execAction( new ChangeCommand( selection_ ) );
                 selection_.updateBackups();
@@ -99,9 +99,9 @@ void PointMoveAction::click( const QPoint& _p, Fig::PointFlags f, const QMatrix*
         }
 }
 
-void PointMoveAction::move( const QPoint& p, const QMatrix* m )
+void PointMoveAction::move( const QPoint& p, const QMatrix& m )
 {
-        wObject_->cursorMove( m->map( QPointF( p ) ) );
+        wObject_->cursorMove( m.map( QPointF( p ) ) );
 }
 
 

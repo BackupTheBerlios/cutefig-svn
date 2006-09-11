@@ -105,11 +105,9 @@ ActionStatusIndicator::ActionStatusIndicator( QStatusBar* parent )
         parent->addPermanentWidget( ctrl_ );
         parent->addPermanentWidget( alt_ );
         parent->addPermanentWidget( shift_ );
-
-        disableAndClear();
 }
 
-void ActionStatusIndicator::disableAndClear()
+void ActionStatusIndicator::clear()
 {
         left_->setText( leftString() );
         right_->setText( rightString() );
@@ -120,29 +118,6 @@ void ActionStatusIndicator::disableAndClear()
         ctrl_->setDisabled( true );
         alt_->setDisabled( true );
         shift_->setDisabled( true );
-
-        left_->setDisabled( true );
-        right_->setDisabled( true );
-        middle_->setDisabled( true );
-        help_->setDisabled( true );
-        status_->setDisabled( true );    
-}
-
-void ActionStatusIndicator::enable()
-{
-        left_->setEnabled( true );
-        right_->setEnabled( true );
-        middle_->setEnabled( true );
-        help_->setEnabled( true );
-        status_->setEnabled( true );
-}
-
-void ActionStatusIndicator::beActive( bool a )
-{
-        if ( a )
-                enable();
-        else
-                disableAndClear();
 }
 
 void ActionStatusIndicator::showStatus( const ActionStatus& st )

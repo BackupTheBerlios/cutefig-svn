@@ -34,7 +34,7 @@ public:
         GroupAction( Controler* parent ); 
         ~GroupAction() {}
 
-        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix* ) {}
+        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix& ) {}
 
         virtual void handleSelection();
 
@@ -56,7 +56,7 @@ public:
         UngroupAction( Controler* parent );
         ~UngroupAction() {}
 
-        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix* ) {}
+        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix& ) {}
 
         virtual void handleSelection();
 

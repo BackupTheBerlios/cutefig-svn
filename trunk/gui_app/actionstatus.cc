@@ -23,6 +23,7 @@
 ******************************************************************************/
 
 #include "actionstatus.h"
+#include "pointflagscalc.h"
 
 #include <QCoreApplication>
 
@@ -37,6 +38,25 @@ ActionStatus::ActionStatus()
           status_()
 {
         clear();
+}
+
+void ActionStatus::setInformation( const Fig::PointFlags& f, const QString& b, const QString& h )
+{
+        Qt::KeyboardModifiers m = PointFlagsCalc::toKbdModifiers( f );
+        Information info = *infoMap_[m];
+
+        switch ( PointFlagsCalc::toMouseButton( f ) ) {
+            case Qt::MidButton:
+                    info.setMid( b ); break;
+            case Qt::RightButton:
+                    info.setRight( b ); break;
+            default:
+                    info.setLeft( b );
+        }
+
+        info.setHelp( h );
+
+        setInformation( m, info );
 }
 
 //! Sets the information for the modifiers.
@@ -124,4 +144,5 @@ ActionStatus::Information::Information()
         : help_(), left_(), mid_(), right_( tr("Cancel") )
 {
 }
+
 

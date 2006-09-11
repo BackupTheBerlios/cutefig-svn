@@ -46,7 +46,7 @@ ScaleAction::ScaleAction( Controler* parent )
 
 /*!
  */
-void ScaleAction::click( const QPoint&, Fig::PointFlags f, const QMatrix* )
+void ScaleAction::click( const QPoint&, Fig::PointFlags f, const QMatrix& )
 {
         if ( notStarted_ ) {
                 notStarted_ = false;
@@ -60,11 +60,11 @@ void ScaleAction::click( const QPoint&, Fig::PointFlags f, const QMatrix* )
         }
 }
 
-void ScaleAction::move( const QPoint& p, const QMatrix* m )
+void ScaleAction::move( const QPoint& p, const QMatrix& m )
 {
         QPointF h = Geom::boundingPoints(selection_.boundingRect())[edgePointIndex_];
         
-        QPoint handle = m->map( h ).toPoint();
+        QPoint handle = m.map( h ).toPoint();
 
 
         QMatrix newMatrix;

@@ -38,15 +38,15 @@
 #include "actions.h"
 #include "interactiveaction.h"
 #include "griddialog.h"
+#include "statuswidgets.h"
+#include "pointflagscalc.h"
 
 
-//! calculates the Fig::PointFlags out of m and b. 
-Fig::PointFlags calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m );
 
 /**
  * The constructor needs a Controler and a figure as parameter.
  */
-CanvasView::CanvasView( Controler* c, const Figure* f,  CuteFig* parent )
+CanvasView::CanvasView( Controler* c, ActionStatusIndicator* si, const Figure* f, CuteFig* parent )
         : QWidget( parent ),
           ViewBase( c, f ),
           mainWindow_( parent ),
@@ -58,7 +58,8 @@ CanvasView::CanvasView( Controler* c, const Figure* f,  CuteFig* parent )
           oldRegion_(),
           oldSnapPoint_( QPoint(0,0) ),
           snapped_( false ),
-          tentativeDraw_( false )
+          tentativeDraw_( false ),
+          statusIndicator_( si )
 {
         setFocusPolicy( Qt::StrongFocus );
         offset_ = QPoint( 0,0 );
@@ -71,6 +72,14 @@ CanvasView::CanvasView( Controler* c, const Figure* f,  CuteFig* parent )
         setGridWidth( .5 );
         setSnapWidth( 1.0 );
         qApp->installEventFilter( this );
+        setupStatus();
+
+        connect( controler_, SIGNAL( actionStatusChanged(const ActionStatus&) ),
+                 si, SLOT( showStatus(const ActionStatus&) ) );
+        connect( this, SIGNAL( status(const ActionStatus&) ),
+                 si, SLOT( showStatus(const ActionStatus&) ) );
+        connect( controler_, SIGNAL( actionIsAway(bool) ),
+                 this, SLOT( takeOverStatusIndicator(bool) ) );
 }
 
 void CanvasView::mouseDoubleClickEvent( QMouseEvent* e )
@@ -84,7 +93,7 @@ void CanvasView::mouseDoubleClickEvent( QMouseEvent* e )
  */
 void CanvasView::mouseReleaseEvent( QMouseEvent* e )
 {
-        Fig::PointFlags f = calcPointFlag( e->button(), e->modifiers() );
+        Fig::PointFlags f = PointFlagsCalc::calcPointFlags( e->button(), e->modifiers() );
 
         snapped_ = false;
 
@@ -98,15 +107,15 @@ void CanvasView::mouseReleaseEvent( QMouseEvent* e )
         QPoint p = e->pos();
 
         if ( controler_->selectedObjects().isEmpty() || 
-             e->modifiers() & Qt::ControlModifier &&
-             ! controler_->hasAction() ) {
+             e->modifiers() & Qt::ControlModifier    &&
+             !controler_->hasAction() ) {
                 o = figure_->findContainingObject( p * scaleMatrixInv_ );
                 controler_->selectObject( o );
         }
 
-        if ( controler_->willAcceptClick( p, &scaleMatrixInv_ ) ) {
+        if ( controler_->willAcceptClick( p, scaleMatrixInv_ ) ) {
                 snap( p );
-                setCursor( controler_->callActionClick( p, f, &scaleMatrixInv_ ) );
+                setCursor( controler_->callActionClick( p, f, scaleMatrixInv_ ) );
         } else
                 if ( !o ) {
                         controler_->cancelAction();
@@ -121,21 +130,19 @@ void CanvasView::mouseMoveEvent( QMouseEvent* e )
 {
         QPoint p = e->pos();
 
-        QPointF pf( QPointF( p ) * scaleMatrixInv_ );
-        
         emit cursorMovedTo( p );
         
-        if ( controler_->wouldAcceptClick( p, &scaleMatrixInv_ ) ) {
+        if ( controler_->wouldAcceptClick( p, scaleMatrixInv_ ) ) {
                 if ( snap( p ) ) 
-                        controler_->callActionMove( p, &scaleMatrixInv_ );
+                        controler_->callActionMove( p, scaleMatrixInv_ );
         } else {
                 QCursor crs;
                 DrawObject* o = 0;
                 if (controler_->selectedObjects().isEmpty()||e->modifiers()&Qt::ControlModifier) {
                         o = figure_->findContainingObject( p * scaleMatrixInv_ );
-                        crs = controler_->considerObject( o, p, &scaleMatrixInv_ );
+                        crs = controler_->considerObject( o, p, scaleMatrixInv_ );
                 } else
-                        crs = controler_->findToolAction( p, &scaleMatrixInv_ );
+                        crs = controler_->findToolAction( p, scaleMatrixInv_ );
                 setCursor( crs );
         }
 }
@@ -143,7 +150,7 @@ void CanvasView::mouseMoveEvent( QMouseEvent* e )
 
 void CanvasView::contextMenuEvent( QContextMenuEvent* e )
 {
-        if ( controler_->wouldAcceptClick( e->pos(), &scaleMatrixInv_ ) ) {
+        if ( controler_->wouldAcceptClick( e->pos(), scaleMatrixInv_ ) ) {
                 e->ignore();
                 return;
         }
@@ -153,14 +160,15 @@ void CanvasView::contextMenuEvent( QContextMenuEvent* e )
         
         while ( it.hasNext() ) {
                 foreach ( QAction* a, it.next()->actions() )
-                        if ( a->isEnabled() ) {
-                                InteractiveAction* ia = qobject_cast<InteractiveAction*>( a );
-                                if ( ia ) {
-                                        if ( ia->wouldHandleSelection() )
-                                                cm->addAction( ia );
-                                } else
-                                        cm->addAction( a );
-                        }
+//                         if ( a->isEnabled() ) {
+//                                 InteractiveAction* ia = qobject_cast<InteractiveAction*>( a );
+//                                 if ( ia ) {
+//                                         if ( ia->wouldHandleSelection() )
+//                                                 cm->addAction( ia );
+//                                 } else
+//                                         cm->addAction( a );
+//                         }
+                        cm->addAction( a );
                 if ( it.hasNext() )
                         cm->addSeparator();
         }
@@ -178,10 +186,7 @@ void CanvasView::contextMenuEvent( QContextMenuEvent* e )
 
 void CanvasView::keyPressEvent( QKeyEvent* e )
 {
-        if ( e->modifiers() != kbdModifiers_ ) {
-                kbdModifiers_ = e->modifiers();
-                controler_->modifierChange( kbdModifiers_ );
-        }
+        dispatchModifierChange( e );
         
         if ( controler_->callActionKeyStroke( e ) ) {
                 e->accept();
@@ -204,10 +209,19 @@ void CanvasView::keyPressEvent( QKeyEvent* e )
 
 void CanvasView::keyReleaseEvent( QKeyEvent* e )
 {
-        if ( e->modifiers() != kbdModifiers_ ) {
-                kbdModifiers_ = e->modifiers();
-                controler_->modifierChange( kbdModifiers_ );
-        }    
+        dispatchModifierChange( e );
+}
+
+
+void CanvasView::dispatchModifierChange( const QKeyEvent* e )
+{
+        if ( e->modifiers() != status_.modifiers() ) {
+                status_.setModifiers( e->modifiers() );
+                if ( controler_->hasAction() )
+                        controler_->modifierChange( e->modifiers() );
+                else
+                        emit status( status_ );
+        }
 }
 
 bool CanvasView::event( QEvent* e )
@@ -277,12 +291,12 @@ inline void CanvasView::handleReturnHit()
 {
         QPoint p; 
         if ( snapped_ )
-                p =  oldSnapPoint_;
+                p = oldSnapPoint_;
         else 
                 p = mapFromGlobal( QCursor::pos() );
             
-        if ( controler_->willAcceptClick( p, &scaleMatrixInv_ ) ) 
-                controler_->callActionClick( p, Fig::Final, &scaleMatrixInv_ );
+        if ( controler_->willAcceptClick( p, scaleMatrixInv_ ) ) 
+                controler_->callActionClick( p, Fig::Final, scaleMatrixInv_ );
 }
 
 // Drawing routines
@@ -354,14 +368,19 @@ void CanvasView::paintEvent( QPaintEvent * e )
         p.begin( this );
         
         p.setClipRegion( e->region() );
-        
+
+#ifndef QT_NO_DEBUG_OUTPUT
         QTime stopWatch;
         stopWatch.start();
+#endif
 
         drawPaper(&p);
         drawGrid(&p);
 
+        
+#ifndef QT_NO_DEBUG_OUTPUT
         int papgrid = stopWatch.elapsed();
+#endif
         
         p.setRenderHint( QPainter::Antialiasing, true );
         p.setMatrix( scaleMatrix_ );
@@ -375,7 +394,9 @@ void CanvasView::paintEvent( QPaintEvent * e )
         p.setBrush( Qt::NoBrush );
         p.setPen( QPen() );
 
+#ifndef QT_NO_DEBUG_OUTPUT
         int elements = stopWatch.elapsed() - papgrid;
+#endif
         
         if ( tentativeDraw_ ) 
                 foreach ( DrawObject* o, l ) 
@@ -386,7 +407,9 @@ void CanvasView::paintEvent( QPaintEvent * e )
 
         p.resetMatrix();
 
+#ifndef QT_NO_DEBUG_OUTPUT
         int selection = stopWatch.elapsed() - elements - papgrid;
+#endif
 
         controler_->drawActionMetaData( &p, this );
         
@@ -397,12 +420,14 @@ void CanvasView::paintEvent( QPaintEvent * e )
         
         p.end();
 
+#ifndef QT_NO_DEBUG_OUTPUT
         int total = stopWatch.elapsed();
         int meta = total - selection - elements;
         
         qDebug() << "papgrid: " << papgrid << ", elements: " << elements
                  << ", selection: " << selection << ", meta: " << meta
                  << ", total: " << total;
+#endif
 }
 
 void CanvasView::drawObjectsMetaData( QPainter* p, const DrawObject* o ) const
@@ -609,7 +634,7 @@ void CanvasView::calcGrid()
 //
 bool CanvasView::snap( QPoint & p )
 {
-        if ( ! ( snapScaled_ && controler_->actionWantsSnap( p, &scaleMatrixInv_ ) ) ) {
+        if ( ! ( snapScaled_ && controler_->actionWantsSnap( p, scaleMatrixInv_ ) ) ) {
                 if ( snapped_ )
                         update();
                 snapped_ = false;
@@ -631,21 +656,18 @@ bool CanvasView::snap( QPoint & p )
         return snapped;
 }
 
-Fig::PointFlags calcPointFlag( Qt::MouseButtons b, Qt::KeyboardModifiers m )
+
+void CanvasView::setupStatus()
 {
-        Fig::PointFlags pf = Fig::Normal;
-        if ( b & Qt::RightButton )
-                pf = Fig::PointFlags( pf | Fig::Cancel );
-        if ( b & Qt::MidButton )
-                pf = Fig::PointFlags( pf | Fig::Final );
+        status_.setInformation( Qt::NoModifier,
+                                ActionStatus::Information()
+                                .setLeft( tr("choose object") )
+                                .setRight( tr("context menu") ) );
+}
 
-        if ( m & Qt::ShiftModifier )
-                pf = Fig::PointFlags( pf | Fig::Straight );
-        if ( m & Qt::ControlModifier )
-                pf = Fig::PointFlags( pf | Fig::Special1 );
-        if ( m & Qt::AltModifier )
-                pf = Fig::PointFlags( pf | Fig::Special2 );
-
-        return pf;
+void CanvasView::takeOverStatusIndicator( bool takeIt )
+{
+        if ( takeIt )
+                emit status( status_ );
 }
 

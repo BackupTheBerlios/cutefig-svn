@@ -62,7 +62,6 @@ public:
 
 public slots:
         void showStatus( const ActionStatus& st );
-        void beActive( bool a );
         
 private:
         QLabel* left_;
@@ -75,8 +74,7 @@ private:
         QLabel* alt_;
         QLabel* shift_;
 
-        void disableAndClear();
-        void enable();
+        void clear();
         
         QString leftString();
         QString middleString();

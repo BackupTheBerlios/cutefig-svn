@@ -22,38 +22,25 @@
 **
 ******************************************************************************/
 
-#ifndef deleteaction_h
-#define deleteaction_h
+#ifndef pointflagscalc_h
+#define pointflagscalc_h
 
-#include "interactiveaction.h"
+#include "fig.h"
 
-class DeleteAction : public InteractiveAction
+#include <Qt>
+
+class PointFlagsCalc 
 {
-        Q_OBJECT
 public:
-        DeleteAction( Controler* parent )
-                : InteractiveAction( parent ) {
-                setText("&Delete");
-                setIcon( QIcon(":images/editdelete.png") );
-                setShortcut( Qt::Key_Delete );
-                cursor_ = Qt::ForbiddenCursor;
-        }
-        ~DeleteAction() {}
-
-        virtual void click( const QPoint& p,Fig::PointFlags f, const QMatrix& m );
-
-
-        virtual bool wouldHandle( DrawObject* o, const QPoint& = QPoint(), const QMatrix* = 0) { 
-                return o; 
-        }
-
-        virtual bool isActive() const { return false; }
-        virtual void handleSelection();
-
-        virtual const QString commandName() const { return "delete"; }
-
+        //! calculates the Fig::PointFlags out of m and b.
+        static Fig::PointFlags calcPointFlags( Qt::MouseButtons b, Qt::KeyboardModifiers m );
+        static Qt::KeyboardModifiers toKbdModifiers( Fig::PointFlags f );
+        static Qt::MouseButton toMouseButton( Fig::PointFlags f );
+        
 private:
-        void deleteSelection();
+        PointFlagsCalc();
+        PointFlagsCalc( const PointFlagsCalc& );
 };
+
 
 #endif

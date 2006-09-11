@@ -105,8 +105,8 @@ public:
         InteractiveAction( Controler* parent );
         ~InteractiveAction() {}
 
-        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix* m ) = 0;
-        virtual void move( const QPoint&, const QMatrix* ) {}
+        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix& m ) = 0;
+        virtual void move( const QPoint&, const QMatrix& ) {}
         virtual bool keyStroke( const QKeyEvent* ) { return false; }
         virtual bool inputMethodEvent( const QInputMethodEvent* ) { return false; }
         void modifierChange( Qt::KeyboardModifiers mods );
@@ -114,7 +114,7 @@ public:
         virtual bool isActive() const = 0;
         virtual bool wouldHandle( DrawObject* o, const QPoint& p=QPoint(), const QMatrix* m=0 )=0;
         virtual bool wouldHandleSelection( const QPoint& p = QPoint(), const QMatrix* m = 0 );
-        virtual bool wantsSnap( const QPoint&, const QMatrix* ) { return true; }
+        virtual bool wantsSnap( const QPoint&, const QMatrix& ) { return true; }
         virtual bool acceptsKeyStrokes() { return false; }
 
         virtual void drawMetaData( QPainter*, const ViewBase* ) const {}
@@ -124,10 +124,13 @@ public:
         virtual const QString commandName() const = 0;
         virtual const QString completeName() const;
 
+        void wakeupAsToolAction();
+        
         //! resets the action. (called by wakeup())
         /*! supposed to do cleanups */
         virtual void reset() {}
 
+        const ActionStatus& status() const { return status_; }
 
 signals:
         void statusChanged( const ActionStatus& st );
@@ -142,13 +145,20 @@ protected:
 
         virtual void handleSelection() {}
         void setInitialStatus();
-        virtual void setInitialStatus_private() {}
+        virtual void setInitialStatus_private();
+        virtual QString defaultFirstClickHelp() const;
         virtual void modifierChange_private( Qt::KeyboardModifiers ) {}
 
+        virtual bool event( QEvent* e );
+
+        void emitStatus();
+        
 protected slots:
         void selectionChanged();
         virtual void wakeup(); 
 };
+
+
 
 
 

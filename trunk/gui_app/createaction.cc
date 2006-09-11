@@ -30,21 +30,21 @@
 #include <QCoreApplication>
 #include <QPainter>
 
-void CreateAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
+void CreateAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix& m )
 {
         firstClick_ = true;
         changeStatusClick();
         
-        if ( !cObject_->pointSet( m->map( QPointF( p ) ), f ) ) {
+        if ( !cObject_->pointSet( m.map( QPointF( p ) ), f ) ) {
                 controler_->execAction( new AddCommand( selection_ ) );
                 selection_.updateBackups();
         }
 }
 
 
-void CreateAction::move( const QPoint& p, const QMatrix* m )
+void CreateAction::move( const QPoint& p, const QMatrix& m )
 {        
-        cObject_->cursorMove( m->map( QPointF( p ) ) );
+        cObject_->cursorMove( m.map( QPointF( p ) ) );
         if ( firstClickDone() )
                 changeStatusMove();
 }
@@ -87,30 +87,13 @@ template<> void TCreateAction<Ellipse>::init()
 
 template<> void TCreateAction<Ellipse>::setInitialStatus_private()
 {
-        status_.setInformation( Qt::NoModifier,
-                                ActionStatus::Information()
-                                .setLeft( tr("corner point") )
-                                .setHelp( tr("ellipse by diameter") ) );
-        
-        status_.setInformation( Qt::AltModifier,
-                                ActionStatus::Information()
-                                .setLeft( tr("center point") )
-                                .setHelp( tr("ellipse by radii") ) );
-
-        status_.setInformation( Qt::ShiftModifier,
-                                ActionStatus::Information()
-                                .setLeft( tr("point on circle") )
-                                .setHelp( tr("circle by diameter") ) );
-        
-        status_.setInformation( Qt::AltModifier,
-                                ActionStatus::Information()
-                                .setLeft( tr("center point") )
-                                .setHelp( tr("circle by radius") ) );
-
-        status_.setInformation( Qt::ControlModifier,
-                                ActionStatus::Information()
-                                .setLeft( tr("axis point") )
-                                .setHelp( tr("angled ellipse") ) );
+        status_.setInformation( Fig::Normal, tr("corner point"), tr("ellipse by diameter") );
+        status_.setInformation( Fig::Special2, tr("center point"), tr("ellipse by radii") );
+        status_.setInformation( Fig::Straight,
+                                tr("point on circle"), tr("circle by diameter") );
+        status_.setInformation( Fig::Straight | Fig::Special2,
+                                tr("center point"), tr("circle by radius") );
+        status_.setInformation( Fig::Special1, tr("axis point"), tr("angled ellipse") );
 }
 
 template<> void TCreateAction<Ellipse>::changeStatusClick() 
@@ -147,14 +130,13 @@ private:
 
 void PolygonlineMessages::initial( ActionStatus& s )
 {
-        s.setInformation( Qt::NoModifier, ActionStatus::Information().setLeft(tr("first point")) );
+        s.setInformation( Fig::Normal, tr("first point") );
 }
 
 void PolygonlineMessages::click( ActionStatus& s )
 {
-        s.setInformation( Qt::NoModifier,
-                          ActionStatus::Information()
-                          .setLeft( tr("next point") ).setMid( tr("last point") ) );
+        s.setInformation( Fig::Normal, tr("next point") );
+        s.setInformation( Fig::Final, tr("last point") );
 }
 
 void PolygonlineMessages::move( ActionStatus& s, const DrawObject& o ) 

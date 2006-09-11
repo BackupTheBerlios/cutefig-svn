@@ -264,3 +264,9 @@ void DrawObject::setCompoundParent( Compound* p )
 }
 
 
+
+QString DrawObject::objectname_stripped() const
+{
+        QString n = objectname();
+        return n.remove('&');
+}

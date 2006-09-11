@@ -29,9 +29,9 @@
 
 #include <QDebug>
 
-void RelativeAction::click( const QPoint& _p, Fig::PointFlags f, const QMatrix* m )
+void RelativeAction::click( const QPoint& _p, Fig::PointFlags f, const QMatrix& m )
 {
-        QPointF p = m->map( QPointF( _p ) );
+        QPointF p = m.map( QPointF( _p ) );
         if ( last_.isNull() ) {
                 last_ = p;
                 return;
@@ -45,9 +45,9 @@ void RelativeAction::click( const QPoint& _p, Fig::PointFlags f, const QMatrix* 
         }
 }
 
-void RelativeAction::move( const QPoint& _p, const QMatrix* m )
+void RelativeAction::move( const QPoint& _p, const QMatrix& m )
 {
-        QPointF p = m->map( QPointF( _p ) );
+        QPointF p = m.map( QPointF( _p ) );
         relativeMove( p - last_ );
         last_ = p;
 }
@@ -59,11 +59,13 @@ bool RelativeAction::wouldHandle( DrawObject* o, const QPoint& p, const QMatrix*
         if ( !m || !last_.isNull() )
                 return true;
 
-        if ( !o )
+        if ( !o || !o->pointHits( m->map( p ), 5*m->m11() ) )
                 return false;
 
-//        return o->region().contains( m->map( p ) );
-        return o->pointHits( m->map( p ), 5*m->m11() );
+        setInitialStatus();
+        emitStatus();
+
+        return true;
 }
 
 
@@ -83,4 +85,24 @@ void RelativeAction::relativeMove( const QPointF& p )
 {
         foreach ( DrawObject* o, selection_.objects() )
                 relativeMove( o, p );
+}
+
+
+
+
+void MoveAction::relativeClick( DrawObject* o, const QPointF& p, Fig::PointFlags )
+{
+        qDebug() << "MoveAction::relativeClick";
+        
+        o->move( p );
+        status_.setInformation( Fig::Normal, tr("end point") );
+        emit statusChanged( status_ );
+}
+
+void MoveAction::relativeMove( DrawObject* o, const QPointF& p )
+{
+        qDebug() << "MoveAction::relativeMove";
+        o->move( p );
+        status_.setStatus( tr("dx: %1, dy: %2").arg( p.x() ).arg( p.y() ) );
+        emit statusChanged( status_ );
 }

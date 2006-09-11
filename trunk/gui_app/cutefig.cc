@@ -65,7 +65,9 @@ CuteFig::CuteFig()
         controler_ = new Controler( this );
         controler_->setFigure( figure_ );
 
-        cview_ = new CanvasView( controler_, figure_, this );
+        ActionStatusIndicator* asi = new ActionStatusIndicator( statusBar() );
+
+        cview_ = new CanvasView( controler_, asi, figure_, this );
         
         controler_->addView( cview_ );
         
@@ -80,11 +82,6 @@ CuteFig::CuteFig()
         connect( cview_, SIGNAL(cursorIsIn(bool)), crd, SLOT(setIndicating(bool)) );
         
         statusBar()->addPermanentWidget( crd );
-
-        ActionStatusIndicator* asi = new ActionStatusIndicator( statusBar() );
-        connect( controler_, SIGNAL( actionStatusChanged(const ActionStatus&) ),
-                 asi, SLOT( showStatus(const ActionStatus&) ) );
-        connect( controler_, SIGNAL( actionIsHere(bool) ), asi, SLOT( beActive(bool) ) );
         
         QTimer::singleShot( 0, this, SLOT( init() ) );
 }

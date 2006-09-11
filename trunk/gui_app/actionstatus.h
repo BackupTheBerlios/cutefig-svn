@@ -25,6 +25,8 @@
 #ifndef actionstatus_h
 #define actionstatus_h
 
+#include "fig.h"
+
 #include <QString>
 #include <QMap>
 #include <QList>
@@ -62,6 +64,8 @@
 class ActionStatus 
 {
 public:
+        friend class CanvasView;
+        
         //! Contains the modifier dependend information for ActionStatus.
         /** Information can be filled by setters that return
          *  refenrences to the Information itself. That way we can
@@ -95,16 +99,19 @@ public:
         
         const Information& information() const;
 
+        void setInformation( const Fig::PointFlags& f,
+                             const QString& b, const QString& h=QString() );
+
         Qt::KeyboardModifiers modifiers() const { return modifiers_; }
         void setModifiers( Qt::KeyboardModifiers mods ) { modifiers_ = mods; }
-        
-        void setInformation( Qt::KeyboardModifiers mods, const Information& info );
-        void setInformation( const Information& info );
 
         void setStatus( const QString& s ) { status_ = s; }
         const QString& status() const { return status_; }
         
-private:
+private:        
+        void setInformation( Qt::KeyboardModifiers mods, const Information& info );
+        void setInformation( const Information& info );
+
         QMap<Qt::KeyboardModifiers, Information*> infoMap_;
         Qt::KeyboardModifiers modifiers_;
 

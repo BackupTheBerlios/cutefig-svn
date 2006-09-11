@@ -65,8 +65,17 @@ void InteractiveAction::wakeup()
         if ( wouldHandleSelection() ) 
                 handleSelection();
 
-        emit statusChanged( status_ );
+        emitStatus();
 }
+
+void InteractiveAction::wakeupAsToolAction()
+{
+        reset();
+        setInitialStatus();
+
+        emitStatus();
+}
+
 
 void InteractiveAction::setInitialStatus()
 {
@@ -86,7 +95,7 @@ void InteractiveAction::modifierChange( Qt::KeyboardModifiers mods )
         
         status_.setModifiers( mods );
         modifierChange_private( mods );
-        emit statusChanged( status_ );
+        emitStatus();
 }
 
 void InteractiveAction::selectionChanged()
@@ -105,7 +114,7 @@ void InteractiveAction::selectionChanged()
 bool InteractiveAction::wouldHandleSelection( const QPoint& p, const QMatrix* m ) 
 {
         if ( selection_.isEmpty() )
-                return wouldHandle( 0, p );
+                return wouldHandle( 0, p, m );
 
         foreach ( DrawObject* o, selection_.objects() )
                 if ( wouldHandle( o, p, m ) ) 
@@ -122,3 +131,35 @@ const QString InteractiveAction::completeName() const
 
 
 
+
+void InteractiveAction::setInitialStatus_private()
+{
+        QString oname = selection_.objectname();
+        oname.remove('&');
+        
+        status_.setInformation( Fig::Normal,
+                                defaultFirstClickHelp(),
+                                tr("%1 %2").arg(commandName()).arg(oname) );
+}
+
+
+
+bool InteractiveAction::event( QEvent* e )
+{
+        if ( e->type() == QEvent::UpdateRequest ) {
+                emit statusChanged( status_ );
+                return true;
+        }
+
+        return QAction::event( e );
+}
+
+void InteractiveAction::emitStatus()
+{
+        QCoreApplication::postEvent( this, new QEvent( QEvent::UpdateRequest ) );
+}
+
+QString InteractiveAction::defaultFirstClickHelp() const
+{
+        return tr("start point");
+}

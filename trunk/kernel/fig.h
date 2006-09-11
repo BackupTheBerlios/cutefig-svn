@@ -41,14 +41,13 @@ namespace Fig
         const double pix2cm = inch2cm*pix2inch;
         const double cm2pix = 1/pix2cm;
 
-        enum PointFlag { 
-                None      = 0x0000,
-                Normal    = 0x0001,
-                Cancel    = 0x0002,
-                Final     = 0x0004,
-                Straight  = 0x0008,
-                Special1  = 0x0010, 
-                Special2  = 0x0020
+        enum PointFlag {
+                Normal    = 0x0000,
+                Straight  = 0x0001,
+                Special1  = 0x0002, 
+                Special2  = 0x0004,
+                Final     = 0x0008,
+                Cancel    = 0x0010
         }; //!< Flags that can be passed to a DrawObject being edited.
 
         Q_DECLARE_FLAGS( PointFlags, PointFlag );

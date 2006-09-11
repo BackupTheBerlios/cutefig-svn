@@ -38,7 +38,7 @@ public:
         TextPropAction( Controler* parent );
         ~TextPropAction() {}
 
-        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix* );
+        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix& );
         virtual void handleSelection();
         virtual bool isActive() const { return false; }
 

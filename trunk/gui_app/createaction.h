@@ -48,8 +48,8 @@ protected:
 public:
         ~CreateAction() {}
 
-        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix* m );
-        virtual void move( const QPoint& p, const QMatrix* m );
+        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix& m );
+        virtual void move( const QPoint& p, const QMatrix& m );
 
         virtual bool wouldHandle( DrawObject*, const QPoint& = QPoint(), const QMatrix* =0 )
         { return true; }

@@ -22,16 +22,6 @@
 **
 ******************************************************************************/
 
-/** \class Controler
- *  
- *  The controler handles all the user interaction and manipulates the
- *  Figure. After it changed the Figure all the views of viewList_ get
- *  the ViewBase::updateFigure() command. The Controler keeps track of
- *  all user interaction by storing all the commands in the
- *  commandStack_. The commandStack_ is used by the undo() and redo()
- *  functions that are called by the coresponding actions.
- *
- */
 
 #include "controler.h"
 #include "figure.h"
@@ -73,12 +63,12 @@ void Controler::selectObject( DrawObject* o )
 
 
 /** Asks the editAction_ whether it will handle the DrawObject o or
- * the current selection_ respectively, if the user clicks at p, and
- * passes a suitable QCursor back to the view to appear.
+ *  the current selection_ respectively, if the user clicks at p, and
+ *  passes a suitable QCursor back to the view to appear.
 */
-const QCursor Controler::considerObject( DrawObject* o, const QPoint& p, const QMatrix* m ) const
+const QCursor Controler::considerObject( DrawObject* o, const QPoint& p, const QMatrix& m ) const
 {
-        if ( editAction_ && editAction_->wouldHandle( o, p, m ) )
+        if ( editAction_ && editAction_->wouldHandle( o, p, &m ) )
                 return editAction_->cursor();
                                                
         if ( o )
@@ -87,24 +77,32 @@ const QCursor Controler::considerObject( DrawObject* o, const QPoint& p, const Q
                 return QCursor( Qt::ArrowCursor );
 }
 
-/** 
+/** Finds the first InteractiveAction of acticeToolActions_ that will
+ *  handle the current selection and activates it.
  */
-const QCursor Controler::findToolAction( const QPoint& p, const QMatrix* m )
+const QCursor Controler::findToolAction( const QPoint& p, const QMatrix& m )
 {
         if ( editAction_ ) { 
-                if ( editAction_->wouldHandleSelection( p, m ) ) 
+                if ( editAction_->wouldHandleSelection( p, &m ) ) 
                         return editAction_->cursor();
-        } else
+        } else 
                 foreach ( InteractiveAction* a, activeToolActions_ )  
-                        if ( a->wouldHandleSelection( p, m ) ) {
-                                a->reset();
-                                editAction_ = a;
+                        if ( a->wouldHandleSelection( p, &m ) ) {
+                                if ( a != editAction_ ) { 
+                                        a->wakeupAsToolAction();
+                                        editAction_ = a;
+                                }
+                                emit actionIsAway( false );
+                                emit actionStatusChanged( a->status() );
                                 return a->cursor();
                         }
 
-        if ( !explicitEAction_ )
+        if ( !explicitEAction_ ) {
+                if ( editAction_ )
+                        actionGone();
                 editAction_ = 0;
-
+        }
+        
         return Qt::ArrowCursor;
 }
 
@@ -118,7 +116,7 @@ void Controler::newAction( InteractiveAction* a )
         connect( a, SIGNAL(statusChanged(const ActionStatus&)),
                  this, SIGNAL(actionStatusChanged(const ActionStatus&)) );
 
-        emit actionIsHere( true );
+        emit actionIsAway( false );
 
         explicitEAction_ = true;
         actionIsActive_ = a->isActive();
@@ -131,7 +129,7 @@ void Controler::cancelAction()
                 return;
 
         actionGone();
-        editAction_->reset();
+//        editAction_->reset();
         editAction_ = 0;
         explicitEAction_ = false;
         actionIsActive_ = 0;
@@ -148,8 +146,9 @@ void Controler::execAction( Command* cmd )
                 appendToCmdList( cmd );
         }
 
-        if ( editAction_ )
-                editAction_->reset();
+        // should be called by InteractiveAction::wakeup()
+//         if ( editAction_ )
+//                 editAction_->reset();
 
         actionGone();
         editAction_ = 0;
@@ -159,9 +158,9 @@ void Controler::execAction( Command* cmd )
         updateViews();
 }
 
-/** Called to pass a mouse move to the editAction_. 
+/** 
  */
-void Controler::callActionMove( const QPoint& p, const QMatrix* m )
+void Controler::callActionMove( const QPoint& p, const QMatrix& m )
 {
         if ( !(actionIsActive_ && editAction_ && !selection_.isEmpty() ) )
                 return;
@@ -170,9 +169,9 @@ void Controler::callActionMove( const QPoint& p, const QMatrix* m )
         updateViewsImediately( true );
 }
 
-/** Called to pass a mouse click to the editAction_
+/** 
  */
-const QCursor Controler::callActionClick( const QPoint& p, Fig::PointFlags f, const QMatrix* m )
+const QCursor Controler::callActionClick( const QPoint& p, Fig::PointFlags f, const QMatrix& m )
 {
         editAction_->click( p, f, m );
         actionIsActive_ = editAction_;
@@ -216,17 +215,24 @@ void Controler::modifierChange( Qt::KeyboardModifiers mods )
                 editAction_->modifierChange( mods );
 }
 
-bool Controler::willAcceptClick( const QPoint& p, const QMatrix* m ) const
+
+/** If the user has already clicked we just ask the editAction_
+ *  whether it is interested in that mouse click.
+ */
+bool Controler::willAcceptClick( const QPoint& p, const QMatrix& m ) const
 {
-        return editAction_ && editAction_->wouldHandleSelection( p, m );
+        return editAction_ && editAction_->wouldHandleSelection( p, &m );
 }
 
-bool Controler::wouldAcceptClick( const QPoint& p, const QMatrix* m ) const
+
+/** As the user has not already clicked we need to check for actionIsActive_.
+ */
+bool Controler::wouldAcceptClick( const QPoint& p, const QMatrix& m ) const
 {
         return actionIsActive_ && willAcceptClick( p, m );
 }
 
-bool Controler::actionWantsSnap( const QPoint& p, const QMatrix* m ) const
+bool Controler::actionWantsSnap( const QPoint& p, const QMatrix& m ) const
 {
         return editAction_ && editAction_->wantsSnap( p,m );
 }
@@ -349,7 +355,7 @@ bool Controler::event( QEvent* e )
         return QObject::event( e );
 }
 
-void Controler::setToolActionsGroup( ToolActions* ta )
+void Controler::setToolActionsGroup( const ToolActions* ta )
 {
         if ( toolActionsGroup_ )
                 return;
@@ -376,7 +382,8 @@ void Controler::updateFigureMetaData() const
 
 void Controler::actionGone()
 {
+        qDebug() << "Controler::actionGone";
         if ( editAction_ )
                 disconnect( editAction_, SIGNAL(statusChanged(const ActionStatus&)) );
-        emit actionIsHere( false );    
+        emit actionIsAway( true );    
 }

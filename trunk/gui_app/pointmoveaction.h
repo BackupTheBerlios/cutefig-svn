@@ -34,8 +34,8 @@ class PointMoveAction : public InteractiveAction
 public:
         PointMoveAction( Controler* parent );
 
-        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix* m );
-        virtual void move( const QPoint& p, const QMatrix* m );
+        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix& m );
+        virtual void move( const QPoint& p, const QMatrix& m );
         virtual bool wouldHandle( DrawObject* o, const QPoint& p = QPoint(), const QMatrix* m=0 );
         virtual bool wouldHandleSelection( const QPoint& p = QPoint(), const QMatrix* m=0 );
 

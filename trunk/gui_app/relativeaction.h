@@ -22,11 +22,6 @@
 **
 ******************************************************************************/
 
-/** \class RelativeAction
- *
- *  \brief Abstract class as a base class for action classes that need
- *  to view mouse coordinates relative to the first mouse click.
- */
 
 #ifndef relativeaction_h
 #define relativeaction_h
@@ -34,6 +29,7 @@
 #include "interactiveaction.h"
 #include "drawobject.h"
 
+//! Abstract base class to use mouse coordinates relative to the first mouse click.
 class RelativeAction : public InteractiveAction
 {
         Q_OBJECT
@@ -45,8 +41,8 @@ public:
 
         ~RelativeAction() {}
         
-        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix* m );
-        virtual void move( const QPoint& p, const QMatrix* m );
+        virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix& m );
+        virtual void move( const QPoint& p, const QMatrix& m );
         virtual bool wouldHandle( DrawObject* o, const QPoint& p = QPoint(), const QMatrix* m=0 );
         virtual bool isActive() const { return false; }
         virtual void reset();
@@ -64,10 +60,8 @@ private:
         virtual void relativeMove( DrawObject* o, const QPointF& ) = 0;
 };
 
-/** \class MoveAction
- *
- *  \brief Quite simple action class that moves a DrawObject.
- */
+
+//! Quite simple action class that moves a DrawObject.
 class MoveAction : public RelativeAction
 {
         Q_OBJECT
@@ -81,16 +75,9 @@ public:
 
         virtual const QString commandName() const { return "move"; }
         
-private:        
-        virtual void relativeClick( DrawObject* o, const QPointF& p, Fig::PointFlags )
-        {
-                o->move( p );
-        }
-        
-        virtual void relativeMove( DrawObject* o, const QPointF& p )
-        {
-                o->move( p );
-        }
+private:
+        virtual void relativeClick( DrawObject* o, const QPointF& p, Fig::PointFlags );
+        virtual void relativeMove( DrawObject* o, const QPointF& p );
 };
 
 

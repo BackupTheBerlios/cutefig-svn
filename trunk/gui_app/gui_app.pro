@@ -62,7 +62,9 @@ HEADERS += cutefig.h \
            ellipsedialog.h \
            textobjectdialog.h \
            polylinedialog.h \
-           polygondialog.h 
+           polygondialog.h \
+           pointflagscalc.h
+
 SOURCES += cutefig.cc \
            guiinit.cc \
            centralwidget.cc \
@@ -101,6 +103,7 @@ SOURCES += cutefig.cc \
            textobjectdialog.cc \
            polylinedialog.cc \
            polygondialog.cc \
+           pointflagscalc.cc \
            main.cc
 
 TRANSLATIONS = cutefig_de.ts

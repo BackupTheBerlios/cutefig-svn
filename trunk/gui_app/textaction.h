@@ -38,7 +38,7 @@ public:
         ~TextAction() {}
 
         virtual void click( const QPoint& p, Fig::PointFlags f, const QMatrix* m );
-        virtual void move( const QPoint&, const QMatrix* ) {}
+        virtual void move( const QPoint&, const QMatrix& ) {}
 
         virtual bool keyStroke( const QKeyEvent* ke );
         virtual bool inputMethodEvent( const QInputMethodEvent* e );

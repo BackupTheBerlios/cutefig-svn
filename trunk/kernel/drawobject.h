@@ -175,6 +175,8 @@ public:
         //! Usually reimplemented by #DRAW_OBJECT
         virtual const QString& objectKeyWord() const =0;
 
+        QString objectname_stripped() const;
+
         //! returns the highest Compound the object belongs to or the object itself.
         const DrawObject* ancestor() const;
 
