@@ -16,6 +16,7 @@ HEADERS = paintutils.h \
           resourcebutton.h \
           colorbutton.h \
           fontbutton.h \
+          fontwidget.h \
           resourceiconengine.h \
           mouseeventhandler.h \
           gradientwidget.h \
@@ -40,6 +41,7 @@ HEADERS = paintutils.h \
 SOURCES = paintutils.cc \
           layouter.cc \
           fontbutton.cc \
+          fontwidget.cc \
           resourceiconengine.cc \
           mouseeventhandler.cc \
           gradientwidget.cc \

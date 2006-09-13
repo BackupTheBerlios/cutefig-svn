@@ -43,10 +43,20 @@ Arc::Arc( Figure* parent )
 
 Arc::Arc( const Arc* other )
         : DrawObject( other ),
-          isCircle_( other->isCircle_ )
+          isCircle_( other->isCircle_ ),
+	  rectSize_( other->rectSize_ ),
+	  angle_( other->angle_ ),
+	  arcFlag_( other->arcFlag_ ),
+	  sweepFlag_( other->sweepFlag_ ),
+	  center_( other->center_ ),
+	  startAngle_( other->startAngle_ ),
+	  sweepLength_( other->sweepLength_ ),
+	  direction_( other->direction_ ),
+	  rotation_( other->rotation_ )
+	  
 {
-        getReadyForDraw();
-        doSpecificPreparation();
+	setupPainterPath();
+	setupRects();
 }
 
 
@@ -58,7 +68,8 @@ void Arc::outputToBackend( OutputBackend* ob ) const
 
 void Arc::setupRects()
 {
-        DrawObject::setupRects();
+	bRect_ = painterPath_.boundingRect();
+	cRect_ = bRect_;
 }
 
 void Arc::doSpecificPreparation()
@@ -118,6 +129,8 @@ void Arc::setRectSize( const QSizeF& s )
         getReadyForDraw();
 }
 
+
+//! see http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
 void Arc::calcCenterParameters()
 {
         const QPointF& s = points_[0];

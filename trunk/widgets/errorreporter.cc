@@ -38,18 +38,17 @@ ErrorReporter::ErrorReporter( const QString& text, QWidget * parent )
 {
         setWindowTitle( tr("Error parsing file") );
         
-        QGridLayout* l = new QGridLayout( this );
+        QGridLayout* l = new QGridLayout;
         l->setSpacing( 5 );
         
-        QLabel* icon = new QLabel( this );
+        QLabel* icon = new QLabel;
         icon->setPixmap( QMessageBox::standardIcon(QMessageBox::Warning) );
 
-        QLabel* message = new QLabel( tr("The following errors occured..."),
-                                      this );
+        QLabel* message = new QLabel( tr("The following errors occured...") );
 
-        QTextEdit* contents = new QTextEdit( text, this );
+        QTextEdit* contents = new QTextEdit;
         contents->setReadOnly( true );
-//        contents->setTextFormat( Qt::PlainText );
+        contents->setPlainText( text );
         contents->setMinimumSize( 500,200 );
 
         QPushButton* ok = new QPushButton( tr("Ok"), this );
@@ -59,7 +58,9 @@ ErrorReporter::ErrorReporter( const QString& text, QWidget * parent )
         l->addWidget( icon, 1,0, Qt::AlignTop );
         l->addWidget( message, 0,0, 1,3 );
         l->addWidget( contents, 1,1, 1,3 );
-        l->addWidget( ok, 2,2 );        
+        l->addWidget( ok, 2,2 );
+
+	setLayout( l );
 }
 
 void ErrorReporter::report( const QString& text, QWidget* parent )

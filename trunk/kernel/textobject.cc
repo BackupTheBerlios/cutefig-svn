@@ -135,6 +135,7 @@ void TextObject::setFont( const QFont& f )
 
 void TextObject::setupRects()
 {
+	qDebug() << "TextObject::setupRects" << font_.family() << font_.pointSize();
         bRect_ = QRectF();
         
         doc_.setDefaultFont( font_ );
@@ -142,12 +143,13 @@ void TextObject::setupRects()
         if ( !textLayout_ )
                 textLayout_ = new QTextLayout( doc_.begin() );
 
-        textLayout_->setFont( font_ );
+//        textLayout_->setFont( font_ );
         textLayout_->beginLayout();
         QTextLine line = textLayout_->createLine();
         textLayout_->endLayout();
 
         bRect_ = line.naturalTextRect();
+	qDebug() << bRect_;
         
         QPointF offset(0,0);
         

@@ -31,7 +31,6 @@
 #include "reslib.h"
 #include "objectdialog.h"
 #include "progutils.h"
-#include "lineshowwidget.h"
 #include "layouter.h"
 #include "penwidget.h"
 #include "strokewidget.h"
@@ -154,6 +153,8 @@ void ObjectDialog::commitChanges( QObject* )
         drawObject_->setStartArrow( arrows->startArrow() );
         drawObject_->setEndArrow( arrows->endArrow() );
 	drawObject_->setComment( comment->toPlainText() );
+
+	commitChangesPrivate();
 }
 
 
@@ -170,6 +171,8 @@ void ObjectDialog::setUpConnections()
 	
         connect( arrows, SIGNAL( startArrowChanged(const Arrow&) ), this, SLOT( noticeChange() ) );
         connect( arrows, SIGNAL( endArrowChanged(const Arrow&) ), this, SLOT( noticeChange() ) );
+
+	setUpConnectionsPrivate();
 }
 
 void ObjectDialog::init()

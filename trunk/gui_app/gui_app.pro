@@ -54,7 +54,6 @@ HEADERS += cutefig.h \
            addcommand.h \
            deletecommand.h \
            changecommand.h \
-           lineshowwidget.h \
            ruler.h \
            propdialog.h \
            griddialog.h \
@@ -94,7 +93,6 @@ SOURCES += cutefig.cc \
            addcommand.cc \
            deletecommand.cc \
            changecommand.cc \
-           lineshowwidget.cc \
            ruler.cc \
            propdialog.cc \
            griddialog.cc \

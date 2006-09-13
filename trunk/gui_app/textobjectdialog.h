@@ -28,7 +28,7 @@
 #include "objectdialog.h"
 
 class TextObject;
-class FontButton;
+class FontWidget;
 class StrokeWidget;
 
 class TextObjectDialog : public ObjectDialog
@@ -46,7 +46,7 @@ private:
 
         TextObject* textObject_;
 
-        FontButton* fontButton_;
+        FontWidget* fontWidget_;
 };
 
 #endif

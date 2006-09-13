@@ -24,7 +24,7 @@
 
 #include "textobjectdialog.h"
 #include "textobject.h"
-#include "fontbutton.h"
+#include "fontwidget.h"
 #include "strokewidget.h"
 #include "editdialogaction.h"
 #include "penwidget.h"
@@ -32,6 +32,8 @@
 #include <QLayout>
 #include <QTextEdit>
 #include <QSpinBox>
+
+#include <QDebug>
 
 TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
         : ObjectDialog( o,a, parent )
@@ -48,8 +50,8 @@ TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget*
 
         QVBoxLayout* rcl = new QVBoxLayout();
         
-        fontButton_ = new FontButton( tr("Choose &Font"), page );
-        rcl->addWidget( fontButton_ );
+        fontWidget_ = new FontWidget;
+        rcl->addWidget( fontWidget_ );
 
         mainLayout->addLayout( rcl );
 
@@ -59,17 +61,21 @@ TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget*
 
 void TextObjectDialog::commitChangesPrivate()
 {
-        textObject_->setFont( fontButton_->font() );
+	qDebug() << "TextObjectDialog::commitChangesPrivate()"
+		 << fontWidget_->font().family()
+		 << fontWidget_->font().pointSize();
+        textObject_->setFont( fontWidget_->font() );
 }
 
 void TextObjectDialog::setUpConnectionsPrivate()
 {
-        connect( fontButton_, SIGNAL( fontChanged(const QFont&) ), this, SLOT( noticeChange() ) );
+	qDebug() << "TextObjectDialog::setUpConnectionsPrivate()";
+        connect( fontWidget_, SIGNAL( fontChanged() ), this, SLOT( noticeChange() ) );
 }
 
 void TextObjectDialog::setDefaultValuesPrivate()
 {
-        fontButton_->setFont( textObject_->font() );
+        fontWidget_->setFont( textObject_->font() );
 }
 
 void TextObjectDialog::castDrawObject()
@@ -79,7 +85,7 @@ void TextObjectDialog::castDrawObject()
 
 template<>
 ObjectDialog* TObjectGUIHandler<TextObject>::makeEditDialog( DrawObject* o, EditdialogAction* a,
-                                                      QWidget* parent )
+							     QWidget* parent )
 {
         return new TextObjectDialog( o, a, parent );
 }
