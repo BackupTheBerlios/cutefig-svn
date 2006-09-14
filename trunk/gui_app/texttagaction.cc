@@ -54,7 +54,7 @@ void TextTagAction::adaptToTextFormat()
 {
         TextObject* to = textAction_->textObject();
         
-        setChecked( to && correctState( to) );
+        setChecked( to && correctState( to ) );
 }
 
 

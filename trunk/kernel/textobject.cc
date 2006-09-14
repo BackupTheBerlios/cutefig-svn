@@ -40,7 +40,7 @@ TextObject::TextObject( Figure* parent )
           doc_( this ),
           cursor_( &doc_ ),
           dummyPaintDevice_(),
-          textLayout_( 0 ),
+          textLayout_(),
           font_(),
           alignment_( Qt::AlignVCenter ),
           cursorVisible_( false )
@@ -54,7 +54,7 @@ TextObject::TextObject( const TextObject* o )
           doc_( this ),
           cursor_( &doc_ ),
           dummyPaintDevice_(),
-          textLayout_( 0 ),
+          textLayout_(),
           font_( o->font_ ),
           alignment_( o->alignment_ ),
           cursorVisible_( false )
@@ -66,7 +66,6 @@ TextObject::TextObject( const TextObject* o )
 
 TextObject::~TextObject()
 {
-        delete textLayout_;
 }
 
 void TextObject::outputToBackend( OutputBackend* ob ) const
@@ -96,9 +95,6 @@ void TextObject::drawTentative( QPainter* p ) const
 
 void TextObject::doDraw( QPainter* p ) const
 {
-        if ( !textLayout_ )
-                return;
-
         QVector<QTextLayout::FormatRange> selection;
 
         if ( cursor_.hasSelection() ) {
@@ -114,11 +110,11 @@ void TextObject::doDraw( QPainter* p ) const
         }
 
         if ( !doc_.isEmpty() )
-                textLayout_->draw( p, actualPoint_, selection );
+                textLayout_.draw( p, actualPoint_, selection );
 
-        if ( cursorVisible_ && textLayout_ ) {
+        if ( cursorVisible_ ) {
                 p->setPen( QPen() );
-                textLayout_->drawCursor( p, actualPoint_, cursor_.position() );
+                textLayout_.drawCursor( p, actualPoint_, cursor_.position() );
         }
 }
 
@@ -140,13 +136,38 @@ void TextObject::setupRects()
         
         doc_.setDefaultFont( font_ );
 
-        if ( !textLayout_ )
-                textLayout_ = new QTextLayout( doc_.begin() );
+//         if ( !textLayout_ )
+//                 textLayout_ = new QTextLayout( doc_.begin() );
 
-//        textLayout_->setFont( font_ );
-        textLayout_->beginLayout();
-        QTextLine line = textLayout_->createLine();
-        textLayout_->endLayout();
+        textLayout_.setFont( font_ );
+        
+        textLayout_.setText( doc_.toPlainText() );
+
+        QList<QTextLayout::FormatRange> formatRanges;
+        
+        QTextBlock::iterator it = doc_.begin().begin();
+        for( ; !it.atEnd(); ++it ) {
+                QTextFragment frag = it.fragment();
+                QTextCharFormat cf = frag.charFormat();
+                QFont f = cf.font();
+                f.setFamily( font_.family() );
+                f.setPointSize( font_.pointSize() );
+                cf.setFont( f );
+                
+                qDebug() << cf.font().family() << cf.font().bold();
+ 		QTextLayout::FormatRange fr;
+ 		fr.format = cf;
+ 		fr.start = frag.position();
+		fr.length = frag.length();
+
+		formatRanges << fr;
+        }
+        
+        textLayout_.setAdditionalFormats( formatRanges );
+
+        textLayout_.beginLayout();
+        QTextLine line = textLayout_.createLine();
+        textLayout_.endLayout();
 
         bRect_ = line.naturalTextRect();
 	qDebug() << bRect_;
@@ -217,12 +238,10 @@ QString formatTags( const QTextCharFormat& oldFormat, const QTextCharFormat& new
  *  So we create our HTML snippet ourselfes.
  *
  *  Therefore we take the plain text and replace critical characters
- *  by there entities first. Then we create a new QTextDocument on the
- *  stack. We don't use #doc_ here as we then could not qualify the
- *  method const and makeing #doc_ mutable would make me nervous.
+ *  by there entities first. 
  *
- *  We then use a QTextCursor to step through that temporary
- *  QTextDocument and to keep track of format changes.
+ *  We then use a QTextBlock::iterator and iterate over all
+ *  QTextFragments to see all the changes of the format.
  *
  *  Finally we replace newlines by <br>.
  */
@@ -233,28 +252,28 @@ const QString TextObject::text() const
         text.replace("<", "&lt;");
         text.replace(">", "&gt;");
 
-        int oldPosition = cursor_.position();
-        cursor_.setPosition( 0 );
-        QTextCharFormat currentFormat = cursor_.charFormat();
-        QTextCharFormat lastFormat;
-
         int pos = 0;
-        
-        while ( !cursor_.atEnd() ) {
-                cursor_.movePosition(QTextCursor::NextCharacter);
-                currentFormat = cursor_.charFormat();
-                QString tags = formatTags( lastFormat, currentFormat );
+        QTextCharFormat lastFormat;
+        QTextBlock::iterator it = doc_.begin().begin();        
+
+        for ( ; !it.atEnd(); ++it ) {
+                QTextFragment cf = it.fragment();
+                
+                QTextCharFormat curr = cf.charFormat();
+
+                QString tags = formatTags( lastFormat, curr );
+                text.insert( pos, tags );
+                pos += tags.length();
+                
                 if ( text[pos] == '&' )
                         while ( text[++pos] != ';');
-                        
-                text.insert( pos++, tags );
-                pos += tags.length();
-                lastFormat = currentFormat;
-        }
+                
+                pos += cf.length();
 
-        cursor_.setPosition( oldPosition );
+                lastFormat = curr;
+        }        
 
-        text.append( formatTags( currentFormat, QTextCharFormat() ) );
+        text.append( formatTags( lastFormat, QTextCharFormat() ) );
 
         text.replace("\n", "<br>");
         return text;
@@ -319,7 +338,7 @@ void TextObject::setCursorToPoint( const QPointF& p )
         qreal x = p.x() - bRect_.left();
         //qreal y = p.y() - bRect_.top();
 
-        QTextLine line = textLayout_->lineAt( 0 );
+        QTextLine line = textLayout_.lineAt( 0 );
         setCursorPos( line.xToCursor( x ) );
 }
 

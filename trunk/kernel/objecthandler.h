@@ -81,9 +81,10 @@ protected:
 
         ObjectGUIHandler* guiHandler_;        
 
-        virtual DrawObject* parseObject( std::istream& is, Figure* fig ) = 0;
         
 private:
+        virtual DrawObject* parseObject( std::istream& is, Figure* fig ) = 0;
+
         ObjectHandler( const ObjectHandler& );
 
         static Initialiser::AutoHash<ObjectHandler> ohHash_;

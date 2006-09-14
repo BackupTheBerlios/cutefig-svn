@@ -36,7 +36,7 @@ protected:
 public:
         ~TextTagAction() {}
 
-        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix* ) {}
+        virtual void click( const QPoint&, Fig::PointFlags, const QMatrix& ) {}
         virtual void handleSelection() {}
         virtual bool isActive() { return false; }
 

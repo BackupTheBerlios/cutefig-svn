@@ -151,10 +151,10 @@ private:
         void trackCharFormat();
         
         QTextDocument doc_;
-        mutable QTextCursor cursor_;
+        QTextCursor cursor_;
         QTextCharFormat charFormat_;
         QPicture dummyPaintDevice_;
-        QTextLayout* textLayout_;
+        QTextLayout textLayout_;
         QFont font_;
         QPointF actualPoint_;
 
