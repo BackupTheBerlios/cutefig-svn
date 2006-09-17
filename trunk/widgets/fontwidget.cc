@@ -26,26 +26,9 @@
 
 #include <QtGui>
 
-// FontListView::FontListView( QWidget *parent )
-//         : QListView(parent)
-// {
-//         setModel( new QStringListModel(parent) );
-//         setEditTriggers( NoEditTriggers );
-// }
-
-// FontWidget::FontWidget( QWidget* parent )
-//         : QWidget( parent )
-// {
-        
-// }
-
-
-
 
 HeadListView::HeadListView( const QString& title, QWidget* parent ) 
 	: QWidget( parent )
-//	  model_(),
-//	  selectedOne_( &model_ )
 {
 	head_ = new QLineEdit;
 	listView_ = new QListView;
@@ -110,12 +93,10 @@ FontWidget::FontWidget( QWidget* parent )
 	  fontDatabase_( QFontDatabase() )
 {
 	family_ = new HeadListView( tr("Font &family") );
-	style_ = new HeadListView( tr("Font sty&le") );
 	size_ = new HeadListView( tr("Font &size") );
 
 	QHBoxLayout* l = new QHBoxLayout;
 	l->addWidget( family_, 38 );
-	l->addWidget( style_, 24 );
 	l->addWidget( size_, 10 );
 	setLayout( l );
 
@@ -125,8 +106,6 @@ FontWidget::FontWidget( QWidget* parent )
 		 this, SLOT( changeFamily( const QString& ) ) );
 	connect( size_, SIGNAL( highlightChanged( const QString& ) ),
 		 this, SLOT( changeSize( const QString& ) ) );
-	connect( style_, SIGNAL( highlightChanged( const QString& ) ),
-		 this, SLOT( changeStyle( const QString& ) ) );
 }
 
 
@@ -134,7 +113,6 @@ void FontWidget::changeFamily( const QString& fam )
 {
 	font_.setFamily( fam );
 	updateSizes();
-	updateStyles();
 	
 	emit fontChanged();
 }
@@ -146,12 +124,6 @@ void FontWidget::changeSize( const QString& size )
 	emit fontChanged();
 }
 
-void FontWidget::changeStyle( const QString& style )
-{
-	font_ = fontDatabase_.font( font_.family(), style, font_.pointSize() );
-
-	emit fontChanged();
-}
 
 void FontWidget::updateSizes()
 {
@@ -162,18 +134,11 @@ void FontWidget::updateSizes()
 	size_->setStringList( sizes );    
 }
 
-void FontWidget::updateStyles()
-{
-	style_->setStringList( fontDatabase_.styles( font_.family() ) );
-}
-
 void FontWidget::setFont( QFont font )
 {
 	font_ = font;
 	updateSizes();
-	updateStyles();
 	family_->select( font_.family() );
-	style_->select( fontDatabase_.styleString( font_ ) );
 	size_->select( QString::number( font_.pointSize() ) );
 }
 

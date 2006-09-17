@@ -27,6 +27,7 @@
 
 #include <QCoreApplication>
 
+#include <QDebug>
 
 /*! Calls clear() in order to fill infoHash_ to contain all valid
  *  Qt::KeyboardModifier.
@@ -99,7 +100,7 @@ void ActionStatus::setInformation( const Information& info )
 
 const ActionStatus::Information& ActionStatus::information() const
 {
-        return *infoMap_[modifiers_];
+	return *infoMap_[modifiers_];
 }
 
 /*! The infoMap_ needs to be filled so that every valid modifier
@@ -146,3 +147,8 @@ ActionStatus::Information::Information()
 }
 
 
+
+void ActionStatus::setModifiers( Qt::KeyboardModifiers mods )
+{
+	modifiers_ = mods & ~Qt::MetaModifier & ~Qt::KeypadModifier & ~Qt::GroupSwitchModifier;
+}

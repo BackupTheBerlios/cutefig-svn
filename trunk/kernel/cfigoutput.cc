@@ -95,12 +95,16 @@ void CfigOutput::outputBezierSpline( const BezierSpline* bs )
 void CfigOutput::outputTextObject( const TextObject* to )
 {
         drawObject_ = to;
+	QString text = to->text();
+	if ( text.isEmpty() )
+		return;
+	
         outputGenericData();
 
         const QFont& f = to->font();
         
         fileStream_ << ' ' << f.family() << ' ' << f.pointSize() << ' '
-                    << to->alignment() << ' ' << to->text() << "\n";
+                    << to->alignment() << ' ' << text << "\n";
 
         outputPoints();
 }

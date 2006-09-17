@@ -40,7 +40,6 @@ class FontWidget : public QWidget
         Q_OBJECT
 public:
         FontWidget( QWidget* parent = 0 );
-//        ~FontWidget();
 
         void setFont( QFont font );
 	QFont font() const { return font_; }
@@ -51,11 +50,9 @@ signals:
 private slots:
 	void changeFamily( const QString& fam );
 	void changeSize( const QString& size );
-	void changeStyle( const QString& style );
 	
 private:
 	void updateSizes();
-	void updateStyles();
 	
 private:
         QFont font_;
@@ -63,7 +60,6 @@ private:
 	
 	HeadListView* family_;
 	HeadListView* size_;
-	HeadListView* style_;
 };
 
 
@@ -94,43 +90,5 @@ private:
 	QStringListModel* model_;
 	QItemSelectionModel* selectedOne_;
 };
-
-
-// class FontListView : public QListView 
-// {
-// public:
-//         FontListView( QWidget* parent );
-        
-//         QStringListModel* model() const
-//         {
-//                 return static_cast<QStringListModel *>(QListView::model());
-//         }
-        
-//         void setCurrentItem( int item )
-//         {
-//                 QListView::setCurrentIndex(static_cast<QAbstractListModel*>(model())->index(item));
-//         }
-
-//         int currentItem() const { return QListView::currentIndex().row(); }
-
-//         int count() const { return model()->rowCount(); }
-
-//         QString currentText() const
-//         {
-//                 int row = QListView::currentIndex().row();
-//                 return row < 0 ? QString() : model()->stringList().at(row);
-//         }
-
-//         void currentChanged(const QModelIndex &current, const QModelIndex &previous)
-//         {
-//                 QListView::currentChanged(current, previous);
-//                 if (current.isValid())
-//                         emit highlighted(current.row());
-//         }
-        
-//         QString text(int i) const { return model()->stringList().at(i); }
-// signals:
-//         void highlighted(int);
-// };
 
 #endif

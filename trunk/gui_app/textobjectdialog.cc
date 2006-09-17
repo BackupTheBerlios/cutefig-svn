@@ -55,8 +55,8 @@ TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget*
 
         mainLayout->addLayout( rcl );
 
-        penWidget->setEnabled( false );
-        fillStroke->setEnabled( false );
+         penWidget->setEnabled( false );
+//         fillStroke->setEnabled( false );
 }
 
 void TextObjectDialog::commitChangesPrivate()

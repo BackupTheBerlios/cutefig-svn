@@ -103,7 +103,7 @@ public:
                              const QString& b, const QString& h=QString() );
 
         Qt::KeyboardModifiers modifiers() const { return modifiers_; }
-        void setModifiers( Qt::KeyboardModifiers mods ) { modifiers_ = mods; }
+        void setModifiers( Qt::KeyboardModifiers mods );
 
         void setStatus( const QString& s ) { status_ = s; }
         const QString& status() const { return status_; }

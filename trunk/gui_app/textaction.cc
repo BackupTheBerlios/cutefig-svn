@@ -28,6 +28,7 @@
 #include "textobject.h"
 #include "addcommand.h"
 #include "changecommand.h"
+#include "deletecommand.h"
 #include "objectguihandler.h"
 #include "actions.h"
 #include "figure.h"
@@ -140,11 +141,17 @@ void TextAction::commitTextObject()
         killTimer( cursorTimer_ );
         textObject_->hideCursor();
 
-        if ( textNew_ )
-                controler_->execAction( new AddCommand( selection_ ) );
-        else
-                controler_->execAction( new ChangeCommand( selection_ ) );
-        
+        if ( textNew_ ) {
+		if ( !textObject_->isEmpty() )
+			controler_->execAction( new AddCommand( selection_ ) );
+	} else {
+		if ( textObject_->isEmpty() )
+			controler_->execAction( new DeleteCommand( selection_ ) );
+		else
+			controler_->execAction( new ChangeCommand( selection_ ) );
+	}
+
+	textObject_ = 0;
         selection_.updateBackups();
         controler_->textPropActions()->setAllEnabled( false );
 }

@@ -39,13 +39,11 @@ TextObject::TextObject( Figure* parent )
         : DrawObject( parent ),
           doc_( this ),
           cursor_( &doc_ ),
-          dummyPaintDevice_(),
           textLayout_(),
           font_(),
           alignment_( Qt::AlignVCenter ),
           cursorVisible_( false )
 {
-        doc_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
 }
 
 
@@ -53,14 +51,12 @@ TextObject::TextObject( const TextObject* o )
         : DrawObject( o ),
           doc_( this ),
           cursor_( &doc_ ),
-          dummyPaintDevice_(),
           textLayout_(),
           font_( o->font_ ),
           alignment_( o->alignment_ ),
           cursorVisible_( false )
 {
         doc_.setHtml( o->doc_.toHtml() );
-        doc_.documentLayout()->setPaintDevice( &dummyPaintDevice_ );
         getReadyForDraw();
 }
 
@@ -73,7 +69,7 @@ void TextObject::outputToBackend( OutputBackend* ob ) const
         ob->outputTextObject( this );
 }
 
-bool TextObject::pointHitsOutline( const QPointF& p, qreal ) const
+bool TextObject::pointHits( const QPointF& p, qreal ) const
 {
         return bRect_.contains( p );
 }
@@ -136,10 +132,7 @@ void TextObject::setupRects()
         
         doc_.setDefaultFont( font_ );
 
-//         if ( !textLayout_ )
-//                 textLayout_ = new QTextLayout( doc_.begin() );
-
-        textLayout_.setFont( font_ );
+	textLayout_.setFont( font_ );
         
         textLayout_.setText( doc_.toPlainText() );
 
@@ -153,7 +146,6 @@ void TextObject::setupRects()
                 f.setFamily( font_.family() );
                 f.setPointSize( font_.pointSize() );
                 cf.setFont( f );
-                
                 qDebug() << cf.font().family() << cf.font().bold();
  		QTextLayout::FormatRange fr;
  		fr.format = cf;
@@ -170,6 +162,25 @@ void TextObject::setupRects()
         textLayout_.endLayout();
 
         bRect_ = line.naturalTextRect();
+
+	qDebug() << bRect_;
+
+	typedef QList<QTextLayout::FormatRange>::iterator IT;
+	
+	for ( IT it = formatRanges.begin(); it != formatRanges.end(); ++it ) {
+		it->format.setTextOutline( QPen( stroke_.brush( bRect_ ), 1, Qt::SolidLine ) );
+		it->format.setForeground( fill_.brush( bRect_ ) );
+	}
+	
+        textLayout_.setAdditionalFormats( formatRanges );
+
+        textLayout_.beginLayout();
+        line = textLayout_.createLine();
+        textLayout_.endLayout();
+
+        bRect_ = line.naturalTextRect();
+		
+	
 	qDebug() << bRect_;
         
         QPointF offset(0,0);
@@ -213,20 +224,21 @@ QString formatTags( const QTextCharFormat& oldFormat, const QTextCharFormat& new
         const QTextCharFormat::VerticalAlignment oldAl = oldFormat.verticalAlignment();
         const QTextCharFormat::VerticalAlignment newAl = newFormat.verticalAlignment();
 
-        if ( !oldAl & QTextCharFormat::AlignSuperScript &&
-             newAl & QTextCharFormat::AlignSuperScript )
-                tags += "<sup>";
-        else if ( oldAl & QTextCharFormat::AlignSuperScript &&
-                  !newAl & QTextCharFormat::AlignSuperScript )
+	if ( oldAl == newAl )
+		return tags;
+	
+
+
+	if ( oldAl == QTextCharFormat::AlignSuperScript )
                 tags += "</sup>";
-        
-        if ( !oldAl & QTextCharFormat::AlignSubScript &&
-             newAl & QTextCharFormat::AlignSubScript )
-                tags += "<sub>";
-        else if ( oldAl & QTextCharFormat::AlignSubScript &&
-                  !newAl & QTextCharFormat::AlignSubScript )
+	if ( oldAl == QTextCharFormat::AlignSubScript )
                 tags += "</sub>";
 
+	if ( newAl == QTextCharFormat::AlignSuperScript )
+                tags += "<sup>";
+	if ( newAl == QTextCharFormat::AlignSubScript )
+                tags += "<sub>";
+	
         return tags;
 }
 
@@ -258,7 +270,6 @@ const QString TextObject::text() const
 
         for ( ; !it.atEnd(); ++it ) {
                 QTextFragment cf = it.fragment();
-                
                 QTextCharFormat curr = cf.charFormat();
 
                 QString tags = formatTags( lastFormat, curr );

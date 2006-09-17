@@ -74,13 +74,14 @@ public:
         /*! The rest is determined by its size and #alignment_.
          */
         virtual int minPoints() const { return 1; }
-        
+	virtual bool canHaveArrows() const { return false; }
+	
         virtual void draw( QPainter* p ) const;
         virtual void drawTentative( QPainter* p ) const;
         
         virtual void outputToBackend( OutputBackend* ob ) const;
         
-        virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
+        virtual bool pointHits( const QPointF& p, qreal tolerance ) const;
 
         //! sets the contents, which is supposed to be a HTML snippet.
         void setText( const QString& text );
@@ -153,7 +154,6 @@ private:
         QTextDocument doc_;
         QTextCursor cursor_;
         QTextCharFormat charFormat_;
-        QPicture dummyPaintDevice_;
         QTextLayout textLayout_;
         QFont font_;
         QPointF actualPoint_;
