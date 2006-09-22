@@ -28,15 +28,14 @@
 
 #include <QWidget>
 
-class QMainWindow;
-
 class Ruler;
 class CanvasView;
 
-/*! \class CentralWidget
- *  \brief The central widget of the CuteFig.  
- */
+class QMainWindow;
+class QScrollArea;
 
+
+//! The central widget of the CuteFig.  
 class CentralWidget : public QWidget
 {
         Q_OBJECT
@@ -44,15 +43,10 @@ public:
         CentralWidget( CanvasView* cv, QMainWindow * parent =0 );
         ~CentralWidget() {}
 
-        QWidget* viewport() const { return viewport_; }
-
-        
-private slots:
-        void dispatchCursorPos( const QPoint& ); 
+        QSize viewportSize() const;
 
 private:
-        Ruler *hRuler_, *vRuler_;  //!< Two rulers to indicate the position
-        QWidget* viewport_;        //!< The scroll views's viewport
+	QScrollArea* scrollArea_;
         
 };
 

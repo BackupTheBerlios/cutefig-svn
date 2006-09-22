@@ -45,8 +45,6 @@
 
 #include <fstream>
 
-int CuteFig::rulerWidth = 30;
-double CuteFig::unit = Fig::cm2pix;
 
 /*! The constructor of CuteFig. It constructs all the three items
  *  which are needed for the MVC design pattern. Then it triggers the
@@ -74,12 +72,12 @@ CuteFig::CuteFig()
         CentralWidget* cw = new CentralWidget( cview_, this );
         setCentralWidget( cw );
 
-        viewport_ = cw->viewport();
-
         CoordWidget* crd = new CoordWidget( *figure_ );
         connect( cview_, SIGNAL(cursorMovedTo(const QPoint&)),
                  crd, SLOT(setCoords(const QPoint&)) );
         connect( cview_, SIGNAL(cursorIsIn(bool)), crd, SLOT(setIndicating(bool)) );
+	connect( cview_, SIGNAL(matrixChanged(const QMatrix&)),
+		 crd, SLOT(setMatrix(const QMatrix&)) );
         
         statusBar()->addPermanentWidget( crd );
         
@@ -345,3 +343,8 @@ void CuteFig::writeSettings()
         s.endGroup();   
 }
 
+
+QSize CuteFig::viewportSize() const
+{
+	return static_cast<CentralWidget*>( centralWidget() )->viewportSize();
+}

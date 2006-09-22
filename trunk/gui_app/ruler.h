@@ -32,6 +32,9 @@
 #include <QStringList>
 #include <QPixmap>
 
+
+
+
 //! This is the ruler for the canvas window.
 /*! This is the ruler for the canvas view. It shows ticks and marks
  *  them. Depending on zoom and length scale the ticks and the
@@ -54,13 +57,13 @@ public:
         void setValue( int v );    //!< Sets the value of the pointerposition.
         void setLength( int l );   //!< Sets the length of the ruler
 
-        void setScale( double s ); //!< Sets the zoom scale 
         void setUnit( const ResourceKey& k );   //!< Sets the length unit
 
-        
-public slots:
         void setIndicating( bool indicating );
+	void setZoomScale( double s ); //!< Sets the zoomScale 
         void setStart( int v );    //!< Sets the lowest visible position
+
+	void setOffset( double o );
 
 protected:
         void paintEvent( QPaintEvent *e );
@@ -75,19 +78,43 @@ private:
         Qt::Orientation o_;
         int value_, oldValue_;
         int length_;
-        double scale_;
+        double zoomScale_;
         ResourceUser<Length> unit_;
         double tickVal_;
 
-        double ticks_, subTicks_, startTick_;
-        int startVal_, startPix_;
-        static int tLen_, stLen_; //!< length of the (sub)ticks
+        double ticks_, subTicks_, offset_;
+	int startPos_;
 
+	int rulerWidth_;
+	
         QStringList tickMarks_;
 
         bool indicating_;
         
         QPixmap buffer_;
+};
+
+
+class RulerDispatcher : public QObject
+{
+        Q_OBJECT
+public:
+	RulerDispatcher( const QSize& s, QWidget* parent );
+
+	Ruler* verticalRuler() const { return vertical_; }
+	Ruler* horizontalRuler() const { return horizontal_; }
+							  
+public slots:
+	void verticalScroll( int s );
+	void horizontalScroll( int s );
+	void sizeChange( const QSize& s );
+	void setMatrix( const QMatrix& m );
+	void setPos( const QPoint& p );
+	void setIndicating( bool i );
+
+private:
+	Ruler* vertical_;
+	Ruler* horizontal_;
 };
 
 #endif

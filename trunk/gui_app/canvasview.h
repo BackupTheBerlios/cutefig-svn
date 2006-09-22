@@ -44,7 +44,6 @@
 
 class DrawObject;
 class CuteFig;
-class Ruler;
 class ActionStatusIndicator;
 
 class QPainter;
@@ -62,9 +61,7 @@ typedef QList<InteractiveAction*> ActionList;
  *
  *  The second job of CanvasView is to pass a QPainter to the Figure
  *  to which the DrawObjects can be painted to. Furthermore it draws
- *  the paper and the snap grid. It communicates with the two
- *  instances of Ruler to tell them about mouse moves and changes of
- *  the zoomscale. Drawing the helplines is also planned.
+ *  the paper and the snap grid. Drawing the helplines is also planned.
  */
 class CanvasView : public QWidget, public ViewBase
 {
@@ -87,10 +84,7 @@ public:
         const Controler* controler() const { return controler_; }
         CuteFig* mainWindow() { return mainWindow_; }
 
-        double paperWidth() const;
-        
-        void setHRuler( Ruler* r );
-        void setVRuler( Ruler* r ); 
+        double paperWidth() const;        
 
         
 public slots:
@@ -116,9 +110,11 @@ signals:
         void cursorMovedTo( const QPoint& );
         void cursorIsIn( bool );
         
-        void scaleChanged( double ); 
-        //!< To be emitted when the zoom scale changes.
-
+        //! To be emitted when the zoom scale changes.
+	void zoomChanged( double );
+	void sizeChanged( const QSize& );
+	void matrixChanged( const QMatrix& );
+     
 protected:
         virtual void mouseReleaseEvent( QMouseEvent * e );
 //        virtual void mousePressEvent( QMouseEvent* e );
@@ -167,15 +163,13 @@ private:
 
         CuteFig* mainWindow_;
 
-        Ruler *hRuler_, *vRuler_;
-
         QMatrix scaleMatrix_, scaleMatrixInv_; //!< the scaling matrix
-        qreal scale_, zoom_;   
-        qreal gridWidth_;
-        qreal gridScaled_;
+        double scale_, zoom_;   
+        double gridWidth_;
+        double gridScaled_;
 
-        qreal snapWidth_;
-        qreal snapScaled_;
+        double snapWidth_;
+        double snapScaled_;
 
         double unit_;
         QSizeF paperSize_;

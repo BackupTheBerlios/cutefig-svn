@@ -25,6 +25,7 @@
 
 #include "ruler.h"
 #include "cutefig.h"
+#include "geometry.h"
 
 #include <cmath>
 #include <QPaintEvent>
@@ -32,19 +33,15 @@
 
 #include <QDebug>
 
-int Ruler::tLen_ = CuteFig::rulerWidth/2;
-int Ruler::stLen_ = CuteFig::rulerWidth/4;
-//int Ruler::fontSize = CuteFig::rulerWidth/3;
 
 Ruler::Ruler( int l, Qt::Orientation o, QWidget * parent )
         : QFrame( parent ),
           o_( o ),
           value_( 0 ),
           oldValue_( 0 ),
-          scale_( 1.0 ),
+          zoomScale_( 1.0 ),
           unit_(),
-          startTick_( -2 ),
-          startVal_( 0 ),
+	  rulerWidth_( 30 ),
           tickMarks_( 0 ),
           indicating_( false )
 {
@@ -60,9 +57,10 @@ void Ruler::setIndicating( bool indicating )
         update();
 }
 
-void Ruler::setScale( double s )
+void Ruler::setZoomScale( double s )
 {
-        scale_ = s;
+	qDebug() << "Ruler::setZoomScale" << s;
+        zoomScale_ = s;
         calcTickMarks();
         updateRuler();
 }
@@ -78,7 +76,8 @@ void Ruler::setUnit( const ResourceKey& k )
  */
 void Ruler::calcTickMarks()
 {
-        double u = unit_.data() * scale_;
+        double unit = unit_.data() * zoomScale_;
+	double u = unit;
         double t = 1/u;
 
         while ( u > 50.0 ) u /= 2.0;
@@ -91,14 +90,15 @@ void Ruler::calcTickMarks()
 
         tickMarks_.clear();
 
-        double v = 0;//startVal_ * t;
+	qDebug() << __PRETTY_FUNCTION__ << zoomScale_ << unit << offset_-startPos_ << qRound( offset_/unit );
+        double v = -qRound( (offset_-startPos_)/unit/t ) * t;
         int p = 2;
         double i = 0;
 
         do {
                 if ( t/v < 0.1 )
                         p = 3;
-                tickMarks_.append( QString::number( ( v ), 'g', p ) );
+                tickMarks_ << QString::number( ( v ), 'g', p );
                 v += t;
                 i += ticks_;
         } while ( i < length_ );
@@ -110,7 +110,7 @@ void Ruler::calcTickMarks()
 void Ruler::setValue( int v )
 {
         oldValue_ = value_;
-        value_ = v - qRound( startPix_ );
+        value_ = v - qRound( startPos_ );
 
         QRect r1, r2;
         
@@ -118,10 +118,9 @@ void Ruler::setValue( int v )
                 r1 = QRect( value_,0, 3, height() );
                 r2 = QRect( oldValue_,0, 3, height() );
         } else {
-                r1 = QRect( 0,value_, width(), 3 );
-                r2 = QRect( 0,oldValue_, width(), 3 );
-                
-        }
+		r1 = QRect( 0,value_-2, width(), 3 );
+		r2 = QRect( 0,oldValue_-2, width(), 3 );
+	}
 
         update( QRegion(r1) | QRegion(r2) );
 }
@@ -129,23 +128,20 @@ void Ruler::setValue( int v )
 void Ruler::paintEvent( QPaintEvent *e )
 {
         QPainter p( this );
-        p.setClipRect( e->rect() );
+        p.setClipRegion( e->region() );
 
-        if ( o_ == Qt::Horizontal )
-                p.translate( 2, 0 );
-        else
-                p.translate( 0, 2 );
-
+	if ( o_ == Qt::Vertical ) {
+		p.rotate( -90 );
+		p.translate( -length_,0 );
+	}
+	
+//	p.translate( 2,0 );
         p.drawPixmap( QPoint( 0,0 ), buffer_ );
 
-        if ( value_ < length_ && indicating_ ) {               
-
+        if ( value_ < length_ && indicating_ ) {
                 p.setPen( Qt::red );
-
-                if ( o_ == Qt::Horizontal ) 
-                        p.drawLine( value_, 0, value_, height() );
-                else 
-                        p.drawLine( 0, value_, width(), value_ );
+		int v = o_ == Qt::Vertical ? length_-value_ : value_;
+		p.drawLine( v, 0, v, rulerWidth_ );
         }
 }
 
@@ -154,90 +150,118 @@ void Ruler::setLength( int l )
         length_ = l;
         calcTickMarks();
         if ( o_ == Qt::Horizontal )
-                resize( l, CuteFig::rulerWidth );
+                resize( l, rulerWidth_ );
         else
-                resize( CuteFig::rulerWidth, l );
-        buffer_ = QPixmap( size() );
+                resize( rulerWidth_, l );
+        buffer_ = QPixmap( l, rulerWidth_ );
         updateRuler();
 }
 
-/*! All the coordinates ticks are to be drawn at and so are stored in
- * pointers. This allows to draw use the same drawing loop for both
- * orientations.
- */
-void Ruler::updateRuler()
+
+
+void Ruler::updateRuler() 
 {
-        buffer_.fill( Qt::white );
-        QPainter p( &buffer_ );
-        p.setBrush( Qt::white );
-        p.setPen( Qt::black );
-        
-        QFont font = p.font();
-        font.setPixelSize( qRound( CuteFig::rulerWidth/3) );
-        p.setFont( font );
-    
-        p.drawRect( 0,0, width(), height() );
+	buffer_.fill();
 
-        double *x1,*y1, *x2,*y2, *x3,*y3, *x4,*y4, *rw;
+	QPainter p( &buffer_ );
+ 	QFont font = p.font();
+ 	font.setPixelSize( qRound( rulerWidth_/3 ) );
+ 	p.setFont( font );
 
-        double i  = -startTick_;
-        double null = 0.0;
-        double wh = CuteFig::rulerWidth;
-        double tl = wh - tLen_;
-        double stl = wh - stLen_;
-        double fw;
+	const double d = (offset_-startPos_)/ticks_;
+	double pos = ( d - qRound(d) ) * ticks_;
+	const double rw   = rulerWidth_;
+	const double rw2  = rulerWidth_/2;
+	const double rw4  = rulerWidth_/4;
+	const double rw34 = rw4*3;
 
-        QRectF r;
-        r.setHeight( p.fontMetrics().height() );
+	int sign = 1;
+ 	if ( o_ == Qt::Vertical ) {
+ 		sign = -1;
+ 		pos = length_ - pos;
+ 	}
 
-        if ( o_ == Qt::Horizontal ) {
-                x1 = x2 = x3 = &i; y1 = &wh; y2 = &tl; y3 = &stl; 
-                rw = &fw; x4 = &null; y4 = &stl;
-        } else {
-                y1 = y2 = y3 = &i; x1 = &wh; x2 = &tl; x3 = &stl; 
-                rw = &wh; x4 = &tl; y4 = &null;
-        }
+	foreach ( QString tm, tickMarks_ ) {
+		p.drawLine( QPointF(pos,rw), QPointF(pos,rw2) );
+		QSizeF s = p.fontMetrics().size( Qt::TextSingleLine, tm );
+		QRectF r = Geom::centerRect( QPointF(pos,rw4), s );
+		p.drawText( r, Qt::AlignHCenter | Qt::AlignVCenter, tm );
 
-        double h;
-        QStringList::Iterator it = tickMarks_.begin();
-        while ( i<length_ && it != tickMarks_.end() ) {
-                p.drawLine( QPointF(*x1,*y1), QPointF(*x2,*y2) );
-                fw = p.fontMetrics().width( *it );
-                r.setWidth( qRound(*rw) );
-                r.moveCenter( QPointF( (*x1-*x4), (*y1-*y4) ) );
-                p.drawText( r, Qt::AlignHCenter || Qt::AlignVCenter, *it++ );
-                h = i + ticks_;
-                for ( ; i<h; i+=subTicks_ )
-                        p.drawLine( QPointF(*x1,*y1), QPointF(*x3,*y3) );
-                i = h;
-        }
+		for ( double j=0; j<ticks_; j+=subTicks_ ) {
+			pos += subTicks_*sign;
+			p.drawLine( QPointF(pos,rw), QPointF(pos,rw34) );
+		}
+	}
 
-        repaint();
+	update();
 }
+	
 
-// void Ruler::updateRuler()
-// {
-//         int sign = ( o_ == Qt::Horizontal ) ? 1 : -1;
-
-//         QPainter p( &buffer_ );
-
-//         if ( o_ == Qt::Vertical )
-//                 p.rotate( 90 );
-
-//         for ( double i = 0; 
 
 void Ruler::setStart( int v )
 {
-        startPix_ = v;
-        double sv = double(v);
-        
-        startTick_ = sv;// v % (int) floor(ticks_);
-        startVal_ = 0;//floor( sv/ticks_ );
-
+	startPos_ = v;
         calcTickMarks();
         updateRuler();
 }
 
+void Ruler::setOffset( double o )
+{
+	offset_ = o;
+	calcTickMarks();
+	updateRuler();
+}
+
+
 void Ruler::contextMenuEvent( QContextMenuEvent* )
 {
+}
+
+
+
+
+
+RulerDispatcher::RulerDispatcher( const QSize& s, QWidget* parent )
+	: QObject( parent ),
+	  vertical_( new Ruler( s.height(), Qt::Vertical, parent ) ),
+	  horizontal_( new Ruler( s.width(), Qt::Horizontal, parent ) )
+{
+}
+
+void RulerDispatcher::sizeChange( const QSize& s )
+{
+	vertical_->setLength( s.height() );
+	horizontal_->setLength( s.width() );
+}
+
+void RulerDispatcher::setMatrix( const QMatrix& m )
+{
+	qDebug() << __PRETTY_FUNCTION__ << m;
+	vertical_->setZoomScale( 1/m.m22() );
+	vertical_->setOffset( -m.dy() );
+
+	horizontal_->setZoomScale( 1/m.m11() );
+	horizontal_->setOffset( -m.dx() );
+}
+
+void RulerDispatcher::setPos( const QPoint& p )
+{
+	vertical_->setValue( p.y() );
+	horizontal_->setValue( p.x() );
+}
+
+void RulerDispatcher::setIndicating( bool i )
+{
+	vertical_->setIndicating( i );
+	horizontal_->setIndicating( i );
+}
+
+void RulerDispatcher::verticalScroll( int s )
+{
+	vertical_->setStart( s );
+}
+
+void RulerDispatcher::horizontalScroll( int s )
+{
+	horizontal_->setStart( s );
 }

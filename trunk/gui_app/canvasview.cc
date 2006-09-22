@@ -34,7 +34,6 @@
 #include "drawobject.h"
 #include "figure.h"
 #include "cutefig.h"
-#include "ruler.h"
 #include "actions.h"
 #include "interactiveaction.h"
 #include "griddialog.h"
@@ -50,11 +49,9 @@ CanvasView::CanvasView( Controler* c, ActionStatusIndicator* si, const Figure* f
         : QWidget( parent ),
           ViewBase( c, f ),
           mainWindow_( parent ),
-          hRuler_( 0 ),
-          vRuler_( 0 ),
-          scale_( 1 ),
-          unit_( f->unit() ),
-          paperSize_( f->paper().size() ),
+	  zoom_( 1.0 ),
+          unit_( 1.0 ),
+          paperSize_(),
           oldRegion_(),
           oldSnapPoint_( QPoint(0,0) ),
           snapped_( false ),
@@ -68,6 +65,7 @@ CanvasView::CanvasView( Controler* c, ActionStatusIndicator* si, const Figure* f
         setAttribute( Qt::WA_NoSystemBackground );
         setAutoFillBackground( false );
         setMouseTracking( true );
+	updateFigureMetaData();
         doResizing();
         setGridWidth( .5 );
         setSnapWidth( 1.0 );
@@ -364,8 +362,7 @@ void CanvasView::paintEvent( QPaintEvent * e )
 {
         const ObjectList& l = controler_->selectedObjects();
         
-        QPainter p;
-        p.begin( this );
+        QPainter p( this );
         
         p.setClipRegion( e->region() );
 
@@ -374,8 +371,10 @@ void CanvasView::paintEvent( QPaintEvent * e )
         stopWatch.start();
 #endif
 
-        drawPaper(&p);
+	p.fillRect( 0,0, width(), height(), Qt::white );
+
         drawGrid(&p);
+        drawPaper(&p);
 
         
 #ifndef QT_NO_DEBUG_OUTPUT
@@ -418,8 +417,6 @@ void CanvasView::paintEvent( QPaintEvent * e )
                 p.drawEllipse( snapRect() );
         }
         
-        p.end();
-
 #ifndef QT_NO_DEBUG_OUTPUT
         int total = stopWatch.elapsed();
         int meta = total - selection - elements;
@@ -459,8 +456,10 @@ void CanvasView::drawObjectsPoints( QPainter* p, const DrawObject* o ) const
 //
 inline void CanvasView::drawPaper( QPainter* p )
 {
-        QRect r( offset_.x(), offset_.y(), width()-offset_.x(), height()-offset_.y() );
-        p->fillRect( r, Qt::white ); // makes spinboxes in ObjectDialog crazy, why?
+	QColor c( Qt::blue );
+	c.setAlphaF( 0.25 );
+	p->setPen( c );
+	p->drawRect( QRectF( offset_, paperSize_ ) ); 
 }
 
 // draws the grid
@@ -471,10 +470,18 @@ inline void CanvasView::drawGrid( QPainter* p )
                 return;
 
         p->setPen( QPen( Qt::lightGray , 1, Qt::DotLine ) );
-        
-        for ( double x = 0; x < width(); x += gridScaled_ )
+
+	double x = (double)offset_.x();
+	double d = x/gridScaled_;
+	x = ( d - std::floor( d ) ) * gridScaled_;
+
+	double y = (double)offset_.y();
+	d = y/gridScaled_;
+	y = ( d - std::floor( d ) ) * gridScaled_;
+	
+        for ( ; x < width(); x += gridScaled_ )
                 p->drawLine( QPointF(x,0), QPointF(x,height()) );
-        for ( double y = 0; y < height(); y += gridScaled_ )
+        for ( ; y < height(); y += gridScaled_ )
                 p->drawLine( QPointF(0,y), QPointF(width(),y) );
 }
 
@@ -553,57 +560,50 @@ void CanvasView::corsenGrid()
 void CanvasView::updateFigureMetaData()
 {
         unit_ = figure_->unit();
-        paperSize_ = figure_->paper().size();
+	scale_ = figure_->scale();
+        paperSize_ = ( figure_->paper().size() * scale_ );
         calcGrid();
-        vRuler_->setUnit( figure_->unitKey() );
-        hRuler_->setUnit( figure_->unitKey() );
 }
 
 void CanvasView::setZoom_private( double z )
 {
-        zoom_ = z;
-        double scaleRatio = 1/scale_;
-        scale_ = zoom_ * figure_->scale();
-        scaleRatio *= scale_;
-        doResizing();
-        scaleMatrix_.scale( scaleRatio, scaleRatio );
-        scaleMatrixInv_ = scaleMatrix_.inverted();
-        calcGrid();
-        emit scaleChanged( scale_ );
+	qDebug() << "CanvasView::setZoom_private" << z;
 
-        if ( hRuler_ )
-                hRuler_->setScale( scale_ );
-        if ( vRuler_ )
-                vRuler_->setScale( scale_ );
+// 	double zr = z/zoom_;
+//         scaleMatrix_.scale( zr, zr );
+//         scaleMatrixInv_ = scaleMatrix_.inverted();
+        zoom_ = z;
+        doResizing();
+        calcGrid();
+
+	emit zoomChanged( zoom_ );
+	emit matrixChanged( scaleMatrixInv_ );
 }
 
 void CanvasView::doResizing()
 {
-        QSize s = ( figure_->paper().size() * scale_ ).toSize();
+        QSize s = ( paperSize_ * zoom_ ).toSize();
+	offset_.setX( qRound( s.width() * 0.25 ) );
+	offset_.setY( qRound( s.height() * 0.25 ) );
+
+	s *= 1.5;
+
+	scaleMatrix_.reset();
+	scaleMatrix_.translate( offset_.x(), offset_.y() ).scale( zoom_*scale_, zoom_*scale_ );
+	scaleMatrixInv_ = scaleMatrix_.inverted();
+	qDebug() << scaleMatrix_ << scaleMatrixInv_;
+	
+	
         qDebug() << "doResizing()" << s << figure_->paper().size() << scale_;
-        if ( hRuler_ )
-                hRuler_->setLength( s.width() );
-        if ( vRuler_ )
-                vRuler_->setLength( s.height() );
+	emit sizeChanged( s );
         resize( s );    
 }
 
 double CanvasView::paperWidth() const
 {
-        return figure_->paper().size().width() * scale_;
+        return paperSize_.width();
 }
 
-void CanvasView::setHRuler( Ruler* r )
-{
-        hRuler_ = r;
-        r->setLength( width() );
-}
-
-void CanvasView::setVRuler( Ruler* r )
-{
-        vRuler_ = r;
-        r->setLength( height() );
-}
 
 void CanvasView::setGridWidth( double gridWidth )
 {

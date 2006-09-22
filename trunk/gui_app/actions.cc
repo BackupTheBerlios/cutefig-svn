@@ -30,12 +30,14 @@
 #include "objectguihandler.h"
 #include "recentfiles.h"
 #include "zoomcombobox.h"
+#include "geometry.h"
 
 #include <QObject>
 #include <QApplication>
 #include <QMenu>
 #include <QToolButton>
 #include <QSignalMapper>
+
 
 #include <QDebug>
 
@@ -315,7 +317,7 @@ ViewActions::ViewActions( CanvasView* parent )
 
 void ViewActions::setupZoomMenu()
 {
-        zoomComboBox_ = new ZoomComboBox();
+        zoomComboBox_ = new ZoomComboBox;
         zoomMenu_ = new QMenu( cview_->mainWindow() );
 
         zoomLevels_ << 0.25 << 0.33 << 0.5 << 0.67 << 0.75 << 1.0 << 1.5 << 2.0 << 3.0 << 4.0;
@@ -333,32 +335,26 @@ void ViewActions::setupZoomMenu()
         }
 
         connect( zoomSignalMapper_, SIGNAL( mapped( int ) ), this, SLOT( zoomChanged( int ) ) );
-        connect( zoomComboBox_, SIGNAL( zoomChanged( double ) ), this, SLOT( setZoom(double) ) );
-        connect( cview_, SIGNAL( scaleChanged(double) ), this, SLOT( setZoom(double) ) );        
+        connect( zoomComboBox_, SIGNAL( zoomChanged( double ) ), cview_, SLOT( setZoom(double) ) );
+        connect( cview_, SIGNAL( zoomChanged(double) ), this, SLOT( updateZoom(double) ) );
 }
 
 void ViewActions::zoomChanged( int id )
 {
         const double& zoom = zoomLevels_[id];
-        setZoom( zoom );
+        cview_->setZoom( zoom );
 }
 
-void ViewActions::setZoom( double zoom )
+void ViewActions::updateZoom( double zoom )
 {
-        if ( sender() != cview_ ) {
-                cview_->blockSignals( true );
-                cview_->setZoom( zoom );
-                cview_->blockSignals( false );
-        }
-
-        if ( sender() != zoomComboBox_ ) 
-                zoomComboBox_->changeZoom( zoom );
-        
+	zoomComboBox_->changeZoom( zoom );
         for ( int i = 0; i < zoomLevels_.size(); i++ ) {
                 QAction* a = (QAction *) zoomSignalMapper_->mapping( i );
-                a->setChecked( zoomLevels_[i] == zoom );
-        }
+                a->setChecked( Geom::isEqual( zoomLevels_[i], zoom ) );
+	}
 }
+
+
 
 /************************ CreateActions ************************/
 
@@ -418,4 +414,5 @@ TextPropActions::TextPropActions( Controler* parent )
 
         parent->setTextPropActions( this );
 }
+
 

@@ -35,7 +35,8 @@
 
 CoordWidget::CoordWidget( const Figure& fig, QWidget* parent )
         : QLabel( parent ),
-          figure_( fig )
+          figure_( fig ),
+	  matrix_()
 {
         setFrameStyle( QFrame::Panel );
         setMinimumWidth( QFontMetrics( QFont() ).width('0') * 15 );
@@ -43,9 +44,17 @@ CoordWidget::CoordWidget( const Figure& fig, QWidget* parent )
 
 void CoordWidget::setCoords( const QPoint& p )
 {
-        pos_ = p;
+        pos_ = QPointF( p ) * matrix_;
         updateContents();
 }
+
+
+void CoordWidget::setMatrix( const QMatrix& m )
+{
+	matrix_ = m;
+	updateContents();
+}
+
 
 void CoordWidget::setIndicating( bool ind )
 {
@@ -61,9 +70,9 @@ void CoordWidget::updateContents()
         }
         
         QString s;
-        
-        double x = double(pos_.x())/figure_.unit();
-        double y = double(pos_.y())/figure_.unit();
+
+	double x = pos_.x()/figure_.unit();
+	double y = pos_.y()/figure_.unit();
 
         QTextStream ts( &s );
         ts.setRealNumberPrecision( 2 );

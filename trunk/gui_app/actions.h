@@ -159,7 +159,7 @@ private:
         
 private slots:
         void zoomChanged( int id );
-        void setZoom( double zoom );
+	void updateZoom( double zoom );
 };
 
 /*! \class FormatActions

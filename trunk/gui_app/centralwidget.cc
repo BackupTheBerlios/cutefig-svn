@@ -45,26 +45,30 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
 {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-        QScrollArea* sa = new QScrollArea( this );
-        sa->setWidget( cv );
-        viewport_ = sa->viewport();
+        scrollArea_ = new QScrollArea( this );
+        scrollArea_->setWidget( cv );
+//        viewport_ = sa->viewport();
 
-        hRuler_ = new Ruler( viewport_->width(), Qt::Horizontal, this );
-        vRuler_ = new Ruler( viewport_->height(), Qt::Vertical, this );
+//         hRuler_ = new Ruler( viewport_->width(), Qt::Horizontal, this );
+//         vRuler_ = new Ruler( viewport_->height(), Qt::Vertical, this );
 
-        cv->setHRuler( hRuler_ );
-        cv->setVRuler( vRuler_ );
+//         cv->setHRuler( hRuler_ );
+//         cv->setVRuler( vRuler_ );
 
-        connect( sa->horizontalScrollBar(), SIGNAL( valueChanged(int) ), 
-                 hRuler_, SLOT( setStart( int ) ) );
-        connect( sa->verticalScrollBar(), SIGNAL( valueChanged(int) ),
-                 vRuler_, SLOT( setStart( int ) ) );
+	RulerDispatcher* rd = new RulerDispatcher( cv->size(), this );
+	
+        connect( scrollArea_->horizontalScrollBar(), SIGNAL( valueChanged(int) ),
+		 rd, SLOT( horizontalScroll(int) ) );
+        connect( scrollArea_->verticalScrollBar(), SIGNAL( valueChanged(int) ),
+                 rd, SLOT( verticalScroll(int) ) );
 
-        connect( cv, SIGNAL( cursorMovedTo(const QPoint&) ),
-                 this, SLOT( dispatchCursorPos(const QPoint&) ) );
+        connect( cv, SIGNAL( cursorMovedTo(const QPoint&) ), rd, SLOT( setPos(const QPoint&) ) );
+        connect( cv, SIGNAL( sizeChanged(const QSize&) ), rd, SLOT( sizeChange(const QSize&) ) );
 
-        connect( cv, SIGNAL( cursorIsIn(bool) ), hRuler_, SLOT( setIndicating(bool) ) );
-        connect( cv, SIGNAL( cursorIsIn(bool) ), vRuler_, SLOT( setIndicating(bool) ) );
+        connect( cv, SIGNAL( cursorIsIn(bool) ), rd, SLOT( setIndicating(bool) ) );
+
+	connect( cv, SIGNAL( matrixChanged(const QMatrix&) ),
+		 rd, SLOT( setMatrix(const QMatrix&) ) );
         
 
         QGridLayout* l = new QGridLayout( this );
@@ -72,16 +76,14 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
         QWidget* corner = new QWidget( this );
         corner->setFixedSize( 30, 30 );
         l->addWidget( corner );
-        l->addWidget( hRuler_, 0,1 );
-        l->addWidget( vRuler_, 1,0 );
-        l->addWidget( sa, 1,1 );
+        l->addWidget( rd->horizontalRuler(), 0,1 );
+        l->addWidget( rd->verticalRuler(), 1,0 );
+        l->addWidget( scrollArea_, 1,1 );
 
 }
 
 
-void CentralWidget::dispatchCursorPos( const QPoint& p )
+QSize CentralWidget::viewportSize() const
 {
-        hRuler_->setValue( p.x() );
-        vRuler_->setValue( p.y() );
+	return scrollArea_->viewport()->size();
 }
-

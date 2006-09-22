@@ -47,7 +47,7 @@ public:
         Controler* controler() const { return controler_; }
         CanvasView* canvasView() const { return cview_; }
 
-        QSize viewportSize() const { return viewport_->size(); }
+        QSize viewportSize() const;
 
 
 public slots:
@@ -74,7 +74,7 @@ private:
 
         QString filename_;         //!< Name of the file being edited
 
-        QWidget* viewport_;
+//        QWidget* viewport_;
 
 //        void setupObjectMapper();  //!< sets up the ObjectMapper
         void setupActions(); //!< sets up the standard actions
@@ -84,12 +84,7 @@ private:
 
 // private slots:
 //         void metaDataChanged()
-//                ;
-        
-        
-public:
-        static int rulerWidth;
-        static double unit;
+//                ;        
 };
 
 

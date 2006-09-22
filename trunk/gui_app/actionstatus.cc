@@ -150,5 +150,5 @@ ActionStatus::Information::Information()
 
 void ActionStatus::setModifiers( Qt::KeyboardModifiers mods )
 {
-	modifiers_ = mods & ~Qt::MetaModifier & ~Qt::KeypadModifier & ~Qt::GroupSwitchModifier;
+	modifiers_ = mods & ( Qt::AltModifier | Qt::ShiftModifier | Qt::ControlModifier );
 }

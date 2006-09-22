@@ -101,11 +101,12 @@ bool ScaleAction::calcScaleMatrix( const QPoint& p, const QPoint& handle, QMatri
                         qx = qy;
         }                
 
-        if ( fabs(qx * qy) > 1e-12 ) {
+        if ( !Geom::isEqual(qx,qy) ) {
                 m.scale( qx, qy );
                 return true;
-        } else
-                return false;
+        }
+
+	return false;
 }
 
 

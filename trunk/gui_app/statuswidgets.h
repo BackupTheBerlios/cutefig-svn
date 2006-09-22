@@ -27,6 +27,7 @@
 
 
 #include <QLabel>
+#include <QMatrix>
 
 class Figure;
 class ActionStatus;
@@ -44,11 +45,14 @@ public:
 public slots:
         void setCoords( const QPoint& p );
         void setIndicating( bool ind );
+	void setMatrix( const QMatrix& m );
 
 private:
         const Figure& figure_;
-        QPoint pos_;
+        QPointF pos_;
         bool indicating_;
+
+	QMatrix matrix_;
 
         void updateContents();
 };

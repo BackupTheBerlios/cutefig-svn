@@ -33,6 +33,7 @@
 #include <QVector>
 
 #include <cmath>
+#include <limits>
 
 //! Some geometrical operations
 /*!
@@ -40,39 +41,45 @@
  */
 namespace Geom
 {
-        //! returns the distance between two points
-        qreal distance( const QPointF& p1, const QPointF& p2 );
+//! returns the distance between two points
+qreal distance( const QPointF& p1, const QPointF& p2 );
 
-        //! returns between the line P1P2 and the x-axis in rad
-        double angle( const QPointF& p1, const QPointF& p2 );
+//! returns between the line P1P2 and the x-axis in rad
+double angle( const QPointF& p1, const QPointF& p2 );
 
-        //! returns a QVector of six QPointF describing the QRectF r
-        QVector<QPointF> boundingPoints( const QRectF& r );
+//! returns a QVector of six QPointF describing the QRectF r
+QVector<QPointF> boundingPoints( const QRectF& r );
 
-        //! returns true if the distance of p1 and p2 is "low"
-        bool isNear( const QPointF& p1, const QPointF& p2 );
+//! returns true if the distance of p1 and p2 is "low"
+bool isNear( const QPointF& p1, const QPointF& p2 );
 
-        //! returns true if the line l intersects the rectangle r
-        bool intersect( const QLineF& l, const QRectF& r );
+//! returns true if the line l intersects the rectangle r
+bool intersect( const QLineF& l, const QRectF& r );
 
-        //! returns the rectangle of the given size and the center.
-        QRect centerRect( const QPoint& center, const QSize& size );
-        QRectF centerRect( const QPointF& center, const QSizeF& size );
+//! returns the rectangle of the given size and the center.
+QRect centerRect( const QPoint& center, const QSize& size );
+QRectF centerRect( const QPointF& center, const QSizeF& size );
 
-        //! returns the scalar product of p1 and p2
-        qreal scalarProduct( const QPointF& p1, const QPointF& p2 );
+//! returns the scalar product of p1 and p2
+qreal scalarProduct( const QPointF& p1, const QPointF& p2 );
 
-        //! returns the absolute value of the point p, the length so to speak.
-        qreal pabs( const QPointF& p );
+//! returns the absolute value of the point p, the length so to speak.
+qreal pabs( const QPointF& p );
 
-        const double clickTolerance = 5;
+template<typename T> bool isEqual( T x, T y ) 
+{
+	return std::abs(x - y) <= std::numeric_limits<T>::epsilon() * std::abs(x);
+}
 
-        const double rad = 180/M_PI;
 
-        int qangle( double angle );
+const double clickTolerance = 5;
 
-        inline
-        int qangle( const QPointF& p1, const QPointF& p2 ) { return qangle( angle( p1,p2 ) ); }
+const double rad = 180/M_PI;
+
+int qangle( double angle );
+
+inline
+int qangle( const QPointF& p1, const QPointF& p2 ) { return qangle( angle( p1,p2 ) ); }
 };
 
 
