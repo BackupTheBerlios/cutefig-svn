@@ -141,6 +141,7 @@ void CuteFig::load( const QString& fileName )
         if ( !errors.isEmpty() ) 
                 ErrorReporter::report( errors );
 
+        cview_->updateFigureMetaData();
         cview_->updateFigure();
 }
 

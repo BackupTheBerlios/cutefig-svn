@@ -114,6 +114,7 @@ signals:
 	void zoomChanged( double );
 	void sizeChanged( const QSize& );
 	void matrixChanged( const QMatrix& );
+        void unitChanged( const ResourceKey& );
      
 protected:
         virtual void mouseReleaseEvent( QMouseEvent * e );
@@ -167,9 +168,11 @@ private:
         double scale_, zoom_;   
         double gridWidth_;
         double gridScaled_;
+        QPointF gridOffset_;
 
         double snapWidth_;
         double snapScaled_;
+        QPointF snapOffset_;
 
         double unit_;
         QSizeF paperSize_;

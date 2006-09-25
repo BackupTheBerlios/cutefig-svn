@@ -31,9 +31,9 @@
 #include <QFrame>
 #include <QStringList>
 #include <QPixmap>
+#include <QLabel>
 
-
-
+class RulerDispatcher;
 
 //! This is the ruler for the canvas window.
 /*! This is the ruler for the canvas view. It shows ticks and marks
@@ -50,10 +50,13 @@ class Ruler : public QFrame
 {
         Q_OBJECT
 public:
-        Ruler( int l, Qt::Orientation o, QWidget * parent =0 );
+        friend class RulerDispatcher;
+        
+        Ruler( int l, int width_, Qt::Orientation o, QWidget * parent =0 );
 //!< The constructor takes the length l and the Orientation o.
         ~Ruler() { };
 
+private:
         void setValue( int v );    //!< Sets the value of the pointerposition.
         void setLength( int l );   //!< Sets the length of the ruler
 
@@ -65,13 +68,11 @@ public:
 
 	void setOffset( double o );
 
-protected:
+
         void paintEvent( QPaintEvent *e );
 
         void contextMenuEvent( QContextMenuEvent* e );
-        
 
-private:
         void updateRuler();
         void calcTickMarks();       //<! calculates the tick marks smartly
 
@@ -85,7 +86,7 @@ private:
         double ticks_, subTicks_, offset_;
 	int startPos_;
 
-	int rulerWidth_;
+	int rulerWidth_, frameSpace_;
 	
         QStringList tickMarks_;
 
@@ -99,12 +100,14 @@ class RulerDispatcher : public QObject
 {
         Q_OBJECT
 public:
-	RulerDispatcher( const QSize& s, QWidget* parent );
+	RulerDispatcher( const QSize& s, QObject* parent = 0 );
 
 	Ruler* verticalRuler() const { return vertical_; }
 	Ruler* horizontalRuler() const { return horizontal_; }
-							  
+        QLabel* unitLabel() const { return unitLabel_; }
+
 public slots:
+        void setUnit( const ResourceKey& k );
 	void verticalScroll( int s );
 	void horizontalScroll( int s );
 	void sizeChange( const QSize& s );
@@ -113,8 +116,12 @@ public slots:
 	void setIndicating( bool i );
 
 private:
+        int rulerWidth_;
+        
 	Ruler* vertical_;
 	Ruler* horizontal_;
+
+        QLabel* unitLabel_;
 };
 
 #endif

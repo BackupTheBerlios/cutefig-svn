@@ -40,17 +40,14 @@ void PercentValidator::setRange( int min, int max )
 
 QValidator::State PercentValidator::validate( QString& input, int& pos ) const
 {
-        qDebug() << "validate";
-        
         QString myInput = input.trimmed();
         if ( myInput.endsWith('%') )
                 myInput.chop( 1 );
         myInput = myInput.trimmed();
         
         QValidator::State s = QIntValidator::validate( myInput, pos );
-        qDebug() << s;
+
         return s;
-        
 }
 
 void PercentValidator::fixup( QString& input )

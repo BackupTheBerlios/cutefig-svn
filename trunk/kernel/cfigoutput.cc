@@ -179,7 +179,10 @@ void CfigOutput::outputMetaData()
 {
         fileStream_ << KWds::unit()          << ' ' << figure_.unitKey() << "\n"
                     << KWds::scale()         << ' ' << figure_.scale() << "\n"
-                    << KWds::paper()         << ' ' << figure_.paperKey() << "\n";
+                    << KWds::paper()         << ' ' << figure_.paperKey() << "\n"
+                    << KWds::paper_orientation() << ' ' 
+                    << (figure_.paperOrientation() == Fig::Landscape
+                        ? KWds::landscape() : KWds::portrait()) << "\n";
         
         const QString& ath = figure_.author();
         if ( figure_.authorIsToBeSaved() && !ath.isEmpty() )

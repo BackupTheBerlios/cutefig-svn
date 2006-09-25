@@ -383,7 +383,7 @@ void CanvasView::paintEvent( QPaintEvent * e )
         
         p.setRenderHint( QPainter::Antialiasing, true );
         p.setMatrix( scaleMatrix_ );
-
+        
         foreach( const DrawObject* o, figure_->objectsToBeDrawn() ) 
                 if ( !controler_->backups().contains( const_cast<DrawObject*>(o->ancestor()) ) &&
                      e->region().contains( o->boundingRect().toRect() ) ) 
@@ -459,7 +459,7 @@ inline void CanvasView::drawPaper( QPainter* p )
 	QColor c( Qt::blue );
 	c.setAlphaF( 0.25 );
 	p->setPen( c );
-	p->drawRect( QRectF( offset_, paperSize_ ) ); 
+	p->drawRect( QRectF( offset_, paperSize_*zoom_ ) ); 
 }
 
 // draws the grid
@@ -471,17 +471,10 @@ inline void CanvasView::drawGrid( QPainter* p )
 
         p->setPen( QPen( Qt::lightGray , 1, Qt::DotLine ) );
 
-	double x = (double)offset_.x();
-	double d = x/gridScaled_;
-	x = ( d - std::floor( d ) ) * gridScaled_;
-
-	double y = (double)offset_.y();
-	d = y/gridScaled_;
-	y = ( d - std::floor( d ) ) * gridScaled_;
 	
-        for ( ; x < width(); x += gridScaled_ )
+        for ( double x = gridOffset_.x(); x < width(); x += gridScaled_ )
                 p->drawLine( QPointF(x,0), QPointF(x,height()) );
-        for ( ; y < height(); y += gridScaled_ )
+        for ( double y = gridOffset_.y(); y < height(); y += gridScaled_ )
                 p->drawLine( QPointF(0,y), QPointF(width(),y) );
 }
 
@@ -562,16 +555,17 @@ void CanvasView::updateFigureMetaData()
         unit_ = figure_->unit();
 	scale_ = figure_->scale();
         paperSize_ = ( figure_->paper().size() * scale_ );
+        if ( figure_->paperOrientation() == Fig::Landscape )
+                paperSize_.transpose();
+        
+        doResizing();
         calcGrid();
+        emit matrixChanged( scaleMatrixInv_ );
+        emit unitChanged( figure_->unitKey() );
 }
 
 void CanvasView::setZoom_private( double z )
 {
-	qDebug() << "CanvasView::setZoom_private" << z;
-
-// 	double zr = z/zoom_;
-//         scaleMatrix_.scale( zr, zr );
-//         scaleMatrixInv_ = scaleMatrix_.inverted();
         zoom_ = z;
         doResizing();
         calcGrid();
@@ -582,19 +576,18 @@ void CanvasView::setZoom_private( double z )
 
 void CanvasView::doResizing()
 {
-        QSize s = ( paperSize_ * zoom_ ).toSize();
-	offset_.setX( qRound( s.width() * 0.25 ) );
+        double zs = zoom_*scale_;
+        
+        QSize s = ( paperSize_ * zs ).toSize();
+        offset_.setX( qRound( s.width() * 0.25 ) );
 	offset_.setY( qRound( s.height() * 0.25 ) );
-
 	s *= 1.5;
 
+
 	scaleMatrix_.reset();
-	scaleMatrix_.translate( offset_.x(), offset_.y() ).scale( zoom_*scale_, zoom_*scale_ );
+	scaleMatrix_.translate( offset_.x(), offset_.y() ).scale( zs, zs );
 	scaleMatrixInv_ = scaleMatrix_.inverted();
-	qDebug() << scaleMatrix_ << scaleMatrixInv_;
 	
-	
-        qDebug() << "doResizing()" << s << figure_->paper().size() << scale_;
 	emit sizeChanged( s );
         resize( s );    
 }
@@ -619,20 +612,40 @@ void CanvasView::setSnapWidth( double snapWidth )
 
 void CanvasView::calcGrid()
 {
-        gridScaled_ = gridWidth_ * unit_ * zoom_;
+
+        double x = (double)offset_.x();
+        double y = (double)offset_.y();
+
+        double uzs = unit_ * zoom_*scale_;
+        
+        gridScaled_ = gridWidth_ * uzs;
         if ( gridScaled_ < 5 )
                 gridScaled_ = -1.0;
+        else {
+                double d = x/gridScaled_;
+                gridOffset_.setX( (d - std::floor(d)) * gridScaled_ );
 
-        snapScaled_ = snapWidth_ * unit_ * zoom_;
+                d = y/gridScaled_;
+                gridOffset_.setY( (d - std::floor(d)) * gridScaled_ );
+        }
+
+        snapScaled_ = snapWidth_ * uzs;
         if ( snapScaled_ < 5 )
                 snapScaled_ = -1.0;
+        else {
+                double d = x/snapScaled_;
+                snapOffset_.setX( (d - std::floor(d)) * snapScaled_ );
+
+                d = y/snapScaled_;
+                snapOffset_.setY( (d - std::floor(d)) * snapScaled_ );
+        }
 
         updateFigure();
 }
 
 // snaps a point to the snapgrid (parameter will be modified)
 //
-bool CanvasView::snap( QPoint & p )
+bool CanvasView::snap( QPoint& p )
 {
         if ( ! ( snapScaled_ && controler_->actionWantsSnap( p, scaleMatrixInv_ ) ) ) {
                 if ( snapped_ )
@@ -641,9 +654,9 @@ bool CanvasView::snap( QPoint & p )
                 return true;
         }
 
-        p.setX( qRound( qRound(qreal(p.x())/snapScaled_) * snapScaled_ ) );
-        p.setY( qRound( qRound(qreal(p.y())/snapScaled_) * snapScaled_ ) );
-
+        p = ((QPointF(p)-snapOffset_)/snapScaled_).toPoint();
+        p = (QPointF(p) * snapScaled_ + snapOffset_).toPoint();
+        
         bool snapped = ( p != snapPoint_ );
 
         if ( snapped ) {

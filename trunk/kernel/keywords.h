@@ -35,6 +35,10 @@ struct KWds
         static char* paper() { return "paper"; }
         static char* unit() { return "unit"; }
 
+        static char* paper_orientation() { return "paper_orientation"; }
+        static char* portrait() { return "portrait"; }
+        static char* landscape() { return "landscape"; }
+
         static char* author() { return "author"; }
         static char* description() { return "description"; }
 

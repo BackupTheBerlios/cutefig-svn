@@ -29,6 +29,7 @@
 #include "typedefs.h"
 #include "length.h"
 #include "paper.h"
+#include "fig.h"
 
 #include <QList>
 #include <QObject>
@@ -87,10 +88,12 @@ public:
                 double scale() const { return scale_; }
                 const ResourceUser<Length>& unit() const { return unit_; }
                 const ResourceUser<Paper>& paper() const { return paper_; }
+                Fig::PaperOrientation paperOrientation() const { return paperOrientation_; }
+                
                 const QString& author() const { return author_; }
 		bool authorToBeSaved() const { return authorToBeSaved_; }
                 const QString& description() const { return description_; }
-
+                
                 QDate creationDate() const { return creationDate_; }
                 QDate modificationDate() const { return modDate_; }
                 
@@ -98,7 +101,8 @@ public:
                 double scale_;
                 ResourceUser<Length> unit_;
                 ResourceUser<Paper> paper_;
-
+                Fig::PaperOrientation paperOrientation_;
+                
                 QString author_;
 		bool authorToBeSaved_;
                 QString description_;
@@ -125,6 +129,9 @@ public:
         const ResourceKey& paperKey() const { return metaData_.paper_.key(); } 
         void setPaper( const ResourceKey& k ) { metaData_.paper_.setResource( k ); }
 
+        Fig::PaperOrientation paperOrientation() const { return metaData_.paperOrientation(); }
+        void setPaperOrientation( Fig::PaperOrientation po ) { metaData_.paperOrientation_ = po; }
+        
         const QString& author() const { return metaData_.author(); }
         void setAuthor( const QString& a ) { metaData_.author_ = a; }
 

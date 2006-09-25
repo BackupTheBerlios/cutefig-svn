@@ -40,7 +40,8 @@ class Layouter
 public:
         explicit Layouter( QBoxLayout* layout );
 
-        Layouter& labeledWidget( const QString& text, QWidget* widget );
+        Layouter& labeledWidget( const QString& text, QWidget* widget, int stretch = 0 );
+        Layouter& widget( QWidget* w, int stretch = 0 );
         Layouter& stretch( int strech = 0 );
         void finishTo( QBoxLayout* target );
         void finishTo( QBoxLayout* target, int index );

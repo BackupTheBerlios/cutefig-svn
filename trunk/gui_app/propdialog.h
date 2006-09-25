@@ -33,7 +33,8 @@ template<typename Resource> class ResourceComboBox;
 class QLineEdit;
 class QTextEdit;
 class QCheckBox;
-
+class QDoubleSpinBox;
+class QButtonGroup;
 
 class PropDialog : public EditDialog
 {
@@ -51,8 +52,10 @@ private:
         Figure::MetaData oldMetaData_;
 
         ResourceComboBox<Length>* length_;
+        QDoubleSpinBox* scale_;
         ResourceComboBox<Paper>* paper_;
-
+        QButtonGroup* paperOrientation_;
+        
 	QCheckBox* saveAuthor_;
         QLineEdit* author_;
         QTextEdit* description_;

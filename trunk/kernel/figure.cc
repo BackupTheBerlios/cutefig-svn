@@ -245,6 +245,7 @@ Figure::MetaData::MetaData()
         : scale_( 1 ),
           unit_(),
           paper_(),
+          paperOrientation_( Fig::Portrait ),
           author_( getUserName() ),
 	  authorToBeSaved_( false ),
           description_(),

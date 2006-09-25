@@ -52,6 +52,7 @@ namespace Fig
 
         Q_DECLARE_FLAGS( PointFlags, PointFlag );
         
+        enum PaperOrientation { Portrait = 0, Landscape = 1 };
         
         const double version = 0.1;
 }

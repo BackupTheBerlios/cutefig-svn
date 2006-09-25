@@ -157,6 +157,23 @@ QString Parser::parseMetaData()
                         continue;
                 }
 
+                if ( itemType_ == KWds::paper_orientation() ) {
+                        std::string s;
+                        stream_ >> s;
+
+                        if ( stream_.fail() ) {
+                                parseError( tr("Strange paper orientation line.") );
+                                continue;
+                        }
+                        
+                        if ( s == KWds::landscape() )
+                                figure_->setPaperOrientation( Fig::Landscape );
+                        else
+                                figure_->setPaperOrientation( Fig::Portrait );
+
+                        continue;
+                }
+                
                 if ( itemType_ == KWds::author() ) {
                         QString ath;
                         stream_ >> ath;

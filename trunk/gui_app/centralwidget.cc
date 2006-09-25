@@ -69,13 +69,13 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
 
 	connect( cv, SIGNAL( matrixChanged(const QMatrix&) ),
 		 rd, SLOT( setMatrix(const QMatrix&) ) );
-        
+
+        connect( cv, SIGNAL(unitChanged(const ResourceKey&)),
+                 rd, SLOT(setUnit(const ResourceKey&)) );
 
         QGridLayout* l = new QGridLayout( this );
         l->setMargin( 0 );
-        QWidget* corner = new QWidget( this );
-        corner->setFixedSize( 30, 30 );
-        l->addWidget( corner );
+        l->addWidget( rd->unitLabel() ); 
         l->addWidget( rd->horizontalRuler(), 0,1 );
         l->addWidget( rd->verticalRuler(), 1,0 );
         l->addWidget( scrollArea_, 1,1 );

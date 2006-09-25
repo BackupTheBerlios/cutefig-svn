@@ -41,23 +41,43 @@ PropDialog::PropDialog( Figure* f, QWidget* parent )
         length_ = new ResourceComboBox<Length>;
         paper_ = new ResourceComboBox<Paper>;
 
+        scale_ = new QDoubleSpinBox;
+        scale_->setMinimum( 0.001 );
+        scale_->setSingleStep( 0.1 );
+
         QVBoxLayout* gl = new QVBoxLayout;
-        Layouter( new QHBoxLayout() )
+        Layouter( new QHBoxLayout )
                 .labeledWidget( tr("&Unit length"), length_ )
                 .stretch()
                 .labeledWidget( tr("&Paper format"), paper_ )
+                .stretch()
+                .labeledWidget( tr("&Scale"), scale_ )
                 .finishTo( gl );
 
+        QRadioButton* portrait = new QRadioButton( tr("P&ortrait") );
+        QRadioButton* landscape = new QRadioButton( tr("&Landscape") );
+        paperOrientation_ = new QButtonGroup( this );
+        paperOrientation_->addButton( portrait, (int) Fig::Portrait );
+        paperOrientation_->addButton( landscape, (int) Fig::Landscape );
+
+        Layouter( new QHBoxLayout )
+                .widget( portrait )
+                .widget( landscape )
+                .stretch()
+                .finishTo( gl );
+        
         geomGrp->setLayout( gl );
         
         connect( length_, SIGNAL(activated(int)), this, SLOT(noticeChange()) );
         connect( paper_, SIGNAL(activated(int)), this, SLOT(noticeChange()) );
+        connect( scale_, SIGNAL(valueChanged(double)), this, SLOT(noticeChange()) );
+        connect( paperOrientation_, SIGNAL(buttonClicked(int)), this, SLOT(noticeChange()) );
         
 
         QGroupBox* metaDatGrp = new QGroupBox( tr("&Meta data") );
 
         author_ = new QLineEdit;
-	saveAuthor_ = new QCheckBox( tr("&Save author's name") );
+	saveAuthor_ = new QCheckBox( tr("Sa&ve author's name") );
         description_ = new QTextEdit;
         description_->setAcceptRichText( false );
 
@@ -117,27 +137,28 @@ void PropDialog::doReset()
 void PropDialog::updateValues()
 {
         doNoticeChanges( false );
-        qDebug() << "updateValues" << figure_->description();
         length_->setCurrentKey( figure_->unitKey() );
         paper_->setCurrentKey( figure_->paperKey() );
+        scale_->setValue( figure_->scale() );
+        paperOrientation_->button( (int) figure_->paperOrientation() )->setChecked( true );
+        
         author_->setText( figure_->author() );
         description_->setPlainText( figure_->description() );
 	saveAuthor_->setChecked( figure_->authorIsToBeSaved() );
 	author_->setEnabled( figure_->authorIsToBeSaved() );
-        qDebug() << "updateValues end" << description_->toPlainText();
         doNoticeChanges( true );
 }
 
 void PropDialog::commitChanges( QObject* )
 {
-        qDebug() << "commitchanges" << description_->toPlainText();
         figure_->setUnit( length_->currentKey() );
         figure_->setPaper( paper_->currentKey() );
+        figure_->setScale( scale_->value() );
+        figure_->setPaperOrientation( (Fig::PaperOrientation) paperOrientation_->checkedId() );
+        
         figure_->setAuthor( author_->text() );
 	figure_->setAuthorToBeSaved( saveAuthor_->isChecked() );
         figure_->setDescription( description_->toPlainText() );
 }
-
-
 
 

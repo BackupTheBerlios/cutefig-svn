@@ -36,13 +36,19 @@ Layouter::Layouter( QBoxLayout* layout )
 {
 }
 
-Layouter& Layouter::labeledWidget( const QString& text, QWidget* widget )
+Layouter& Layouter::labeledWidget( const QString& text, QWidget* widget, int stretch )
 {
         QLabel* label = new QLabel( text, widget->parentWidget() );
         label->setBuddy( widget );
         layout_->addWidget( label );
-        layout_->addWidget( widget );
+        layout_->addWidget( widget, stretch );
 
+        return *this;
+}
+
+Layouter& Layouter::widget( QWidget* w, int stretch )
+{
+        layout_->addWidget( w, stretch );
         return *this;
 }
 
