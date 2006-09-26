@@ -360,8 +360,6 @@ QRegion CanvasView::drawingRegion() const
 
 void CanvasView::paintEvent( QPaintEvent * e )
 {
-        const ObjectList& l = controler_->selectedObjects();
-        
         QPainter p( this );
         
         p.setClipRegion( e->region() );
@@ -383,10 +381,12 @@ void CanvasView::paintEvent( QPaintEvent * e )
         
         p.setRenderHint( QPainter::Antialiasing, true );
         p.setMatrix( scaleMatrix_ );
-        
-        foreach( const DrawObject* o, figure_->objectsToBeDrawn() ) 
+
+	QRegion region = scaleMatrixInv_.map( e->region() );
+	
+        foreach ( const DrawObject* o, figure_->objectsToBeDrawn() ) 
                 if ( !controler_->backups().contains( const_cast<DrawObject*>(o->ancestor()) ) &&
-                     e->region().contains( o->boundingRect().toRect() ) ) 
+                     region.contains( o->boundingRect().toRect() ) ) 
                         o->draw( &p );
 
 
@@ -396,7 +396,9 @@ void CanvasView::paintEvent( QPaintEvent * e )
 #ifndef QT_NO_DEBUG_OUTPUT
         int elements = stopWatch.elapsed() - papgrid;
 #endif
-        
+
+	const ObjectList& l = controler_->selectedObjects();
+	
         if ( tentativeDraw_ ) 
                 foreach ( DrawObject* o, l ) 
                         o->drawTentative( &p );
@@ -555,6 +557,7 @@ void CanvasView::updateFigureMetaData()
         unit_ = figure_->unit();
 	scale_ = figure_->scale();
         paperSize_ = ( figure_->paper().size() * scale_ );
+	qDebug() << __PRETTY_FUNCTION__ << paperSize_;
         if ( figure_->paperOrientation() == Fig::Landscape )
                 paperSize_.transpose();
         
@@ -571,25 +574,25 @@ void CanvasView::setZoom_private( double z )
         calcGrid();
 
 	emit zoomChanged( zoom_ );
-	emit matrixChanged( scaleMatrixInv_ );
 }
 
 void CanvasView::doResizing()
 {
-        double zs = zoom_*scale_;
         
-        QSize s = ( paperSize_ * zs ).toSize();
+        QSize s = ( paperSize_ * zoom_ ).toSize();
         offset_.setX( qRound( s.width() * 0.25 ) );
 	offset_.setY( qRound( s.height() * 0.25 ) );
 	s *= 1.5;
 
-
+        double zs = zoom_*scale_;
 	scaleMatrix_.reset();
 	scaleMatrix_.translate( offset_.x(), offset_.y() ).scale( zs, zs );
 	scaleMatrixInv_ = scaleMatrix_.inverted();
 	
 	emit sizeChanged( s );
-        resize( s );    
+	emit matrixChanged( scaleMatrixInv_ );
+
+        resize( s );
 }
 
 double CanvasView::paperWidth() const

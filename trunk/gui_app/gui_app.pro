@@ -1,7 +1,7 @@
 # @version $Id$
 
 TARGET = cutefig
-CONFIG += thread #assistant 
+CONFIG += thread assistant 
 TEMPLATE = app
 
 #QT += opengl

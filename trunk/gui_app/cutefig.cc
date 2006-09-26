@@ -41,7 +41,7 @@
 #include "exportgui.h"
 
 #include <QtGui>
-//#include <QAssistantClient>
+#include <QAssistantClient>
 
 #include <fstream>
 
@@ -200,17 +200,24 @@ void CuteFig::saveAs()
 void CuteFig::print()
 {
         QPrinter printer;
-        QPrintDialog pdlg( &printer, this );
+	printer.setPageSize( figure_->paper().qPageSize() );
+	printer.setOrientation( (QPrinter::Orientation)figure_->paperOrientation() );
 
+	QPrintDialog pdlg( &printer, this );
+	pdlg.setEnabledOptions( pdlg.enabledOptions() &
+				~QAbstractPrintDialog::PrintPageRange &
+				~QAbstractPrintDialog::PrintSelection );
+	
         if ( pdlg.exec() == QDialog::Accepted ) {
+		qDebug() << printer.pageSize();
                 QPainter p( &printer );
-                figure_->drawElements( &p );
+		figure_->drawElements( &p );
         }
 }
 
 
-/*! Asks the obligated areyousure-question before accepting the close
- * event. This might sometimes be skiped in development versions. :-)
+/*! Asks the obligated areyousure-question, saves ResLibs and the
+ *  settings before accepting the close event.
  */
 void CuteFig::closeEvent( QCloseEvent* ce )
 {
@@ -227,14 +234,14 @@ void CuteFig::closeEvent( QCloseEvent* ce )
                     save();
                     break;
             case 1:
-            default: // just for sanity
+            default: 
                     ce->ignore();
                     return;
             case 2:
                     break;
         }
 
- finish:
+finish:
         writeSettings();
         ResourceIOFactory::saveResLibs();
         ce->accept();
@@ -252,19 +259,19 @@ void CuteFig::about()
 
 void CuteFig::help()
 {
-//         QAssistantClient* assi = new QAssistantClient( QString(), this );
-//         QSettings s;
+        QAssistantClient* assi = new QAssistantClient( QString(), this );
+        QSettings s;
         
-//         QString helpFile = s.value("HandBookPath", QDir::currentPath() ).toString() +
-//                            "/doc/html/" +
-//                            QLocale::system().name().left( 2 ) +
-//                            "/index.html";
-//         assi->showPage( helpFile );
+        QString helpFile = s.value("HandBookPath", QDir::currentPath() ).toString() +
+                           "/doc/html/" +
+                           QLocale::system().name().left( 2 ) +
+                           "/index.html";
+        assi->showPage( helpFile );
 }
 
 /*! Sets up an AllActions instance and then sets up a menubar entry
- * and a toolbutton (if possible) for each ActionCollection. Finally
- * it adds the help menu by foot.
+ *  and a toolbutton (if possible) for each ActionCollection. Finally
+ *  it adds the help menu by foot.
  */
 void CuteFig::setupActions()
 {
@@ -315,7 +322,7 @@ void CuteFig::setupActions()
         
         helpMenu->addSeparator();
 
-//        helpMenu->addAction( QWhatsThis::createAction( this ) );
+        helpMenu->addAction( QWhatsThis::createAction( this ) );
 }
 
 void CuteFig::exportFigure()

@@ -25,6 +25,7 @@
 #include "griddialog.h"
 #include "layouter.h"
 #include "canvasview.h"
+#include "cutefig.h"
 
 #include <QDoubleSpinBox>
 #include <QLayout>
@@ -33,7 +34,7 @@
 #include <QDebug>
 
 GridDialog::GridDialog( double gridWidth, double snapWidth, CanvasView* cview )
-        : QDialog( cview )
+        : QDialog( cview->mainWindow() )
 {
         setWindowTitle( tr("Adjust snap grid") );
 

@@ -88,27 +88,40 @@ void Ruler::setOffset( double o )
 void Ruler::calcTickMarks()
 {
         double unit = unit_.data() * zoomScale_;
-	double u = unit;
-        double t = 1/u;
+	tickDist_ = unit;
 
-        while ( u > 50.0 ) u /= 2.0;
-        while ( u < 20.0 ) u *= 2.0;
+	int d = 2;
+	
+        while ( tickDist_ > 80.0 ) {
+		tickDist_ /= d;
+		d = d == 2 ? 5 : 2;
+	}
+	
+        while ( tickDist_ < 40.0 ) {
+		d = d == 2 ? 5 : 2;
+		tickDist_ *= 5.0;
+	}	
 
-        t *= u;
+	double step = tickDist_/unit;
 
-        ticks_ = u;
-        subTicks_ = u / ( (u>40.0) ? 5 : 2  );
+	tickDist_ = step*unit;
+	
+        subTickDist_ = tickDist_ / d;
 
         tickMarks_.clear();
 
-        double v = -qRound( (offset_*zoomScale_-startPos_)/unit/t ) * t;
-        double i = 0;
+        double val = -qRound( (offset_*zoomScale_-startPos_)/unit/step ) * step;
+        double pos = 0;
 
+	int prec = -(int) std::floor( std::log10(step) );
+	if ( prec < 0 )
+		prec = 0;
+	
         do {
-                tickMarks_ << QString::number( ( v ), 'f', 1 );
-                v += t;
-                i += ticks_;
-        } while ( i < length_ );
+                tickMarks_ << QString::number( ( val ), 'f', prec );
+                val += step;
+                pos += tickDist_;
+        } while ( pos < length_ );
 }
 
 /*! sets the value of the pointer position and repaints the area that
@@ -151,7 +164,9 @@ void Ruler::paintEvent( QPaintEvent* e )
 		int v = o_ == Qt::Vertical ? length_-value_+frameWidth() : value_;
 		p.drawLine( v, 0, v, rulerWidth_ );
         }
-        
+
+	p.end();
+	
         QFrame::paintEvent( e );
 }
 
@@ -182,8 +197,8 @@ void Ruler::updateRuler()
  	font.setPixelSize( qRound( rulerWidth_/3 ) );
  	p.setFont( font );
 
-	const double d = (offset_*zoomScale_-startPos_)/ticks_;
-	double pos = ( d - qRound(d) ) * ticks_;
+	const double d = (offset_*zoomScale_-startPos_)/tickDist_;
+	double pos = ( d - qRound(d) ) * tickDist_;
 	const double rw   = rulerWidth_;
 	const double rw2  = rulerWidth_/2;
 	const double rw4  = rulerWidth_/4;
@@ -201,8 +216,8 @@ void Ruler::updateRuler()
 		QRectF r = Geom::centerRect( QPointF(pos,rw4), s );
 		p.drawText( r, Qt::AlignHCenter | Qt::AlignVCenter, tm );
 
-		for ( double j=0; j+subTicks_/2<ticks_; j+=subTicks_ ) {
-			pos += subTicks_*sign;
+		for ( double j=0; j+subTickDist_/2<tickDist_; j+=subTickDist_ ) {
+			pos += subTickDist_*sign;
 			p.drawLine( QPointF(pos,rw), QPointF(pos,rw34) );
 		}
 	}
@@ -246,8 +261,6 @@ void RulerDispatcher::sizeChange( const QSize& s )
 
 void RulerDispatcher::setMatrix( const QMatrix& m )
 {
-        qDebug() << __PRETTY_FUNCTION__ << m;
-        
 	vertical_->setZoomScale( 1/m.m22() );
 	vertical_->setOffset( -m.dy() );
         vertical_->updateRuler();

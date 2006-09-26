@@ -33,7 +33,7 @@ class GridDialog : public QDialog
 {
         Q_OBJECT
 public:
-        GridDialog( double gridWidth, double snapWidth, CanvasView* parent = 0 );
+        GridDialog( double gridWidth, double snapWidth, CanvasView* parent );
 
 //         double getGridWidth() const;
 //         double getSnapWidth() const;

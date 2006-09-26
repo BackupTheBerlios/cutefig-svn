@@ -28,19 +28,22 @@
 
 Paper::Paper()
         : size_( QSizeF( 8.5, 11 ) ),
-          unit_( ResourceKey::builtIn("inch") )
+          unit_( ResourceKey::builtIn("inch") ),
+	  qPageSize_( QPrinter::Letter )
 {
 }
 
-Paper::Paper( QSizeF size, const ResourceKey& key )
+Paper::Paper( QSizeF size, QPrinter::PageSize qps, const ResourceKey& key )
         : size_( size ),
-          unit_( key )
+          unit_( key ),
+	  qPageSize_( qps )
 {
 }
 
 Paper::Paper( const Paper& other )
         : size_( other.size_ ),
-          unit_( other.unit_ )
+          unit_( other.unit_ ),
+	  qPageSize_( other.qPageSize_ )
 {
 }
 
@@ -52,8 +55,10 @@ QSizeF Paper::size() const
 template<>
 void ResLib<Paper>::init()
 {
-        insertBuiltIn( "Letter", Paper( QSizeF( 8.5, 11 ), ResourceKey::builtIn("inch") ) );
-        insertBuiltIn( "ISO A4", Paper( QSizeF( 210, 297 ), ResourceKey::builtIn("mm") ) );
+        insertBuiltIn( "Letter", Paper( QSizeF( 8.5, 11 ), QPrinter::Letter,
+					ResourceKey::builtIn("inch") ) );
+        insertBuiltIn( "ISO A4", Paper( QSizeF( 210, 297 ), QPrinter::A4,
+					ResourceKey::builtIn("mm") ) );
 }
 
 template<>

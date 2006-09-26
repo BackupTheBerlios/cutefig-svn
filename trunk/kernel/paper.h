@@ -28,21 +28,26 @@
 #include "length.h"
 
 #include <QSizeF>
+#include <QPrinter>
 
 
 class Paper
 {
 public:
         Paper();
-        Paper( QSizeF size, const ResourceKey& key );
+        Paper( QSizeF size, QPrinter::PageSize qps, const ResourceKey& key );
         Paper( const Paper& other );
 
         QSizeF size() const;
         QSizeF sizeInUnit() const { return size_; }
 
+	QPrinter::PageSize qPageSize() const { return qPageSize_; }
+
 private:
         QSizeF size_;
         ResourceUser<Length> unit_;
+
+	QPrinter::PageSize qPageSize_;
 };
 
 inline

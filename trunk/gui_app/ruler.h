@@ -77,17 +77,41 @@ private:
         void calcTickMarks();       //<! calculates the tick marks smartly
 
         Qt::Orientation o_;
-        int value_, oldValue_;
-        int length_;
-        double zoomScale_;
-        ResourceUser<Length> unit_;
-        double tickVal_;
 
-        double ticks_, subTicks_, offset_;
+	//! the currently indicated value
+        int value_;
+
+	//! the formerly indicated value
+	int oldValue_;
+
+	//! the length of the measured distance in pixels
+        int length_;
+
+	//! CanvasView::zoom_ * Figure::scale_
+        double zoomScale_;
+
+	//! The Unit of the Figure (Figure::unit())
+        ResourceUser<Length> unit_;
+
+	//! Distance between two major ticks
+        double tickDist_;
+
+	//! Distance between two minor ticks
+	double subTickDist_;
+
+	//! The offset from the edge to the top left paperCorner \sa CanvasView::offset_ 
+	double offset_;
+
+	//! The current start position changeble by scrolling
 	int startPos_;
 
-	int rulerWidth_, frameSpace_;
-	
+	//! The width of the ruler.
+	int rulerWidth_;
+
+	//! The space needed by the frame (2*QFrame::frameWidth())
+	int frameSpace_;
+
+	//! 
         QStringList tickMarks_;
 
         bool indicating_;

@@ -66,14 +66,18 @@ FileActions::FileActions( CuteFig* parent )
 {
         setText( tr("&File") );
         QAction* fileNew = new QAction( QIcon(":images/filenew.png"), tr("&New"),  this );
-        addAction( fileNew );
         fileNew->setShortcut( Qt::CTRL+Qt::Key_N );
+	fileNew->setStatusTip( tr("Create a new figure") );
+	fileNew->setWhatsThis( tr("Draw a new figure from scratch") );
         connect( fileNew, SIGNAL( triggered() ), parent, SLOT( newDoc() ) );
+        addAction( fileNew );
 
         QAction* open = new QAction( QIcon(":images/fileopen.png"), tr("&Open"), this );
-        addAction( open );
         open->setShortcut( Qt::CTRL+Qt::Key_O );
+	open->setStatusTip( tr("Open an existing file") );
+	open->setWhatsThis( tr("Open an existing file to edit it.") );
         connect( open, SIGNAL( triggered() ), parent, SLOT( choose()) );
+        addAction( open );
         
         QAction* save = new QAction( QIcon(":images/filesave.png"), tr("&Save"), this );
         addAction( save );
