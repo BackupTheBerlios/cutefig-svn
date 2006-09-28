@@ -45,7 +45,7 @@ Ruler::Ruler( int l, int width, Qt::Orientation o, QWidget * parent )
           tickMarks_( 0 ),
           indicating_( false )
 {
-        setFrameStyle( StyledPanel | Sunken );
+        setFrameStyle( Panel | Sunken );
         frameSpace_ = 2*frameWidth();
         setLength( l );
         setStart( 0 );

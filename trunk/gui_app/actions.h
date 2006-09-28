@@ -158,8 +158,12 @@ private:
         CanvasView* cview_;
         
 private slots:
-        void zoomChanged( int id );
+        void changeZoom( int id );
 	void updateZoom( double zoom );
+	void zoomIn();
+	void zoomOut();
+	void zoomOrig();
+	void zoomFitPage();
 };
 
 /*! \class FormatActions

@@ -279,23 +279,23 @@ ViewActions::ViewActions( CanvasView* parent )
         
         QAction* zoomIn = new QAction( QIcon(":images/viewmag+.png"), tr("Zoom &in"), this );
         zoomIn->setShortcut( Qt::Key_Plus );
-        connect( zoomIn, SIGNAL( triggered() ), parent, SLOT( zoomIn() ) );
+        connect( zoomIn, SIGNAL( triggered() ), this, SLOT( zoomIn() ) );
         addAction( zoomIn );
 
         QAction* zoomOut = new QAction( QIcon(":images/viewmag-.png"), tr("Zoom &out"), this );
         zoomOut->setShortcut( Qt::Key_Minus );
-        connect( zoomOut, SIGNAL( triggered() ), parent, SLOT( zoomOut() ) );
+        connect( zoomOut, SIGNAL( triggered() ), this, SLOT( zoomOut() ) );
         addAction( zoomOut );
         
         QAction* zoom1 = new QAction( QIcon(":images/viewmag1.png"), tr("O&riginal size"), this );
         zoom1->setShortcut( Qt::Key_1 );
-        connect( zoom1, SIGNAL( triggered() ), parent, SLOT( zoomOrig() ) );
+        connect( zoom1, SIGNAL( triggered() ), this, SLOT( zoomOrig() ) );
         addAction( zoom1 );
 
-        QAction* zoomFit = new QAction( QIcon(":images/viewmagfit.png"), tr("Fit canvas"), this );
-        zoomFit->setShortcut( Qt::CTRL+Qt::Key_F );
-        connect( zoomFit, SIGNAL( triggered() ), parent, SLOT( zoomFit() ) );
-        addAction( zoomFit );
+	QAction* zoomFit = new QAction( QIcon(":images/viewmagfit.png"), tr("Fit canvas"), this );
+	zoomFit->setShortcut( Qt::CTRL+Qt::Key_F );
+	connect( zoomFit, SIGNAL( triggered() ), this, SLOT( zoomFitPage() ) );
+	addAction( zoomFit );
         
         QAction* setZoom = new QAction( tr("&Set zoom"), this );
         setupZoomMenu();
@@ -326,35 +326,97 @@ void ViewActions::setupZoomMenu()
 
         zoomLevels_ << 0.25 << 0.33 << 0.5 << 0.67 << 0.75 << 1.0 << 1.5 << 2.0 << 3.0 << 4.0;
 
-        int i = 0;
         zoomSignalMapper_ = new QSignalMapper( this );
-        foreach ( double z, zoomLevels_ ) {
-                QString zs = QString::number( z*100 ) + " %";
-                zoomComboBox_->addItem( zs, QVariant( z ) );
-                QAction* za = new QAction( zs, zoomMenu_ );
+
+	QActionGroup* zoomActions = new QActionGroup( this );
+	zoomActions->setExclusive( true );
+	
+	QString s = tr("Fit page");
+	zoomComboBox_->addItem( s );
+	QAction* a = new QAction( s, zoomActions );
+	a->setCheckable( true );
+	connect( a, SIGNAL( triggered() ), zoomSignalMapper_, SLOT( map() ) );
+	zoomSignalMapper_->setMapping( a, -2 );
+	zoomMenu_->addAction( a );
+
+	s = tr("Fit width");
+	zoomComboBox_->addItem( s );
+	a = new QAction( s, zoomActions );
+	a->setCheckable( true );
+	connect( a, SIGNAL( triggered() ), zoomSignalMapper_, SLOT( map() ) );
+	zoomSignalMapper_->setMapping( a, -1 );
+	zoomMenu_->addAction( a );
+	
+	for ( int i=0; i<zoomLevels_.size(); ++i ) {
+                QString zs = QString::number( zoomLevels_[i]*100 ) + " %";
+                zoomComboBox_->addItem( zs );
+                QAction* za = new QAction( zs, zoomActions );
                 za->setCheckable( true );
                 connect( za, SIGNAL( triggered() ), zoomSignalMapper_, SLOT( map() ) );
                 zoomMenu_->addAction( za );
-                zoomSignalMapper_->setMapping( za, i++ );
+                zoomSignalMapper_->setMapping( za, i );
         }
 
-        connect( zoomSignalMapper_, SIGNAL( mapped( int ) ), this, SLOT( zoomChanged( int ) ) );
-        connect( zoomComboBox_, SIGNAL( zoomChanged( double ) ), cview_, SLOT( setZoom(double) ) );
-        connect( cview_, SIGNAL( zoomChanged(double) ), this, SLOT( updateZoom(double) ) );
+        connect( zoomSignalMapper_, SIGNAL(mapped(int)), this, SLOT(changeZoom(int)) );
+        connect( zoomComboBox_, SIGNAL(zoomChanged(int)), this, SLOT(changeZoom(int)) );
+        connect( zoomComboBox_, SIGNAL(zoomChanged(double)), cview_, SLOT(setZoom(double)) );
+        connect( cview_, SIGNAL(zoomChanged(double)), this, SLOT( updateZoom(double) ) );
+
+	updateZoom( cview_->zoom() );
 }
 
-void ViewActions::zoomChanged( int id )
+void ViewActions::changeZoom( int id )
 {
-        const double& zoom = zoomLevels_[id];
-        cview_->setZoom( zoom );
+	switch ( id ) {
+	    case -2:
+		    cview_->zoomFitPage(); break;
+	    case -1:
+		    cview_->zoomFitWidth(); break;
+	    default:
+		    cview_->setZoom( zoomLevels_[id] );
+	}
+
+	static_cast<QAction*>( zoomSignalMapper_->mapping(id) )->setChecked( true );
+	zoomComboBox_->setCurrentIndex( id+2 );
+}
+
+void ViewActions::zoomIn()
+{
+	cview_->zoomIn();
+	updateZoom( cview_->zoom() );
+}
+
+void ViewActions::zoomOut()
+{
+	cview_->zoomOut();
+	updateZoom( cview_->zoom() );
+}
+
+void ViewActions::zoomOrig()
+{
+	cview_->setZoom( 1. );
+	updateZoom( 1. );
+}
+
+void ViewActions::zoomFitPage()
+{
+	cview_->zoomFitPage();
+	zoomComboBox_->setCurrentIndex( 0 );
+	static_cast<QAction*>( zoomSignalMapper_->mapping(-2) )->setChecked( true );
 }
 
 void ViewActions::updateZoom( double zoom )
 {
+	qDebug() << __PRETTY_FUNCTION__;
+	
 	zoomComboBox_->changeZoom( zoom );
-        for ( int i = 0; i < zoomLevels_.size(); i++ ) {
-                QAction* a = (QAction *) zoomSignalMapper_->mapping( i );
-                a->setChecked( Geom::isEqual( zoomLevels_[i], zoom ) );
+        for ( int i = 0; i < zoomLevels_.size(); ++i ) {
+                QAction* a = static_cast<QAction*>( zoomSignalMapper_->mapping( i ) );
+		if ( Geom::isEqual( zoomLevels_[i], zoom ) ) {
+			a->setChecked( true );
+			zoomComboBox_->setCurrentIndex( i+2 );
+		} else
+			a->setChecked( false );
 	}
 }
 

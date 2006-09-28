@@ -52,9 +52,7 @@ void ZoomComboBox::changeZoom( double value )
 
 void ZoomComboBox::comboBoxChanged( int id )
 {
-        QVariant data = itemData( id );
-        if ( data.isValid() )
-                emit zoomChanged( data.toDouble() );
+	emit zoomChanged( id - 2 );
 }
 
 void ZoomComboBox::textChanged()

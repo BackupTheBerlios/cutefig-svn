@@ -86,14 +86,19 @@ public:
 
         double paperWidth() const;        
 
+	double zoom() const { return zoom_; }
+
+	void setHorizontalScrollBar( QScrollBar* sb );
+	void setVerticalScrollBar( QScrollBar* sb );
+
+	void zoomIn();   //!< Zooms in by 10% of the original size
+        void zoomOut();  //!< Zooms out by 10% of the original size
+        void zoomFitPage();
+	void zoomFitWidth();
         
 public slots:
         void updateFigureMetaData();
 
-        void zoomIn();   //!< Zooms in by 10% of the original size
-        void zoomOut();  //!< Zooms out by 10% of the original size
-        void zoomOrig();
-        void zoomFit();
         void setZoom( double z ); //!< sets the zoom to \param z * 100%.
 
         void newSnapGrid();
@@ -163,6 +168,10 @@ private:
         void dispatchModifierChange( const QKeyEvent* e );
 
         CuteFig* mainWindow_;
+	
+	QScrollBar* horizontalScrollBar_;
+	QScrollBar* verticalScrollBar_;
+				      
 
         QMatrix scaleMatrix_, scaleMatrixInv_; //!< the scaling matrix
         double scale_, zoom_;   

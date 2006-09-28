@@ -47,14 +47,11 @@ CentralWidget::CentralWidget( CanvasView* cv, QMainWindow * parent )
 
         scrollArea_ = new QScrollArea( this );
         scrollArea_->setWidget( cv );
-//        viewport_ = sa->viewport();
+	scrollArea_->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 
-//         hRuler_ = new Ruler( viewport_->width(), Qt::Horizontal, this );
-//         vRuler_ = new Ruler( viewport_->height(), Qt::Vertical, this );
-
-//         cv->setHRuler( hRuler_ );
-//         cv->setVRuler( vRuler_ );
-
+	cv->setHorizontalScrollBar( scrollArea_->horizontalScrollBar() );
+	cv->setVerticalScrollBar( scrollArea_->verticalScrollBar() );
+	
 	RulerDispatcher* rd = new RulerDispatcher( cv->size(), this );
 	
         connect( scrollArea_->horizontalScrollBar(), SIGNAL( valueChanged(int) ),

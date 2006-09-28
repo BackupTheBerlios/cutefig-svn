@@ -35,7 +35,8 @@ public:
         ~ZoomComboBox() {}
 
 signals:
-        void zoomChanged( double );
+        void zoomChanged( int );
+	void zoomChanged( double );
 
 public slots:
         void changeZoom( double value );

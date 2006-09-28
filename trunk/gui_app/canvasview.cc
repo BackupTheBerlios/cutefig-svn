@@ -49,6 +49,8 @@ CanvasView::CanvasView( Controler* c, ActionStatusIndicator* si, const Figure* f
         : QWidget( parent ),
           ViewBase( c, f ),
           mainWindow_( parent ),
+	  horizontalScrollBar_( 0 ),
+	  verticalScrollBar_( 0 ),
 	  zoom_( 1.0 ),
           unit_( 1.0 ),
           paperSize_(),
@@ -501,22 +503,27 @@ void CanvasView::zoomOut()
                 setZoom( zoom_ - 0.1 );
 }
 
-void CanvasView::zoomFit()
+void CanvasView::zoomFitPage()
 {
-        QRectF r = figure_->boundingRect();
-        if ( r.isNull() )
-                return;
+	double zw = (mainWindow_->viewportSize().width()-2) / paperSize_.width();
+	double zh = (mainWindow_->viewportSize().height()-2) / paperSize_.height();
 
-        QSizeF vs = mainWindow_->viewportSize();
-        QSizeF fs = r.size();
+	setZoom_private( qMin( zw,zh ) );
 
-        setZoom( qMin( vs.width()/fs.width(), vs.height()/fs.height() ) );
+	if ( horizontalScrollBar_ )
+		horizontalScrollBar_->setSliderPosition( offset_.x()-1 );
+	if ( verticalScrollBar_ )
+		verticalScrollBar_->setSliderPosition( offset_.y()-1 );
 }
 
-void CanvasView::zoomOrig()
+void CanvasView::zoomFitWidth()
 {
-        setZoom( 1. );
+	setZoom_private( (mainWindow_->viewportSize().width()-2) / paperSize_.width() );
+
+	if ( horizontalScrollBar_ )
+		horizontalScrollBar_->setSliderPosition( offset_.x()-1 );
 }
+
 
 void CanvasView::setZoom( double z )
 {
@@ -557,8 +564,8 @@ void CanvasView::updateFigureMetaData()
         unit_ = figure_->unit();
 	scale_ = figure_->scale();
         paperSize_ = ( figure_->paper().size() * scale_ );
-	qDebug() << __PRETTY_FUNCTION__ << paperSize_;
-        if ( figure_->paperOrientation() == Fig::Landscape )
+
+	if ( figure_->paperOrientation() == Fig::Landscape )
                 paperSize_.transpose();
         
         doResizing();
@@ -572,13 +579,10 @@ void CanvasView::setZoom_private( double z )
         zoom_ = z;
         doResizing();
         calcGrid();
-
-	emit zoomChanged( zoom_ );
 }
 
 void CanvasView::doResizing()
-{
-        
+{        
         QSize s = ( paperSize_ * zoom_ ).toSize();
         offset_.setX( qRound( s.width() * 0.25 ) );
 	offset_.setY( qRound( s.height() * 0.25 ) );
@@ -687,3 +691,15 @@ void CanvasView::takeOverStatusIndicator( bool takeIt )
                 emit status( status_ );
 }
 
+
+void CanvasView::setHorizontalScrollBar( QScrollBar* sb )
+{
+	if ( !horizontalScrollBar_ )
+		horizontalScrollBar_ = sb;
+}
+
+void CanvasView::setVerticalScrollBar( QScrollBar* sb )
+{
+	if ( !verticalScrollBar_ )
+		verticalScrollBar_ = sb;    
+}
