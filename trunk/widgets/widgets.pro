@@ -28,7 +28,6 @@ HEADERS = paintutils.h \
           arrowwidget.h \
           errorreporter.h \
           percentvalidator.h \
-          zoomcombobox.h \
           actionpushbutton.h \
           editdialog.h \
           colordialog.h \
@@ -53,7 +52,6 @@ SOURCES = paintutils.cc \
           arrowwidget.cc \
           errorreporter.cc \
           percentvalidator.cc \
-          zoomcombobox.cc \
           actionpushbutton.cc \
           editdialog.cc \
           colordialog.cc \
