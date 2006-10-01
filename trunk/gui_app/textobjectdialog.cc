@@ -40,7 +40,7 @@ TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget*
 {
         setWindowTitle( tr("Text Properties") );
         QWidget* page = new QWidget();
-        tabWidget->addTab( page, "&Text" );
+        tabWidget()->addTab( page, "&Text" );
         
         QHBoxLayout* mainLayout = new QHBoxLayout( page );
         
@@ -55,7 +55,7 @@ TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget*
 
         mainLayout->addLayout( rcl );
 
-         penWidget->setEnabled( false );
+        penWidget()->setEnabled( false );
 //         fillStroke->setEnabled( false );
 }
 
@@ -73,14 +73,14 @@ void TextObjectDialog::setUpConnectionsPrivate()
         connect( fontWidget_, SIGNAL( fontChanged() ), this, SLOT( noticeChange() ) );
 }
 
-void TextObjectDialog::setDefaultValuesPrivate()
+void TextObjectDialog::setupInitialValuesPrivate()
 {
         fontWidget_->setFont( textObject_->font() );
 }
 
 void TextObjectDialog::castDrawObject()
 {
-        textObject_ = static_cast<TextObject*>( drawObject_ );
+        textObject_ = static_cast<TextObject*>( drawObject() );
 }
 
 template<>

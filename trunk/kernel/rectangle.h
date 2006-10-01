@@ -27,6 +27,8 @@
 
 #include "rectangloid.h"
 
+template<typename ObjectName> class TObjectHandler;
+
 class Rectangle : public Rectangloid
 {
         Q_OBJECT
@@ -35,14 +37,34 @@ public:
         explicit Rectangle( Figure* parent = 0 );
         Rectangle( const Rectangle* r );
 
+        double xCornerRad() const;
+        void setXCornerRad( double r );
+
+        double yCornerRad() const;
+        void setYCornerRad( double r );
+
+        bool hasRoundedCorners() const;
+        bool hasEqualCornerRadii() const;
+
+        void setRoundedCorners( bool rc );
+        void setEqualRoundedCorners( bool eq );
+        
+        double xCornerRadVar() const;
+        double yCornerRadVar() const;
+        
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
         virtual void outputToBackend( OutputBackend* ob ) const;
 
+        friend class TObjectHandler<Rectangle>;
+        
 private:
         virtual void passPointFlag_private( Fig::PointFlags ) {}
         virtual void setupWidthAndHeight();
         virtual void addPath();
+
+        double xCornerRad_;
+        double yCornerRad_;
 };
 
 #endif

@@ -122,16 +122,6 @@ void Rectangloid::setAngleNew( double a )
         angle_ = a/Geom::rad;
 }
 
-
-// void Rectangloid::drawTentative( QPainter* p ) const
-// {
-// //                QPen op = p->pen();
-// //                 p->setPen( auxpen );
-// //                 p->setPen( op );
-//         } else
-//                 DrawObject::drawTentative( p );
-// }
-
 void Rectangloid::calcAngle()
 {
         angle_ = Geom::angle( points_[0], points_[1] );

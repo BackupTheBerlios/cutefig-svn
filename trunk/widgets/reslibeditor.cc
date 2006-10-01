@@ -37,7 +37,7 @@
 #include <QDebug>
 
 
-void AbstractReslibEditor::init()
+void AbstractReslibEditor::setupGUI()
 {
         connect( selectedResource_, SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
                  this, SLOT( resourceChanged( const QModelIndex&, const QModelIndex& ) ) );
@@ -81,7 +81,7 @@ void AbstractReslibEditor::init()
         QWidget* resDem = resourceDemo();
         mainLayout->addWidget( resDem );
         
-        dialogLayout()->insertLayout( 0, mainLayout );
+        takeLayout( mainLayout );
 
         setResource( resourceKey_ );
         setResource( oldResourceKey_ );

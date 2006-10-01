@@ -34,21 +34,13 @@
 
 class GradientWidget;
 class FlagButtonGroup;
-// class QListWidget;
-// class QListWidgetItem;
 
 
 class GradientEditor : public ResourceEditor
 {
         Q_OBJECT
 public:
-        GradientEditor( Gradient& gradient, EditDialog* dlg, QVBoxLayout* layout,
-                        QObject* parent = 0 );
-        ~GradientEditor() {}
-
-//         Gradient gradient() const { return gradient_; }
-
-//         static Gradient getGradient( const Gradient& initial, bool *ok, QWidget* parent = 0 );
+        GradientEditor( Gradient& gradient, QWidget* parent = 0 );
 
         virtual void updateData();
         
@@ -59,13 +51,6 @@ private:
         Gradient& gradient_;
         GradientWidget* gradWidget_;
         FlagButtonGroup* gradType_;
-//        QListWidget* gradListWgt_;
-        
-//        double radius_;
-
-//        QHash<QListWidgetItem*,ResourceKey> gradHash_;
-
-//        void fillGradList();
 };
 
 

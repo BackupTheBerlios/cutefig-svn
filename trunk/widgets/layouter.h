@@ -46,7 +46,7 @@ public:
         void finishTo( QBoxLayout* target );
         void finishTo( QBoxLayout* target, int index );
         void finishTo( QGridLayout* target, int row, int col );
-        
+        void finishTo( QWidget* target );
 private:
         QBoxLayout* layout_;
 };      

@@ -26,11 +26,21 @@
 
 #include <QLayout>
 #include <QPushButton>
+#include <QTimer>
 
+#include <QDebug>
+
+/*! Sets up the standard widgets and calls init() by the delayed
+ *  initialisation idiom. This way init() is called by the event loop,
+ *  so it is guaranteed that the whole concrete EditDialog object is
+ *  properly constructed by the time init() and thus
+ *  setupInitialValues() are called.
+ */
 EditDialog::EditDialog( QWidget* parent )
         : QDialog( parent ),
           dialogLayout_( new QVBoxLayout( this ) ),
-          changed_( false )
+          changed_( false ),
+          blindForChanges_( true )
 {
         QHBoxLayout* bottomLayout = new QHBoxLayout();
 
@@ -52,11 +62,27 @@ EditDialog::EditDialog( QWidget* parent )
 
         dialogLayout_->setSpacing( 6 );
         dialogLayout_->insertLayout( 1, bottomLayout );
+
+        QTimer::singleShot( 0, this, SLOT( initialize() ) );
+}
+
+void EditDialog::takeLayout( QLayout* layout, int stretch )
+{
+        dialogLayout_->insertLayout( 0, layout, stretch );
+}
+
+void EditDialog::takeWidget( QWidget* widget, int stretch )
+{
+        dialogLayout_->insertWidget( 0, widget, stretch );
 }
 
 void EditDialog::resetChanges()
 {
+        blindForChanges_ = true;
         doReset();
+        initialize();
+        blindForChanges_ = false;
+        
         changed_ = false;
         reset_->setEnabled( false );
         emit changeHappened();
@@ -64,17 +90,29 @@ void EditDialog::resetChanges()
 
 void EditDialog::noticeChange()
 {
+        qDebug() << __PRETTY_FUNCTION__ << blindForChanges_;
         if ( blindForChanges_ )
                 return;
-        
+
+        blindForChanges_ = true;
         changed_ = true;
-        commitChanges( sender() );
+        commitChanges();
         reset_->setEnabled( true );
         emit changeHappened();
+        blindForChanges_ = false;
 }
 
 void EditDialog::reject()
 {
-        resetChanges();
+        if ( changed_ )
+                resetChanges();
         QDialog::reject();
+}
+
+void EditDialog::initialize()
+{
+        setupInitialValues();
+        blindForChanges_ = false;
+
+        qDebug() << __PRETTY_FUNCTION__ << this << blindForChanges_;
 }

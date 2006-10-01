@@ -31,12 +31,9 @@ class PolygonDialog : public ObjectDialog
 {
         Q_OBJECT
 public:
-        PolygonDialog( DrawObject *o, EditdialogAction* a,
-                        QWidget * parent =0 );
-        ~PolygonDialog() { };
+        PolygonDialog( DrawObject *o, EditdialogAction* a, QWidget * parent =0 );
 
 protected:
-        virtual void setUpWidgetsPrivate() {};
         virtual void castDrawObject() {};        
 };
 

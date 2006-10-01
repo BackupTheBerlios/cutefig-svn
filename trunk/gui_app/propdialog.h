@@ -45,10 +45,9 @@ private:
         Figure* figure_;
 
         virtual void doReset();
-        virtual void commitChanges( QObject* sender );
+        virtual void commitChanges();
+        virtual void setupInitialValues();
         
-        void updateValues();
-
         Figure::MetaData oldMetaData_;
 
         ResourceComboBox<Length>* length_;

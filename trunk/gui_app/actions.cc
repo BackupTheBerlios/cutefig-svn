@@ -29,15 +29,17 @@
 #include "canvasview.h"
 #include "objectguihandler.h"
 #include "recentfiles.h"
-#include "zoomcombobox.h"
+//#include "zoomcombobox.h"
 #include "geometry.h"
+#include "percentvalidator.h"
 
 #include <QObject>
 #include <QApplication>
 #include <QMenu>
 #include <QToolButton>
 #include <QSignalMapper>
-
+#include <QComboBox>
+#include <QLineEdit>
 
 #include <QDebug>
 
@@ -321,7 +323,13 @@ ViewActions::ViewActions( CanvasView* parent )
 
 void ViewActions::setupZoomMenu()
 {
-        zoomComboBox_ = new ZoomComboBox;
+        zoomComboBox_ = new QComboBox;
+        zoomComboBox_->setEditable( true );
+        zoomComboBox_->setInsertPolicy( QComboBox::NoInsert );
+        zoomValidator_ = new PercentValidator( this );
+        zoomValidator_->setTop( 2000 );
+        zoomComboBox_->setValidator( zoomValidator_ );
+        
         zoomMenu_ = new QMenu( cview_->mainWindow() );
 
         zoomLevels_ << 0.25 << 0.33 << 0.5 << 0.67 << 0.75 << 1.0 << 1.5 << 2.0 << 3.0 << 4.0;
@@ -358,8 +366,9 @@ void ViewActions::setupZoomMenu()
         }
 
         connect( zoomSignalMapper_, SIGNAL(mapped(int)), this, SLOT(changeZoom(int)) );
-        connect( zoomComboBox_, SIGNAL(zoomChanged(int)), this, SLOT(changeZoom(int)) );
-        connect( zoomComboBox_, SIGNAL(zoomChanged(double)), cview_, SLOT(setZoom(double)) );
+        connect( zoomComboBox_, SIGNAL(activated(int)), this, SLOT(changeZoom(int)) );
+        connect( zoomComboBox_->lineEdit(), SIGNAL(returnPressed()),
+                 this, SLOT(changeZoomByComboBox()) );
         connect( cview_, SIGNAL(zoomChanged(double)), this, SLOT( updateZoom(double) ) );
 
 	updateZoom( cview_->zoom() );
@@ -367,6 +376,9 @@ void ViewActions::setupZoomMenu()
 
 void ViewActions::changeZoom( int id )
 {
+        if ( sender() == zoomComboBox_ )
+                id -= 2;
+        
 	switch ( id ) {
 	    case -2:
 		    cview_->zoomFitPage(); break;
@@ -405,11 +417,24 @@ void ViewActions::zoomFitPage()
 	static_cast<QAction*>( zoomSignalMapper_->mapping(-2) )->setChecked( true );
 }
 
+void ViewActions::changeZoomByComboBox()
+{
+        double zoom = zoomValidator_->lastValidated();
+        cview_->setZoom( zoom );
+        updateZoomIndex( zoom );
+}
+
+
 void ViewActions::updateZoom( double zoom )
+{
+        updateZoomIndex( zoom );
+        updateZoomString( zoom );
+}
+
+void ViewActions::updateZoomIndex( double zoom )
 {
 	qDebug() << __PRETTY_FUNCTION__;
 	
-	zoomComboBox_->changeZoom( zoom );
         for ( int i = 0; i < zoomLevels_.size(); ++i ) {
                 QAction* a = static_cast<QAction*>( zoomSignalMapper_->mapping( i ) );
 		if ( Geom::isEqual( zoomLevels_[i], zoom ) ) {
@@ -419,6 +444,12 @@ void ViewActions::updateZoom( double zoom )
 			a->setChecked( false );
 	}
 }
+
+void ViewActions::updateZoomString( double zoom )
+{
+        zoomComboBox_->setEditText( QString("%1 %").arg( zoom*100, 0, 'g', 3 ) );
+}
+
 
 
 
@@ -480,5 +511,4 @@ TextPropActions::TextPropActions( Controler* parent )
 
         parent->setTextPropActions( this );
 }
-
 

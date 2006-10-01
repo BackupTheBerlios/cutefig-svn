@@ -50,16 +50,19 @@
 #include <QList>
 #include <QHash>
 
-class QSignalMapper;
-
 class Controler;
 class CuteFig;
 class ActionCollection;
 class CanvasView;
 class InteractiveAction;
-class ZoomComboBox;
+class PercentValidator;
 
 typedef QList<ActionCollection*> ActionGroups;
+
+
+class QComboBox;
+class QSignalMapper;
+
 
 
 /*! \class AllActions
@@ -148,15 +151,6 @@ public:
         ViewActions( CanvasView* parent );
         ~ViewActions() {}
 
-private:
-        void setupZoomMenu();
-        QMenu* zoomMenu_;
-        ZoomComboBox* zoomComboBox_;
-
-        QList<double> zoomLevels_;
-        QSignalMapper* zoomSignalMapper_;
-        CanvasView* cview_;
-        
 private slots:
         void changeZoom( int id );
 	void updateZoom( double zoom );
@@ -164,6 +158,23 @@ private slots:
 	void zoomOut();
 	void zoomOrig();
 	void zoomFitPage();
+
+        void changeZoomByComboBox();
+
+private:
+        void setupZoomMenu();
+
+        void updateZoomIndex( double zoom );
+        void updateZoomString( double zoom );
+        
+        QMenu* zoomMenu_;
+        QComboBox* zoomComboBox_;
+        PercentValidator* zoomValidator_;
+
+        QList<double> zoomLevels_;
+        QSignalMapper* zoomSignalMapper_;
+        CanvasView* cview_;
+        
 };
 
 /*! \class FormatActions

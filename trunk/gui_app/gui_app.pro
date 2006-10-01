@@ -58,10 +58,8 @@ HEADERS += cutefig.h \
            propdialog.h \
            griddialog.h \
            objectdialog.h \
-           ellipsedialog.h \
+           rectangloiddialog.h \
            textobjectdialog.h \
-           polylinedialog.h \
-           polygondialog.h \
            pointflagscalc.h
 
 SOURCES += cutefig.cc \
@@ -97,10 +95,8 @@ SOURCES += cutefig.cc \
            propdialog.cc \
            griddialog.cc \
            objectdialog.cc \
-           ellipsedialog.cc \
+           rectangloiddialog.cc \
            textobjectdialog.cc \
-           polylinedialog.cc \
-           polygondialog.cc \
            pointflagscalc.cc \
            main.cc
 

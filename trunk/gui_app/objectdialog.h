@@ -49,44 +49,34 @@ class ObjectDialog : public EditDialog
         Q_OBJECT
 public:
         ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent=0 );
-        ~ObjectDialog() {};
-        
-// public slots:
-//         virtual void reset();
-//         virtual void accept();
-        
-protected slots:
-        virtual void init();
-        
+
 protected:
-        DrawObject* drawObject_;//, *backup_;
-        QTabWidget* tabWidget;
-
-        virtual void doReset();
-
-
-        virtual void commitChanges( QObject* sender = 0 );
-        virtual void commitChangesPrivate() {}
-                
-        virtual void setUpConnections();
-        virtual void setUpConnectionsPrivate() {}
+        QTabWidget* tabWidget() { return tabWidget_; }
+        DrawObject* drawObject() { return drawObject_; }
+        PenWidget*  penWidget() { return penWidget(); }        
         
-        virtual void setDefaultValues();
-        virtual void setDefaultValuesPrivate() {}
+private:
+        virtual void doReset();
+        virtual void commitChanges();
+        virtual void commitChangesPrivate() {}
+        virtual void setupInitialValues();
+        virtual void setupInitialValuesPrivate() {}
         
         virtual void castDrawObject() {};
+
+        void setDrawObject( DrawObject* o );
         
         EditdialogAction* action_;
 
-        void setUpGeneral();   
-        void setDrawObject( DrawObject* o );
+        DrawObject* drawObject_;
+        QTabWidget* tabWidget_;
 
-        PenWidget* penWidget;
-        StrokeWidget* lineStroke;
-        StrokeWidget* fillStroke;
-        ArrowWidget* arrows;
-        QTextEdit* comment;
-        QSpinBox* depth;
+        PenWidget* penWidget_;
+        StrokeWidget* lineStroke_;
+        StrokeWidget* fillStroke_;
+        ArrowWidget* arrows_;
+        QTextEdit* comment_;
+        QSpinBox* depth_;
 
 // private slots:
 //         void changeStartArrow( const Arrow& a );

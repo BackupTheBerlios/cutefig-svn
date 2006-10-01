@@ -41,19 +41,16 @@ public:
         Ellipse( const Ellipse *o );
         ~Ellipse() {}
 
-//        virtual DrawObject* copy();
-
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
         bool isCircle() const { return circle_; }
         bool isSpecifiedByRadii() const { return specByRadii_; }
 
+        void setSpecifiedByRadii( bool r );
+        void setCircle( bool c );
+
         virtual void outputToBackend( OutputBackend* ob ) const;
         
-
-public slots:
-        void setSpecByRadii( bool r );
-        void setIsCircle( bool c );
 
 private:
         bool specByRadii_, circle_;

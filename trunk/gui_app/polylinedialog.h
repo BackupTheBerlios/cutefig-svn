@@ -31,12 +31,9 @@ class PolylineDialog : public ObjectDialog
 {
         Q_OBJECT
 public:
-        PolylineDialog( DrawObject *o, EditdialogAction* a,
-                        QWidget * parent =0 );
-        ~PolylineDialog() { };
+        PolylineDialog( DrawObject *o, EditdialogAction* a, QWidget * parent =0 );
 
 protected:
-        virtual void setUpWidgetsPrivate() {};
         virtual void castDrawObject() {};
 };
 

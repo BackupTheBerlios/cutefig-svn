@@ -36,7 +36,9 @@
 
 DrawObject::DrawObject( Figure* parent )
         : QObject( parent ),
+          figure_( parent ),
           stroke_( Qt::black ),
+          depth_( 50 ),
           points_( 1 ),
           bRect_( 0,0,0,0 ),
           currentPointIndex_( 0 ),
@@ -44,12 +46,11 @@ DrawObject::DrawObject( Figure* parent )
           startArrow_(),
           endArrow_()
 {
-        figure_ = parent;
-        depth_ = 50;
 }
 
 DrawObject::DrawObject( const DrawObject* o )
         : QObject( o->parent() ),
+          figure_( o->figure_ ),
           pen_( o->pen_ ),
           stroke_( o->stroke_ ),
           fill_( o->fill_ ),

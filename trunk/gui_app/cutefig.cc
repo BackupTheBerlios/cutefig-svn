@@ -36,7 +36,6 @@
 #include "guiinit.h"
 #include "actions.h"
 #include "errorreporter.h"
-#include "propdialog.h"
 #include "statuswidgets.h"
 #include "exportgui.h"
 

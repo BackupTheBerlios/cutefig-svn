@@ -38,11 +38,18 @@
 #include <QDebug>
 
 
+CfigOutput::CfigOutput( std::ostream& ts, const Figure& f )
+        : OutputBackend( ts, f ),
+          unit_( f.unit() )
+{
+}
+
 void CfigOutput::outputRectangle( const Rectangle* r )
 {
         drawObject_ = r;
         outputGenericData();
-        fileStream_ << ' ' << r->angle() << "\n";
+        fileStream_ << ' ' << r->angle() << ' '
+                    << r->xCornerRadVar()/unit_ << ' ' << r->yCornerRadVar()/unit_ << "\n";
         outputPoints();
 }
 
@@ -78,7 +85,7 @@ void CfigOutput::outputArc( const Arc* arc )
 {
         drawObject_ = arc;
         outputGenericData();
-        fileStream_ << ' ' << arc->rectSize()/2/figure_.unit() << ' ' << arc->angle()
+        fileStream_ << ' ' << arc->rectSize()/2/unit_ << ' ' << arc->angle()
                     << ' ' << (int)arc->arcFlag()  << ' ' << (int)arc->sweepFlag() << "\n";
         outputPoints();
 }
@@ -150,10 +157,8 @@ void CfigOutput::outputGenericData()
 
 void CfigOutput::outputPoints()
 {
-        double u = figure_.unit();
-        
         foreach ( QPointF p, drawObject_->points() )
-                fileStream_ << KWds::point() << ' ' << p.x()/u << ' ' << p.y()/u << "\n";
+                fileStream_ << KWds::point() << ' ' << p.x()/unit_ << ' ' << p.y()/unit_ << "\n";
 }
 
 void CfigOutput::outputHeader()

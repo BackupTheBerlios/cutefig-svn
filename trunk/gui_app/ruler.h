@@ -45,18 +45,20 @@ class RulerDispatcher;
  *
  *  It is also planned that helplines can be pulled out of the ruler.
  *
+ *  By now everything in Ruler is private, as RulerDispatcher is the
+ *  only class to deal with Rulers. This restriction might be loosened
+ *  in the future as soon as other applications for a Ruler come up.
  */
 class Ruler : public QFrame
 {
         Q_OBJECT
 public:
         friend class RulerDispatcher;
-        
-        Ruler( int l, int width_, Qt::Orientation o, QWidget * parent =0 );
-//!< The constructor takes the length l and the Orientation o.
-        ~Ruler() { };
 
 private:
+        //! The constructor takes the length l and the Orientation o.
+        Ruler( int l, int width_, Qt::Orientation o, QWidget * parent =0 );
+
         void setValue( int v );    //!< Sets the value of the pointerposition.
         void setLength( int l );   //!< Sets the length of the ruler
 
@@ -74,7 +76,9 @@ private:
         void contextMenuEvent( QContextMenuEvent* e );
 
         void updateRuler();
-        void calcTickMarks();       //<! calculates the tick marks smartly
+        
+        //! calculates the tick marks smartly
+        void calcTickMarks();       
 
         Qt::Orientation o_;
 
@@ -119,6 +123,9 @@ private:
         QPixmap buffer_;
 };
 
+
+
+//! Dispatches commands from the CanvasView and the CentralView to the two Rulers.
 
 class RulerDispatcher : public QObject
 {

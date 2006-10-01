@@ -72,3 +72,8 @@ void Layouter::finishTo( QGridLayout* target, int row, int col )
 {
         target->addLayout( layout_, row, col );
 }
+
+void Layouter::finishTo( QWidget* target )
+{
+        target->setLayout( layout_ );
+}

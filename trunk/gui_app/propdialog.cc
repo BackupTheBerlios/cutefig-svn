@@ -120,23 +120,21 @@ PropDialog::PropDialog( Figure* f, QWidget* parent )
         
         dateGrp->setLayout( dateLt );
         
+        QVBoxLayout* lt = new QVBoxLayout;
+        lt->addWidget( geomGrp );
+        lt->addWidget( metaDatGrp );
+        lt->addWidget( dateGrp );
 
-        dialogLayout()->insertWidget( 0, dateGrp );
-        dialogLayout()->insertWidget( 0, metaDatGrp );
-        dialogLayout()->insertWidget( 0, geomGrp );
-        
-        updateValues();
+        takeLayout( lt );
 }
 
 void PropDialog::doReset()
 {
         figure_->setMetaData( oldMetaData_ );
-        updateValues();
 }
 
-void PropDialog::updateValues()
+void PropDialog::setupInitialValues()
 {
-        doNoticeChanges( false );
         length_->setCurrentKey( figure_->unitKey() );
         paper_->setCurrentKey( figure_->paperKey() );
         scale_->setValue( figure_->scale() );
@@ -146,10 +144,9 @@ void PropDialog::updateValues()
         description_->setPlainText( figure_->description() );
 	saveAuthor_->setChecked( figure_->authorIsToBeSaved() );
 	author_->setEnabled( figure_->authorIsToBeSaved() );
-        doNoticeChanges( true );
 }
 
-void PropDialog::commitChanges( QObject* )
+void PropDialog::commitChanges()
 {
         figure_->setUnit( length_->currentKey() );
         figure_->setPaper( paper_->currentKey() );

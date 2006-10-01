@@ -35,8 +35,7 @@
 class CfigOutput : public OutputBackend
 {
 public:
-        CfigOutput( std::ostream& ts, const Figure& f ) : OutputBackend( ts, f ) {}
-        ~CfigOutput() {}
+        CfigOutput( std::ostream& ts, const Figure& f );
         
         virtual void outputRectangle( const Rectangle* rc );
         virtual void outputEllipse( const Ellipse* el );
@@ -63,6 +62,8 @@ private:
         const DrawObject* drawObject_;
 
         QHash<int,int> dashMap_;
+
+        double unit_;
 };
 
 

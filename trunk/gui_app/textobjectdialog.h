@@ -41,7 +41,7 @@ public:
 private:
         virtual void commitChangesPrivate();
         virtual void setUpConnectionsPrivate();
-        virtual void setDefaultValuesPrivate();
+        virtual void setupInitialValuesPrivate();
         virtual void castDrawObject();
 
         TextObject* textObject_;

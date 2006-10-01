@@ -105,16 +105,14 @@ bool Ellipse::pointHitsOutline( const QPointF& p, qreal tolerance ) const
         return fabs( d ) <= tolerance;
 }
 
-void Ellipse::setSpecByRadii( bool r )
+void Ellipse::setSpecifiedByRadii( bool r )
 {
         specByRadii_ = r;
-//         emit( objectChanged() );
 }
 
-void Ellipse::setIsCircle( bool c )
+void Ellipse::setCircle( bool c )
 {
         circle_ = c;
-//         emit( objectChanged() );
 }
 
 void Ellipse::passPointFlag_private( Fig::PointFlags f )
@@ -144,8 +142,8 @@ DrawObject* TObjectHandler<Ellipse>::parseObject( std::istream& is, Figure* fig 
                 return 0;
         
         Ellipse *e = new Ellipse( fig );
-        e->setIsCircle( circle );
-        e->setSpecByRadii( byRadius );
+        e->setCircle( circle );
+        e->setSpecifiedByRadii( byRadius );
         e->setAngleNew( angle );
         
         return e;

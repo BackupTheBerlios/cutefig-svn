@@ -24,37 +24,46 @@
 
 #include "percentvalidator.h"
 
+#include <limits>
+
 #include <QDebug>
 
-void PercentValidator::setBottom( int bottom )
+
+PercentValidator::PercentValidator( QObject* parent )
+        : QIntValidator( 1, std::numeric_limits<int>::max(), parent ),
+          lastValidated_( 100 )
 {
-        if ( bottom >= 1 )
-                QIntValidator::setBottom( bottom );
 }
 
-void PercentValidator::setRange( int min, int max )
+void PercentValidator::setRange( int _bottom, int _top )
 {
-        setTop( max );
-        setBottom( min );
+        QIntValidator::setRange( _bottom >= 1 ? _bottom : bottom(), _top );
 }
 
 QValidator::State PercentValidator::validate( QString& input, int& pos ) const
 {
-        QString myInput = input.trimmed();
-        if ( myInput.endsWith('%') )
-                myInput.chop( 1 );
-        myInput = myInput.trimmed();
+        input = input.trimmed();
+
+        bool chopped = false;
+        if ( input.endsWith('%') ) {
+                input.chop( 1 );
+                input = input.trimmed();
+                chopped = true;
+        }
         
-        QValidator::State s = QIntValidator::validate( myInput, pos );
+        QValidator::State s = QIntValidator::validate( input, pos );
+
+        if ( s == QValidator::Acceptable )
+                lastValidated_ = input.toInt();
+
+        if ( chopped || s == QValidator::Acceptable )
+                input.append(" %");
 
         return s;
 }
 
-void PercentValidator::fixup( QString& input )
+
+double PercentValidator::lastValidated() const
 {
-        qDebug() << "fixup";
-        
-        int pos;
-        if ( validate( input, pos ) == QValidator::Acceptable && !input.endsWith('%') )
-                input.append('%');
+        return (double) lastValidated_ / 100;
 }

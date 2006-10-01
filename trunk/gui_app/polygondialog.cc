@@ -27,11 +27,9 @@
 
 class Polygon;
 
-PolygonDialog::PolygonDialog( DrawObject *o, EditdialogAction* a,
-                              QWidget * parent )
+PolygonDialog::PolygonDialog( DrawObject *o, EditdialogAction* a, QWidget * parent )
         : ObjectDialog( o, a, parent )
 {
-        setWindowTitle( tr("Polygon Properties") );
 }
 
 

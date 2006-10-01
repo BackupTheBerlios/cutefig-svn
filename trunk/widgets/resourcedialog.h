@@ -27,14 +27,12 @@
 
 #include "editdialog.h"
 
-class ResourceEditor : public QObject
+class ResourceEditor : public QWidget
 {
         Q_OBJECT
 public:
-        ResourceEditor( EditDialog* dlg, QVBoxLayout* layout, QObject* parent = 0 )
-                : QObject( parent ),
-                  dialog_( dlg ),
-                  layout_( layout ) 
+        ResourceEditor( QWidget* parent = 0 )
+                : QWidget( parent )
         {
         }
 
@@ -45,7 +43,6 @@ signals:
 
 protected:
         EditDialog* dialog_;
-        QVBoxLayout* layout_;
 };
 
 
@@ -53,45 +50,16 @@ template<class Resource>
 class ResourceDialog : public EditDialog
 {
 public:        
-        static int execute( Resource& editee, QWidget* parent = 0 ) 
-        {
-                ResourceDialog<Resource> dlg( editee, parent );
-                dlg.init();
-                return dlg.exec();
-        }
+        static int execute( Resource& editee, QWidget* parent = 0 );
+        
+        static Resource editData( const Resource& initial, bool* ok = 0, QWidget* parent = 0 );
 
-        static Resource editData( const Resource& initial, bool* ok = 0, QWidget* parent = 0 )
-        {
-                Resource res = initial;
-
-                bool accepted = ( execute( res, parent ) == QDialog::Accepted );
-                if ( ok )
-                        *ok = accepted;
-
-                return res;
-        }       
-                
-        virtual void doReset()
-        {
-                editee_ = oldData_;
-                editor_->updateData();
-        }
-
+        virtual void doReset();
+        virtual void commitChanges() {}
+        virtual void setupInitialValues() {}
         
 protected:
-        ResourceDialog<Resource>( Resource& editee, QWidget* parent = 0 )
-                : EditDialog( parent ),
-                  editee_( editee ),
-                  oldData_( editee )
-        {}
-                  
-        ~ResourceDialog<Resource>() {}
-
-        void init() 
-        {
-                editor_ = createEditor();
-                connect( editor_, SIGNAL( changeHappened() ), this, SLOT( noticeChange() ) );
-        }
+        ResourceDialog<Resource>( Resource& editee, QWidget* parent = 0 );
 
         ResourceEditor* createEditor();
         
@@ -101,29 +69,47 @@ protected:
         ResourceEditor* editor_;
 };
 
+template<typename Resource>
+ResourceDialog<Resource>::ResourceDialog( Resource& editee, QWidget* parent )
+        : EditDialog( parent ),
+          editee_( editee ),
+          oldData_( editee )
+{
+        editor_ = createEditor();
+        takeWidget( editor_ );
+        connect( editor_, SIGNAL( changeHappened() ), this, SLOT( noticeChange() ) );
+}
 
-// #include "colordialog.h"
+        
 
-// template<> class ResourceDialog<QColor> 
-// {
-// public:
-//         static int execute( QColor& editee, QWidget* parent = 0 ) 
-//         {
-//                 bool ok;
-//                 QColor c = editData( editee, &ok, parent );
-//                 if ( ok )
-//                         editee = c;
+template<typename Resource>
+int ResourceDialog<Resource>::execute( Resource& editee, QWidget* parent ) 
+{
+        ResourceDialog<Resource> dlg( editee, parent );
+        return dlg.exec();
+}
 
-//                 return ok;
-//         }
 
-//         static QColor editData( const QColor& initial, bool* ok = 0,
-//                                 QWidget* parent = 0 ) 
-//         {
-//                 return ColorDialog::getColor( initial, ok, parent );
-//         }
+template<typename Resource>
+Resource ResourceDialog<Resource>::editData( const Resource& initial, bool* ok,
+                                             QWidget* parent )
+{
+        Resource res = initial;
 
-// };
+        bool accepted = ( execute( res, parent ) == QDialog::Accepted );
+        if ( ok )
+                *ok = accepted;
+
+        return res;
+}
+
+
+template<typename Resource>
+void ResourceDialog<Resource>::doReset()
+{
+        editee_ = oldData_;
+}
+
 
 
 #endif

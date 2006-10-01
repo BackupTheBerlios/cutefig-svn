@@ -26,7 +26,7 @@
 #define allodialogs_h
 
 #include "objectdialog.h"
-#include "ellipsedialog.h"
+#include "rectangloiddialog.h"
 #include "textobjectdialog.h"
 #include "polylinedialog.h"
 #include "polygondialog.h"

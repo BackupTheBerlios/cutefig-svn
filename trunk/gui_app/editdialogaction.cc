@@ -61,15 +61,9 @@ void EditdialogAction::editObject()
 DrawObject* EditdialogAction::restoreWObject()
 {
         selection_.restoreBackups();        
-//        controler_->updateViews();
         return selection_.objects()[0];
 }
 
-// void EditdialogAction::wObjectHasChanged()
-// {
-//         wObjectChanged_ = true;
-//         controler_->updateViews();
-// }
 
 bool EditdialogAction::wouldHandleSelection( const QPoint&, const QMatrix* )
 {

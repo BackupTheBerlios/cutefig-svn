@@ -27,21 +27,36 @@
 
 #include <QIntValidator>
 
-#include <limits>
-
+//! A subclass of QIntValidator, that validates values like "200 %"
+/*! Validates int values from bottom() to top(), ensuring that bottom() >= 1.
+ *  validate() will ensure that a the input string endsWith(" %").
+ *
+ *  The value that has been validated recently is readable by
+ *  lastValidated(). 
+ */
 class PercentValidator : public QIntValidator
 {
         Q_OBJECT
 public:
-        PercentValidator( QObject* parent )
-                : QIntValidator( 1, std::numeric_limits<int>::max(), parent ) {}
-        ~PercentValidator() {}
+        PercentValidator( QObject* parent );
 
-        void setBottom( int bottom );
+        //! \reimp QIntValidator::setRange() ensuring min >= 1
         void setRange( int min, int max );
         
         virtual QValidator::State validate( QString& input, int& pos ) const;
-        virtual void fixup( QString& intput );
+
+        //! returns the value validated recently.
+        /*! Note that this value is a double which represents the percentage
+         *  (1.0 if the inputstring is "100 %").
+         */
+        double lastValidated() const;
+
+private:
+        //! the int value that has been validated recently.
+        /*! Has to be mutable as QValidator::validate() is qualified
+         *  const.
+         */
+        mutable int lastValidated_;
 };
 
 #endif

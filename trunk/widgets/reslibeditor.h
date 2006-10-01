@@ -51,13 +51,13 @@ public:
                   resourceKey_( initial ),
                   previousResourceKey_( initial )
         {}
-        
-        ~AbstractReslibEditor() {}
 
         ResourceKey resourceKey() { return resourceKey_; }
         
 protected:
-        void init();
+        virtual void setupInitialValues() {}
+        virtual void commitChanges() {}
+        virtual void setupGUI();
         virtual void doReset();
 
 private slots:
@@ -91,8 +91,8 @@ public:
                   resLib_( ResLib<Resource>::instance() ),
                   resourceDemo_( 0 )
         {
+                setupGUI();
                 setupModel();
-                init();
         }
         
         ~ReslibEditor() {}
