@@ -43,10 +43,10 @@
 #include <QDebug>
 
 
+class Compound;
 class ObjectDialog;
 class OutputBackend;
 class CanvasView;
-class Compound;
 class AbstractResourceUser;
 
 //! The baseclass of all objects that can be drawn.
@@ -161,11 +161,7 @@ public:
         DrawObject( const DrawObject* );
         ~DrawObject() {}
 
-        //! needs to call getReadyForDraw();
-        friend void Figure::takeDrawObjects( const ObjectList& );
-
-        //! needs to call getReadyForDraw();
-        friend class Compound;
+	friend class Compound;
 
         //! Usually reimplemented by #DRAW_OBJECT
         virtual DrawObject* copy() const = 0;
@@ -290,6 +286,8 @@ public:
 
 
 	void update();
+	void updateEverything();
+	void updateImediatley();
 	
 	
         //! used to sort the DrawObjects according to their #depth_
@@ -366,6 +364,7 @@ protected:
 
         QRectF bRect_, cRect_;
 
+
 private:
         int currentPointIndex_;
         void setCompoundParent( Compound* p );
@@ -373,6 +372,8 @@ private:
 
         Arrow startArrow_;
         Arrow endArrow_;
+
+	bool updateEverything_;
 };
 
 //! Small helper class to store the DrawObject's keyword and name

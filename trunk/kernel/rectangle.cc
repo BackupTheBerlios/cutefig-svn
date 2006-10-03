@@ -44,7 +44,6 @@ Rectangle::Rectangle( const Rectangle* r )
 	  roundedCorners_( r->roundedCorners_ ),
 	  equalCornerRadii_( r->equalCornerRadii_ )
 {
-        getReadyForDraw();
 }
 
 void Rectangle::setXCornerRad( double r )

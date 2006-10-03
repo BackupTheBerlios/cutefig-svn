@@ -41,6 +41,8 @@
 
 Figure::Figure( QObject *parent ) :
         QObject( parent ),
+	objectList_(),
+	drawingList_(),
         metaData_()
 {
 }
@@ -53,8 +55,7 @@ void Figure::takeDrawObjects( const ObjectList& l )
         foreach ( DrawObject* o, l ) {
                 addObjectToDrawingList( o );
                 o->setParent( this );
-                o->getReadyForDraw();
-                o->doSpecificPreparation();
+                o->updateEverything();
         }
 
         sortObjects();
@@ -68,7 +69,7 @@ void Figure::addDrawObject( DrawObject* o )
 {
         o->reclaimResources();
         o->setParent( this );
-        objectList_.push_back( o );
+        objectList_ << o;
         addObjectToDrawingList( o );
 }
 
@@ -195,6 +196,7 @@ QRectF Figure::boundingRect() const
 
         return r;
 }
+
 
 /*! Each DrawObject of objectList_ is asked for the Resources it uses.
  *  Those resources are then added to the ResourceSet returned if the

@@ -58,9 +58,6 @@ Compound::Compound( const Compound* c )
                 newObject->setCompoundParent( this );
                 childObjects_.append( newObject );
         }
-
-        getReadyForDraw();
-        doSpecificPreparation();
 }
 
 /*! Makes the children children of the Compounds parent. So the
@@ -119,8 +116,6 @@ void Compound::mapMatrix( const QMatrix& m )
 {
         foreach ( DrawObject* o, childObjects_ ) 
                 o->mapMatrix( m );
-        
-        doSpecificPreparation();
 }
 
 const ResourceSet Compound::usedResources() const

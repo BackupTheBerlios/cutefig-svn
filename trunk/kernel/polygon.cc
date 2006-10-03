@@ -39,7 +39,6 @@ Polygon::Polygon( Figure* parent )
 Polygon::Polygon( const Polygon* o )
         : Polyline( o )
 {
-        getReadyForDraw();
 }
 
 void Polygon::outputToBackend( OutputBackend* ob ) const

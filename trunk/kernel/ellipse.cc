@@ -44,14 +44,8 @@ Ellipse::Ellipse( const Ellipse *o )
           specByRadii_( o->specByRadii_ ),
           circle_( o->circle_ )
 {
-        getReadyForDraw();
-        doSpecificPreparation();
 }
 
-// DrawObject* Ellipse::copy()
-// {
-//         return new Ellipse( this );
-// }
 
 void Ellipse::setupWidthAndHeight()
 {

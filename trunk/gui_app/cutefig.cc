@@ -140,8 +140,8 @@ void CuteFig::load( const QString& fileName )
         if ( !errors.isEmpty() ) 
                 ErrorReporter::report( errors );
 
-        cview_->updateFigureMetaData();
-        cview_->updateFigure();
+        controler_->updateFigureMetaData();
+        controler_->updateViews();
 }
 
 /*! Uses an OutputBackend to store the figure into a file. The

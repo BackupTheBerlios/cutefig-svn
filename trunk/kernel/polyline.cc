@@ -45,7 +45,6 @@ Polyline::Polyline( const Polyline* o )
         : DrawObject( o ),
           finished_( true )
 {
-        getReadyForDraw();
 }
 
 void Polyline::passPointFlag( Fig::PointFlags f )

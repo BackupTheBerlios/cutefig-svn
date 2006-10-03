@@ -58,8 +58,6 @@ protected:
         virtual void setupPainterPath();
         virtual void setupRects();
 
-//        virtual void getReadyForDraw();
-
         virtual void doSpecificPreparation();
         
         virtual void passPointFlag( Fig::PointFlags f );

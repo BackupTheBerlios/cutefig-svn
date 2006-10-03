@@ -93,7 +93,6 @@ BezierSpline::BezierSpline( const BezierSpline* other )
           finished_( true ),
           oppositeDirective_( 0 )
 {
-        getReadyForDraw();
 }
 
                 

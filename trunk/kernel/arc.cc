@@ -126,7 +126,7 @@ void Arc::setRectSize( const QSizeF& s )
         rectSize_.setHeight( fabs(s.height() ) );
 
         isCircle_ = ( rectSize_.width() == rectSize_.height() );
-        getReadyForDraw();
+        update();
 }
 
 

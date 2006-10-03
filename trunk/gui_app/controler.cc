@@ -146,15 +146,12 @@ void Controler::execAction( Command* cmd )
                 appendToCmdList( cmd );
         }
 
-        // should be called by InteractiveAction::wakeup()
-//         if ( editAction_ )
-//                 editAction_->reset();
-
         actionGone();
         editAction_ = 0;
         actionIsActive_ = false;
         explicitEAction_ = false;
 
+	QCoreApplication::sendPostedEvents();
         updateViews();
 }
 
@@ -322,19 +319,6 @@ void Controler::appendToCmdList( Command* c )
 }
 
 
-void Controler::setToolProperties()
-{
-//         if ( !wObject_ ) {
-//                 qDeug(b"Controler::setToolProperties shouldn't be called " 
-//                        "without wObject_");
-//                 return;
-//         }
-
-//         wObject_->setPen( toolPen_ );
-//         wObject_->setFillColor( toolFillColor_ );
-//         wObject_->setDepth( toolDepth_ );
-}
-
 void Controler::updateViewsImediately( bool tentative )
 {
         foreach ( ViewBase* v, viewList_ ) 
@@ -366,8 +350,7 @@ void Controler::setToolActionsGroup( const ToolActions* ta )
 }
 
 void Controler::drawActionMetaData( QPainter* p, const ViewBase* v )
-{
-        
+{        
         v->drawSelection( p );
 
         if ( editAction_ )
@@ -382,7 +365,6 @@ void Controler::updateFigureMetaData() const
 
 void Controler::actionGone()
 {
-        qDebug() << "Controler::actionGone";
         if ( editAction_ )
                 disconnect( editAction_, SIGNAL(statusChanged(const ActionStatus&)) );
         emit actionIsAway( true );    

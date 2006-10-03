@@ -142,7 +142,6 @@ public slots:
 private:
         void setupPainterPath() {}
         void setupRects();
-        void doSpecificPreparation() {}
         void doDraw( QPainter* p ) const;
 
         int nextPointIndex() { return -1; }

@@ -160,7 +160,6 @@ private:
         void updateViewsImediately( bool tentative = false);
         virtual bool event( QEvent* e );
 
-        void setToolProperties();
         void appendToCmdList( Command* c );
 
         void actionGone();

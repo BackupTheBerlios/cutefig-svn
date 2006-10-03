@@ -70,8 +70,6 @@ EllipseDialog::EllipseDialog( DrawObject* o, EditdialogAction* a,
                               QWidget * parent )
         : RectangloidDialog( o, a, parent )
 {
-        qDebug("EllipseDialog::EllipseDialog");
-
         QGroupBox* stg = new QGroupBox( tr("&Type") );
         QGroupBox* dg = new QGroupBox( tr("Specified &by") );
         
@@ -172,12 +170,7 @@ void RectangleDialog::commitChangesPrivate()
         bool rc = roundedCorners_->isChecked();
         rectangle_->setRoundedCorners( rc );
 
-	qDebug() << __PRETTY_FUNCTION__ << rc;
-	qDebug() << __PRETTY_FUNCTION__ << sender();
-
-	
-
-        setRoundedCornersEnabled( rc );
+	setRoundedCornersEnabled( rc );
         
         if ( rc ) {
 		bool eq = equalCornerRadii_->isChecked();
@@ -187,7 +180,6 @@ void RectangleDialog::commitChangesPrivate()
  			else if ( sender() == yCornerRadius_ )
  				xCornerRadius_->setValue( yCornerRadius_->value() ); 	
 		
-                qDebug() << "setting radii" << xCornerRadius_->value() << yCornerRadius_->value();
                 rectangle_->setXCornerRad( xCornerRadius_->value() );
                 rectangle_->setYCornerRad( yCornerRadius_->value() );
 		

@@ -46,7 +46,8 @@ DrawObject::DrawObject( Figure* parent )
           currentPointIndex_( 0 ),
           compoundParent_( 0 ),
           startArrow_(),
-          endArrow_()
+          endArrow_(),
+	  updateEverything_( false )
 {
 }
 
@@ -62,8 +63,10 @@ DrawObject::DrawObject( const DrawObject* o )
           currentPointIndex_( -1 ),
           compoundParent_( 0 ),
           startArrow_( o->startArrow_ ),
-          endArrow_( o->endArrow_ )
+          endArrow_( o->endArrow_ ),
+	  updateEverything_( true )
 {
+	updateEverything();
 }
 
 void DrawObject::move( const QPointF& d )
@@ -167,8 +170,7 @@ void DrawObject::drawTentative( QPainter *p ) const
 void DrawObject::mapMatrix( const QMatrix& m )
 {
         points_ = m.map( points_ );
-        update();
-        doSpecificPreparation();
+        updateEverything();
 }
 
 /*! \e tolerance is a tolerance which is has to be variable as the
@@ -276,6 +278,11 @@ bool DrawObject::event( QEvent* e )
 {
 	if ( e->type() == QEvent::UpdateRequest ) {
 		getReadyForDraw();
+		if ( updateEverything_ ) {
+			doSpecificPreparation();
+			updateEverything_ = false;
+		}
+		
 		return true;
 	}
 
@@ -286,3 +293,10 @@ void DrawObject::update()
 {
 	QCoreApplication::postEvent( this, new QEvent( QEvent::UpdateRequest ) );
 }
+
+void DrawObject::updateEverything()
+{
+	updateEverything_ = true;
+	update();
+}
+

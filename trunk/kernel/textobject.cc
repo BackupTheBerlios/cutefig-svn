@@ -57,7 +57,6 @@ TextObject::TextObject( const TextObject* o )
           cursorVisible_( false )
 {
         doc_.setHtml( o->doc_.toHtml() );
-        getReadyForDraw();
 }
 
 TextObject::~TextObject()
@@ -122,7 +121,7 @@ void TextObject::toggleCursor()
 void TextObject::setFont( const QFont& f )
 {
         font_ = f;
-        getReadyForDraw();
+	update();
 }
 
 void TextObject::setupRects()
@@ -298,21 +297,21 @@ bool TextObject::isEmpty() const
 void TextObject::insertByCursor( const QString& piece )
 {
         cursor_.insertText( piece, charFormat_ );
-        getReadyForDraw();
+	update();
 }
 
 void TextObject::removeCharForward()
 {
         cursor_.deleteChar();
         trackCharFormat();
-        getReadyForDraw();
+	update();
 }
 
 void TextObject::removeCharBackward()
 {
         cursor_.deletePreviousChar();
         trackCharFormat();
-        getReadyForDraw();
+	update();
 }
 
 void TextObject::setCursorPos( int c, QTextCursor::MoveMode mode )
@@ -416,7 +415,7 @@ void TextObject::alignHCenter()
         alignment_ &= Qt::AlignVertical_Mask;
         alignment_ |= Qt::AlignHCenter;
 
-        getReadyForDraw();
+	update();
 }
 
 void TextObject::alignLeft()
@@ -427,7 +426,7 @@ void TextObject::alignLeft()
         alignment_ &= Qt::AlignVertical_Mask;
         alignment_ |= Qt::AlignLeft;
 
-        getReadyForDraw();
+	update();
 }
 
 
@@ -439,7 +438,7 @@ void TextObject::alignRight()
         alignment_ &= Qt::AlignVertical_Mask;
         alignment_ |= Qt::AlignRight;
 
-        getReadyForDraw();
+	update();
 }
 
 void TextObject::alignTop()
@@ -450,7 +449,7 @@ void TextObject::alignTop()
         alignment_ &= Qt::AlignHorizontal_Mask;
         alignment_ |= Qt::AlignTop;
 
-        getReadyForDraw();
+	update();
 }
 
 void TextObject::alignVCenter()
@@ -461,7 +460,7 @@ void TextObject::alignVCenter()
         alignment_ &= Qt::AlignHorizontal_Mask;
         alignment_ |= Qt::AlignVCenter;
 
-        getReadyForDraw();
+        update();
 }
 
 void TextObject::alignBottom()
@@ -472,7 +471,7 @@ void TextObject::alignBottom()
         alignment_ &= Qt::AlignHorizontal_Mask;
         alignment_ |= Qt::AlignBottom;
 
-        getReadyForDraw();
+	update();
 }
 
 /*! Here the TextObject specific things are parsed. Note that only the
