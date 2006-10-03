@@ -288,6 +288,10 @@ public:
         /*! This is to be done by calling ob->output<DerivedClass>(). */
         virtual void outputToBackend( OutputBackend* ob ) const = 0;
 
+
+	void update();
+	
+	
         //! used to sort the DrawObjects according to their #depth_
         static bool isLessThan( const DrawObject* o1, const DrawObject* o2 )
         { 
@@ -331,6 +335,8 @@ protected:
 
         virtual QPointF startAngle( const QPolygonF& pol ) const;
         virtual QPointF endAngle( const QPolygonF& pol ) const;
+
+	bool event( QEvent* e );
         
         //! the Figure containing the DrawObject
         Figure* figure_;

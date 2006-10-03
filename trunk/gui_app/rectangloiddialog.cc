@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id: ellipsedialog.h 117 2006-08-21 13:54:16Z joh $
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -26,6 +26,7 @@
 #include "ellipse.h"
 #include "rectangle.h"
 #include "layouter.h"
+#include "figure.h"
 
 #include <QtGui>
 
@@ -141,7 +142,11 @@ RectangleDialog::RectangleDialog( DrawObject* o, EditdialogAction* a, QWidget* p
 
         roundedCorners_ = new QCheckBox( tr("Rounded corners") );
         xCornerRadius_ = new QDoubleSpinBox;
+	xCornerRadius_->setSingleStep( 0.1 );
+	xCornerRadius_->setMinimum( 0.0 );
         yCornerRadius_ = new QDoubleSpinBox;
+	yCornerRadius_->setSingleStep( 0.1 );
+	yCornerRadius_->setMinimum( 0.0 );
         equalCornerRadii_ = new QPushButton( "chain" );
         equalCornerRadii_->setCheckable( true );
         
@@ -157,24 +162,42 @@ RectangleDialog::RectangleDialog( DrawObject* o, EditdialogAction* a, QWidget* p
         connect( xCornerRadius_, SIGNAL( valueChanged(double) ), this, SLOT( noticeChange() ) );
         connect( yCornerRadius_, SIGNAL( valueChanged(double) ), this, SLOT( noticeChange() ) );
 
-        pageLayout()->addWidget( corners );
+	pageLayout()->addWidget( corners );
 }
 
 void RectangleDialog::commitChangesPrivate()
 {
-        qDebug() << __PRETTY_FUNCTION__;
-        
-        rectangle_->setAngle( angleSlider()->value() );
+	rectangle_->setAngle( angleSlider()->value() );
 
         bool rc = roundedCorners_->isChecked();
         rectangle_->setRoundedCorners( rc );
+
+	qDebug() << __PRETTY_FUNCTION__ << rc;
+	qDebug() << __PRETTY_FUNCTION__ << sender();
+
+	
+
         setRoundedCornersEnabled( rc );
         
         if ( rc ) {
+		bool eq = equalCornerRadii_->isChecked();
+// 		if ( eq )
+// 			if ( sender() == xCornerRadius_ )
+// 				yCornerRadius_->setValue( xCornerRadius_->value() );
+// 			else if ( sender() == yCornerRadius_ )
+// 				xCornerRadius_->setValue( yCornerRadius_->value() ); 	
+		
                 qDebug() << "setting radii" << xCornerRadius_->value() << yCornerRadius_->value();
                 rectangle_->setXCornerRad( xCornerRadius_->value() );
                 rectangle_->setYCornerRad( yCornerRadius_->value() );
-                rectangle_->setEqualRoundedCorners( equalCornerRadii_->isChecked() );
+		
+                rectangle_->setEqualRoundedCorners( eq );
+		
+		yCornerRadius_->setValue( rectangle_->yCornerRad() );
+		xCornerRadius_->setValue( rectangle_->xCornerRad() );
+
+		xCornerRadius_->setMaximum( rectangle_->maxXCornerRad() );
+		yCornerRadius_->setMaximum( rectangle_->maxYCornerRad() );
         }
 }
 
@@ -188,10 +211,24 @@ void RectangleDialog::setupInitialValuesPrivate()
 
         if ( rc ) {
                 xCornerRadius_->setValue( rectangle_->xCornerRad() );
-                yCornerRadius_->setValue( rectangle_->xCornerRad() );
+                yCornerRadius_->setValue( rectangle_->yCornerRad() );
         }
 
+	xCornerRadius_->setMaximum( rectangle_->maxXCornerRad() );
+	yCornerRadius_->setMaximum( rectangle_->maxYCornerRad() );
+
         equalCornerRadii_->setChecked( rectangle_->hasEqualCornerRadii() );
+}
+
+void RectangleDialog::updateRadiiSpinBoxes( double v )
+{
+	if ( !rectangle_->hasEqualCornerRadii() )
+		return;
+	
+	if ( sender() == xCornerRadius_ )
+		yCornerRadius_->setValue( v );
+	else
+		xCornerRadius_->setValue( v );
 }
 
 void RectangleDialog::setRoundedCornersEnabled( bool e )

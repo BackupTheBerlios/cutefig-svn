@@ -48,9 +48,9 @@ public:
 
         void setRoundedCorners( bool rc );
         void setEqualRoundedCorners( bool eq );
-        
-        double xCornerRadVar() const;
-        double yCornerRadVar() const;
+
+	double maxXCornerRad() const;
+	double maxYCornerRad() const;
         
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
@@ -65,6 +65,9 @@ private:
 
         double xCornerRad_;
         double yCornerRad_;
+
+	bool roundedCorners_;
+	bool equalCornerRadii_;
 };
 
 #endif

@@ -109,7 +109,7 @@ void Rectangloid::passPointFlag( Fig::PointFlags f )
 void Rectangloid::setAngle( double a )
 {
         angle_ = a/Geom::rad;
-        getReadyForDraw();
+        update();
 }
 
 void Rectangloid::setAngle( int a )

@@ -133,6 +133,7 @@ void ObjectDialog::commitChanges()
 	drawObject_->setComment( comment_->toPlainText() );
 
 	commitChangesPrivate();
+	drawObject_->update();
 }
 
 

@@ -28,6 +28,8 @@
 #include "compound.h"
 
 #include <QPainter>
+#include <QEvent>
+#include <QCoreApplication>
 
 #include <cmath>
 
@@ -105,17 +107,15 @@ void DrawObject::cursorMove( const QPointF & pos )
  */
 void DrawObject::draw( QPainter* p ) const
 {
-//        qDebug() << "draw" << this;
         fill_.fillPath( painterPath_, p );
         pen_.strikePath( painterPath_, stroke_, p );
 
-//        if ( startArrow_ || endArrow_ )
-                drawArrows( p );
+	drawArrows( p );
 }
 
 void DrawObject::drawArrows( QPainter* p ) const
 {
-        if ( painterPath_.isEmpty() )
+        if ( painterPath_.isEmpty() || ( !startArrow_.isValid() && !endArrow_.isValid() ))
                 return;
         
         p->setPen( QPen( stroke_.brush( bRect_ ), pen_.width() ) );
@@ -161,15 +161,14 @@ QPointF DrawObject::endAngle( const QPolygonF& pol ) const
  */
 void DrawObject::drawTentative( QPainter *p ) const
 {
-//        qDebug() << this;// << painterPath_;
         p->drawPath( painterPath_ );
 }
 
 void DrawObject::mapMatrix( const QMatrix& m )
 {
         points_ = m.map( points_ );
+        update();
         doSpecificPreparation();
-        getReadyForDraw();
 }
 
 /*! \e tolerance is a tolerance which is has to be variable as the
@@ -271,4 +270,19 @@ QString DrawObject::objectname_stripped() const
 {
         QString n = objectname();
         return n.remove('&');
+}
+
+bool DrawObject::event( QEvent* e )
+{
+	if ( e->type() == QEvent::UpdateRequest ) {
+		getReadyForDraw();
+		return true;
+	}
+
+	return QObject::event( e );
+}
+
+void DrawObject::update()
+{
+	QCoreApplication::postEvent( this, new QEvent( QEvent::UpdateRequest ) );
 }

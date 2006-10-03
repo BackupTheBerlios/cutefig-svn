@@ -49,7 +49,8 @@ void CfigOutput::outputRectangle( const Rectangle* r )
         drawObject_ = r;
         outputGenericData();
         fileStream_ << ' ' << r->angle() << ' '
-                    << r->xCornerRadVar()/unit_ << ' ' << r->yCornerRadVar()/unit_ << "\n";
+                    << r->xCornerRad() << ' '
+		    << (r->hasEqualCornerRadii() ? -1.0 : r->yCornerRad()) << "\n";
         outputPoints();
 }
 

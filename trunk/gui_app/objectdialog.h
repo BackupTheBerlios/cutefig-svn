@@ -77,11 +77,6 @@ private:
         ArrowWidget* arrows_;
         QTextEdit* comment_;
         QSpinBox* depth_;
-
-// private slots:
-//         void changeStartArrow( const Arrow& a );
-//         void changeEndArrow( const Arrow& a );
-
 };
 
 #endif

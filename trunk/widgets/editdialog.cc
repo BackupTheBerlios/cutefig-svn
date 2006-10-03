@@ -90,7 +90,6 @@ void EditDialog::resetChanges()
 
 void EditDialog::noticeChange()
 {
-        qDebug() << __PRETTY_FUNCTION__ << blindForChanges_;
         if ( blindForChanges_ )
                 return;
 
@@ -113,6 +112,4 @@ void EditDialog::initialize()
 {
         setupInitialValues();
         blindForChanges_ = false;
-
-        qDebug() << __PRETTY_FUNCTION__ << this << blindForChanges_;
 }

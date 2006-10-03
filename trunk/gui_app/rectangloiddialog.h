@@ -1,7 +1,7 @@
  
 /*****************************************************************************
 **
-**  @version $Id: ellipsedialog.h 117 2006-08-21 13:54:16Z joh $
+**  @version $Id$
 **
 **  This file is part of CuteFig
 **
@@ -45,7 +45,7 @@ protected:
         QVBoxLayout* pageLayout() const { return pageLayout_; }
 
         QSlider* angleSlider() { return angleSlider_; }
-        
+
 private:
         QSlider* angleSlider_;
         QSpinBox* angleSpin_;
@@ -63,6 +63,9 @@ class RectangleDialog : public RectangloidDialog
 public:
         RectangleDialog( DrawObject* o, EditdialogAction* a, QWidget* parent = 0 );
 
+private slots:
+	void updateRadiiSpinBoxes( double v );
+	
 private:
         Rectangle* rectangle_;
 
