@@ -41,7 +41,7 @@ DrawObject::DrawObject( Figure* parent )
           figure_( parent ),
           stroke_( Qt::black ),
           depth_( 50 ),
-          points_( 1 ),
+          points_(),
           bRect_( 0,0,0,0 ),
           currentPointIndex_( 0 ),
           compoundParent_( 0 ),
@@ -69,6 +69,12 @@ DrawObject::DrawObject( const DrawObject* o )
 	updateEverything();
 }
 
+void DrawObject::appendPoint( const QPointF& p )
+{
+	points_ << p;
+}
+
+
 void DrawObject::move( const QPointF& d )
 {
         points_.translate( d.x(),d.y() );
@@ -76,10 +82,26 @@ void DrawObject::move( const QPointF& d )
         doSpecificPreparation();
 }
 
+void DrawObject::setCurrentPointIndex( int i )
+{
+	currentPointIndex_ = i;
+}
+
 bool DrawObject::pointSet( const QPointF & pos, Fig::PointFlags f )
 {
         if ( currentPointIndex_ < 0 )
                 return false;
+
+	int max = points_.size() - 1;
+	if ( currentPointIndex_ > max++ )
+		points_ << QPointF();
+
+	if ( currentPointIndex_ > max ) {
+		qDebug() << "*** BUG ***" << __PRETTY_FUNCTION__ << "point index out of range"
+			 << currentPointIndex_ << max;
+		currentPointIndex_ = max;
+	}
+	
         
         points_[currentPointIndex_] = pos;
 
@@ -96,7 +118,7 @@ bool DrawObject::pointSet( const QPointF & pos, Fig::PointFlags f )
 
 void DrawObject::cursorMove( const QPointF & pos )
 {
-        if ( currentPointIndex_ < 0 )
+        if ( currentPointIndex_ < 0 || currentPointIndex_ > points_.size()-1 )
                 return;
 
         points_[currentPointIndex_] = pos;
@@ -299,4 +321,6 @@ void DrawObject::updateEverything()
 	updateEverything_ = true;
 	update();
 }
+
+
 

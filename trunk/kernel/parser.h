@@ -85,7 +85,7 @@ private:
 
         QString objectComment_;
 
-        DrawObject *parseGenericData( int& npoints, QPolygonF*& pa );
+        DrawObject* parseGenericData();
 
         QPointF parsePoint();
         void parseResource( ResourceKey::Flags flag );

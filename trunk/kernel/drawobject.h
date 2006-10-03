@@ -220,15 +220,15 @@ public:
         void setComment( const QString& str ) { commentString_ = str; }
         QString comment() const { return commentString_; }
 
-        virtual void setCurrentPointIndex( int i ) { currentPointIndex_ = i; }
+        virtual void setCurrentPointIndex( int i );
         //!< Tells the object which point is to be edited.
         
         void setPoints( const QPolygonF& pa ) { points_ = pa; }
 
-        //! FIXME: returning handles to private member objects is "ineffective"
-        QPolygonF& points() { return points_; }
-        
+	//! Returns the control points of the object.
         const QPolygonF& points() const { return points_; }
+
+	void appendPoint( const QPointF& p );
 
         //! returns the central point of the object.
         virtual QPointF center() const { return points_.boundingRect().center(); }
@@ -287,7 +287,6 @@ public:
 
 	void update();
 	void updateEverything();
-	void updateImediatley();
 	
 	
         //! used to sort the DrawObjects according to their #depth_

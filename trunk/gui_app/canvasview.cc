@@ -313,13 +313,15 @@ void CanvasView::drawSelection( QPainter* p ) const
         QRectF r;
         foreach ( DrawObject* o, controler_->selection().objects() ) {
                 r = o->controlPointRect();
+		if ( r.isNull() )
+			continue;
+		
                 r = scaleMatrix_.mapRect( r );
 
-                foreach ( QPointF pt, Geom::boundingPoints( r ) ) 
-                        if ( !pt.isNull() ) {
-                                dr.moveCenter( pt );
-                                p->fillRect( dr, Qt::blue );
-                        }
+                foreach ( QPointF pt, Geom::boundingPoints( r ) ) {
+			dr.moveCenter( pt );
+			p->fillRect( dr, Qt::blue );
+		}
         }
 }
 

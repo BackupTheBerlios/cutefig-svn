@@ -228,11 +228,7 @@ QString Parser::parseResLibs( QTextStream& ts )
  */
 ObjectList Parser::parseLoop( bool parsingCompound )
 {
-        int npoints = 0;
-        int i = 0;
-        
-        QPolygonF* pa;
-        DrawObject* o = 0;
+	DrawObject* o = 0;
         ObjectList olist;
 
         while ( readLine() ) {
@@ -243,24 +239,24 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                                 continue;
                         }
                         QPointF p = parsePoint();
-                        if ( !p.isNull() )
-                                (*pa)[i++] = p;
-                        if ( npoints == i ) {
-                                o->setComment( objectComment_ );
-                                objectComment_ = QString();
-                                olist.push_back( o );
-                                o = 0;
-                        }
+			o->appendPoint( p );
                         continue;
                 }
                 else if ( o ) {
-                        parseError(wrongPointNumber.arg(i).arg(npoints), Discarding);
-                        delete o;
+			int np = o->points().size();
+			if ( o->points().size() < o->minPoints() ) {
+				parseError( notEnoughPoints
+					    .arg(o->objectKeyWord()).arg(np).arg(o->minPoints()),
+					    Discarding );
+				delete o;
+			} else {
+				olist << o;
+				o = 0;
+			}
                 }
 
                 if ( itemType_ == KWds::object() ) {
-                        o = parseGenericData( npoints, pa );
-                        i = 0;
+                        o = parseGenericData();
                         continue;
                 }
                 
@@ -286,7 +282,10 @@ ObjectList Parser::parseLoop( bool parsingCompound )
 
         if ( itemType_ != KWds::compound_end() && parsingCompound )
                 parseError( unexpectedEnd );
-        
+
+	if ( o )
+		olist << o;
+	
         return olist;
 }
 
@@ -406,12 +405,12 @@ QPointF Parser::parsePoint()
  *  to that DrawObject. If an error occurs the DrawObject is deleted
  *  if necessary and a null pointer is returned.
  */
-DrawObject * Parser::parseGenericData( int &npoints, QPolygonF*& pa )
+DrawObject * Parser::parseGenericData()
 {
         QString obType;
         Stroke stroke, fill;
         ResourceKey dashKey;
-        int depth;
+        int depth, npoints;
         Pen pen;
 
         stream_ >> obType >> npoints;
@@ -439,6 +438,9 @@ DrawObject * Parser::parseGenericData( int &npoints, QPolygonF*& pa )
                 return 0;
         }
 
+	o->setComment( objectComment_ );
+	objectComment_.clear();
+	
         if ( o->canHaveArrows() ) {
                 ResourceKey s, e;
                 stream_ >> s;
@@ -458,9 +460,6 @@ DrawObject * Parser::parseGenericData( int &npoints, QPolygonF*& pa )
         
 
         if ( npoints < o->minPoints() ) {
-                parseError( notEnoughPoints.arg(obType).arg(npoints).arg(o->minPoints()),
-                            Discarding );
-                delete o;
                 npoints = 0;
                 return 0;
         }
@@ -469,9 +468,6 @@ DrawObject * Parser::parseGenericData( int &npoints, QPolygonF*& pa )
         o->setStroke( stroke );
         o->setFill( fill );
         o->setDepth( depth );
-        
-        pa = &o->points();
-        pa->resize( npoints );
         
         return o;
 }               
