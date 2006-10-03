@@ -41,6 +41,7 @@ TextObject::TextObject( Figure* parent )
           cursor_( &doc_ ),
           textLayout_(),
           font_(),
+	  actualPoint_(),
           alignment_( Qt::AlignVCenter ),
           cursorVisible_( false )
 {
@@ -53,14 +54,11 @@ TextObject::TextObject( const TextObject* o )
           cursor_( &doc_ ),
           textLayout_(),
           font_( o->font_ ),
+	  actualPoint_( o->actualPoint_ ),
           alignment_( o->alignment_ ),
           cursorVisible_( false )
 {
         doc_.setHtml( o->doc_.toHtml() );
-}
-
-TextObject::~TextObject()
-{
 }
 
 void TextObject::outputToBackend( OutputBackend* ob ) const
@@ -76,7 +74,7 @@ bool TextObject::pointHits( const QPointF& p, qreal ) const
 void TextObject::draw( QPainter* p ) const
 {
         QPen op = p->pen();
-        p->setPen( QPen( stroke_.brush( bRect_ ), 0 ) );
+        p->setPen( QPen( stroke().brush( bRect_ ), 0 ) );
 
         doDraw( p );
 
@@ -167,8 +165,8 @@ void TextObject::setupRects()
 	typedef QList<QTextLayout::FormatRange>::iterator IT;
 	
 	for ( IT it = formatRanges.begin(); it != formatRanges.end(); ++it ) {
-		it->format.setTextOutline( QPen( stroke_.brush( bRect_ ), 1, Qt::SolidLine ) );
-		it->format.setForeground( fill_.brush( bRect_ ) );
+		it->format.setTextOutline( QPen( stroke().brush( bRect_ ), 1, Qt::SolidLine ) );
+		it->format.setForeground( fill().brush( bRect_ ) );
 	}
 	
         textLayout_.setAdditionalFormats( formatRanges );

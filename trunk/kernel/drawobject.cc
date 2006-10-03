@@ -38,35 +38,43 @@
 
 DrawObject::DrawObject( Figure* parent )
         : QObject( parent ),
-          figure_( parent ),
-          stroke_( Qt::black ),
-          depth_( 50 ),
+	  painterPath_(),
           points_(),
-          bRect_( 0,0,0,0 ),
-          currentPointIndex_( 0 ),
-          compoundParent_( 0 ),
+          bRect_(),
+	  cRect_(),
+          figure_( parent ),
+	  pen_(),
+          stroke_( Qt::black ),
+	  fill_(),
+          depth_( 50 ),
           startArrow_(),
           endArrow_(),
+	  commentString_(),
+          currentPointIndex_( 0 ),
+          compoundParent_( 0 ),
 	  updateEverything_( false )
 {
 }
 
 DrawObject::DrawObject( const DrawObject* o )
         : QObject( o->parent() ),
-          figure_( o->figure_ ),
+	  painterPath_( o->painterPath_ ),
+          points_( o->points_ ),
+	  bRect_( o->bRect_ ),
+	  cRect_( o->cRect_ ),
+	  figure_( o->figure_ ),
           pen_( o->pen_ ),
           stroke_( o->stroke_ ),
           fill_( o->fill_ ),
           depth_( o->depth_ ),
-          commentString_( o->commentString_ ),
-          points_( o->points_ ),
-          currentPointIndex_( -1 ),
-          compoundParent_( 0 ),
           startArrow_( o->startArrow_ ),
           endArrow_( o->endArrow_ ),
-	  updateEverything_( true )
+          commentString_( o->commentString_ ),
+          currentPointIndex_( -1 ),
+          compoundParent_( 0 ),
+	  updateEverything_( false )
 {
-	updateEverything();
+//	updateEverything();
 }
 
 void DrawObject::appendPoint( const QPointF& p )
@@ -120,6 +128,8 @@ void DrawObject::cursorMove( const QPointF & pos )
 {
         if ( currentPointIndex_ < 0 || currentPointIndex_ > points_.size()-1 )
                 return;
+
+	cursorMovePrivate( pos );
 
         points_[currentPointIndex_] = pos;
 

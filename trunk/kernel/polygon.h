@@ -33,7 +33,6 @@ class Polygon : public Polyline
         DRAW_OBJECT( "polygon", "&Polygon" );
 public:
         explicit Polygon( Figure* parent =0 );
-        ~Polygon() { };
 
         Polygon( const Polygon* o );
 

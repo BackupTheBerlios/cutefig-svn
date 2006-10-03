@@ -110,7 +110,7 @@ void BezierSpline::setupPainterPath()
                 painterPath_.addPath( pf.currentPath() );
 }
 
-void BezierSpline::cursorMove( const QPointF& pos )
+void BezierSpline::cursorMovePrivate( const QPointF& pos )
 {
         QPointF diff = pos - points_[currentPointIndex()];
         
@@ -120,8 +120,6 @@ void BezierSpline::cursorMove( const QPointF& pos )
                 points_[currentPointIndex()+1] += diff;
                 points_[currentPointIndex()-1] += diff;
         }
-        
-        DrawObject::cursorMove( pos );
 }
 
 

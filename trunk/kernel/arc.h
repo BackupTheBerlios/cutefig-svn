@@ -70,6 +70,11 @@ protected:
 //        virtual QPointF endAngle();
         
 private:
+	QPointF arrowAngle( int angle );
+
+        void calcCenterParameters();
+        void calcEndPointParameters();
+
         bool isCircle_;
 
         // common parameters
@@ -87,10 +92,6 @@ private:
         int direction_;
 
 
-        QPointF arrowAngle( int angle );
-
-        void calcCenterParameters();
-        void calcEndPointParameters();
         
         QMatrix rotation_;
 //         void calcDirection( int& startAngle, int& sweepLength, int& direction ) const;

@@ -50,8 +50,10 @@ class ObjectDialog : public EditDialog
 public:
         ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent=0 );
 
+	virtual void accept();
+	
 protected:
-        QTabWidget* tabWidget() { return tabWidget_; }
+	QTabWidget* tabWidget() { return tabWidget_; }
         DrawObject* drawObject() { return drawObject_; }
         PenWidget*  penWidget() { return penWidget(); }        
         

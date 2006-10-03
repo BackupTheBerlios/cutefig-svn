@@ -48,13 +48,13 @@ Rectangle::Rectangle( const Rectangle* r )
 
 void Rectangle::setXCornerRad( double r )
 {
-	xCornerRad_ = r * figure_->unit();
+	xCornerRad_ = r * figure()->unit();
 	update();
 }
 
 void Rectangle::setYCornerRad( double r )
 {
-	yCornerRad_ = r * figure_->unit();
+	yCornerRad_ = r * figure()->unit();
 	update();
 }
 
@@ -63,7 +63,7 @@ double Rectangle::xCornerRad() const
         if ( !roundedCorners_ )
 		return -1.0;
 
-	return xCornerRad_/figure_->unit();
+	return xCornerRad_/figure()->unit();
 }
 
 double Rectangle::yCornerRad() const
@@ -72,9 +72,9 @@ double Rectangle::yCornerRad() const
 		return -1.0;
 
 	if ( equalCornerRadii_ )
-		return xCornerRad_/figure_->unit();
+		return xCornerRad_/figure()->unit();
 
-	return yCornerRad_/figure_->unit();
+	return yCornerRad_/figure()->unit();
 }
 
 double Rectangle::maxXCornerRad() const
@@ -84,7 +84,7 @@ double Rectangle::maxXCornerRad() const
 	if ( equalCornerRadii_ )
 		max = qMin( max, std::fabs( points_[0].y() - points_[1].y() ) );
 
-	return max / figure_->unit() / 2;
+	return max / figure()->unit() / 2;
 }	
 
 double Rectangle::maxYCornerRad() const
@@ -94,7 +94,7 @@ double Rectangle::maxYCornerRad() const
 	if ( equalCornerRadii_ )
 		max = qMin( max, std::fabs( points_[0].x() - points_[1].x() ) );
 
-	return max / figure_->unit() / 2;
+	return max / figure()->unit() / 2;
 }
 
 bool Rectangle::hasRoundedCorners() const
@@ -129,8 +129,8 @@ void Rectangle::setEqualRoundedCorners( bool eq )
 
 bool Rectangle::pointHitsOutline( const QPointF& p, qreal tol ) const
 {
-        const double c = cos( -angle_ );
-        const double s = sin( -angle_ );
+        const double c = cos( -angleRad() );
+        const double s = sin( -angleRad() );
 
         const QPointF h(  w2_*c, w2_*s );
         const QPointF v( -h2_*s, h2_*c );

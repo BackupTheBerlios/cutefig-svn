@@ -34,7 +34,6 @@ class Polyline : public DrawObject
 public:
         explicit Polyline( Figure * parent =0 );
         Polyline( const Polyline* o );
-        ~Polyline() { };
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
         virtual void outputToBackend( OutputBackend* ob ) const;

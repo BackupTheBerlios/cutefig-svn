@@ -51,7 +51,8 @@ Compound::Compound( const ObjectList& l, Figure* parent )
 }
 
 Compound::Compound( const Compound* c )
-        : DrawObject( c )
+        : DrawObject( c ),
+	  childObjects_()
 {
         foreach ( DrawObject* o, c->childObjects_ ) {
                 DrawObject* newObject = o->copy();

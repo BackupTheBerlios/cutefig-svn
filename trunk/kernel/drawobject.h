@@ -177,7 +177,7 @@ public:
         const DrawObject* ancestor() const;
 
         //! retrurns a reference to the figure
-        const Figure& figure() const { return *figure_; }
+        const Figure* figure() const { return figure_; }
 
         //! returns the minimum number of points the objetct need to be defined.
         virtual int minPoints() const { return 2; }
@@ -199,7 +199,8 @@ public:
 
         
         const Pen& pen() const { return pen_; }
-        //! sets the #pen_
+
+	//! sets the #pen_
         void setPen( const Pen& p );
         
         const Stroke& stroke() const { return stroke_; }
@@ -260,7 +261,7 @@ public:
         bool pointSet( const QPointF & pos, Fig::PointFlags f = Fig::Normal ); 
 
         //! moves the point just being edited tentatively.
-        virtual void cursorMove( const QPointF & pos );
+        void cursorMove( const QPointF & pos );
 
         //! moves the object by dx and dy
         virtual void move( const QPointF& d );
@@ -300,7 +301,9 @@ public:
 protected:
         //! not meant to be called manually but by #DRAW_OBJECT
         template<typename OT> DrawObject* doCopy( const OT* orig ) const { return new OT( orig ); }
-        
+
+	virtual void cursorMovePrivate( const QPointF& ) {}
+	
         //! supposed to return the index of next point to be edited ot -1
         virtual int nextPointIndex() = 0;
 
@@ -335,7 +338,15 @@ protected:
 
 	bool event( QEvent* e );
         
-        //! the Figure containing the DrawObject
+
+        QPainterPath painterPath_;
+        QPolygonF points_;
+
+        QRectF bRect_, cRect_;
+
+
+private:
+	//! the Figure containing the DrawObject
         Figure* figure_;
 
         //! the Pen of the object
@@ -354,23 +365,16 @@ protected:
          */
         int depth_;
 
-        //! the comment of an object (no relevance to drawing)
+        Arrow startArrow_;
+        Arrow endArrow_;
+
+	//! the comment of an object (no relevance to drawing)
         QString commentString_;
 
-        QPainterPath painterPath_;
-        QPolygonF points_;
-        QPointF centerPoint_;
-
-        QRectF bRect_, cRect_;
-
-
-private:
         int currentPointIndex_;
         void setCompoundParent( Compound* p );
         Compound* compoundParent_;
 
-        Arrow startArrow_;
-        Arrow endArrow_;
 
 	bool updateEverything_;
 };

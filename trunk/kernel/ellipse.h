@@ -39,7 +39,6 @@ class Ellipse : public Rectangloid
 public:
         explicit Ellipse( Figure* parent=0 );
         Ellipse( const Ellipse *o );
-        ~Ellipse() {}
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;
 
@@ -55,8 +54,12 @@ public:
 private:
         bool specByRadii_, circle_;
 
+
+	//! The two focal points are needed for internal stuff in pointHitsOutline().
         QPointF fp1_, fp2_;
-        qreal rad_d_;
+
+	//! the ellipse radius
+        double rad_d_;
         
         void passPointFlag_private( Fig::PointFlags f );
         

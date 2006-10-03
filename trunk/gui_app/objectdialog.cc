@@ -54,9 +54,8 @@ ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent 
 
         QGridLayout* layout = new QGridLayout( page );
     
-        // final setup
 
-        penWidget_ = new PenWidget( tr("&Pen"), page );
+	penWidget_ = new PenWidget( tr("&Pen"), page );
         layout->addWidget( penWidget_, 0,0 );
         connect( penWidget_, SIGNAL( penChanged() ), this, SLOT( noticeChange() ) );
 
@@ -92,6 +91,12 @@ ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent 
 	connect( comment_, SIGNAL( textChanged() ), this, SLOT( noticeChange() ) );        
 } 
 
+
+void ObjectDialog::accept()
+{
+	drawObject_->updateEverything();
+	EditDialog::accept();
+}
 
 
 void ObjectDialog::doReset()

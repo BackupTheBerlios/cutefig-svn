@@ -54,14 +54,7 @@ public slots:
         void setAngle( int a );
 
 protected:
-        double angle_;
-        
-        QPointF center_;
-        qreal w_, h_, w2_, h2_;
-
-        QMatrix rotation_;
-
-        QRectF oldRect_;
+	double angleRad() const { return angle_; }
 
         void setupPainterPath();
         void setupRects();
@@ -73,10 +66,19 @@ protected:
         virtual void setupWidthAndHeight() = 0;
         virtual void addPath() = 0;
 
+        QPointF center_;
+        qreal w_, h_, w2_, h2_;
+
 //        static const double rad = 180/M_PI;
         
 private:
+	double angle_;
+        
+        QMatrix rotation_;
+
         bool hasAngle_;
+	QRectF oldRect_;
+
         void calcAngle();
 
 

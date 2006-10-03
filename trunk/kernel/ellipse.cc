@@ -35,14 +35,18 @@
 Ellipse::Ellipse( Figure* parent ) 
         : Rectangloid( parent ),
           specByRadii_( false ),
-          circle_( false )
+          circle_( false ),
+	  fp1_(), fp2_(),
+	  rad_d_()
 {
 }
 
-Ellipse::Ellipse( const Ellipse *o ) 
+Ellipse::Ellipse( const Ellipse* o ) 
         : Rectangloid( o ),
           specByRadii_( o->specByRadii_ ),
-          circle_( o->circle_ )
+          circle_( o->circle_ ),
+	  fp1_( o->fp1_ ), fp2_( o->fp2_ ),
+	  rad_d_( o->rad_d_ )
 {
 }
 
@@ -70,9 +74,9 @@ void Ellipse::addPath()
 
 void Ellipse::doSpecificPreparation()
 {
-        qreal angleShift = 0;
+        double angleShift = 0;
         
-        qreal fpdist = w2_*w2_ - h2_*h2_;
+        double fpdist = w2_*w2_ - h2_*h2_;
         if ( fpdist < 0 ) {
                 angleShift = M_PI_2;
                 fpdist = -fpdist;
@@ -82,7 +86,7 @@ void Ellipse::doSpecificPreparation()
 
         fpdist = sqrt( fpdist );
 
-        QPointF d( fpdist * cos( -angle_ + angleShift ), fpdist * sin( -angle_ + angleShift ) );
+        QPointF d( fpdist * cos(-angleRad()+angleShift), fpdist * sin(-angleRad()+angleShift) );
 
         fp1_ = center_ + d;
         fp2_ = center_ - d;
@@ -90,9 +94,9 @@ void Ellipse::doSpecificPreparation()
 
 bool Ellipse::pointHitsOutline( const QPointF& p, qreal tolerance ) const
 {
-        qreal d = Geom::distance( p, fp1_ ) + Geom::distance( p, fp2_ );
+        double d = Geom::distance( p, fp1_ ) + Geom::distance( p, fp2_ );
         
-        if ( fill_ )
+        if ( fill() )
                 return d <= rad_d_; 
 
         d -= rad_d_;

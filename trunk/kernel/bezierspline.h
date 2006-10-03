@@ -88,8 +88,6 @@ public:
 
         virtual int minPoints() const { return 3; }
         
-        virtual void cursorMove( const QPointF& pos );
-        
         virtual void outputToBackend( OutputBackend* ob ) const;
 
         virtual void setCurrentPointIndex( int i );
@@ -97,13 +95,11 @@ public:
         void drawMetaData( QPainter* p ) const;
         
 protected:
+	virtual void cursorMovePrivate( const QPointF& pos );
         virtual void setupPainterPath();
-
         virtual void passPointFlag( Fig::PointFlags f );
         virtual int nextPointIndex();
 
-//        virtual QPointF startAngle() const;
-//        virtual QPointF endAngle() const;
         
 private:
         bool finished_;

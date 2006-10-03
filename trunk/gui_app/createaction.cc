@@ -103,7 +103,7 @@ template<> void TCreateAction<Ellipse>::changeStatusClick()
 template<> void TCreateAction<Ellipse>::changeStatusMove() 
 {
         QRectF r = drawObject()->controlPointRect();
-        double u = drawObject()->figure().unit();
+        double u = drawObject()->figure()->unit();
         QString s;
         QTextStream ts( &s );
         ts.setRealNumberPrecision( 2 );
@@ -144,7 +144,7 @@ void PolygonlineMessages::move( ActionStatus& s, const DrawObject& o )
         QPolygonF::const_iterator it = o.points().constEnd();
         QPointF d = *--it;
         d -= *--it;
-        d /= o.figure().unit();
+        d /= o.figure()->unit();
         double angle = -atan2( d.y(), d.x() ) * Geom::rad;
 
         QString m;

@@ -59,7 +59,6 @@ class TextObject : public DrawObject
 public:
         explicit TextObject( Figure* parent = 0 );
         TextObject( const TextObject* o );
-        ~TextObject();
 
         //! it is handy to make the parsing function friend.
         friend DrawObject* TObjectHandler<TextObject>::parseObject( std::istream&, Figure* fig );

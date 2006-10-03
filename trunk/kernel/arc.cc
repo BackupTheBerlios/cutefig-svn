@@ -35,6 +35,14 @@
 Arc::Arc( Figure* parent )
         : DrawObject( parent ),
           isCircle_( true ),
+	  rectSize_(),
+	  angle_(),
+	  arcFlag_(),
+	  sweepFlag_(),
+	  center_(),
+	  startAngle_(),
+	  sweepLength_(),
+	  direction_(),
           rotation_()
 {
 }

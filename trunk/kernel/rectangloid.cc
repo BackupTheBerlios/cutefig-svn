@@ -28,14 +28,20 @@
 
 Rectangloid::Rectangloid( Figure* parent )
         : DrawObject( parent ),
-          angle_( 0.0 ),
+	  center_(),
+	  w_( 0 ), h_( 0 ), w2_( 0 ), h2_( 0 ),
+	  angle_( 0.0 ),
+	  rotation_(),
           hasAngle_( false )
 {   
 }
 
 Rectangloid::Rectangloid( const Rectangloid* r )
         : DrawObject( r ),
+	  center_( r->center_ ),
+	  w_( r->w_ ), h_( r->h_ ), w2_( r->w2_ ), h2_( r->h2_ ),
           angle_( r->angle_ ),
+	  rotation_( r->rotation_ ),
           hasAngle_( false )
 {
 }
@@ -70,7 +76,7 @@ void Rectangloid::setupRects()
         double h = ws + hc;
 
         cRect_ = Geom::centerRect( center_, QSizeF( w,h ) );
-        bRect_ = Geom::centerRect( center_, QSizeF( w+pen_.width(), h+pen_.width() ) );
+        bRect_ = Geom::centerRect( center_, QSizeF( w+pen().width(), h+pen().width() ) );
 }
 
 void Rectangloid::setupPainterPath()
