@@ -24,7 +24,7 @@
 #ifndef pixoutdialog_h
 #define pixoutdialog_h
 
-#include "exportdialog.h"
+#include "editdialog.h"
 #include "filterfactory.h"
 #include "pixoutput.h"
 
@@ -33,11 +33,14 @@
 class QSpinBox;
 class QDoubleSpinBox;
 class QCheckBox;
+class ChainButton;
+class QSlider;
+
 
 template<typename Resource> class ResourceButton;
 typedef ResourceButton<QColor> ColorButton;
 
-class PixoutDialog : public ExportDialog
+class PixoutDialog : public EditDialog
 {
         Q_OBJECT
 public:
@@ -48,28 +51,30 @@ private:
         PIXOutput* filter_;
         bool keepAspectRatio_;
         double aspectRatio_;
-        QSize figSize_;
+        QSizeF figSize_;
 
-        QSpinBox *xres, *yres;
-        QDoubleSpinBox *scale;
-        QCheckBox *keepAspect;
-        ColorButton* bgColor;
-        
-private slots:
-        void setXres( int x );
-        void setYres( int y );
-        void setScale( double s );
-        void keepAspectRatio( int keep );
-        void changeBackground();
-        void setGamma( double g );
-        void setQuality( int q );
-        
+        QSpinBox *xres_, *yres_;
+        QDoubleSpinBox *scale_;
+        ChainButton *keepAspect_;
+        ColorButton* bgColor_;
+	QDoubleSpinBox* gamma_;
+	QSlider* quality_;
+	QCheckBox* withPaper_;
+
+	void setupInitialValues();
+	void commitChanges();
+	void doReset() {}
+
+	void updateWidgets();
+	void applyChanges();
+
+	void calcFigSize( bool withPaper );
 };
 
 class PixFilterFactory : public FilterFactory
 {
 public:
-        ExportDialog* dialog( ExportFilter* filter, QWidget* parent=0 ) {
+        PixoutDialog* dialog( ExportFilter* filter, QWidget* parent=0 ) {
                 return new PixoutDialog( (PIXOutput*) filter, parent );
         }
 };

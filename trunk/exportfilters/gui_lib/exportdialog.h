@@ -27,18 +27,12 @@
 
 #include <QDialog>
 
-class QVBoxLayout;
 
 class ExportDialog : public QDialog
 {
         Q_OBJECT
 public:
         ExportDialog( QWidget* parent = 0 );
-        ~ExportDialog() {}
-
-protected:
-        void setupStandardButtons();
-        QVBoxLayout* topLayout_;
 };
 
 #endif

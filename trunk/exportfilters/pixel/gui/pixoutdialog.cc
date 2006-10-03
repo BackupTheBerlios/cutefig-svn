@@ -25,6 +25,7 @@
 #include "pixoutdialog.h"
 #include "figure.h"
 #include "colorbutton.h"
+#include "chainbutton.h"
 #include "layouter.h"
 
 #include <QtGui>
@@ -32,180 +33,175 @@
 #include <limits>
 
 PixoutDialog::PixoutDialog( PIXOutput* filter, QWidget* parent )
-        : ExportDialog( parent ),
+        : EditDialog( parent ),
           filter_( filter ),
           keepAspectRatio_( true ),
           aspectRatio_( 1 )
 {
-        const Figure* figure = filter->figure_;
-        QSizeF figSizeF = figure->boundingRect().size();
-        figSize_ = figSizeF.toSize();
-        
-        aspectRatio_ = figSizeF.height() / figSizeF.width();
-        
         setWindowTitle( tr("CuteFig: export to a bitmap graphics:") );
+
+	QGridLayout* mainLayout = new QGridLayout;
+	
+        QGroupBox* sizeGroup = new QGroupBox( tr("Size") );
+	QHBoxLayout* sizeLayout = new QHBoxLayout( sizeGroup );
+
+        xres_ = new QSpinBox;
+        xres_->setRange( 0, std::numeric_limits<int>::max() );
+        xres_->setSingleStep( 1 );
         
-        QGridLayout* mainLayout = new QGridLayout();
+        yres_ = new QSpinBox;
+        yres_->setRange( 0, std::numeric_limits<int>::max()  );
+        yres_->setSingleStep( 1 );
 
-        QGroupBox* sizeGroup = new QGroupBox( tr("Size"), this );
-        QGridLayout* sizeLayout = new QGridLayout( sizeGroup );
+	QVBoxLayout* whlt = new QVBoxLayout;
+	Layouter( new QHBoxLayout ).labeledWidget( tr("&Width"), xres_ ).finishTo( whlt );
+	Layouter( new QHBoxLayout ).labeledWidget( tr("&Height"), yres_ ).finishTo( whlt );
+	sizeLayout->addLayout( whlt );
+	
+        keepAspect_ = new ChainButton;
+	sizeLayout->addWidget( keepAspect_ );
+	
+        scale_ = new QDoubleSpinBox;
+        scale_->setSuffix(" %");
+        scale_->setRange( std::numeric_limits<double>::min(), std::numeric_limits<double>::max() );
+        scale_->setSingleStep( 10 );
 
-        xres = new QSpinBox( sizeGroup );
-        xres->setRange( 0, std::numeric_limits<int>::max() );
-        xres->setValue( figSize_.width() );
-        xres->setSingleStep( 1 );
-        QLabel* xresLabel = new QLabel( tr("&Width"), sizeGroup );
-        xresLabel->setBuddy( xres );
-        sizeLayout->addWidget( xresLabel, 0,0 );
-        sizeLayout->addWidget( xres, 0, 1 );
+	Layouter( new QHBoxLayout ).labeledWidget( tr("&Scale"), scale_ ).finishTo( sizeLayout );
 
-        sizeLayout->addItem( new QSpacerItem( 20, 0 ), 0, 2 );
-        
-        yres = new QSpinBox( sizeGroup );
-        yres->setRange( 0, std::numeric_limits<int>::max()  );
-        yres->setValue( figSize_.height() );
-        yres->setSingleStep( 1 );
-        QLabel* yresLabel = new QLabel( tr("&Height"), sizeGroup );
-        yresLabel->setBuddy( yres );
-        sizeLayout->addWidget( yresLabel, 0,3 );
-        sizeLayout->addWidget( yres, 0, 4 );
-
-        scale = new QDoubleSpinBox( sizeGroup );
-        scale->setSuffix(" %");
-        scale->setRange( std::numeric_limits<double>::min(), std::numeric_limits<double>::max() );
-        scale->setValue( 100.0 );
-        scale->setSingleStep( 10 );
-        QLabel* scaleLabel = new QLabel( tr("&Scale"), sizeGroup );
-        scaleLabel->setBuddy( scale );
-        sizeLayout->addWidget( scaleLabel, 1, 0 );
-        sizeLayout->addWidget( scale, 1, 1 );
-
-        keepAspect = new QCheckBox( tr("Keep &aspect ratio") );
-        keepAspect->setCheckState( Qt::Checked );
-        sizeLayout->addWidget( keepAspect, 1,3, 1,2 );
-
-        QColor bg( Qt::white );
+        mainLayout->addWidget( sizeGroup, 0,0, 1,3 );
+	mainLayout->addItem( new QSpacerItem( 3*layout()->spacing(), 0 ), 1,1 );
+	
+	QColor bg( Qt::white );
         bg.setAlpha( 0 );
-        bgColor = new ColorButton( bg, this );
+        bgColor_ = new ColorButton( bg );
+	Layouter( new QHBoxLayout )
+		.labeledWidget( tr("&Background color"), bgColor_ )
+		.finishTo( mainLayout, 1,0 );
 
-        Layouter( new QHBoxLayout() )
-                .labeledWidget( tr("&Background color"), bgColor )
-                .finishTo( mainLayout, 2,0 );
+	withPaper_ = new QCheckBox( tr("Paint with &paper") );
+	mainLayout->addWidget( withPaper_, 1,2 );
 
+        gamma_ = new QDoubleSpinBox( this );
+        gamma_->setRange( 0, 10 );
+        gamma_->setSingleStep( 0.1 );
+        Layouter( new QHBoxLayout )
+                .labeledWidget( tr("&Gamma_ value"), gamma_ )
+		.finishTo( mainLayout, 2,0 );
 
-        QDoubleSpinBox* gamma = new QDoubleSpinBox( this );
-        gamma->setRange( 0, 10 );
-        gamma->setSingleStep( 0.1 );
-        gamma->setValue( 1 );
-
-        QSlider* quality = new QSlider( Qt::Horizontal, this );
-        quality->setRange( 0, 100 );
-        quality->setValue( 100 );
-
-        Layouter( new QHBoxLayout() )
-                .labeledWidget( tr("&Gamma value"), gamma )
-                .stretch()
-                .labeledWidget( tr("&Quality"), quality )
-                .finishTo( mainLayout, 4, 0 );
+        quality_ = new QSlider( Qt::Horizontal, this );
+        quality_->setRange( 0, 100 );
+	Layouter( new QHBoxLayout )
+                .labeledWidget( tr("&Quality_"), quality_ )
+                .finishTo( mainLayout, 2,2 );
         
-
-        mainLayout->addWidget( sizeGroup, 0,0 );
-        mainLayout->setRowMinimumHeight( 1, 6 );
-        mainLayout->setRowMinimumHeight( 3, 6 );
-        
-        connect( xres, SIGNAL( valueChanged( int ) ), this, SLOT( setXres( int ) ) );
-        connect( yres, SIGNAL( valueChanged( int ) ), this, SLOT( setYres( int ) ) );
-        connect( scale, SIGNAL( valueChanged( double ) ), this, SLOT( setScale( double ) ) );
-        connect( keepAspect, SIGNAL( stateChanged( int ) ), 
-                 this, SLOT( keepAspectRatio( int ) ) );
-        connect( bgColor, SIGNAL( resourceChanged() ), this, SLOT( changeBackground() ) );
-        connect( gamma, SIGNAL( valueChanged(double) ), this, SLOT( setGamma(double) ) );
-        connect( quality, SIGNAL( valueChanged(int) ), this, SLOT( setQuality(int) ) ); 
-        topLayout_->addItem( mainLayout );
-        setupStandardButtons();
-}
-
-void setValue( QSpinBox* sb, int value )
-{
-        sb->blockSignals( true );
-        sb->setValue( value );
-        sb->blockSignals( false );
-}
-
-void setValue( QDoubleSpinBox* sb, double value )
-{
-        sb->blockSignals( true );
-        sb->setValue( value );
-        sb->blockSignals( false );
+        connect( xres_,       SIGNAL( valueChanged(int) ),    this, SLOT( noticeChange() ) );
+        connect( yres_,       SIGNAL( valueChanged(int) ),    this, SLOT( noticeChange() ) );
+        connect( scale_,      SIGNAL( valueChanged(double) ), this, SLOT( noticeChange() ) );
+        connect( keepAspect_, SIGNAL( toggled(bool) ),        this, SLOT( noticeChange() ) );
+        connect( bgColor_,    SIGNAL( resourceChanged() ),    this, SLOT( noticeChange() ) );
+	connect( withPaper_,  SIGNAL( toggled(bool) ),        this, SLOT( noticeChange() ) );
+        connect( gamma_,      SIGNAL( valueChanged(double) ), this, SLOT( noticeChange() ) );
+        connect( quality_,    SIGNAL( valueChanged(int) ),    this, SLOT( noticeChange() ) );
+	
+        takeLayout( mainLayout );
 }
 
 
-void PixoutDialog::setXres( int x )
+void PixoutDialog::updateWidgets()
 {
-        if ( keepAspect->isChecked() ) {
-                int y = qRound( x * aspectRatio_ );
-                if ( y <= 0 ) {
-                        setValue( xres, qRound(yres->value() / aspectRatio_) );
-                        return;
-                }
-                setValue( yres, y );
-                filter_->setYres( y );
-                setValue( scale, 100 * x/figSize_.width() );
-        }
-        filter_->setXres( x );
+	if ( sender() == withPaper_ ) {
+		bool wp = withPaper_->isChecked();
+		calcFigSize( wp );
+
+		double s = scale_->value() / 100;
+		xres_->setValue( qRound( s * figSize_.width() ) );
+		yres_->setValue( qRound( s * figSize_.height() ) );
+	}
+	
+		
+	bool keepAR = keepAspect_->isChecked();;
+	
+	if ( sender() == keepAspect_ ) {
+		scale_->setEnabled( keepAR );
+		yres_->setValue( qRound( (double)xres_->value() * aspectRatio_ ) );
+		scale_->setValue( (double)xres_->value() / figSize_.width() * 100 );
+	}
+	
+	if ( keepAR ) {
+		if ( sender() == xres_ ) {
+			double y = (double)xres_->value() * aspectRatio_;
+			if ( y > 1 ) {
+				yres_->setValue( qRound(y) );
+				scale_->setValue( qRound(100 * y/figSize_.height()) );
+			} else 
+				xres_->setValue( qRound( (double)yres_->value() / aspectRatio_) );
+		} else if ( sender() == yres_ ) {
+			double x = yres_->value() / aspectRatio_;
+			if ( x > 1 ) {
+				xres_->setValue( qRound(x) );
+				scale_->setValue( qRound(100 * x/figSize_.width()) );
+			} else
+				yres_->setValue( qRound( (double)xres_->value() * aspectRatio_) );
+		} else if ( sender() == scale_ ) {
+			double s = scale_->value() / 100;
+			double x = s * figSize_.width();
+			double y = s * figSize_.height();
+
+			if ( x > 1 && y > 1 ) {
+				xres_->setValue( qRound(x) );
+				yres_->setValue( qRound(y) );
+			} else
+				scale_->setValue( (double)xres_->value()/figSize_.width() * 100 );
+		}
+	}    
 }
 
-void PixoutDialog::setYres( int y )
+void PixoutDialog::applyChanges()
 {
-        if ( keepAspect->isChecked() ) {
-                int x = qRound( y / aspectRatio_ );
-                if ( x <= 0 ) {
-                        setValue( yres, qRound(xres->value() * aspectRatio_) );
-                        return;
-                }
-                xres->setValue( x );
-                filter_->setXres( x );
-                setValue( scale, 100 * y/figSize_.height() );
-        }
-        filter_->setYres( y );
+	filter_->setXres( xres_->value() );
+	filter_->setYres( yres_->value() );
+	filter_->setBackground( bgColor_->getResource() );
+	filter_->setGamma( gamma_->value() );
+	filter_->setQuality( quality_->value() );
+	filter_->setWithPaper( withPaper_->isChecked() );    
+}
+
+void PixoutDialog::commitChanges()
+{
+        updateWidgets();
+	applyChanges();
 }
 
 
-void PixoutDialog::setScale( double s )
+void PixoutDialog::setupInitialValues()
 {
-        s /= 100;
-        int x = qRound( s * figSize_.width() );
-        int y = qRound( s * figSize_.height() );
+	calcFigSize( false );
+	
+        xres_->setValue( qRound( figSize_.width() ) );
+        yres_->setValue( qRound( figSize_.height() ) );
+        scale_->setValue( 100.0 );
+	scale_->setEnabled( true );
+        keepAspect_->setChecked( true );
 
-        if ( x < 0 && y < 0 ) {
-                setValue( scale, xres->value() / figSize_.width() * 100 );
-                return;
-        }
-        
-        setValue( xres, x );
-        setValue( yres, y );
-        
-        filter_->setXres( x );
-        filter_->setYres( y );
+	QColor bg( Qt::white );
+        bg.setAlpha( 0 );
+	bgColor_->setResource( bg );
+	withPaper_->setChecked( false );
+	
+        gamma_->setValue( 1 );
+        quality_->setValue( 100 );
+
+	applyChanges();
 }
 
-void PixoutDialog::keepAspectRatio( int keep )
+void PixoutDialog::calcFigSize( bool withPaper )
 {
-        scale->setEnabled( keep );
-        keepAspectRatio_ = keep;
-}
+        const Figure* fig = filter_->figure_;
 
-void PixoutDialog::changeBackground()
-{
-        filter_->setBackground( bgColor->getResource() );
-}
-
-void PixoutDialog::setGamma( double g )
-{
-        filter_->setGamma( g );
-}
-
-void PixoutDialog::setQuality( int q )
-{
-        filter_->setQuality( q );
+	if ( withPaper )
+		figSize_ = fig->paper().size();
+	else
+		figSize_ = fig->boundingRect().size();
+	
+        aspectRatio_ = figSize_.height() / figSize_.width();	
 }

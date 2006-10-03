@@ -15,6 +15,7 @@ HEADERS = paintutils.h \
           layouter.h \
           resourcebutton.h \
           colorbutton.h \
+          chainbutton.h \
           fontbutton.h \
           fontwidget.h \
           resourceiconengine.h \
@@ -39,6 +40,7 @@ HEADERS = paintutils.h \
 
 SOURCES = paintutils.cc \
           layouter.cc \
+          chainbutton.cc \
           fontbutton.cc \
           fontwidget.cc \
           resourceiconengine.cc \

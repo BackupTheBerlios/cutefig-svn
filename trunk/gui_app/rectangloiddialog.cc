@@ -26,7 +26,7 @@
 #include "ellipse.h"
 #include "rectangle.h"
 #include "layouter.h"
-#include "figure.h"
+#include "chainbutton.h"
 
 #include <QtGui>
 
@@ -147,7 +147,7 @@ RectangleDialog::RectangleDialog( DrawObject* o, EditdialogAction* a, QWidget* p
         yCornerRadius_ = new QDoubleSpinBox;
 	yCornerRadius_->setSingleStep( 0.1 );
 	yCornerRadius_->setMinimum( 0.0 );
-        equalCornerRadii_ = new QPushButton( "chain" );
+        equalCornerRadii_ = new ChainButton;
         equalCornerRadii_->setCheckable( true );
         
         Layouter( new QHBoxLayout( corners ) )
@@ -181,11 +181,11 @@ void RectangleDialog::commitChangesPrivate()
         
         if ( rc ) {
 		bool eq = equalCornerRadii_->isChecked();
-// 		if ( eq )
-// 			if ( sender() == xCornerRadius_ )
-// 				yCornerRadius_->setValue( xCornerRadius_->value() );
-// 			else if ( sender() == yCornerRadius_ )
-// 				xCornerRadius_->setValue( yCornerRadius_->value() ); 	
+ 		if ( eq )
+ 			if ( sender() == xCornerRadius_ )
+ 				yCornerRadius_->setValue( xCornerRadius_->value() );
+ 			else if ( sender() == yCornerRadius_ )
+ 				xCornerRadius_->setValue( yCornerRadius_->value() ); 	
 		
                 qDebug() << "setting radii" << xCornerRadius_->value() << yCornerRadius_->value();
                 rectangle_->setXCornerRad( xCornerRadius_->value() );

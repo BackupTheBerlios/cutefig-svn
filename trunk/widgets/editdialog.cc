@@ -61,7 +61,8 @@ EditDialog::EditDialog( QWidget* parent )
         bottomLayout->addWidget( cancel );
 
         dialogLayout_->setSpacing( 6 );
-        dialogLayout_->insertLayout( 1, bottomLayout );
+	dialogLayout_->addItem( new QSpacerItem( 0, dialogLayout_->spacing() ) );
+        dialogLayout_->addLayout( bottomLayout );
 
         QTimer::singleShot( 0, this, SLOT( initialize() ) );
 }

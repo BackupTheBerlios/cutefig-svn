@@ -41,7 +41,8 @@ PIXOutput::PIXOutput( QByteArray format )
           scale_( 1.0 ),
           backgroundColor_(),
           quality_( 100 ),
-          gamma_( 1.0 )
+          gamma_( 1.0 ),
+	  withPaper_( false )
 {
 }
 
@@ -53,7 +54,8 @@ PIXOutput::PIXOutput( const Figure* figure, QFile* file, QByteArray format )
                   scale_( 1.0 ),
                   backgroundColor_(),
                   quality_( 100 ),
-                  gamma_( 1.0 )
+                  gamma_( 1.0 ),
+		  withPaper_( false )
 {
 }
 
@@ -64,7 +66,12 @@ void PIXOutput::exportFigure()
                 return;
         }
         
-        QSize sz = figure_->boundingRect().size().toSize();
+        QSize sz;
+	if ( withPaper_ )
+		sz = figure_->paper().size().toSize();
+	else
+		sz = figure_->boundingRect().size().toSize();
+	
         QSize nsz = sz;
 
         double scaleX = scale_;
@@ -101,7 +108,9 @@ void PIXOutput::exportFigure()
                 painter.fillRect( 0,0, nsz.width(),nsz.height(), backgroundColor_ );
         
         painter.scale( double(nsz.width())/sz.width(), double(nsz.height())/sz.height() );
-        painter.translate( - figure_->boundingRect().topLeft() );
+
+	if ( !withPaper_ )
+		painter.translate( - figure_->boundingRect().topLeft() );
 
         figure_->drawElements( &painter );
 

@@ -15,8 +15,8 @@ CONFIG += staticlib
 
 SUBDIRS = pixel
 
-HEADERS += filterlib.h exportdialog.h exportgui.h
-SOURCES += filterlib.cc exportdialog.cc exportgui.cc
+HEADERS += filterlib.h exportgui.h
+SOURCES += filterlib.cc exportgui.cc
 
 FILTERS += pixel
 

@@ -68,9 +68,9 @@ void Layouter::finishTo( QBoxLayout* target, int index )
         target->insertLayout( index, layout_ );
 }
 
-void Layouter::finishTo( QGridLayout* target, int row, int col )
+void Layouter::finishTo( QGridLayout* target, int r, int c, int rs, int cs, Qt::Alignment algn )
 {
-        target->addLayout( layout_, row, col );
+        target->addLayout( layout_, r, c, rs, cs, algn );
 }
 
 void Layouter::finishTo( QWidget* target )

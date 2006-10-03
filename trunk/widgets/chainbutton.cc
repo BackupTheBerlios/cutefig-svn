@@ -22,35 +22,36 @@
 **
 ******************************************************************************/
 
-#ifndef layouter_h
-#define layouter_h
 
-class QString;
-class QBoxLayout;
-class QGridLayout;
-class QWidget;
+#include "chainbutton.h"
 
-#include <Qt>
+#include <QPainter>
 
-//! A Conveniance class to layout labeled widgets
-/*! The Layouter can be used to layout labeled widgets side by side in
- *  very little code lines.  The usual way of using it is the
- *  following using only one statement.
- */
-class Layouter
+#include <QDebug>
+
+ChainButton::ChainButton( QWidget* parent )
+	: QAbstractButton( parent )
 {
-public:
-        explicit Layouter( QBoxLayout* layout );
+	setCheckable( true );
+	toggleIcon( false );
+	connect( this, SIGNAL( toggled(bool) ), this, SLOT( toggleIcon(bool) ) );
+}
 
-        Layouter& labeledWidget( const QString& text, QWidget* widget, int stretch = 0 );
-        Layouter& widget( QWidget* w, int stretch = 0 );
-        Layouter& stretch( int strech = 0 );
-        void finishTo( QBoxLayout* target );
-        void finishTo( QBoxLayout* target, int index );
-        void finishTo( QGridLayout* target, int r, int c, int rs=1, int cs=1, Qt::Alignment al=0 );
-        void finishTo( QWidget* target );
-private:
-        QBoxLayout* layout_;
-};      
+void ChainButton::toggleIcon( bool checked )
+{
+	if ( checked )
+		setIcon( QIcon(":images/hchain") );
+	else
+		setIcon( QIcon(":images/hchain_broken") );
+}
 
-#endif
+void ChainButton::paintEvent( QPaintEvent* )
+{
+	QPainter p( this );
+	icon().paint( &p, rect(), Qt::AlignCenter, isEnabled() ? QIcon::Normal : QIcon::Disabled );
+}
+
+QSize ChainButton::sizeHint() const
+{
+	return QSize( 24, 9 );
+}

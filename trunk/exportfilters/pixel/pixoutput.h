@@ -37,7 +37,6 @@ class PIXOutput : public ExportFilter
 public:
         PIXOutput( QByteArray format );
         PIXOutput( const Figure* figure, QFile* file, QByteArray format = QByteArray() );
-        ~PIXOutput() {}
 
         friend class PixoutDialog;
         
@@ -48,6 +47,7 @@ public:
         void setBackground( const QColor& c ) { backgroundColor_ = c; }
         void setQuality( int q ) { quality_ = q; }
         void setGamma( double g ) { gamma_ = g; }
+	void setWithPaper( bool w ) { withPaper_ = w; }
 
         void exportFigure();
 
@@ -61,6 +61,8 @@ private:
         QColor backgroundColor_;
         int quality_;
         double gamma_;
+	bool withPaper_;
+	
         bool error_;
         QString errorString_;
 };

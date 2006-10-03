@@ -25,7 +25,7 @@
 #ifndef filterfactory_h
 #define filterfactory_h
 
-class ExportDialog;
+class QDialog;
 class ExportFilter;
 
 class FilterFactory
@@ -33,7 +33,7 @@ class FilterFactory
 public:
         virtual ~FilterFactory() {}
         virtual ExportFilter* filter() = 0;
-        virtual ExportDialog* dialog( ExportFilter* filter, QWidget* parent=0 ) = 0;
+        virtual QDialog* dialog( ExportFilter* filter, QWidget* parent=0 ) = 0;
 };
 
 #endif

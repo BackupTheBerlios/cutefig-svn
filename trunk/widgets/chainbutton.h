@@ -22,35 +22,25 @@
 **
 ******************************************************************************/
 
-#ifndef layouter_h
-#define layouter_h
+#ifndef chainbutton_h
+#define chainbutton_h
 
-class QString;
-class QBoxLayout;
-class QGridLayout;
-class QWidget;
+#include <QAbstractButton>
 
-#include <Qt>
 
-//! A Conveniance class to layout labeled widgets
-/*! The Layouter can be used to layout labeled widgets side by side in
- *  very little code lines.  The usual way of using it is the
- *  following using only one statement.
- */
-class Layouter
+class ChainButton : public QAbstractButton
 {
+        Q_OBJECT
 public:
-        explicit Layouter( QBoxLayout* layout );
+	ChainButton( QWidget* parent = 0 );
 
-        Layouter& labeledWidget( const QString& text, QWidget* widget, int stretch = 0 );
-        Layouter& widget( QWidget* w, int stretch = 0 );
-        Layouter& stretch( int strech = 0 );
-        void finishTo( QBoxLayout* target );
-        void finishTo( QBoxLayout* target, int index );
-        void finishTo( QGridLayout* target, int r, int c, int rs=1, int cs=1, Qt::Alignment al=0 );
-        void finishTo( QWidget* target );
-private:
-        QBoxLayout* layout_;
-};      
+protected:
+	void paintEvent( QPaintEvent* e );
+	QSize sizeHint() const;
+					  
+private slots:
+	void toggleIcon( bool checked );
+};
+
 
 #endif

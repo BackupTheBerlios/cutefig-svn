@@ -64,12 +64,13 @@ int PixfilterApp::getOptions( int& _optind )
                         {"background", 1, 0, 'b'},
                         {"quality",    1, 0, 'q'},
                         {"gamma",      1, 0, 'g'},
+			{"paper",      0, 0, 'p'},
 			{"help",       0, 0, 'h'},
-                        {"list",    0, 0, 'l'},
+                        {"list",       0, 0, 'l'},
 			{0, 0, 0, 0}
 		};
 
-		opt = getopt_long ( argc(), argv(), "cs:x:y:q:g:b:hl",
+		opt = getopt_long ( argc(), argv(), "cs:x:y:b:q:g:phl",
                                     long_options, &option_index);
 
                 if ( opt == -1 )
@@ -111,6 +112,9 @@ int PixfilterApp::getOptions( int& _optind )
                             if ( ok )
                                     pixout_.setGamma( g );
                     } break;
+		    case 'p': 
+			    pixout_.setWithPaper( true );
+			    break;
                     case 'h':
                             usage();
                             return 1;
@@ -328,6 +332,10 @@ void PixfilterApp::printOptions()
 "        -q, --quality=val       Sets the quality to val. Must be an integer\n"
 "                                value between 0 (low) and 100 (high quality).\n"
 "                                Defaults to 100.\n"
+"        -p, --paper             The edge sizes of the resulting image will be\n"
+"                                determined by the paper size specified in the\n"
+"                                figure file rather than by the actual contents\n"
+"                                of the figure.\n"
 "        -g, --gamma=val         Sets the gamma value to val.\n"
 "        -h, --help              Prints this message and terminates successfully\n"
 "        -l, --list              Prints out all supported formats and returns\n"

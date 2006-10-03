@@ -26,7 +26,6 @@
 #include "filterlib.h"
 #include "exportfilter.h"
 #include "filterfactory.h"
-#include "exportdialog.h"
 #include "pixoutdialog.h"
 
 #include <QFile>
@@ -81,7 +80,7 @@ void ExportGUI::exportFigure( Figure* figure )
         ExportFilter* filter = filterFactory->filter();
         filter->setFigure( figure );
 
-        ExportDialog* dialog = filterFactory->dialog( filter );
+        QDialog* dialog = filterFactory->dialog( filter );
 
         if ( !dialog->exec() )
                 return;

@@ -28,26 +28,7 @@
 #include <QLayout>
 
 ExportDialog::ExportDialog( QWidget* parent )
-        : QDialog( parent ),
-          topLayout_( new QVBoxLayout( this ) )
+        : QDialog( parent )
 {
-        topLayout_->setSpacing( 6 );
-}
 
-
-void ExportDialog::setupStandardButtons()
-{
-        QHBoxLayout* bottomLayout = new QHBoxLayout( topLayout_->widget() );
-        topLayout_->addItem( bottomLayout );
-
-        QPushButton* ok = new QPushButton( tr("Ok"), this );
-        ok->setAutoDefault( true );
-        connect( ok, SIGNAL( clicked() ), this, SLOT( accept() ) );
-        bottomLayout->addWidget( ok );
-
-        bottomLayout->addSpacing( 10 );
-        
-        QPushButton* cancel = new QPushButton( tr("Cancel"), this );
-        connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
-        bottomLayout->addWidget( cancel );    
 }
