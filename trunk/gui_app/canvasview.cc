@@ -329,13 +329,11 @@ void CanvasView::updateFigure( bool tentative )
 {
         tentativeDraw_ = tentative;
 
-        QRegion clipRegion = drawingRegion();
+        QRegion clipRegion = drawingRegion() | snapRect();
 
-        if ( snapped_ ) 
-                clipRegion |= snapRect();
-
-        clipRegion |= oldRegion_;
-        oldRegion_ = clipRegion;
+	QRegion oreg = oldRegion_;
+	oldRegion_ = clipRegion;
+        clipRegion |= oreg;
                 
         if ( clipRegion.isEmpty()  )
                 update();
@@ -358,7 +356,7 @@ QRegion CanvasView::drawingRegion() const
                 region |= r;
         }
 
-        return region;
+	return region;
 }
 
 

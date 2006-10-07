@@ -91,8 +91,8 @@ public:
                   resLib_( ResLib<Resource>::instance() ),
                   resourceDemo_( 0 )
         {
-                setupGUI();
                 setupModel();
+                setupGUI();
         }
         
         ~ReslibEditor() {}

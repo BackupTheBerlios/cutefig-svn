@@ -197,9 +197,9 @@ TextObject* TextAction::textObjectUnderPoint( const QPointF& p )
         return qobject_cast<TextObject*>( o );
 }
 
-bool TextAction::wantsSnap( const QPoint& p, const QMatrix* m )
+bool TextAction::wantsSnap( const QPoint& p, const QMatrix& m )
 {
-        return ! ( textObject_ || textObjectUnderPoint( m->map( p ) ) );
+        return ! ( textObject_ || textObjectUnderPoint( p*m ) );
 }
 
 const QString TextAction::commandName() const

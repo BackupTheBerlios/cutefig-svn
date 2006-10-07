@@ -60,7 +60,7 @@ public:
 
         virtual bool acceptsKeyStrokes() { return textObject_; }
 
-        virtual bool wantsSnap( const QPoint& p, const QMatrix* m );
+        virtual bool wantsSnap( const QPoint& p, const QMatrix& m );
 
         virtual void reset();
         

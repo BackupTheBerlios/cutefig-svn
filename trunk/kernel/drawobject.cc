@@ -116,6 +116,7 @@ bool DrawObject::pointSet( const QPointF & pos, Fig::PointFlags f )
         passPointFlag( f );
 
         currentPointIndex_ = nextPointIndex();
+	getReadyForDraw();
         if ( currentPointIndex_ < 0 ) { 
                 doSpecificPreparation();
                 return false;

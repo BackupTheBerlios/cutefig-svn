@@ -36,11 +36,9 @@ class TextObjectDialog : public ObjectDialog
         Q_OBJECT
 public:
         TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent );
-        ~TextObjectDialog() {}
 
 private:
         virtual void commitChangesPrivate();
-        virtual void setUpConnectionsPrivate();
         virtual void setupInitialValuesPrivate();
         virtual void castDrawObject();
 

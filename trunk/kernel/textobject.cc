@@ -59,6 +59,7 @@ TextObject::TextObject( const TextObject* o )
           cursorVisible_( false )
 {
         doc_.setHtml( o->doc_.toHtml() );
+	setupRects();	
 }
 
 void TextObject::outputToBackend( OutputBackend* ob ) const

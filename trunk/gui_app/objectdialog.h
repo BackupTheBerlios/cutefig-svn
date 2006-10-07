@@ -55,8 +55,8 @@ public:
 protected:
 	QTabWidget* tabWidget() { return tabWidget_; }
         DrawObject* drawObject() { return drawObject_; }
-        PenWidget*  penWidget() { return penWidget(); }        
-        
+        PenWidget*  penWidget() { return penWidget_; }
+
 private:
         virtual void doReset();
         virtual void commitChanges();

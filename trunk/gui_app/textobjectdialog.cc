@@ -52,11 +52,11 @@ TextObjectDialog::TextObjectDialog( DrawObject* o, EditdialogAction* a, QWidget*
         
         fontWidget_ = new FontWidget;
         rcl->addWidget( fontWidget_ );
+        connect( fontWidget_, SIGNAL( fontChanged() ), this, SLOT( noticeChange() ) );
 
         mainLayout->addLayout( rcl );
 
         penWidget()->setEnabled( false );
-//         fillStroke->setEnabled( false );
 }
 
 void TextObjectDialog::commitChangesPrivate()
@@ -65,12 +65,6 @@ void TextObjectDialog::commitChangesPrivate()
 		 << fontWidget_->font().family()
 		 << fontWidget_->font().pointSize();
         textObject_->setFont( fontWidget_->font() );
-}
-
-void TextObjectDialog::setUpConnectionsPrivate()
-{
-	qDebug() << "TextObjectDialog::setUpConnectionsPrivate()";
-        connect( fontWidget_, SIGNAL( fontChanged() ), this, SLOT( noticeChange() ) );
 }
 
 void TextObjectDialog::setupInitialValuesPrivate()

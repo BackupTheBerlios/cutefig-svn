@@ -147,7 +147,7 @@ class AbstractResourceUser;
  *  \subsubsection private Behind the scenes  
  *  The following functions must be reimplemented by subclasses to
  *  handle userinteraction.
- *      - nextPoint()
+ *      - nextPointIndex()
  *      - passPointFlag()
  *  
  *  
