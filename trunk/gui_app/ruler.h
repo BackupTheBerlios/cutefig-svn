@@ -30,7 +30,6 @@
 
 #include <QFrame>
 #include <QStringList>
-#include <QPixmap>
 #include <QLabel>
 
 class RulerDispatcher;
@@ -74,13 +73,11 @@ private:
         void paintEvent( QPaintEvent *e );
 
         void contextMenuEvent( QContextMenuEvent* e );
-
-        void updateRuler();
         
         //! calculates the tick marks smartly
         void calcTickMarks();       
 
-        Qt::Orientation o_;
+        const Qt::Orientation o_;
 
 	//! the currently indicated value
         int value_;
@@ -119,8 +116,6 @@ private:
         QStringList tickMarks_;
 
         bool indicating_;
-        
-        QPixmap buffer_;
 };
 
 

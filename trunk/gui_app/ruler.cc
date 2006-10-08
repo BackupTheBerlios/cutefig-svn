@@ -31,6 +31,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 
+#include <QTime>
 #include <QDebug>
 
 
@@ -39,16 +40,24 @@ Ruler::Ruler( int l, int width, Qt::Orientation o, QWidget * parent )
           o_( o ),
           value_( 0 ),
           oldValue_( 0 ),
+	  length_( l ),
           zoomScale_( 1.0 ),
           unit_(),
+	  offset_( 0 ),
+	  startPos_( 0 ),
 	  rulerWidth_( width ),
           tickMarks_( 0 ),
           indicating_( false )
 {
         setFrameStyle( Panel | Sunken );
         frameSpace_ = 2*frameWidth();
-        setLength( l );
-        setStart( 0 );
+
+	setAutoFillBackground( true );
+	QPalette pal = palette();
+	pal.setColor( QPalette::Background, Qt::white );
+	setPalette( pal );
+
+	calcTickMarks();
 }
 
 void Ruler::setIndicating( bool indicating )
@@ -67,14 +76,14 @@ void Ruler::setUnit( const ResourceKey& k )
 {
         unit_.setResource( k );
         calcTickMarks();
-        updateRuler();
+	update();
 }
 
 void Ruler::setStart( int v )
 {
 	startPos_ = v;
         calcTickMarks();
-        updateRuler();
+	update();
 }
 
 void Ruler::setOffset( double o )
@@ -89,7 +98,7 @@ void Ruler::calcTickMarks()
 {
         double unit = unit_.data() * zoomScale_;
 	tickDist_ = unit;
-
+	
 	int d = 2;
 	
         while ( tickDist_ > 80.0 ) {
@@ -135,15 +144,40 @@ void Ruler::setValue( int v )
         QRect r1, r2;
         
         if ( o_ == Qt::Horizontal ) {
-                r1 = QRect( value_,0, 3, height() );
-                r2 = QRect( oldValue_,0, 3, height() );
+                r1 = QRect( value_-1,0, 3, height() );
+                r2 = QRect( oldValue_-1,0, 3, height() );
         } else {
-		r1 = QRect( 0,value_-frameWidth(), width(), 3 );
-		r2 = QRect( 0,oldValue_-frameWidth(), width(), 3 );
+		r1 = QRect( 0,value_-frameWidth()-1, width(), 3 );
+		r2 = QRect( 0,oldValue_-frameWidth()-1, width(), 3 );
 	}
 
         update( QRegion(r1) | QRegion(r2) );
 }
+
+
+inline bool rect_intersects(const QRect &r1, const QRect &r2)
+{
+    return qMax(r1.left(), r2.left()) <= qMin(r1.right(), r2.right())
+        && qMax(r1.top(), r2.top()) <= qMin(r1.bottom(), r2.bottom());
+}
+
+
+/*!
+    \since 4.2
+
+    Returns true if this region intersects with \a rect, otherwise
+    returns false.
+*/
+bool regionrect_intersects(const QRegion& reg, const QRect &rect)
+{
+    QRect r = rect.normalized();
+    const QVector<QRect> myRects = reg.rects();
+    for (QVector<QRect>::const_iterator it = myRects.begin(); it < myRects.end(); ++it)
+        if (rect_intersects(r, *it))
+            return true;
+    return false;
+}
+
 
 void Ruler::paintEvent( QPaintEvent* e )
 {
@@ -154,79 +188,71 @@ void Ruler::paintEvent( QPaintEvent* e )
 		p.rotate( -90 );
 		p.translate( -length_-frameSpace_,0 );
 	}
-
+	QMatrix matr = p.matrix().inverted();
+	
         p.translate( frameWidth(), frameWidth() );
+
 	
-        p.drawPixmap( QPoint( 0,0 ), buffer_ );
-
-        if ( value_ < length_ && indicating_ ) {
-                p.setPen( Qt::red );
-		int v = o_ == Qt::Vertical ? length_-value_+frameWidth() : value_;
-		p.drawLine( v, 0, v, rulerWidth_ );
-        }
-
-	p.end();
-	
-        QFrame::paintEvent( e );
-}
-
-void Ruler::setLength( int l )
-{
-        length_ = l;
-        l += frameSpace_;
-        
-        if ( o_ == Qt::Horizontal ) 
-                resize( l, rulerWidth_+frameSpace_ );
-        else 
-                resize( rulerWidth_+frameSpace_, l );
-        
-        calcTickMarks();
-
-        buffer_ = QPixmap( length_, rulerWidth_ );
-        updateRuler();
-}
-
-
-
-void Ruler::updateRuler() 
-{
-	buffer_.fill();
-
-	QPainter p( &buffer_ );
  	QFont font = p.font();
  	font.setPixelSize( qRound( rulerWidth_/3 ) );
  	p.setFont( font );
 
+	
 	const double d = (offset_*zoomScale_-startPos_)/tickDist_;
 	double pos = ( d - qRound(d) ) * tickDist_;
 	const double rw   = rulerWidth_;
 	const double rw2  = rulerWidth_/2;
 	const double rw4  = rulerWidth_/4;
 	const double rw34 = rw4*3;
-
+	
 	int sign = 1;
  	if ( o_ == Qt::Vertical ) {
  		sign = -1;
  		pos = length_ - pos;
  	}
 
+	int stop = o_ == Qt::Horizontal ? width() :  height()-qRound(pos);
+	QRegion reg = p.matrix().inverted().map( e->region() );
+	
 	foreach ( QString tm, tickMarks_ ) {
 		p.drawLine( QPointF(pos,rw), QPointF(pos,rw2) );
-		QSizeF s = p.fontMetrics().size( Qt::TextSingleLine, tm );
-		QRectF r = Geom::centerRect( QPointF(pos,rw4), s );
-		p.drawText( r, Qt::AlignHCenter | Qt::AlignVCenter, tm );
-
+		QSize s = p.fontMetrics().size( Qt::TextSingleLine, tm );
+		QRect r = Geom::centerRect( QPointF(pos,rw4).toPoint(), s );
+// Qt42		if ( e->region().intersects( r ) )
+		if ( regionrect_intersects( reg, r ) ) {
+			p.setClipRegion( p.clipRegion() | r );
+			p.drawText( r, Qt::AlignHCenter | Qt::AlignVCenter, tm );
+		}
+		
 		for ( double j=0; j+subTickDist_/2<tickDist_; j+=subTickDist_ ) {
 			pos += subTickDist_*sign;
 			p.drawLine( QPointF(pos,rw), QPointF(pos,rw34) );
 		}
+
+		if ( pos*sign > stop )
+			break;
+
 	}
-
-	update();
-}
 	
+	if ( value_ < length_ && indicating_ ) {
+                p.setPen( Qt::red );
+		int v = o_ == Qt::Vertical ? length_-value_+frameWidth() : value_;
+		p.drawLine( v, 0, v, rulerWidth_ );
+        }
+	
+	p.end();
 
+        QFrame::paintEvent( e );
+}
 
+void Ruler::setLength( int l )
+{
+        length_ = l;
+        
+        calcTickMarks();
+
+        update();
+}
 
 void Ruler::contextMenuEvent( QContextMenuEvent* )
 {
@@ -263,11 +289,9 @@ void RulerDispatcher::setMatrix( const QMatrix& m )
 {
 	vertical_->setZoomScale( 1/m.m22() );
 	vertical_->setOffset( -m.dy() );
-        vertical_->updateRuler();
 
 	horizontal_->setZoomScale( 1/m.m11() );
 	horizontal_->setOffset( -m.dx() );
-        horizontal_->updateRuler();
 }
 
 void RulerDispatcher::setPos( const QPoint& p )
