@@ -26,6 +26,7 @@
 
 #include "stroke.h"
 #include "gradient.h"
+#include "pixmap.h"
 #include "reslib.h"
 #include "flagbuttongroup.h"
 #include "resourcebutton.h"
@@ -41,7 +42,7 @@ StrokeWidget::StrokeWidget( const QString& title, QWidget* parent )
 {        
         colorButton_ = new ResourceButton<QColor>( Qt::transparent, this );
         gradientButton_ = new ResourceButton<Gradient>( ResourceKey(), this );
-        pixmapButton_ = new ResourceButton<QPixmap>( ResourceKey(), this );
+        pixmapButton_ = new ResourceButton<Pixmap>( ResourceKey(), this );
 
         QRadioButton* nostrokeRB = new QRadioButton( tr("None"), this );
         QRadioButton* colorRB    = new QRadioButton( tr("Color"), this );
@@ -84,6 +85,7 @@ void StrokeWidget::setStroke( const Stroke& stroke )
         stroke_ = stroke;
         colorButton_->setEnabled( stroke.type() == Stroke::sColor );
         gradientButton_->setEnabled( stroke.type() == Stroke::sGradient );
+        pixmapButton_->setEnabled( stroke.type() == Stroke::sPixmap );
         strokeType_->setState( int( stroke.type() ) );
 
         switch( stroke.type() ) {
@@ -91,6 +93,8 @@ void StrokeWidget::setStroke( const Stroke& stroke )
                     colorButton_->setResource( stroke.color() ); break;
             case Stroke::sGradient:
                     gradientButton_->setResource( stroke.key() ); break;
+  	    case Stroke::sPixmap:
+		    pixmapButton_->setResource( stroke.key() ); break;
             default:
                     break;
         }
@@ -105,6 +109,8 @@ void StrokeWidget::changeType( int type )
                     stroke_.setColor( colorButton_->getResource() ); break;
             case Stroke::sGradient: 
                     setGradient(); break;
+    	    case Stroke::sPixmap:
+		    setPixmap();
             default:
                     break;
         }

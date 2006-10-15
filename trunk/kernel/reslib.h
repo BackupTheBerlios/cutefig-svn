@@ -389,14 +389,14 @@ void ResLib<Resource>::ResourceData::setData( const Resource& d )
         hashSum_ = qHash( d );
 }
 
-class QPixmap;
+class Pixmap;
 
 namespace Res 
 {
         template<> inline const QString resourceName<QColor>() { return "color"; }
         template<> inline const QString resourceName<Gradient>() { return "gradient"; }
         template<> inline const QString resourceName<Dashes>() { return "dashes"; }
-        template<> inline const QString resourceName<QPixmap>() { return "pixmap"; }
+        template<> inline const QString resourceName<Pixmap>() { return "pixmap"; }
 }
 
 #endif

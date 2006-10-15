@@ -24,6 +24,7 @@
 
 #include "resourcedemo.h"
 #include "gradient.h"
+#include "pixmap.h"
 
 template<>
 void ResourceDemo<QColor>::doPainting( QPainter* p )
@@ -67,7 +68,7 @@ void ResourceDemo<Gradient>::doPainting( QPainter* p )
 
 
 template<>
-void ResourceDemo<QPixmap>::doPainting( QPainter* p )
+void ResourceDemo<Pixmap>::doPainting( QPainter* p )
 {
         int w = width();
         int h = height();
@@ -77,13 +78,13 @@ void ResourceDemo<QPixmap>::doPainting( QPainter* p )
         int h9 = h3/3;
         w3 *=2;
 
-        p->setPen( QPen( QBrush( *resource_ ), 3.0 ) );
+        p->setPen( QPen( QBrush( resource_->qpixmap() ), 3.0 ) );
         p->drawEllipse( w9,h9, w3,h3 );
 
         h9 *= 5;
 
         p->setPen( Qt::NoPen );
-        p->setBrush( *resource_ ); 
+        p->setBrush( resource_->qpixmap() ); 
         p->drawEllipse( w9,h9, w3,h3 );
 }
 

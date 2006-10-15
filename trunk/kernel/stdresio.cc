@@ -24,12 +24,12 @@
 
 #include "streamops.h"
 #include "gradient.h"
+#include "pixmap.h"
 #include "resourceio.h"
 #include "reslib.h"
 #include "typedefs.h"
 
 #include <QColor>
-#include <QPixmap>
 #include <istream>
 
 #include <QDebug>
@@ -134,20 +134,29 @@ void TResourceIO<Gradient>::outputResourceBody( const Gradient& res, std::ostrea
 // Pixmaps
 
 template<>
-bool TResourceIO<QPixmap>::parseResource( const QString& itemtype, std::istream& is )
+bool TResourceIO<Pixmap>::parseResource( const QString& itemtype, std::istream& is )
 {
 	QString fileName;
 	is >> fileName;
 
-	if ( !resource_.load( fileName ) ) {
+	if ( !resource_.loadFromFile( fileName ) ) {
 		errorString_ = tr("Could not read pixmap file %1.").arg( fileName );
 		failed_ = true;
 	}
 
-	return false;
+	return true;
 }
 
-	
+
+template<>
+void TResourceIO<Pixmap>::outputResourceBody( const Pixmap& res, std::ostream& ts ) const
+{
+	if ( res.isFromFile() ) {
+		ts << res.fileName() << "\n";
+		return;
+	}
+}
+
 
 
 // Dashes

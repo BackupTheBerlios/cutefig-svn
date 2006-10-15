@@ -25,6 +25,7 @@
 
 #include "stroke.h"
 #include "gradient.h"
+#include "pixmap.h"
 #include "resourceuser.h"
 
 #include <QPainter>
@@ -45,15 +46,6 @@ template<> ResourceKey ResLib<QColor>::defaultKey()
         return ResourceKey();
 }
 
-
-template<> void ResLib<QPixmap>::init()
-{
-}
-
-template<> ResourceKey ResLib<QPixmap>::defaultKey()
-{
-        return ResourceKey();
-}
 
 
 class StrokeDataSetter 
@@ -126,8 +118,9 @@ void Stroke::setColor( const ResourceKey& key )
 
         delete resourceUser_;
         
-        resourceUser_ = new ResourceUser<QColor>();
-        static_cast<ResourceUser<QColor>*>( resourceUser_ )->setResource( key );
+	ResourceUser<QColor>* ru = new ResourceUser<QColor>;
+	ru->setResource( key );
+	resourceUser_ = ru;
 }
 
 void Stroke::setGradient( const ResourceKey& key )
@@ -136,8 +129,9 @@ void Stroke::setGradient( const ResourceKey& key )
 
         delete resourceUser_;
         
-        resourceUser_ = new ResourceUser<Gradient>();
-        static_cast<ResourceUser<Gradient>*>( resourceUser_ )->setResource( key );
+	ResourceUser<Gradient>* ru = new ResourceUser<Gradient>;
+	ru->setResource( key );
+	resourceUser_ = ru;
 }
 
 void Stroke::setPixmap( const ResourceKey& key )
@@ -145,11 +139,10 @@ void Stroke::setPixmap( const ResourceKey& key )
         type_ = sPixmap;
         
         delete resourceUser_;
-        
-        if ( !resourceUser_ )
-                resourceUser_ = new ResourceUser<QPixmap>();
-        
-        static_cast<ResourceUser<QPixmap>*>( resourceUser_ )->setResource( key );
+
+	ResourceUser<Pixmap>* ru = new ResourceUser<Pixmap>;
+	ru->setResource( key );
+	resourceUser_ = ru;
 }
 
 bool Stroke::setData( const QString& typeString, const ResourceKey& key )
@@ -182,7 +175,7 @@ void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
                     break;
             }
             case sPixmap:
-                    painter->fillPath( path, QBrush( resourceUser_->resource<QPixmap>() ) );
+                    painter->fillPath( path, QBrush(resourceUser_->resource<Pixmap>().qpixmap()) );
                     break;
             case sNone:
             default: break;
@@ -206,7 +199,7 @@ const QBrush Stroke::brush( const QRectF& rect ) const
                     break;
             }
             case sPixmap:
-                    ret = resourceUser_->resource<QPixmap>();
+                    ret = resourceUser_->resource<Pixmap>().qpixmap();
                     break;
             case sNone:
             default: break;
@@ -292,7 +285,7 @@ static GradientDataSetter gds;
 class PixmapDataSetter : public StrokeDataSetter
 {
 public:
-	PixmapDataSetter() : StrokeDataSetter( Res::resourceName<QPixmap>() ) {}
+	PixmapDataSetter() : StrokeDataSetter( Res::resourceName<Pixmap>() ) {}
 
 private:
 	virtual void doSetData( Stroke* st, const ResourceKey& key ) { st->setPixmap( key ); }
@@ -315,7 +308,7 @@ void AutoHash<Stroke::StrokeType, QString>::init()
 {
 	hash_[Stroke::sColor] = Res::resourceName<QColor>();
 	hash_[Stroke::sGradient] = Res::resourceName<Gradient>();
-	hash_[Stroke::sPixmap] = Res::resourceName<QPixmap>();
+	hash_[Stroke::sPixmap] = Res::resourceName<Pixmap>();
 }
 
 

@@ -150,8 +150,7 @@ template<> inline void ResourceButton<QColor>::changeResource()
         }
 }
 
-template<> inline void ResourceButton<QPixmap>::changeResource()
-{
-}
+
+
 
 #endif

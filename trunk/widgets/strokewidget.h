@@ -62,7 +62,7 @@ private:
         FlagButtonGroup* strokeType_;
         ResourceButton<QColor>* colorButton_;
         ResourceButton<Gradient>* gradientButton_;
-        ResourceButton<QPixmap>* pixmapButton_;
+        ResourceButton<Pixmap>* pixmapButton_;
 };
 
 #endif

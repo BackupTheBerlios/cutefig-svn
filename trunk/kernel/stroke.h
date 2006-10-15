@@ -34,7 +34,7 @@
 #include <QBrush>
 
 class Gradient;
-class QPixmap;
+class Pixmap;
 class QPainterPath;
 class QPainter;
 class QRectF;
@@ -98,11 +98,6 @@ private:
 };
 
 inline int qHash( const QColor& ) 
-{
-        return 0;
-}
-
-inline int qHash( const QPixmap& ) 
 {
         return 0;
 }

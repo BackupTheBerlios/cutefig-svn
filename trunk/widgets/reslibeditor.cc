@@ -92,3 +92,35 @@ void AbstractReslibEditor::doReset()
         setResource( oldResourceKey_ );
 }
 
+
+
+#include "pixmap.h"
+
+#include <QFileDialog>
+#include <QImageReader>
+
+template<>
+void ReslibEditor<Pixmap>::editResource()
+{
+	QString filter;
+	foreach( const QByteArray ba, QImageReader::supportedImageFormats() )
+		filter += "*." + ba + " ";
+	filter.chop(1);
+	
+	QString fileName = QFileDialog::getOpenFileName( this, tr("Choose pixmap file"),
+							 QString(), filter );
+
+	Pixmap pm = resLib_[resourceKey_];
+	if ( !fileName.isEmpty() && fileName != pm.fileName() && pm.loadFromFile( fileName ) ) {
+		resLib_.setResource( resourceKey_, pm );
+		resourceDemo_->update();
+	}
+}
+
+template<>
+ResourceEditor* ResourceDialog<Pixmap>::createEditor()
+{
+	return 0;
+}
+
+

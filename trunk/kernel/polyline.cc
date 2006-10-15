@@ -28,7 +28,6 @@
 #include "geometry.h"
 
 #include <QPainter>
-#include <QPixmap>
 #include <QPolygonF>
 
 #include <cmath>

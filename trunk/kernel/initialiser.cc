@@ -25,6 +25,7 @@
 #include "initialiser.h"
 #include "allobjects.h"
 #include "resourceio.h"
+#include "pixmap.h"
 
 #include <QDebug>
 
@@ -48,7 +49,7 @@ void AutoHash<ResourceIOFactory>::init()
 {
 	static TResourceIOFactory<QColor> ciof;
 	static TResourceIOFactory<Gradient> giof;
-	static TResourceIOFactory<QPixmap> piof;
+	static TResourceIOFactory<Pixmap> piof;
 	static TResourceIOFactory<Dashes> diof;
 }
 

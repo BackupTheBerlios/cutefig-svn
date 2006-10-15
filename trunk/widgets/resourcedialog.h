@@ -36,7 +36,7 @@ public:
         {
         }
 
-        virtual void updateData() = 0;
+        virtual void updateData() {}
 
 signals:
         void changeHappened();

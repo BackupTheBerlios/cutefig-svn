@@ -34,8 +34,6 @@
 #include <QTextLayout>
 #include <QTextCursor>
 #include <QTextCharFormat>
-#include <QPixmap>
-#include <QPicture>
 #include <QList>
 
 //! The DrawObject representing text elements.

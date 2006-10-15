@@ -25,6 +25,7 @@
 #include "resourceiconengine.h"
 #include "typedefs.h"
 #include "gradient.h"
+#include "pixmap.h"
 
 #include <QPainter>
 
@@ -72,9 +73,9 @@ void ResourceIconEngine<Gradient>::paintForeground( QPainter* p, const QRect& r 
 }
 
 template<>
-void ResourceIconEngine<QPixmap>::paintForeground( QPainter* p, const QRect& r )
+void ResourceIconEngine<Pixmap>::paintForeground( QPainter* p, const QRect& r )
 {
-        p->fillRect( r, resource_ );
+        p->fillRect( r, resource_.qpixmap() );
 }
 
 template<>

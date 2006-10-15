@@ -39,6 +39,7 @@ HEADERS += fig.h \
            pen.h \
            stroke.h \
            gradient.h \
+           pixmap.h \
            outputbackend.h 
 SOURCES += figure.cc \
            length.cc \
@@ -54,6 +55,7 @@ SOURCES += figure.cc \
            pen.cc \
            stroke.cc \
            gradient.cc \
+           pixmap.cc \
            drawobject.cc \
            compound.cc \
            rectangloid.cc \
