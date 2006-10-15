@@ -49,7 +49,7 @@ Rectangloid::Rectangloid( const Rectangloid* r )
 int Rectangloid::nextPointIndex()
 {
         if ( points_.size() == 1 ) {
-                points_.resize( 2 );
+                points_ << QPointF();
                 return 1;
         }
 

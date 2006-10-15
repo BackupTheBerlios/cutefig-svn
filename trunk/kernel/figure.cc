@@ -55,7 +55,7 @@ void Figure::takeDrawObjects( const ObjectList& l )
         foreach ( DrawObject* o, l ) {
                 addObjectToDrawingList( o );
                 o->setParent( this );
-                o->updateEverything();
+                o->updateEverythingNow();
         }
 
         sortObjects();

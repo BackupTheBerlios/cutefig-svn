@@ -28,7 +28,6 @@
 #include "drawobject.h"
 #include "geometry.h"
 
-//#include <cmath>
 
 class Rectangloid : public DrawObject 
 {
@@ -44,10 +43,7 @@ public:
 
         virtual void drawMetaData( QPainter* p ) const;
         
-
-//        virtual void drawTentative( QPainter* p ) const;
-        
-        void setAngleNew( double a );
+	void setAngleNew( double a );
 
 public slots:
         void setAngle( double a );
@@ -68,8 +64,6 @@ protected:
 
         QPointF center_;
         qreal w_, h_, w2_, h2_;
-
-//        static const double rad = 180/M_PI;
         
 private:
 	double angle_;

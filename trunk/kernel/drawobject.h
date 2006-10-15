@@ -288,6 +288,7 @@ public:
 
 	void update();
 	void updateEverything();
+	void updateEverythingNow();
 	
 	
         //! used to sort the DrawObjects according to their #depth_

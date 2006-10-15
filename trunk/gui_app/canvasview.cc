@@ -385,12 +385,11 @@ void CanvasView::paintEvent( QPaintEvent * e )
         p.setMatrix( scaleMatrix_ );
 
 	QRegion region = scaleMatrixInv_.map( e->region() );
-	
+
         foreach ( const DrawObject* o, figure_->objectsToBeDrawn() ) 
-                if ( !controler_->backups().contains( const_cast<DrawObject*>(o->ancestor()) ) &&
+	        if ( !controler_->backups().contains( const_cast<DrawObject*>(o->ancestor()) ) &&
                      region.contains( o->boundingRect().toRect() ) ) 
                         o->draw( &p );
-
 
         p.setBrush( Qt::NoBrush );
         p.setPen( QPen() );

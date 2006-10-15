@@ -129,7 +129,7 @@ void Controler::cancelAction()
                 return;
 
         actionGone();
-//        editAction_->reset();
+        editAction_->reset();
         editAction_ = 0;
         explicitEAction_ = false;
         actionIsActive_ = 0;

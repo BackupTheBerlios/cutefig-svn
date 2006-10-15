@@ -59,7 +59,7 @@ int Polyline::nextPointIndex()
                 return -1;
 
         int s = points_.size();
-        points_.append( QPointF() );
+        points_ << QPointF();
         return s;
 }
 

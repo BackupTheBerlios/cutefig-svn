@@ -39,9 +39,7 @@ HEADERS += fig.h \
            pen.h \
            stroke.h \
            gradient.h \
-           outputbackend.h \
-#           xfigoutput.h \
-           progutils.h 
+           outputbackend.h 
 SOURCES += figure.cc \
            length.cc \
            paper.cc \
@@ -67,7 +65,5 @@ SOURCES += figure.cc \
            arc.cc \
            textobject.cc \
            arrow.cc \
-           objecthandler.cc \
-#           xfigoutput.cc \
-           progutils.cc
+           objecthandler.cc 
 

@@ -49,46 +49,7 @@ private:
 };
 
 
-//typedef ResourceValue<Length> Unit;
-
 inline
 unsigned int qHash( const Length& ) { return 0; }
-
-// class Unit 
-// {
-// public:
-//         Unit();
-//         Unit( const QString& name );
-//         Unit( const ResourceKey& key );
-//         Unit( const QString& name, double value, const QString& base );
-//         Unit( const QString& name, double value, const ResourceKey& base );
-
-//         operator double() const { return value_; }
-//         double value() const { return value_; }
-//         const ResourceKey& key() const { return resourceUser_.key(); }
-
-//         const ResourceKey& base() const { return baseKey_; }
-//         double valueInBase() const { return valueInBase_; }
-        
-// private:
-//         class Data 
-//         {
-//         public:
-//                 Data() : value_( -1 ) {}                
-//                 Data( double v ) : value_ ( v ) {}
-//                 operator double() const { return value_; }
-
-//         private:
-//                 double value_;
-//         };
-        
-//         ResourceUser<Data> resourceUser_;
-
-//         ResourceKey baseKey_;
-//         Data value_, valueInBase_;
-
-// };
-
-// unsigned int qHash( double d );
 
 #endif

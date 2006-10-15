@@ -30,7 +30,6 @@
 #include "pen.h"
 #include "reslib.h"
 #include "objectdialog.h"
-#include "progutils.h"
 #include "layouter.h"
 #include "penwidget.h"
 #include "strokewidget.h"
