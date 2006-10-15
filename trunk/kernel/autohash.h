@@ -22,35 +22,35 @@
 **
 ******************************************************************************/
 
-#include "initialiser.h"
-#include "allobjects.h"
-#include "resourceio.h"
+#ifndef autohash_h
+#define autohash_h
 
-#include <QDebug>
+#include <QHash>
+#include <QString>
 
-namespace Initialiser 
+template<typename Key, typename Value> class AutoHash
 {
-        
-template<>
-void AutoHash<ObjectHandler>::init()
+public:
+	AutoHash();
+
+	const Value operator[]( const Key& k ) const { return hash_[k]; }
+	Value& operator[]( const Key& k ) { return hash_[k]; }
+
+	const Key key( const Value& value ) const { return hash_.key( value ); }
+	
+private:
+	QHash<Key,Value> hash_;
+
+	void init();
+};
+
+
+template<typename Key, typename Value> AutoHash<Key, Value>::AutoHash()
+	: hash_()
 {
-	static TObjectHandler<Rectangle> rcf;
-	static TObjectHandler<Ellipse> elf;
-	static TObjectHandler<Polyline> plf;
-	static TObjectHandler<Polygon> pgf;
-	static TObjectHandler<Arc> agf;
-	static TObjectHandler<BezierSpline> bsf;
-	static TObjectHandler<TextObject> tgf;
+	init();
 }
 
-template<>
-void AutoHash<ResourceIOFactory>::init()
-{
-	static TResourceIOFactory<QColor> ciof;
-	static TResourceIOFactory<Gradient> giof;
-	static TResourceIOFactory<QPixmap> piof;
-	static TResourceIOFactory<Dashes> diof;
-}
+	
 
-}
-
+#endif

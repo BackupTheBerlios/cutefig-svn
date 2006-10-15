@@ -137,7 +137,7 @@ protected:
 
         QString keyWord_;
 
-        const char* tr( const char* text ) { return text; }
+        static QString tr( const char* text );
 
 private:
         ResourceIO( const ResourceIO& ) {}

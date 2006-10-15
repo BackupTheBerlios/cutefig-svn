@@ -29,7 +29,7 @@
 #include "typedefs.h"
 
 #include <QColor>
-
+#include <QPixmap>
 #include <istream>
 
 #include <QDebug>
@@ -129,7 +129,27 @@ void TResourceIO<Gradient>::outputResourceBody( const Gradient& res, std::ostrea
                 ts << "gradstop " << s.first << ' ' << s.second << "\n";        
 }
 
-        
+
+
+// Pixmaps
+
+template<>
+bool TResourceIO<QPixmap>::parseResource( const QString& itemtype, std::istream& is )
+{
+	QString fileName;
+	is >> fileName;
+
+	if ( !resource_.load( fileName ) ) {
+		errorString_ = tr("Could not read pixmap file %1.").arg( fileName );
+		failed_ = true;
+	}
+
+	return false;
+}
+
+	
+
+
 // Dashes
 
 template<>

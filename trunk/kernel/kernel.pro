@@ -11,6 +11,7 @@ HEADERS += fig.h \
            allobjects.h \
            keywords.h \
            typedefs.h \
+           autohash.h \
            length.h \
            paper.h \
            geometry.h \

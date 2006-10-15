@@ -30,6 +30,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
+#include <QCoreApplication>
 
 #include <fstream>
 //QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
@@ -93,3 +94,8 @@ void ResourceIOFactory::readResLibs()
         }
 }
 
+
+QString ResourceIO::tr( const char* text )
+{
+	return QCoreApplication::translate( "ResourceIO", text );
+}

@@ -175,11 +175,9 @@ std::istream& operator>> ( std::istream &is, Stroke& s )
                 
                         QString kw;
                         is >> kw;
-                        
-                        if ( kw == Res::resourceName<QColor>() ) 
-                                s.setColor( key );
-                        else if ( kw == Res::resourceName<Gradient>() )
-                                s.setGradient( key );
+
+			if ( !s.setData( kw, key ) )
+				is.setstate( is.rdstate() | std::istream::failbit );
                 }
         }
 

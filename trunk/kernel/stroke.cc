@@ -56,6 +56,23 @@ template<> ResourceKey ResLib<QPixmap>::defaultKey()
 }
 
 
+class StrokeDataSetter 
+{
+public:
+	virtual ~StrokeDataSetter() {}
+	
+	static bool setData( Stroke* st, const QString& typeString, const ResourceKey& key );
+
+protected:
+	StrokeDataSetter( const QString& typeString );
+	
+private:
+	virtual void doSetData( Stroke*, const ResourceKey& key ) = 0;
+
+	static QHash<QString, StrokeDataSetter*>& hash();
+};
+
+
 
 Stroke::Stroke()
         : type_( sNone ),
@@ -135,6 +152,11 @@ void Stroke::setPixmap( const ResourceKey& key )
         static_cast<ResourceUser<QPixmap>*>( resourceUser_ )->setResource( key );
 }
 
+bool Stroke::setData( const QString& typeString, const ResourceKey& key )
+{
+	return StrokeDataSetter::setData( this, typeString, key );
+}
+
 QColor Stroke::color() const
 {
         if ( type_ == sColor )
@@ -205,20 +227,95 @@ const QBrush Stroke::brush( const QPainterPath& path ) const
 
 const QString Stroke::typeString() const
 {
-        switch ( type_ ) {
-            case sColor:    return "color";
-            case sGradient: return "gradient";
-                    
-            default: break;
-        } 
-
-        return QString();
+	return typeHash()[type_];
 }
 
 
 const ResourceKey Stroke::key() const
 {
         return resourceUser_ ? resourceUser_->key() : ResourceKey();
+}
+
+
+
+// StrokeDataSetter
+
+StrokeDataSetter::StrokeDataSetter( const QString& typeString )
+{
+	hash()[typeString] = this;
+}
+
+QHash<QString, StrokeDataSetter*>& StrokeDataSetter::hash()
+{
+	static QHash<QString, StrokeDataSetter*> h;
+	return h;
+}
+
+
+bool StrokeDataSetter::setData( Stroke* st, const QString& typeString, const ResourceKey& key )
+{
+	StrokeDataSetter* sds = hash()[typeString];
+
+	if ( !sds ) 
+		return false;
+
+	sds->doSetData( st, key );
+
+	return true;
+}
+
+
+class ColorDataSetter : public StrokeDataSetter
+{
+public:
+	ColorDataSetter() : StrokeDataSetter( Res::resourceName<QColor>() ) {}
+
+private:
+	virtual void doSetData( Stroke* st, const ResourceKey& key ) { st->setColor( key ); }
+};
+
+static ColorDataSetter cds;
+
+
+class GradientDataSetter : public StrokeDataSetter
+{
+public:
+	GradientDataSetter() : StrokeDataSetter( Res::resourceName<Gradient>() ) {}
+
+private:
+	virtual void doSetData( Stroke* st, const ResourceKey& key ) { st->setGradient( key ); }
+};
+
+static GradientDataSetter gds;
+
+
+class PixmapDataSetter : public StrokeDataSetter
+{
+public:
+	PixmapDataSetter() : StrokeDataSetter( Res::resourceName<QPixmap>() ) {}
+
+private:
+	virtual void doSetData( Stroke* st, const ResourceKey& key ) { st->setPixmap( key ); }
+};
+
+static PixmapDataSetter pds;
+
+
+
+const AutoHash<Stroke::StrokeType, QString>& Stroke::typeHash()
+{
+	static AutoHash<StrokeType, QString> as;
+	return as;
+}
+
+
+
+template<>
+void AutoHash<Stroke::StrokeType, QString>::init()
+{
+	hash_[Stroke::sColor] = Res::resourceName<QColor>();
+	hash_[Stroke::sGradient] = Res::resourceName<Gradient>();
+	hash_[Stroke::sPixmap] = Res::resourceName<QPixmap>();
 }
 
 

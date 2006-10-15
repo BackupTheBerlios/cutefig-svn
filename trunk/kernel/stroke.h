@@ -28,6 +28,7 @@
 #include "resourcekey.h"
 #include "resourceuser.h"
 #include "gradient.h"
+#include "autohash.h"
 
 #include <QColor>
 #include <QBrush>
@@ -66,6 +67,8 @@ public:
         void setColor( const ResourceKey& key );
         void setGradient( const ResourceKey& key );
         void setPixmap( const ResourceKey& key );
+
+	bool setData( const QString& typeString, const ResourceKey& key );
         
         QColor color() const;
         bool isHardColor() const { return resourceUser_ && type_ == sColor; }
@@ -90,6 +93,8 @@ private:
         StrokeType type_;
 
         AbstractResourceUser* resourceUser_;
+
+	static const AutoHash<StrokeType, QString>& typeHash();
 };
 
 inline int qHash( const QColor& ) 
