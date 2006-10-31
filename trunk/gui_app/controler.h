@@ -28,7 +28,6 @@
 #include "fig.h"
 #include "command.h"
 #include "viewbase.h"
-#include "pen.h"
 #include "selection.h"
 #include "interactiveaction.h"
 
@@ -67,7 +66,7 @@ class Controler : public QObject
         Q_OBJECT
 public:
         Controler( QMainWindow * parent =0 );
-        ~Controler() { }
+        ~Controler();
 
         void setFigure( Figure* f );
         Figure* figure() const { return figure_; }
@@ -186,8 +185,6 @@ private:
         Selection selection_;
         bool figureChanged_;
 
-        Pen toolPen_;
-        QColor toolFillColor_;
         int toolDepth_;
 
         typedef QVector<InteractiveAction*> activeToolActions_t;

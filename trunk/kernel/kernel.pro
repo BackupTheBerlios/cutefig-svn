@@ -38,6 +38,7 @@ HEADERS += fig.h \
            objecthandler.h \
            pen.h \
            stroke.h \
+           pattern.h \
            gradient.h \
            pixmap.h \
            outputbackend.h 
@@ -48,12 +49,12 @@ SOURCES += figure.cc \
            reslib.cc \
            initialiser.cc \
            resourceio.cc \
-           stdresio.cc \
            streamops.cc \
            parser.cc \
            cfigoutput.cc \
            pen.cc \
            stroke.cc \
+           pattern.cc \
            gradient.cc \
            pixmap.cc \
            drawobject.cc \

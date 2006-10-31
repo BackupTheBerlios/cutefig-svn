@@ -47,6 +47,11 @@ Controler::Controler( QMainWindow * parent )
 {
 }
 
+Controler::~Controler()
+{
+        qDeleteAll( commandStack_ );
+}
+
 void Controler::setFigure( Figure* f )
 {
         figure_ = f;
@@ -255,10 +260,8 @@ const QPolygonF Controler::objectsPoints()
 
 void Controler::clearCommandList()
 {
-        currentCommand_.toFront();
-        while ( currentCommand_.hasNext() )
-                delete currentCommand_.next();
- 
+        qDeleteAll( commandStack_ );
+        
         commandStack_.clear();
         currentCommand_ = CmdStackIt( commandStack_ );
 }

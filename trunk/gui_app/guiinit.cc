@@ -45,7 +45,9 @@ namespace Initialiser
         {
                 ResLibInit() 
                 {
-                        ResourceIOFactory::readResLibs();
+                        QString error;
+                        error = ResourceIOFactory::readResLibs();
+                        qDebug() << __PRETTY_FUNCTION__ << error;
                 }
         };
 }

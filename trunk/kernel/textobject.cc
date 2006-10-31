@@ -75,7 +75,7 @@ bool TextObject::pointHits( const QPointF& p, qreal ) const
 void TextObject::draw( QPainter* p ) const
 {
         QPen op = p->pen();
-        p->setPen( QPen( stroke().brush( bRect_ ), 0 ) );
+        p->setPen( QPen( stroke().brush( bRect_, p->matrix() ), 0 ) );
 
         doDraw( p );
 
@@ -166,8 +166,8 @@ void TextObject::setupRects()
 	typedef QList<QTextLayout::FormatRange>::iterator IT;
 	
 	for ( IT it = formatRanges.begin(); it != formatRanges.end(); ++it ) {
-		it->format.setTextOutline( QPen( stroke().brush( bRect_ ), 1, Qt::SolidLine ) );
-		it->format.setForeground( fill().brush( bRect_ ) );
+		it->format.setTextOutline( QPen( stroke().brush( bRect_, QMatrix() ), 1, Qt::SolidLine ) );
+		it->format.setForeground( fill().brush( bRect_, QMatrix() ) );
 	}
 	
         textLayout_.setAdditionalFormats( formatRanges );
@@ -479,7 +479,7 @@ void TextObject::alignBottom()
  *  itself.
  */
 template<>
-DrawObject* TObjectHandler<TextObject>::parseObject( std::istream& is, Figure* fig )
+DrawObject* TObjectHandler<TextObject>::parseObject( QTextStream& is, Figure* fig )
 {
         QString family;
         int pointSize;
@@ -488,7 +488,7 @@ DrawObject* TObjectHandler<TextObject>::parseObject( std::istream& is, Figure* f
 
         is >> family >> pointSize >> alignment >> text;
 
-        if ( is.fail() )
+        if ( is.status() != QTextStream::Ok )
                 return 0;
 
         TextObject* to = new TextObject( fig );

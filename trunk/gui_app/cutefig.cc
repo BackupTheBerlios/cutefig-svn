@@ -51,6 +51,7 @@
  *  idiom described in http://www.codeskipper.org/.
  */
 CuteFig::CuteFig()
+        : figure_()
 {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         setAttribute( Qt::WA_DeleteOnClose );
@@ -58,20 +59,19 @@ CuteFig::CuteFig()
 
         Initialiser::initResLibs();
         
-        figure_ = new Figure( this );
         controler_ = new Controler( this );
-        controler_->setFigure( figure_ );
+        controler_->setFigure( &figure_ );
 
         ActionStatusIndicator* asi = new ActionStatusIndicator( statusBar() );
 
-        cview_ = new CanvasView( controler_, asi, figure_, this );
+        cview_ = new CanvasView( controler_, asi, &figure_, this );
         
         controler_->addView( cview_ );
         
         CentralWidget* cw = new CentralWidget( cview_, this );
         setCentralWidget( cw );
 
-        CoordWidget* crd = new CoordWidget( *figure_ );
+        CoordWidget* crd = new CoordWidget( figure_ );
         connect( cview_, SIGNAL(cursorMovedTo(const QPoint&)),
                  crd, SLOT(setCoords(const QPoint&)) );
         connect( cview_, SIGNAL(cursorIsIn(bool)), crd, SLOT(setIndicating(bool)) );
@@ -135,7 +135,7 @@ void CuteFig::load( const QString& fileName )
         controler_->resetFigure();
         
         QTextStream ts( &f );
-        QString errors = Parser::parse( ts, figure_ );
+        QString errors = Parser::parse( ts, &figure_ );
 
         if ( !errors.isEmpty() ) 
                 ErrorReporter::report( errors );
@@ -154,10 +154,10 @@ void CuteFig::save()
                 return;
         }
 
-        figure_->updateModificationDate();
-        
-        std::ofstream ts( filename_.toLocal8Bit().constData() );
-        if ( !ts ) {
+        figure_.updateModificationDate();
+
+	QFile ofile( filename_ );
+	if ( !ofile.open( QFile::WriteOnly | QFile::Truncate ) ) {
                 statusBar()->showMessage( QString(tr("Could not write to %1"))
                                           .arg(filename_), 2000 );
                 return;
@@ -166,14 +166,10 @@ void CuteFig::save()
         uint slen = filename_.length() - filename_.indexOf('.');
         QString suffix = filename_.right( slen );
 
-        OutputBackend* b;
-        b = new CfigOutput( ts, *figure_ );
+	QTextStream ts( &ofile );
+        CfigOutput cf( ts, figure_ );
                 
-        b->processOutput();
-
-        delete b;
-
-        ts.close();
+        cf.processOutput();
 
         setWindowTitle( tr( "CuteFig: %1" ).arg( filename_ ) );
 
@@ -199,8 +195,8 @@ void CuteFig::saveAs()
 void CuteFig::print()
 {
         QPrinter printer;
-	printer.setPageSize( figure_->paper().qPageSize() );
-	printer.setOrientation( (QPrinter::Orientation)figure_->paperOrientation() );
+	printer.setPageSize( figure_.paper().qPageSize() );
+	printer.setOrientation( (QPrinter::Orientation)figure_.paperOrientation() );
 
 	QPrintDialog pdlg( &printer, this );
 	pdlg.setEnabledOptions( pdlg.enabledOptions() &
@@ -208,9 +204,8 @@ void CuteFig::print()
 				~QAbstractPrintDialog::PrintSelection );
 	
         if ( pdlg.exec() == QDialog::Accepted ) {
-		qDebug() << printer.pageSize();
                 QPainter p( &printer );
-		figure_->drawElements( &p );
+		figure_.drawElements( &p );
         }
 }
 
@@ -326,7 +321,7 @@ void CuteFig::setupActions()
 
 void CuteFig::exportFigure()
 {
-        ExportGUI::instance().exportFigure( figure_ );
+        ExportGUI::instance().exportFigure( &figure_ );
 }
 
 

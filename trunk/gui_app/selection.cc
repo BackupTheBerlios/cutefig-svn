@@ -150,7 +150,7 @@ const QString Selection::objectname() const
  */
 const QRectF Selection::boundingRect() const
 {
-        QRectF r;
+	QRectF r;
         foreach ( DrawObject* o, objects_ )
                 r |= o->controlPointRect();
 

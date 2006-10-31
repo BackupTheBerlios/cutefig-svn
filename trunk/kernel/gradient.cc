@@ -165,6 +165,86 @@ ResourceKey ResLib<Gradient>::defaultKey()
         return ResourceKey::builtIn("defaultGradient");
 }
 
+template<>
+const QString ResLib<Gradient>::resourceName()
+{
+        return "gradient";
+}
+
+void createGradient( QTextStream& is, Gradient& gradient ) 
+{
+        QString type;
+        double x1,x2, y1,y2;
+
+        is >> type >> x1 >> y1 >> x2 >> y2;
+
+        QPointF startPoint( x1,y1 );
+        QPointF endPoint( x2,y2 );
+        
+        if ( type == "radial" ) {
+                double rad;
+                is >> rad;
+                gradient = Gradient( Gradient::Radial, startPoint, endPoint );
+                gradient.setRadius( rad );
+        }
+        else 
+                gradient = Gradient( Gradient::Linear, startPoint, endPoint );
+}
+
+
+template<>
+bool TResourceIO<Gradient>::parseResource( const QString& itemtype, QTextStream& is ) 
+{
+        if ( itemtype.isNull() ) {
+                createGradient( is, resource_ );
+                if ( is.status() != QTextStream::Ok ) {
+                        errorString_ = tr("Invalid gradient line");
+                        failed_ = true;
+                }
+        } else {
+                if ( itemtype != "gradstop" ) {
+                        errorString_ = tr("gradstop expected");
+                        failed_ = true;
+                        return false;
+                }
+
+                double pos;
+                QColor cl;
+                
+                is >> pos >> cl;
+                if ( is.status() != QTextStream::Ok ) {
+                        errorString_ = tr("invalid gradstop line");
+                        failed_ = true;
+                } else
+                        resource_.setColorAt( pos, cl );
+        }
+
+        return true;
+}
+
+template<>
+void TResourceIO<Gradient>::outputResourceBody( const Gradient& res, QTextStream& ts ) const
+{
+        const QGradientStops& stops = res.colorStops();
+        
+        if ( res.type() == Gradient::Linear ) 
+                ts << "linear ";
+        else 
+                ts << "radial ";
+
+        ts << res.startPoint().x() << ' ' << res.startPoint().y()  << ' '
+           << res.finalPoint().x() << ' ' << res.finalPoint().y();
+        if ( res.type() == Gradient::Radial )
+                ts << res.radius();
+
+        ts << "\n";
+
+        foreach ( QGradientStop s, stops )
+                ts << "gradstop " << s.first << ' ' << s.second << "\n";        
+}
+
+static TResourceIOFactory<Gradient> rIOFinstance;
+
 
 QDebug operator<<(QDebug dbg, const Gradient& g)
 {

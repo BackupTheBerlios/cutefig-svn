@@ -75,7 +75,7 @@ void Rectangloid::setupRects()
         double w = wc + hs;
         double h = ws + hc;
 
-        cRect_ = Geom::centerRect( center_, QSizeF( w,h ) );
+        cRect_ = painterPath_.boundingRect();
         bRect_ = Geom::centerRect( center_, QSizeF( w+pen().width(), h+pen().width() ) );
 }
 
@@ -87,18 +87,13 @@ void Rectangloid::setupPainterPath()
         setupWidthAndHeight();
 
         w_ = 2*w2_; h_ = 2*h2_;
-
-        bRect_.setSize( QSizeF( w_, h_ ) );
-        bRect_.moveCenter( QPointF(0.,0.) );
-
+        
         painterPath_ = QPainterPath();
         
-        addPath();
+        addPath( Geom::centerRect( QPointF(0,0), QSizeF(w_,h_) )  );
         
         rotation_ = QMatrix();
         rotation_.rotate( -angle_ * Geom::rad );        
-
-        bRect_ = rotation_.mapRect( bRect_ );
 
         QMatrix rottrans = QMatrix();
         rottrans.translate( center_.x(), center_.y() );

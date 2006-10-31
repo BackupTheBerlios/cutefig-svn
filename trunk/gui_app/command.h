@@ -30,11 +30,11 @@
 class Controler;
 class Figure;
 
-class Command : public QObject
+class Command 
 {
 public: 
-        Command() : QObject() {}
-        virtual ~Command() {};
+        Command() {}
+        virtual ~Command() {}
 
         virtual void execute() = 0;
         virtual void unexecute() = 0;
@@ -47,6 +47,8 @@ public:
 protected:
         Controler* controler_;
         Figure* figure_;
+
+        static QString tr( const char* source );
 
 private:
         QString commandString_;

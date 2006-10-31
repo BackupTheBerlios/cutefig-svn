@@ -26,14 +26,15 @@
 #define objectcommand_h
 
 #include "command.h"
-#include "selection.h"
+#include "typedefs.h"
 
+class Selection;
 
 class ObjectCommand : public Command
 {
 public:
-        ObjectCommand( const Selection& s ) : Command(), objects_( s.objects() ) {}
-
+        ObjectCommand( const Selection& s );
+        
 protected:
         ObjectList objects_;
 };

@@ -47,7 +47,9 @@
 #include <QCoreApplication>
 
 #include <sstream>
+#include <memory>
 #include <cctype>
+
 #include <QDebug>
 
         
@@ -56,6 +58,8 @@ Parser::Parser( QTextStream& ts, Figure* f  )
         : fileStream_( ts ),
           figure_( f ),
           figureUnit_( 1.0 ),
+          currentLine_(),
+          stream_( &currentLine_, QIODevice::ReadOnly ),
           line_( 0 ),
           errorReport_( QString() )
 {
@@ -84,6 +88,13 @@ QString Parser::parse( QTextStream& ts, Figure* f )
         return p.errorReport_;
 }
 
+QString Parser::parseObjects( QTextStream& ts, Figure* f )
+{
+        Parser p( ts, f );
+        p.figureUnit_ = f->unit();
+        f->takeDrawObjects( p.parseLoop() );
+        return p.errorReport_;
+}
 
 QString Parser::parseHeader()
 {
@@ -99,7 +110,7 @@ QString Parser::parseHeader()
 
         stream_ >> vs >> version;
         
-        if ( stream_.fail() || vs != KWds::version() )
+        if ( stream_.status() != QTextStream::Ok || vs != KWds::version() )
                 return makeErrorLine( tr("Could not find a valid version line.") );
 
         if ( version > Fig::version )
@@ -123,7 +134,7 @@ QString Parser::parseMetaData()
                 if ( itemType_ == KWds::unit() ) {
                         ResourceKey key;
                         stream_ >> key;
-                        if ( stream_.fail() )
+                        if ( stream_.status() != QTextStream::Ok )
                                 parseError( tr("Invalid unit line.") );
                         else {
                                 figure_->setUnit( key );
@@ -137,7 +148,7 @@ QString Parser::parseMetaData()
                         double s;
                         stream_ >> s;
 
-                        if ( stream_.fail() )
+                        if ( stream_.status() != QTextStream::Ok )
                                 parseError( tr("Invalid scale line." ) );
                         else
                                 figure_->setScale( s );
@@ -149,7 +160,7 @@ QString Parser::parseMetaData()
                         ResourceKey key;
                         stream_ >> key;
 
-                        if ( stream_.fail() )
+                        if ( stream_.status() != QTextStream::Ok )
                                 parseError( tr("Invalid paper line.") );
                         else
                                 figure_->setPaper( key );
@@ -158,10 +169,10 @@ QString Parser::parseMetaData()
                 }
 
                 if ( itemType_ == KWds::paper_orientation() ) {
-                        std::string s;
+                        QString s;
                         stream_ >> s;
 
-                        if ( stream_.fail() ) {
+                        if ( stream_.status() != QTextStream::Ok ) {
                                 parseError( tr("Strange paper orientation line.") );
                                 continue;
                         }
@@ -177,7 +188,7 @@ QString Parser::parseMetaData()
                 if ( itemType_ == KWds::author() ) {
                         QString ath;
                         stream_ >> ath;
-                        figure_->setAuthor( ath );
+                        figure_->setAuthor( percentDecode( ath ) );
 			figure_->setAuthorToBeSaved( true );
 
                         continue;
@@ -186,7 +197,7 @@ QString Parser::parseMetaData()
                 if ( itemType_ == KWds::description() ) {
                         QString dsc;
                         stream_ >> dsc;
-                        figure_->setDescription( dsc );
+                        figure_->setDescription( percentDecode( dsc ) );
 
                         continue;
                 }
@@ -246,7 +257,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
 			int np = o->points().size();
 			if ( o->points().size() < o->minPoints() ) {
 				parseError( notEnoughPoints
-					    .arg(o->objectKeyWord()).arg(np).arg(o->minPoints()),
+					    .arg(o->objectKeyword()).arg(np).arg(o->minPoints()),
 					    Discarding );
 				delete o;
 			} else {
@@ -261,7 +272,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                 }
                 
                 if ( itemType_ == KWds::compound_begin() ) {
-                        olist.push_back( new Compound( parseLoop( true ) ) );
+                        olist << new Compound( parseLoop( true ), figure_ );
                         continue;
                 }
 
@@ -301,51 +312,53 @@ void Parser::parseResource( ResourceKey::Flags flags )
         QString keyWord;
         stream_ >> keyWord;
 
-        ResourceIO* resIO = ResourceIOFactory::getResourceIO( keyWord );
-        
-        if ( !resIO ) {
+        std::auto_ptr<ResourceIO> resIO( ResourceIOFactory::getResourceIO( keyWord ) );
+        if ( !resIO.get() ) {
                 parseError( unknownResourceType.arg( keyWord ) );
                 return;
         }
 
         QString rks;
         stream_ >> rks;
-
-        bool rKeyFound;
-        int hashsum = resIO->hashSum( ResourceKey::inLib( rks ), &rKeyFound );
-        
+        rks = percentDecode( rks );
         
         bool parseit = true;
-        
         int savedHashsum;
         stream_ >> savedHashsum;
 
-        if ( hashsum ) {
-
-                if ( hashsum == savedHashsum ) {
-                        QString s;
-                        do {
-                                fileStream_ >> s;
-                                fileStream_.readLine();
-                        } while ( s != KWds::resource_end() );
+        if ( flags == ResourceKey::InFig ) {
+                bool rKeyFound;
+                int hashsum = resIO->hashSum( ResourceKey::inLib( rks ), &rKeyFound );
+                
+                if ( hashsum ) {
+                        if ( hashsum == savedHashsum ) {
+                                QString s;
+                                do {
+                                        fileStream_ >> s;
+                                        fileStream_.readLine();
+                                } while ( s != KWds::resource_end() );
                         
-                        parseit = false;
+                                parseit = false;
+                        }
                 }
         }
-
+        
         if ( parseit ) {
                 if ( resIO->parseResource( QString(), stream_ ) ) {
-                        readLine();
-                        while ( itemType_ != KWds::resource_end() && !resIO->failed() ) {
+                        bool neof = readLine();
+                        while ( neof && itemType_ != KWds::resource_end() && !resIO->failed() ) {
                                 resIO->parseResource( itemType_, stream_ );
-                                readLine();
-                        } 
+                                neof = readLine();
+                        }
+                        if ( !neof )
+                                parseError( tr("File ended while parsing resource %1")
+                                            .arg( rks ) );
                 }
 
                 resIO->postProcessResource();
-                
                 if ( resIO->failed() )
-                        parseError( resIO->errorString() );
+                        parseError( tr("Error while parsing resource %1:").arg( rks ) +
+                                    resIO->errorString() );
                 else
                         resIO->pushResource( ResourceKey( rks, flags ) );
         }
@@ -358,25 +371,27 @@ void Parser::parseResource( ResourceKey::Flags flags )
  */
 bool Parser::readLine()
 {
-        QString s;     
-        s = fileStream_.readLine();
+        if ( fileStream_.atEnd() )
+                return false;
+        
+        currentLine_ = fileStream_.readLine();
         ++line_;
 
-        while ( s.isEmpty() || s[0] == '#' ) {
-                if ( !s.isEmpty() ) {
-                        s.remove( 0, 1 );
-			if ( s[0] == ' ' )
-				s.remove( 0,1 );
-                        objectComment_ += s + '\n';
+        while ( currentLine_.isEmpty() || currentLine_[0] == '#' ) {
+                if ( !currentLine_.isEmpty() ) {
+                        currentLine_.remove( 0, 1 );
+			if ( currentLine_[0] == ' ' )
+				currentLine_.remove( 0,1 );
+                        objectComment_ += currentLine_ + '\n';
                 }
-                s = fileStream_.readLine();
+                currentLine_ = fileStream_.readLine();
                 if ( fileStream_.atEnd() )
                         return false;
                 ++line_;
         }       
-        
-        stream_.clear();
-        stream_.str( std::string( s.trimmed().toUtf8() ) );
+
+        stream_.seek( 0 );
+        stream_.setStatus( QTextStream::Ok );
         stream_ >> itemType_;
         
         return true;
@@ -389,8 +404,9 @@ QPointF Parser::parsePoint()
 {
         double x,y;
         QPointF p;
-        
-        if ( (stream_ >> x >> y) )
+
+        stream_ >> x >> y;
+        if ( stream_.status() == QTextStream::Ok )
                 p = QPointF( x*figureUnit_, y*figureUnit_ );
         else
                 parseError( invalidPoint );
@@ -414,19 +430,22 @@ DrawObject * Parser::parseGenericData()
         Pen pen;
 
         stream_ >> obType >> npoints;
-        if ( stream_.fail() ) {
+        if ( stream_.status() != QTextStream::Ok ) {
                 parseError( invalidStandardLine, Discarding );
                 npoints = 0;
                 return 0;
         }
 
-        if ( !( stream_ >> pen ) ) 
+        stream_ >> pen;
+        if ( stream_.status() != QTextStream::Ok ) 
                 parseError( tr("Invalid pen.") );
 
-        if ( ! (stream_ >> stroke >> fill) )
+        stream_ >> stroke >> fill;
+        if ( stream_.status() != QTextStream::Ok )
                 parseError( tr("Invalid strokes, courious what happens") );
-        
-        if ( !( stream_ >> depth ) ) {
+
+        stream_ >> depth;
+        if ( stream_.status() != QTextStream::Ok ) {
                 parseError( tr("Invalid depth, assuming 50") );
                 depth = 50;
         }
@@ -526,5 +545,6 @@ const QString Parser::compound_end_without_compound = tr("Received compound end 
 const QString Parser::unexpectedEnd = tr("Unexpected end of file.");
 const QString Parser::invalidGradientLine = tr("Invalid gradient line.");
 const QString Parser::invalidGradStopLine = tr("Invalid gradient stop line.");
+
 
 

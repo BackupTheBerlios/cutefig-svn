@@ -104,13 +104,13 @@ void StrokeWidget::changeType( int type )
 {
         switch( Stroke::StrokeType( type ) ) {
             case Stroke::sNone:
-                    stroke_.setNone(); break;
+                    stroke_.setData<NoStroke>(); break;
             case Stroke::sColor:
                     stroke_.setColor( colorButton_->getResource() ); break;
             case Stroke::sGradient: 
-                    setGradient(); break;
+                    stroke_.setData<Gradient>( gradientButton_->key() ); break;
     	    case Stroke::sPixmap:
-		    setPixmap();
+		    stroke_.setData<Pixmap>( pixmapButton_->key() );
             default:
                     break;
         }
@@ -126,12 +126,12 @@ void StrokeWidget::setColor()
 
 void StrokeWidget::setGradient()
 {
-        stroke_.setGradient( gradientButton_->key() );
+        stroke_.setData<Gradient>( gradientButton_->key() );
         emit strokeChanged();
 }
 
 void StrokeWidget::setPixmap()
 {
-        stroke_.setPixmap( pixmapButton_->key() );
+        stroke_.setData<Pixmap>( pixmapButton_->key() );
         emit strokeChanged();
 }

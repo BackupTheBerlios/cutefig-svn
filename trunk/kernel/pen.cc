@@ -34,12 +34,18 @@
 const int NoPen = -2;
 const int SolidLine = -1;
 
-
 template<>
 ResourceKey ResLib<Dashes>::defaultKey()
 {
         return ResourceKey::builtIn("S");
 }
+
+template<>
+const QString ResLib<Dashes>::resourceName() 
+{
+        return "dashes";
+}
+
 
 template<>
 void ResLib<Dashes>::init()
@@ -57,6 +63,41 @@ void ResLib<Dashes>::init()
 //                        TResourceIO<Dashes>::parseResource( QString(), "3 3 3 3 3 3 1 3") );
 //         insertBuiltIn( "DashDashDotDot",
 //                        TResourceIO<Dashes>::parseResource( QString(), "3 3 3 3 1 3 1 3") );
+}
+
+
+template<>
+bool TResourceIO<Dashes>::parseResource( const QString&, QTextStream& is ) 
+{
+        double val;
+
+        is >> val;
+        while ( is.status() == QTextStream::Ok && val > 0 ) {
+                resource_ << val;
+                is >> val;
+        }
+
+        return false;
+}
+
+template<>
+void TResourceIO<Dashes>::outputResourceBody( const Dashes& res, QTextStream& ts ) const
+{
+        foreach ( double d, res )
+                ts << d << ' ';
+}
+
+static TResourceIOFactory<Dashes> rIOFinstance;
+
+
+int qHash( const Dashes& dashes )
+{
+        QByteArray data;
+        QDataStream ds( &data, QIODevice::WriteOnly );
+        
+        ds << dashes;
+
+        return qHash( data );
 }
 
 
@@ -110,7 +151,8 @@ void Pen::strikePath( const QPainterPath& path, const Stroke& stroke, QPainter* 
                 return;
 
         if ( dashes_->data().isEmpty() ) {
-                QPen pen( stroke.brush( path ), lineWidth_, Qt::SolidLine, capStyle_, joinStyle_ );
+                QPen pen( stroke.brush( path, painter->matrix() ),
+                          lineWidth_, Qt::SolidLine, capStyle_, joinStyle_ );
                 painter->strokePath( path, pen );
         } else {
                 QPainterPath strokePath;
@@ -138,13 +180,5 @@ void Pen::setupPainterPath( QPainterPath& strokePath, const QPainterPath& path )
 }
 
 
-int qHash( const Dashes& dashes )
-{
-        QByteArray data;
-        QDataStream ds( &data, QIODevice::WriteOnly );
-        
-        ds << dashes;
 
-        return qHash( data );
-}
 

@@ -62,7 +62,7 @@ void ObjectGUIHandler::setupCreateActions( Controler* c, ActionCollection* ac )
 
 ObjectDialog* ObjectGUIHandler::editDialog( DrawObject* o, EditdialogAction* a, QWidget* parent )
 {
-        const QString kw = o->objectKeyWord();
+        const QString kw = o->objectKeyword();
         ObjectGUIHandler* gh = ObjectHandler::guiHandler( kw );
         if ( !gh ) {
                 qDebug() << "+++ BUG +++ no ObjectGUIHandler for" << kw << "using default one.";

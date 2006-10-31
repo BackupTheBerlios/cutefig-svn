@@ -37,19 +37,16 @@ class BezierSpline;
 class TextObject;
 class Compound;
 
-//class QTextStream;
-
-
 #include "stroke.h"
 #include "gradient.h"
 
-#include <ostream>
+#include <QTextStream>
 #include <QStringList>
 
 class OutputBackend
 {
 public:
-        OutputBackend( std::ostream& ts, const Figure& f ) 
+        OutputBackend( QTextStream& ts, const Figure& f ) 
                 : figure_( f ),
                   fileStream_( ts ),
                   errorReport_()
@@ -74,7 +71,7 @@ protected:
         Stroke::StrokeType strokeType( const Stroke& s ) { return s.type(); }
         
         const Figure& figure_;
-        std::ostream& fileStream_;
+        QTextStream& fileStream_;
         QStringList errorReport_;
 };
 

@@ -32,15 +32,13 @@
 #include <QPolygonF>
 #include <QDate>
 
-#include <ostream>
 #include <iomanip>
 
 #include <QDebug>
 
 
-CfigOutput::CfigOutput( std::ostream& ts, const Figure& f )
-        : OutputBackend( ts, f ),
-          unit_( f.unit() )
+CfigOutput::CfigOutput( QTextStream& ts, const Figure& f )
+        : OutputBackend( ts, f )
 {
 }
 
@@ -58,7 +56,7 @@ void CfigOutput::outputEllipse( const Ellipse* el )
 {
         drawObject_ = el;
         outputGenericData();
-        fileStream_ << std::setprecision( 3 );
+        fileStream_.setRealNumberPrecision( 3 );
         fileStream_ << ' ' << el->isCircle() << ' ' 
                     << el->isSpecifiedByRadii() << ' ' << el->angle()
                     << "\n";
@@ -86,7 +84,7 @@ void CfigOutput::outputArc( const Arc* arc )
 {
         drawObject_ = arc;
         outputGenericData();
-        fileStream_ << ' ' << arc->rectSize()/2/unit_ << ' ' << arc->angle()
+        fileStream_ << ' ' << arc->rectSize()/2/unit() << ' ' << arc->angle()
                     << ' ' << (int)arc->arcFlag()  << ' ' << (int)arc->sweepFlag() << "\n";
         outputPoints();
 }
@@ -112,7 +110,7 @@ void CfigOutput::outputTextObject( const TextObject* to )
         const QFont& f = to->font();
         
         fileStream_ << ' ' << f.family() << ' ' << f.pointSize() << ' '
-                    << to->alignment() << ' ' << text << "\n";
+                    << to->alignment() << ' ' << percentEncode(text) << "\n";
 
         outputPoints();
 }
@@ -144,10 +142,10 @@ void CfigOutput::outputGenericData()
 		if ( comments.last().isEmpty() )
 			comments.removeLast();
                 foreach ( QString s, comments )
-			fileStream_ << "# " << s.toUtf8().data() << "\n";
+			fileStream_ << "# " << s << "\n";
         }
         
-        fileStream_ << KWds::object() << ' ' << drawObject_->objectKeyWord() << ' '
+        fileStream_ << KWds::object() << ' ' << drawObject_->objectKeyword() << ' '
                     << drawObject_->points().size() << ' ';
         
         fileStream_ << p.width() << ' ' << p.dashesKey() << ' '
@@ -159,7 +157,7 @@ void CfigOutput::outputGenericData()
 void CfigOutput::outputPoints()
 {
         foreach ( QPointF p, drawObject_->points() )
-                fileStream_ << KWds::point() << ' ' << p.x()/unit_ << ' ' << p.y()/unit_ << "\n";
+                fileStream_ << KWds::point() << ' ' << p.x()/unit() << ' ' << p.y()/unit() << "\n";
 }
 
 void CfigOutput::outputHeader()
@@ -192,11 +190,11 @@ void CfigOutput::outputMetaData()
         
         const QString& ath = figure_.author();
         if ( figure_.authorIsToBeSaved() && !ath.isEmpty() )
-                fileStream_ << KWds::author() << ' ' << figure_.author() << "\n";
+                fileStream_ << KWds::author() << ' ' << percentEncode(figure_.author()) << "\n";
         
         const QString& dsc = figure_.description();
         if ( !dsc.isEmpty() )
-                fileStream_ << KWds::description() << ' ' << dsc << "\n";
+                fileStream_ << KWds::description() << ' ' << percentEncode(dsc) << "\n";
         
         fileStream_ << KWds::created()       << ' ' << figure_.creationDate() << "\n"
                     << KWds::last_modified() << ' ' << figure_.modificationDate() << "\n"
@@ -221,4 +219,9 @@ void CfigOutput::outputArrows()
                 fileStream_ << ' ' << a.width() << ' ' << a.length();
         }
         
+}
+
+inline double CfigOutput::unit()
+{
+	return figure_.unit();
 }

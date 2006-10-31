@@ -45,6 +45,7 @@
 class DrawObject;
 class CuteFig;
 class ActionStatusIndicator;
+class ResourceKey;
 
 class QPainter;
 class QPointF;

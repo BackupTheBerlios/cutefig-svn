@@ -88,6 +88,7 @@ SOURCES += cutefig.cc \
            editdialogaction.cc \
            propdialogaction.cc \
            command.cc \
+           objectcommand.cc \
            addcommand.cc \
            deletecommand.cc \
            changecommand.cc \

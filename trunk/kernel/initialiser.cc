@@ -44,14 +44,5 @@ void AutoHash<ObjectHandler>::init()
 	static TObjectHandler<TextObject> tgf;
 }
 
-template<>
-void AutoHash<ResourceIOFactory>::init()
-{
-	static TResourceIOFactory<QColor> ciof;
-	static TResourceIOFactory<Gradient> giof;
-	static TResourceIOFactory<Pixmap> piof;
-	static TResourceIOFactory<Dashes> diof;
-}
-
 }
 

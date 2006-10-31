@@ -36,13 +36,13 @@
 #include <QDebug>
 
 
-DrawObject::DrawObject( Figure* parent )
-        : QObject( parent ),
+DrawObject::DrawObject( const Figure* figure )
+        : QObject(),
 	  painterPath_(),
           points_(),
           bRect_(),
 	  cRect_(),
-          figure_( parent ),
+          figure_( figure ),
 	  pen_(),
           stroke_( Qt::black ),
 	  fill_(),
@@ -57,7 +57,7 @@ DrawObject::DrawObject( Figure* parent )
 }
 
 DrawObject::DrawObject( const DrawObject* o )
-        : QObject( o->parent() ),
+        : QObject(),
 	  painterPath_( o->painterPath_ ),
           points_( o->points_ ),
 	  bRect_( o->bRect_ ),
@@ -155,8 +155,8 @@ void DrawObject::drawArrows( QPainter* p ) const
         if ( painterPath_.isEmpty() || ( !startArrow_.isValid() && !endArrow_.isValid() ))
                 return;
         
-        p->setPen( QPen( stroke_.brush( bRect_ ), pen_.width() ) );
-        p->setBrush( fill_.brush( bRect_ ) );
+        p->setPen( QPen( stroke_.brush( bRect_, p->matrix() ), pen_.width() ) );
+        p->setBrush( fill_.brush( bRect_, p->matrix() ) );
         
         QList<QPolygonF> pols = painterPath_.toSubpathPolygons();
 
@@ -237,7 +237,8 @@ void DrawObject::getReadyForDraw()
 void DrawObject::setupRects()
 {
         cRect_ = points_.boundingRect();
-        bRect_ = pen_.pathRect( painterPath_ );
+//        bRect_ = pen_.pathRect( painterPath_ );
+        bRect_ = painterPath_.boundingRect();
 }
 
 void DrawObject::setPen( const Pen& p )
@@ -290,14 +291,12 @@ const DrawObject* DrawObject::ancestor() const
                 return this;
 }
 
-void DrawObject::setCompoundParent( Compound* p )
+void DrawObject::setCompoundParent( const Compound* p )
 {
         if ( !p && compoundParent_ )
-                setParent( compoundParent_->parent() );
-        else {
+                setCompoundParent( compoundParent_->compoundParent() );
+        else 
                 compoundParent_ = p;
-                setParent( p );
-        }
 }
 
 

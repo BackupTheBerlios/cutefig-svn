@@ -24,6 +24,7 @@
 
 
 #include "deletecommand.h"
+#include "selection.h"
 #include "figure.h"
 
 #include <QDebug>

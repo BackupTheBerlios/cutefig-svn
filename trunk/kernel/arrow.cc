@@ -98,6 +98,11 @@ ResourceKey ResLib<ArrowPainter*>::defaultKey()
         return ResourceKey::builtIn("STD");
 }
 
+template<>
+const QString ResLib<ArrowPainter*>::resourceName()
+{
+        return "arrow";
+}
 
 
 Arrow::Arrow( ArrowPainter* ap, double l, double w )

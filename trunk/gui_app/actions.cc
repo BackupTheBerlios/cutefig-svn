@@ -433,8 +433,6 @@ void ViewActions::updateZoom( double zoom )
 
 void ViewActions::updateZoomIndex( double zoom )
 {
-	qDebug() << __PRETTY_FUNCTION__;
-	
         for ( int i = 0; i < zoomLevels_.size(); ++i ) {
                 QAction* a = static_cast<QAction*>( zoomSignalMapper_->mapping( i ) );
 		if ( Geom::isEqual( zoomLevels_[i], zoom ) ) {

@@ -29,13 +29,13 @@
 #include <QMap>
 
 //! A small namespace to avoid name colision with a globally visible function
-namespace Res
-{
-        //! returns the key word of Resource used in the figure file
-        /*! The actual functions ar to be sepecialised.
-         */
-        template<typename Resource> const QString resourceName();
-}
+// namespace Res
+// {
+//         //! returns the key word of Resource used in the figure file
+//         /*! The actual functions ar to be sepecialised.
+//          */
+//         template<typename Resource> const QString resourceName();
+// }
 
 #include "typedefs.h"
 #include "resourcekey.h"
@@ -59,7 +59,7 @@ public:
         
         virtual void unassignResource( const ResourceKey& key, AbstractResourceUser* u ) = 0;
 
-        virtual void save( ResourceIO* rio, std::ostream& ts ) = 0;
+        virtual void save( ResourceIO* rio, QTextStream& ts ) = 0;
 
         virtual bool contains( const ResourceKey& key ) const =0;
 
@@ -141,11 +141,14 @@ public:
         //! removes a ResourceUser of the list of resource users
         void unassignResource( const ResourceKey& key, AbstractResourceUser* u );
 
-        void save( ResourceIO* rio, std::ostream& ts );
+        void save( ResourceIO* rio, QTextStream& ts );
 
         static ResourceKey findKey( const QString& ks ) { return instance().findKeyImpl( ks ); }
 
         static ResourceKey defaultKey();
+        static const Resource& defaultResource() { return instance()[defaultKey()]; }
+
+        static const QString resourceName();
         
 private:
         /*! Private to enforce singularity according to the Singleton
@@ -178,7 +181,7 @@ private:
         class ResourceData;
 
         //! a default constructed instance of Resource
-        static Resource& dummyResource();
+        //static Resource& dummyResource();
         
         //! resolves a ResourceKey to a Resource
         /*! Note that the key is resolved to a \e pointer to a
@@ -192,16 +195,16 @@ private:
 
 template<> class ResLib<Stroke>;
 
-template<typename Resource>
 
 /*! This is to be returned if a resource is requested by a key that is
  *  not in the ResLib.
  */
-Resource& ResLib<Resource>::dummyResource()
-{
-        static Resource r;
-        return r;
-}
+// template<typename Resource>
+// Resource& ResLib<Resource>::dummyResource()
+// {
+//         static Resource r;
+//         return r;
+// }
 
 
 /*! It therefore first checks whether the resource is not
@@ -280,7 +283,7 @@ const Resource& ResLib<Resource>::operator[]( const ResourceKey& key ) const
         if ( map_.contains( key ) ) 
                 return map_[key]->data();
         else 
-                return dummyResource();
+                return defaultResource();
 }
 
 template<typename Resource>
@@ -341,7 +344,7 @@ void ResLib<Resource>::unassignResource( const ResourceKey& key, AbstractResourc
 }
 
 template<typename Resource>
-void ResLib<Resource>::save( ResourceIO* rIO, std::ostream& ts )
+void ResLib<Resource>::save( ResourceIO* rIO, QTextStream& ts )
 {
         const ResourceKeyList kl = map_.keys();
         foreach ( const ResourceKey key, kl )
@@ -361,7 +364,7 @@ class ResLib<Resource>::ResourceData
 {
 public:
         ResourceData()  : users(), data_(), hashSum_() {}
-        ResourceData( const Resource& d ) : users(), data_(), hashSum_()
+        ResourceData( const Resource& d ) : users(), data_( d ), hashSum_()
         {
                 setData( d );
         }
@@ -389,14 +392,5 @@ void ResLib<Resource>::ResourceData::setData( const Resource& d )
         hashSum_ = qHash( d );
 }
 
-class Pixmap;
-
-namespace Res 
-{
-        template<> inline const QString resourceName<QColor>() { return "color"; }
-        template<> inline const QString resourceName<Gradient>() { return "gradient"; }
-        template<> inline const QString resourceName<Dashes>() { return "dashes"; }
-        template<> inline const QString resourceName<Pixmap>() { return "pixmap"; }
-}
 
 #endif

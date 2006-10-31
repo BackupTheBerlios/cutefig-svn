@@ -30,11 +30,7 @@
 class ChangeCommand : public ObjectCommand
 {
 public:
-        ChangeCommand( const Selection& s )
-                : ObjectCommand( s ),
-                  oldObjects_( s.backups() ) {}
-                
-        ~ChangeCommand() { }
+        ChangeCommand( const Selection& s );
 
         virtual void execute();
         virtual void unexecute();

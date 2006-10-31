@@ -67,9 +67,9 @@ void Ellipse::setupWidthAndHeight()
         }
 }
 
-void Ellipse::addPath()
+void Ellipse::addPath( const QRectF& r )
 {
-        painterPath_.addEllipse( bRect_ );
+        painterPath_.addEllipse( r );
 }
 
 void Ellipse::doSpecificPreparation()
@@ -129,14 +129,14 @@ void Ellipse::outputToBackend( OutputBackend* ob ) const
 
 
 template<>
-DrawObject* TObjectHandler<Ellipse>::parseObject( std::istream& is, Figure* fig )
+DrawObject* TObjectHandler<Ellipse>::parseObject( QTextStream& is, Figure* fig )
 {
         int circle, byRadius;
         double angle;
 
         is >> circle >> byRadius >> angle;
         
-        if ( is.fail() )
+        if ( is.status() != QTextStream::Ok )
                 return 0;
         
         Ellipse *e = new Ellipse( fig );

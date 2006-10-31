@@ -41,7 +41,6 @@ ObjectDialog::ObjectDialog( DrawObject* o, EditdialogAction* a, QWidget* parent 
         : EditDialog( parent ),
           action_ ( a )
 { 
-        qDebug("ObjectDialog::ObjectDialog");
         setWindowTitle( tr("%1 properties").arg( o->objectname_stripped() ) );
         drawObject_ = o;
 

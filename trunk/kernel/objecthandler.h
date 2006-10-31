@@ -29,8 +29,8 @@
 
 #include <QHash>
 #include <QString>
+#include <QTextStream>
 
-#include <istream>
 class DrawObjectIO;
 class DrawObject;
 class Figure;
@@ -66,7 +66,7 @@ class ObjectHandler
 {
 public:
         //! returns a DrawObject for keyword.
-        static DrawObject* getDrawObject( const QString& keyword, std::istream& is, Figure* f );
+        static DrawObject* getDrawObject( const QString& keyword, QTextStream& is, Figure* f );
 
         //! returns an appropriate ObjectGUIHandler
         static ObjectGUIHandler* guiHandler( const QString& keyWord );
@@ -83,7 +83,7 @@ protected:
 
         
 private:
-        virtual DrawObject* parseObject( std::istream& is, Figure* fig ) = 0;
+        virtual DrawObject* parseObject( QTextStream& is, Figure* fig ) = 0;
 
         ObjectHandler( const ObjectHandler& );
 
@@ -104,10 +104,10 @@ class TObjectHandler : public ObjectHandler
 {
 public:
         TObjectHandler<ObjectType>()
-                : ObjectHandler( ObjectType::cuteMetaObject().keyWord() )
+                : ObjectHandler( ObjectType::cuteMetaObject().keyword() )
         {}
 
-        virtual DrawObject* parseObject( std::istream&, Figure* fig ) 
+        virtual DrawObject* parseObject( QTextStream&, Figure* fig ) 
         {
                 return new ObjectType( fig );
         }

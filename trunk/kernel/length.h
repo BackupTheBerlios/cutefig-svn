@@ -30,7 +30,7 @@
 class Length
 {
 public:
-        Length( double value = 1.0 );
+        Length( double value );
         Length( double value, const ResourceKey& key );
         Length( const Length& other );
 

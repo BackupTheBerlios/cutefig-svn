@@ -23,7 +23,6 @@
 ******************************************************************************/
 
 #include "pixfilterapp.h"
-#include "figure.h"
 #include "parser.h"
 #include "fig.h"
 
@@ -42,8 +41,8 @@ PixfilterApp::PixfilterApp( int& argc, char* argv[] )
           infileList_(),
           outfileList_(),
           cerr( stderr ),
-          figure_( new Figure( this ) ),
-          pixout_( figure_, &outfile_ )
+          figure_(),
+          pixout_( &figure_, &outfile_ )
 {
         setupUsageString();
 }
@@ -258,8 +257,8 @@ int PixfilterApp::exec()
 int PixfilterApp::exportFigure()
 {
         QTextStream ts( &infile_ );
-        figure_->clear();
-        QString errors = Parser::parse( ts, figure_ );
+        figure_.clear();
+        QString errors = Parser::parse( ts, &figure_ );
         infile_.close();
 
         if ( !errors.isEmpty() )

@@ -129,7 +129,7 @@ public:
         void reclaimResource();
 
         //! returns the keyword of the Resource
-        const QString resourceName() const { return Res::resourceName<Resource>(); }
+        const QString resourceName() const { return ResLib<Resource>::resourceName(); }
         
 private:
         //! makes the ResLib remove the user from the userlist.
@@ -152,7 +152,7 @@ ResLib<Resource>& ResourceUser<Resource>::resLib_ = ResLib<Resource>::instance()
 template<typename Resource>
 ResourceUser<Resource>::ResourceUser( const ResourceKey& key )
         : AbstractResourceUser(),
-          data_(),
+          data_( resLib_.defaultResource() ),
           p_data_( 0 )
 {
         setResource( key );
@@ -240,7 +240,7 @@ void ResourceUser<Resource>::releaseResource()
         if ( !key_.isValid() )
                 return;
         
-        data_ = p_data_ ? *p_data_ : Resource();
+        data_ = p_data_ ? *p_data_ : resLib_.defaultResource();
         unassignResource();
 }
 

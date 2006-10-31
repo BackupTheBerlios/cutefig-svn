@@ -157,7 +157,7 @@ class DrawObject : public QObject
 {
 	Q_OBJECT
 public:
-        explicit DrawObject( Figure* parent = 0 );
+        explicit DrawObject( const Figure* figure );
         DrawObject( const DrawObject* );
         ~DrawObject() {}
 
@@ -169,7 +169,7 @@ public:
         //! Usually reimplemented by #DRAW_OBJECT
         virtual const QString& objectname() const =0;
         //! Usually reimplemented by #DRAW_OBJECT
-        virtual const QString& objectKeyWord() const =0;
+        virtual const QString& objectKeyword() const =0;
 
         QString objectname_stripped() const;
 
@@ -337,6 +337,7 @@ protected:
         virtual QPointF startAngle( const QPolygonF& pol ) const;
         virtual QPointF endAngle( const QPolygonF& pol ) const;
 
+
 	bool event( QEvent* e );
         
 
@@ -348,7 +349,7 @@ protected:
 
 private:
 	//! the Figure containing the DrawObject
-        Figure* figure_;
+        const Figure* figure_;
 
         //! the Pen of the object
         Pen pen_;
@@ -373,12 +374,14 @@ private:
         QString commentString_;
 
         int currentPointIndex_;
-        void setCompoundParent( Compound* p );
-        Compound* compoundParent_;
+        void setCompoundParent( const Compound* p );
+        const Compound* compoundParent_;
 
 
 	bool updateEverything_;
 };
+
+
 
 //! Small helper class to store the DrawObject's keyword and name
 /*! This class is not meant to be instaciated manually but by the
@@ -390,16 +393,16 @@ class MetaObject
 public:
         MetaObject( const QString& name, const QString& keyword )
                 : name_( name ),
-                  keyWord_( keyword )
+                  keyword_( keyword )
         {}
 
         const QString& name() const { return name_; }
-        const QString& keyWord() const { return keyWord_; }
+        const QString& keyword() const { return keyword_; }
 
 private:
         MetaObject( const MetaObject& );
         MetaObject& operator=( const MetaObject& );
-        QString name_, keyWord_;
+        QString name_, keyword_;
 };
 
 //! Defines things a concrete subclass of DrawObject needs.
@@ -428,7 +431,7 @@ public: \
         static const MetaObject& cuteMetaObject() \
         { static MetaObject mo( oname, okeyword ); return mo; }\
         const QString& objectname() const { return cuteMetaObject().name(); } \
-        const QString& objectKeyWord() const { return cuteMetaObject().keyWord(); } \
+        const QString& objectKeyword() const { return cuteMetaObject().keyword(); } \
         DrawObject* copy() const { return doCopy( this ); } \
 private:
 

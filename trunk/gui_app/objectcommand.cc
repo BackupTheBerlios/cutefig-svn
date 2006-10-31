@@ -22,21 +22,12 @@
 **
 ******************************************************************************/
 
-#ifndef deletecommand_h
-#define deletecommand_h
-
 #include "objectcommand.h"
+#include "selection.h"
 
-class DeleteCommand : public ObjectCommand
-{
-public:
-        DeleteCommand( const Selection& s );
+ObjectCommand::ObjectCommand( const Selection& s )
+        : Command(),
+          objects_( s.objects() )
+{    
+}
 
-        virtual void execute();
-        virtual void unexecute();
-
-private:
-        ObjectList actualObjects_;
-};
-
-#endif

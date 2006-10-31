@@ -12,7 +12,7 @@
 **  as published by the Free Software Foundation.
 ** 
 **  This program is distributed in the hope that it will be useful,
-**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  but WITHOUT ANY WARRANTY; with;out even the implied warranty of
 **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 **  GNU General Public License for more details.
 **
@@ -28,22 +28,34 @@
 #include <QPixmap>
 #include <QString>
 
+class Pixmap;
+int qHash( const Pixmap& pm );
+
+        
 class Pixmap 
 {
 public:
+        friend int qHash( const Pixmap& pm );
+        
 	Pixmap();
+        Pixmap( const Pixmap& other );
+        ~Pixmap();        
 
-	void setPixmap( const QPixmap& pm );
+        Pixmap& operator=( const Pixmap& other );
+        
+        void setPixmap( const QPixmap& pm );
 	bool loadFromFile( const QString& filename );
 
-	const QPixmap qpixmap() const { return pixmap_; }
+	const QPixmap qpixmap() const;
 	const QString fileName() const { return fileName_; }
 
 	bool isFromFile() const;
 
 private:
+        QPixmap& pixmap();
+        
 	QString fileName_;
-	QPixmap pixmap_;
+	QPixmap* pixmap_;
 };
 
 

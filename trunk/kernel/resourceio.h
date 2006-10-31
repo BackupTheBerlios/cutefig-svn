@@ -27,17 +27,12 @@
 
 #include "resourcekey.h"
 #include "streamops.h"
-//#include "reslib.h"
 
 #include <QString>
 #include <QHash>
 #include <QTextStream>
 
 
-namespace Initialiser
-{
-        template<typename T> class AutoHash;
-}
 
 class ResourceIO;
 
@@ -79,7 +74,7 @@ public:
         static AbstractResLib* getResLibInstance( const QString& keyWord );
 
         static void saveResLibs();
-        static void readResLibs();
+        static QString readResLibs();
         
         virtual ~ResourceIOFactory() {}
         
@@ -95,7 +90,7 @@ private:
 
         AbstractResLib* resLib_;
 
-        static Initialiser::AutoHash<ResourceIOFactory> rIOFHash_;        
+        static QHash<QString,ResourceIOFactory*>& rIOFHash();        
 };
 
 
@@ -121,10 +116,10 @@ public:
         virtual ~ResourceIO() {}
         
         virtual int hashSum( const ResourceKey& key, bool* found ) const = 0;
-        virtual bool parseResource( const QString& itemType, std::istream& is ) = 0;
+        virtual bool parseResource( const QString& itemType, QTextStream& is ) = 0;
         virtual void postProcessResource() = 0;
         virtual void pushResource( const ResourceKey& key ) const = 0;
-        virtual void outputResource( const ResourceKey& key, std::ostream& stream ) const = 0;
+        virtual void outputResource( const ResourceKey& key, QTextStream& stream ) const = 0;
         
         bool failed() const { return failed_; }
         QString errorString() const { return errorString_; }
@@ -139,8 +134,15 @@ protected:
 
         static QString tr( const char* text );
 
+        QString& buffer() { return buffer_; }
+        void clearBuffer();
+        void streamToBuffer( QTextStream& ts );
+
 private:
         ResourceIO( const ResourceIO& ) {}
+
+        mutable QTextStream bufferStream_;
+        QString buffer_;
 };
 
 //! Implements the interface provided by ResourceIO.
@@ -187,13 +189,13 @@ public:
          * be returned. If it is \b always only one line long \i false
          * has to be returned.
          */
-        virtual bool parseResource( const QString& itemType, std::istream& is );
+        virtual bool parseResource( const QString& itemType, QTextStream& is );
 
         //! Is to be specialised by some types
         virtual void postProcessResource() {}
 
         //! \b Needs to be specialised
-        void outputResource( const ResourceKey& key, std::ostream& stream ) const;
+        void outputResource( const ResourceKey& key, QTextStream& stream ) const;
 
         //! adds the resource to the resourceLib after having successfully parsed it.
         void pushResource( const ResourceKey& key ) const 
@@ -203,7 +205,7 @@ public:
 
 protected:
         //! \b Needs to be specislised by all types
-        virtual void outputResourceBody( const Resource&, std::ostream& ) const {}
+        virtual void outputResourceBody( const Resource&, QTextStream& ) const {}
         
 private:
         ResLib<Resource>& resourceLib_;
@@ -222,7 +224,8 @@ template<typename Resource> class TResourceIOFactory : public ResourceIOFactory
 {
 public:
         TResourceIOFactory<Resource>()
-                : ResourceIOFactory( Res::resourceName<Resource>(), ResLib<Resource>::instance() )
+                : ResourceIOFactory( ResLib<Resource>::resourceName(),
+                                     ResLib<Resource>::instance() )
         {}
         
         virtual ResourceIO* newResourceIO() { return new TResourceIO<Resource>(); }
@@ -230,13 +233,13 @@ public:
 
 
 template<typename Resource>
-void TResourceIO<Resource>::outputResource( const ResourceKey& key, std::ostream& stream ) const
+void TResourceIO<Resource>::outputResource( const ResourceKey& key, QTextStream& stream ) const
 {
         const Resource& res = resourceLib_[key];
         
         stream << "resource "
-               << Res::resourceName<Resource>() << " "
-               << key.keyString() << " "
+               << ResLib<Resource>::resourceName() << " "
+               << percentEncode(key.keyString()) << " "
                << hashSum( key ) << " ";
 
         outputResourceBody( res, stream );

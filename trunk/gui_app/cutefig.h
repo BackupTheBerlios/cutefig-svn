@@ -25,10 +25,11 @@
 #ifndef CUTEFIG_H
 #define CUTEFIG_H
 
+#include "figure.h"
+
 #include <QMainWindow>
 #include <QSize>
 
-class Figure;
 class CanvasView;
 class Controler;
 
@@ -70,7 +71,7 @@ protected:
 private:
         CanvasView *cview_;        //!< The editing view of the figure
         Controler *controler_;     //!< The controler editing the figure
-        Figure *figure_;           //!< The figure acts as the model
+        Figure figure_;           //!< The figure acts as the model
 
         QString filename_;         //!< Name of the file being edited
 

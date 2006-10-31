@@ -23,14 +23,13 @@
 ******************************************************************************/
 
 #include "pixoutput.h"
+#include "figure.h"
 
 #include <QApplication>
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
 #include <QByteArray>
-
-class Figure;
 
 class PixfilterApp : public QApplication
 {
@@ -45,7 +44,7 @@ protected:
         QString usageString_;
         QStringList infileList_, outfileList_;
         QTextStream cerr;
-        Figure* figure_;
+        Figure figure_;
         PIXOutput pixout_;
 
         bool verbose_;

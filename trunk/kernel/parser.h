@@ -34,8 +34,6 @@
 #include <QPen>
 #include <QHash>
 
-#include <sstream>
-
 #include "typedefs.h"
 #include "pen.h"
 #include "stroke.h"
@@ -52,6 +50,7 @@ class Parser
 public:
         static QString parse( QTextStream& ts, Figure* f );
         static QString parseResLibs( QTextStream& ts );
+        static QString parseObjects( QTextStream& ts, Figure* f );
 
         static Dashes parseDashLine( const std::string& s );
         
@@ -76,10 +75,11 @@ private:
 
         double figureUnit_;
 
-        std::istringstream stream_;
-        
         QString itemType_;
-        uint line_;
+        QString currentLine_;
+        
+        QTextStream stream_;
+        unsigned int line_;
 
         QString errorReport_;
 

@@ -25,6 +25,13 @@
 
 #include "changecommand.h"
 #include "figure.h"
+#include "selection.h"
+
+ChangeCommand::ChangeCommand( const Selection& s )
+        : ObjectCommand( s ),
+          oldObjects_( s.backups() )
+{
+}
 
 void ChangeCommand::execute()
 {

@@ -65,7 +65,7 @@ private:
         
         void doSpecificPreparation();
         void setupWidthAndHeight();
-        void addPath();
+        void addPath( const QRectF& r );
 };
 
 

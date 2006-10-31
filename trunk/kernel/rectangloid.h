@@ -60,7 +60,7 @@ protected:
         virtual void passPointFlag_private( Fig::PointFlags f ) = 0;
 
         virtual void setupWidthAndHeight() = 0;
-        virtual void addPath() = 0;
+        virtual void addPath( const QRectF& r ) = 0;
 
         QPointF center_;
         qreal w_, h_, w2_, h2_;

@@ -35,7 +35,7 @@
 class CfigOutput : public OutputBackend
 {
 public:
-        CfigOutput( std::ostream& ts, const Figure& f );
+        CfigOutput( QTextStream& ts, const Figure& f );
         
         virtual void outputRectangle( const Rectangle* rc );
         virtual void outputEllipse( const Ellipse* el );
@@ -57,13 +57,9 @@ private:
         void outputResources();
         void outputMetaData();
 
-        static const char* objectString;
+	double unit();
 
         const DrawObject* drawObject_;
-
-        QHash<int,int> dashMap_;
-
-        double unit_;
 };
 
 

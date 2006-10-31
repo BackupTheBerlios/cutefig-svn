@@ -60,7 +60,7 @@ class TObjectGUIHandler : public ObjectGUIHandler
 {
 public:
         TObjectGUIHandler<ObjectType>()
-                : ObjectGUIHandler( ObjectType::cuteMetaObject().keyWord() )
+                : ObjectGUIHandler( ObjectType::cuteMetaObject().keyword() )
         {}
 
         CreateAction* makeCreateAction( Controler* c );

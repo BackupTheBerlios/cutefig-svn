@@ -59,7 +59,7 @@ public:
         TextObject( const TextObject* o );
 
         //! it is handy to make the parsing function friend.
-        friend DrawObject* TObjectHandler<TextObject>::parseObject( std::istream&, Figure* fig );
+        friend DrawObject* TObjectHandler<TextObject>::parseObject( QTextStream&, Figure* fig );
 
         //! returns the font of the TextObject.
         /*! Note that only font family and size are relevant, as the

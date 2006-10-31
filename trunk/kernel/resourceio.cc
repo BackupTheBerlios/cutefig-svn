@@ -23,30 +23,28 @@
 ******************************************************************************/
 
 #include "resourceio.h"
-#include "initialiser.h"
 #include "parser.h"
 
 #include <QSettings>
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
+#include <QFile>
 #include <QCoreApplication>
 
-#include <fstream>
-//QHash<QString,ResourceIOFactory*> ResourceIOFactory::rIOFHash_;
 
-Initialiser::AutoHash<ResourceIOFactory> ResourceIOFactory::rIOFHash_;
+
 
 ResourceIOFactory::ResourceIOFactory( const QString& kw, AbstractResLib& rl )
         : resLib_( &rl )
 {
-        rIOFHash_[kw] = this;
+        rIOFHash()[kw] = this;
 }
 
 
 ResourceIO* ResourceIOFactory::getResourceIO( const QString& keyWord )
 {
-        ResourceIOFactory* f = rIOFHash_[keyWord];
+        ResourceIOFactory* f = rIOFHash()[keyWord];
 
         if ( !f )
                 return 0;
@@ -59,7 +57,7 @@ ResourceIO* ResourceIOFactory::getResourceIO( const QString& keyWord )
 
 AbstractResLib* ResourceIOFactory::getResLibInstance( const QString& keyWord )
 {
-        ResourceIOFactory* f = rIOFHash_[keyWord];
+        ResourceIOFactory* f = rIOFHash()[keyWord];
 
         if ( !f )
                 return 0;
@@ -78,20 +76,35 @@ static const QString resourceFileName()
 
 void ResourceIOFactory::saveResLibs()
 {
-        std::ofstream ts( resourceFileName().toLocal8Bit().constData() );
+	QFile fl( resourceFileName() );
+	if ( !fl.open( QFile::WriteOnly | QFile::Truncate ) ) {
+		return;
+	}
+	
+	QTextStream ts( &fl );
         
-        foreach ( ResourceIOFactory* f, rIOFHash_.objects() )
-                f->resLibInstance()->save( f->newResourceIO(), ts );
+        foreach ( ResourceIOFactory* f, rIOFHash().values() ) {
+                if ( f )
+                        f->resLibInstance()->save( f->newResourceIO(), ts );
+        }
+        
 }
 
-void ResourceIOFactory::readResLibs()
+QString ResourceIOFactory::readResLibs()
 {
         QFile f( resourceFileName() );
 
-        if ( f.open( QIODevice::ReadOnly ) ) {
-                QTextStream ts( &f );
-                Parser::parseResLibs( ts );
-        }
+        if ( !f.open( QIODevice::ReadOnly ) )
+                return QString();
+        
+        QTextStream ts( &f );
+        return Parser::parseResLibs( ts );
+}
+
+QHash<QString,ResourceIOFactory*>& ResourceIOFactory::rIOFHash()
+{
+        static QHash<QString,ResourceIOFactory*> h;
+        return h;
 }
 
 
@@ -99,3 +112,19 @@ QString ResourceIO::tr( const char* text )
 {
 	return QCoreApplication::translate( "ResourceIO", text );
 }
+
+void ResourceIO::streamToBuffer( QTextStream& ts )
+{
+        ts.seek( 0 );
+        QString s = ts.readAll();
+        if ( !s.isEmpty() )
+                if ( !buffer_.isEmpty() )
+                        buffer_ += "\n";
+                buffer_ += s;
+}
+
+void ResourceIO::clearBuffer()
+{
+        buffer_.clear();
+}
+

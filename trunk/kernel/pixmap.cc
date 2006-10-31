@@ -33,14 +33,19 @@
 
 Pixmap::Pixmap()
 	: fileName_(),
-	  pixmap_()
+	  pixmap_( 0 )
 {
+}
+
+Pixmap::~Pixmap()
+{
+        delete pixmap_;
 }
 
 void Pixmap::setPixmap( const QPixmap& pm )
 {
 	fileName_.clear();
-	pixmap_ = pm;
+	pixmap() = pm;
 }
 
 bool Pixmap::loadFromFile( const QString& filename )
@@ -53,7 +58,7 @@ bool Pixmap::loadFromFile( const QString& filename )
 		return false;
 
 	fileName_ = filename;
-	pixmap_ = pm;
+	pixmap() = pm;
 
 	return true;
 }
@@ -63,21 +68,72 @@ bool Pixmap::isFromFile() const
 	return !fileName_.isEmpty();
 }
 
+const QPixmap Pixmap::qpixmap() const
+{
+        if ( !pixmap_ )
+                return QPixmap();
+        else
+                return *pixmap_;
+}
+
+QPixmap& Pixmap::pixmap()
+{
+        if ( !pixmap_ )
+                pixmap_ = new QPixmap;
+        
+        return *pixmap_;
+}
+
+
 
 
 template<> void ResLib<Pixmap>::init()
 {
+        insertBuiltIn("nopixmap", Pixmap());
 }
 
 template<> ResourceKey ResLib<Pixmap>::defaultKey()
 {
-        return ResourceKey();
+        return ResourceKey::builtIn("nopixmap");
 }
+
+template<>
+const QString ResLib<Pixmap>::resourceName()
+{
+        return "pixmap";
+}
+
+
+template<>
+bool TResourceIO<Pixmap>::parseResource( const QString&, QTextStream& is )
+{
+	QString fileName;
+	is >> fileName;
+
+	if ( !resource_.loadFromFile( fileName ) ) {
+		errorString_ = tr("Could not read pixmap file %1.").arg( fileName );
+		failed_ = true;
+	}
+
+	return true;
+}
+
+
+template<>
+void TResourceIO<Pixmap>::outputResourceBody( const Pixmap& res, QTextStream& ts ) const
+{
+	if ( res.isFromFile() ) {
+		ts << res.fileName() << "\n";
+		return;
+	}
+}
+
+static TResourceIOFactory<Pixmap> rIOFinstance;
 
 
 int qHash( const Pixmap& pm )
 {
-	if ( pm.isFromFile() )
+	if ( pm.isFromFile() || !pm.pixmap_ )
 		return 0;
 
 	QByteArray ba;
@@ -88,3 +144,22 @@ int qHash( const Pixmap& pm )
 	return qHash( ba );
 }
 
+Pixmap::Pixmap( const Pixmap& other )
+        : fileName_( other.fileName_ ),
+          pixmap_( other.pixmap_ ? new QPixmap( *other.pixmap_ ) : 0 )
+{
+}
+
+Pixmap& Pixmap::operator= ( const Pixmap& other )
+{
+        if ( &other == this )
+                return *this;
+        
+        if ( pixmap_ )
+                delete pixmap_;
+        
+        pixmap_ = other.pixmap_ ? new QPixmap( *other.pixmap_ ) : 0;
+        fileName_ = other.fileName_;
+
+        return *this;
+}

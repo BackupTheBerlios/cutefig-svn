@@ -32,7 +32,6 @@
 #include "fig.h"
 
 #include <QList>
-#include <QObject>
 #include <QSizeF>
 #include <QDate>
 
@@ -65,15 +64,9 @@ class QRectF;
  *  without it a Compound would not honor different depths of
  *  childObjects.
  */
-class Figure : public QObject
+class Figure
 {
-Q_OBJECT
-
 public:
-        explicit Figure( QObject * parent = 0 );
-        ~Figure() {};
-
-
         //! Contains the Figures meta data
         /*! All the metadata is put into one class so that it can be
          *  copied or referenced to easily in one statement.
@@ -111,9 +104,12 @@ public:
                 QDate modDate_;
         };
 
-        //! sets the controler_ to c
-        //void setControler( Controler* c ) { controler_ = c; }
+        Figure();
+        Figure( const Figure& other );
+        ~Figure();
 
+        Figure& operator= ( const Figure& other );
+        
         const MetaData& metaData() const { return metaData_; }
         void setMetaData( const MetaData& md ) { metaData_ = md; }
         
@@ -195,9 +191,9 @@ private:
         void removeObjectFromDrawingList( DrawObject* o );
         void sortIntoDrawingList( DrawObject* o );
         
-        ObjectList objectList_, drawingList_;
+        ObjectList objectList_, drawingList_, removedObjects_;
 
-        MetaData metaData_;        
+        MetaData metaData_;
 };
 
 #endif

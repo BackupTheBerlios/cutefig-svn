@@ -1,4 +1,4 @@
- 
+
 /*****************************************************************************
 **
 **  @version $Id$
@@ -22,21 +22,41 @@
 **
 ******************************************************************************/
 
-#ifndef deletecommand_h
-#define deletecommand_h
+#ifndef pattern_h
+#define pattern_h
 
-#include "objectcommand.h"
+#include "typedefs.h"
+#include "figure.h"
 
-class DeleteCommand : public ObjectCommand
+#include <QList>
+
+template<typename Resource> class TResourceIO;
+
+class QBrush;
+class QMatrix;
+
+class Pattern;
+unsigned int qHash( const Pattern& p );
+
+class Pattern 
 {
 public:
-        DeleteCommand( const Selection& s );
-
-        virtual void execute();
-        virtual void unexecute();
+        friend class TResourceIO<Pattern>;
+        friend unsigned int qHash( const Pattern& p );
+        
+	Pattern();
+	explicit Pattern( const ObjectList& obs );
+	
+	const ObjectList& objects() const { return figure_.objects(); }
+	void setObjectList( const ObjectList& obs );
+	
+	const QBrush brush( const QRectF& rect, const QMatrix& m ) const;
 
 private:
-        ObjectList actualObjects_;
+        Figure figure_;
 };
+
+
+
 
 #endif

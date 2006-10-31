@@ -41,9 +41,10 @@ class Compound : public DrawObject
         Q_OBJECT
         DRAW_OBJECT( "group", "" )
 public:
-        Compound( const ObjectList& l, Figure* parent = 0 );
+        Compound( const ObjectList& l, const Figure* fig );
         Compound( const Compound* c );
-        ~Compound() {}
+
+        ~Compound();
 
         void releaseChildren();
 
@@ -66,6 +67,8 @@ public:
 
         const ObjectList& childObjects() const { return childObjects_; }
 
+        const Compound* compoundParent() const { return compoundParent_; }
+        
 protected:
         virtual int nextPointIndex() { return -1; }
         virtual void passPointFlag( Fig::PointFlags ) {}

@@ -99,12 +99,6 @@ private:
         double width_, length_;
 };
 
-//uint qHash( const Arrow& a );
 
-namespace Res
-{
-        template<typename Resource> const QString resourceName();
-        template<> inline const QString resourceName<ArrowPainter*>() { return "arrow"; }
-}
 
 #endif

@@ -42,8 +42,8 @@
 /*! Creates a Compound object of the DrawObjects in l. Those
  *  DrawObjects are made the children of the Compund.
  */
-Compound::Compound( const ObjectList& l, Figure* parent )
-        : DrawObject( parent ),
+Compound::Compound( const ObjectList& l, const Figure* fig )
+        : DrawObject( fig ),
           childObjects_( l )
 {
         foreach ( DrawObject* o, l ) 
@@ -59,6 +59,11 @@ Compound::Compound( const Compound* c )
                 newObject->setCompoundParent( this );
                 childObjects_.append( newObject );
         }
+}
+
+Compound::~Compound()
+{
+        qDeleteAll( childObjects_ );
 }
 
 /*! Makes the children children of the Compounds parent. So the

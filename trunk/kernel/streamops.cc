@@ -32,32 +32,27 @@
 #include <QUrl>
 #include <QSizeF>
 
-#include <iostream>
-#include <sstream>
 
-/*! Puts the next word of the a std::istream into a QString. 
- *
- */
-std::istream &operator>> ( std::istream &is, QString &_s ) 
+QString percentDecode( const QString& s )
 {
-        std::string s;
-        is >> s;
-        _s = QUrl::fromPercentEncoding( s.c_str() );
-        
-        return is;
+        return QUrl::fromPercentEncoding( s.toUtf8() );
 }
 
-int get_colorByte( std::istream& is )
+
+int get_colorByte( QTextStream& is )
 {
-         int v = toupper(is.get()) - '0';
-         if ( v > 9 )
-                 v -= 7;
-         if ( v < 0 || v > 15 )
-                 is.setstate( is.rdstate() | std::istream::failbit );
-         return v;
+        char c;
+        is >> c;
+        int v = std::toupper(c) - '0';
+        if ( v > 9 )
+                v -= 7;
+        if ( v < 0 || v > 15 )
+                is.setStatus( QTextStream::ReadCorruptData );
+
+        return v;
 }
 
-int get_colorPart( std::istream& is )
+int get_colorPart( QTextStream& is )
 {
         int v = get_colorByte( is );
         v = v << 4;
@@ -66,18 +61,16 @@ int get_colorPart( std::istream& is )
 }
         
 
-/*! Tries to interpret the next word of an std::istream as a
- * QColor. On failure the failbit of the std::istream is set to true.
+/*! Tries to interpret the next word of an QTextStream as a
+ * QColor. On failure the failbit of the QTextStream is set to true.
  */
-std::istream &operator>> ( std::istream &is, QColor &color )
+QTextStream &operator>> ( QTextStream &is, QColor &color )
 {
+        is.skipWhiteSpace();
         char c;
-        do 
-                c = is.get();
-        while( isspace( c ) );
-        
+        is >> c;
         if ( c != '#' ) {
-                is.setstate( is.rdstate() | std::istream::failbit );
+                is.setStatus( QTextStream::ReadCorruptData );
                 return is;
         }
         
@@ -85,16 +78,17 @@ std::istream &operator>> ( std::istream &is, QColor &color )
         color.setGreen( get_colorPart( is ) );
         color.setBlue( get_colorPart( is ) );
 
-        c = is.peek();
-        if ( !is.eof() ) {
-                if ( !isspace( c ) && c > 0 ) 
+        if ( !is.atEnd() ) {
+                is >> c;
+                is.seek( is.pos() - 1 );
+                if ( !std::isspace( c ) && c > 0 ) 
                         color.setAlpha( get_colorPart( is ) );
         }
         
         return is;
 }
 
-std::istream& operator>> ( std::istream& is, QSizeF& size ) 
+QTextStream& operator>> ( QTextStream& is, QSizeF& size ) 
 {
         double w,h;
         is >> w >> h;
@@ -105,12 +99,11 @@ std::istream& operator>> ( std::istream& is, QSizeF& size )
         return is;
 }
 
-std::istream& operator>> ( std::istream &is, ResourceKey& key )
+QTextStream& operator>> ( QTextStream &is, ResourceKey& key )
 {
+        is.skipWhiteSpace();
         char c;
-        do
-                c = is.get();
-        while ( isspace(c) );
+        is >> c;
 
         if ( c == '%' ) {
                 key = ResourceKey();
@@ -119,6 +112,7 @@ std::istream& operator>> ( std::istream &is, ResourceKey& key )
                 
         QString keyString;
         is >> keyString;
+        keyString = percentDecode( keyString );
         
         switch ( c ) {
             case '&':
@@ -128,7 +122,7 @@ std::istream& operator>> ( std::istream &is, ResourceKey& key )
                     key = ResourceKey::inFig( keyString );
                     break;
             default:
-                    is.setstate( is.rdstate() | std::istream::failbit );
+                    is.setStatus( QTextStream::ReadCorruptData );
                     key = ResourceKey();
         }
         
@@ -136,7 +130,7 @@ std::istream& operator>> ( std::istream &is, ResourceKey& key )
 }
 
 
-std::istream& operator>>( std::istream& is, Pen& pen )
+QTextStream& operator>>( QTextStream& is, Pen& pen )
 {
         double lw;
         ResourceKey dashKey;
@@ -144,7 +138,7 @@ std::istream& operator>>( std::istream& is, Pen& pen )
         
         is >> lw >> dashKey >> cs >> js;
 
-        if ( !is.fail() ) {
+        if ( !is.status() == QTextStream::ReadCorruptData ) {
                 pen.setWidth( lw );
                 pen.setCapStyle( (Qt::PenCapStyle) cs );
                 pen.setJoinStyle( (Qt::PenJoinStyle) js );
@@ -154,30 +148,30 @@ std::istream& operator>>( std::istream& is, Pen& pen )
         return is;
 }
 
-std::istream& operator>> ( std::istream &is, Stroke& s )
+QTextStream& operator>> ( QTextStream &is, Stroke& s )
 {
+        is.skipWhiteSpace();
         char c;
-        do 
-                c = is.get();
-        while ( isspace(c) );
-
-        is.putback( c );
+        is >> c;
+        is.seek( is.pos() - 1 );
         
         if ( c == '#' ) {
                 QColor color;
-                if (is >> color)
+                is >> color;
+                if ( is.status() == QTextStream::Ok )
                         s = Stroke( color );
         } else {
                 ResourceKey key;
                 
                 s = Stroke();
-                if ( (is >> key) && key.isValid() ) {
+                is >> key;
+                if ( key.isValid() ) {
                 
                         QString kw;
                         is >> kw;
 
 			if ( !s.setData( kw, key ) )
-				is.setstate( is.rdstate() | std::istream::failbit );
+                                is.setStatus( QTextStream::ReadCorruptData );
                 }
         }
 
@@ -185,13 +179,13 @@ std::istream& operator>> ( std::istream &is, Stroke& s )
 }
  
 
-std::istream& operator>> ( std::istream &is, QDate& d ) 
+QTextStream& operator>> ( QTextStream &is, QDate& d ) 
 {
         QString ds;
         is >> ds;
         d = QDate::fromString( ds, Qt::ISODate );
         if ( !d.isValid() && !d.isNull() )
-                is.setstate( is.rdstate() | std::istream::failbit );
+                is.setStatus( QTextStream::ReadCorruptData );
 
         return is;
 }
@@ -201,15 +195,13 @@ std::istream& operator>> ( std::istream &is, QDate& d )
 
 //// output
 
-std::ostream& operator<< ( std::ostream& ts, const QString& s )
+QString percentEncode( const QString& s )
 {
-        ts << QUrl::toPercentEncoding( s ).data();
-
-        return ts;
+	return QUrl::toPercentEncoding( s ).data();
 }
 
 
-void put_colorPart( std::ostream& ts, int v )
+void put_colorPart( QTextStream& ts, int v )
 {
         int e = v & 0x0F;
         e += (e>9) ? 'A'-10 : '0';
@@ -219,7 +211,7 @@ void put_colorPart( std::ostream& ts, int v )
         ts << (char)v << (char)e;
 }
 
-std::ostream& operator<< ( std::ostream& ts, const QColor& c )
+QTextStream& operator<< ( QTextStream& ts, const QColor& c )
 {
         ts << '#';
         
@@ -234,14 +226,14 @@ std::ostream& operator<< ( std::ostream& ts, const QColor& c )
 }
 
 
-std::ostream& operator<< ( std::ostream& ts, const QSizeF& s ) 
+QTextStream& operator<< ( QTextStream& ts, const QSizeF& s ) 
 {
         ts << s.width() << ' ' << s.height();
         return ts;
 }
 
 
-std::ostream& operator<< ( std::ostream& ts, const ResourceKey& key )
+QTextStream& operator<< ( QTextStream& ts, const ResourceKey& key )
 {
         if ( !key.isValid() ) {
                 ts << '%';
@@ -253,12 +245,12 @@ std::ostream& operator<< ( std::ostream& ts, const ResourceKey& key )
         else
                 ts << '*';
 
-        ts << key.keyString();
+        ts << percentEncode(key.keyString());
 
         return ts;
 }
 
-std::ostream& operator<< ( std::ostream& ts, const Stroke& st )
+QTextStream& operator<< ( QTextStream& ts, const Stroke& st )
 {
         if ( st.isHardColor() )
                 ts << st.color();
@@ -269,7 +261,7 @@ std::ostream& operator<< ( std::ostream& ts, const Stroke& st )
 }
 
 
-std::ostream& operator<< ( std::ostream& os, const QDate& d ) 
+QTextStream& operator<< ( QTextStream& os, const QDate& d ) 
 {
         os << d.toString( Qt::ISODate );
         return os;

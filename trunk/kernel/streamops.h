@@ -37,20 +37,20 @@ class Pen;
 class QDate;
 
 
-std::istream& operator>> ( std::istream&, QString& );
-std::istream& operator>> ( std::istream&, QColor& );
-std::istream& operator>> ( std::istream&, QSizeF& );
-std::istream& operator>> ( std::istream&, ResourceKey& );
-std::istream& operator>> ( std::istream&, Pen& );
-std::istream& operator>> ( std::istream&, Stroke& );
-std::istream& operator>> ( std::istream&, QDate& );
+QString percentDecode( const QString& s );
+QTextStream& operator>> ( QTextStream&, QColor& );
+QTextStream& operator>> ( QTextStream&, QSizeF& );
+QTextStream& operator>> ( QTextStream&, ResourceKey& );
+QTextStream& operator>> ( QTextStream&, Pen& );
+QTextStream& operator>> ( QTextStream&, Stroke& );
+QTextStream& operator>> ( QTextStream&, QDate& );
 
-std::ostream& operator<< ( std::ostream&, const QString& );
-std::ostream& operator<< ( std::ostream&, const QColor& );
-std::ostream& operator<< ( std::ostream&, const QSizeF& );
-std::ostream& operator<< ( std::ostream&, const Stroke& );
-std::ostream& operator<< ( std::ostream&, const ResourceKey& );
-std::ostream& operator<< ( std::ostream&, const QDate& d );
+QString percentEncode( const QString& s );
+QTextStream& operator<< ( QTextStream&, const QColor& );
+QTextStream& operator<< ( QTextStream&, const QSizeF& );
+QTextStream& operator<< ( QTextStream&, const Stroke& );
+QTextStream& operator<< ( QTextStream&, const ResourceKey& );
+QTextStream& operator<< ( QTextStream&, const QDate& d );
 
 
 

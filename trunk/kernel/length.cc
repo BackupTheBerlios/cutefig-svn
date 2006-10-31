@@ -84,8 +84,9 @@ ResourceKey ResLib<Length>::defaultKey()
         return ResourceKey::builtIn("inch");
 }
 
-namespace Res
+template<>
+const QString ResLib<Length>::resourceName()
 {
-        template<> const QString resourceName<Length>() { return "length"; }
+        return "length";
 }
 

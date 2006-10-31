@@ -27,6 +27,8 @@
 #ifndef geometry_h
 #define geometry_h
 
+#include "typedefs.h"
+
 #include <QPointF>
 #include <QRectF>
 #include <QLineF>
@@ -72,6 +74,9 @@ template<typename T> bool isEqual( T x, T y )
 }
 
 
+QRectF boundingRectOf( const ObjectList& obs );
+
+
 const double clickTolerance = 5;
 
 const double rad = 180/M_PI;
@@ -80,6 +85,8 @@ int qangle( double angle );
 
 inline
 int qangle( const QPointF& p1, const QPointF& p2 ) { return qangle( angle( p1,p2 ) ); }
+
+
 };
 
 

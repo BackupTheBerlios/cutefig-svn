@@ -92,8 +92,6 @@ void RelativeAction::relativeMove( const QPointF& p )
 
 void MoveAction::relativeClick( DrawObject* o, const QPointF& p, Fig::PointFlags )
 {
-        qDebug() << "MoveAction::relativeClick";
-        
         o->move( p );
         status_.setInformation( Fig::Normal, tr("end point") );
         emit statusChanged( status_ );
@@ -101,7 +99,6 @@ void MoveAction::relativeClick( DrawObject* o, const QPointF& p, Fig::PointFlags
 
 void MoveAction::relativeMove( DrawObject* o, const QPointF& p )
 {
-        qDebug() << "MoveAction::relativeMove";
         o->move( p );
         status_.setStatus( tr("dx: %1, dy: %2").arg( p.x() ).arg( p.y() ) );
         emit statusChanged( status_ );

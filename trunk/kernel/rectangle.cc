@@ -174,22 +174,23 @@ void Rectangle::setupWidthAndHeight()
                 yCornerRad_ = h2_;
 }
 
-void Rectangle::addPath()
+void Rectangle::addPath( const QRectF& rect )
 {
+        QRectF r = rect;
+        r.moveCenter( center_ );
 	double rx = xCornerRad();
 	double ry = yCornerRad();
 	
         if ( !roundedCorners_  || Geom::isEqual( rx*ry, 0.0 ) )
-                painterPath_.addRect( bRect_ );
-
+                painterPath_.addRect( rect );
         else {
 		rx *= 2;
 		ry *= 2;
 		
-                const double l = bRect_.left();
-                const double r = bRect_.right();
-                const double t = bRect_.top();
-                const double b = bRect_.bottom();
+                const double l = rect.left();
+                const double r = rect.right();
+                const double t = rect.top();
+                const double b = rect.bottom();
 
                 const double rx = 2*xCornerRad_;
                 const double ry = equalCornerRadii_ ? rx : 2*yCornerRad_;
@@ -204,14 +205,14 @@ void Rectangle::addPath()
 }
 
 template<>
-DrawObject* TObjectHandler<Rectangle>::parseObject( std::istream& is, Figure* fig )
+DrawObject* TObjectHandler<Rectangle>::parseObject( QTextStream& is, Figure* fig )
 {
         double angle, xr, yr;
         is >> angle >> xr >> yr;
 
-        if ( is.fail() )
+        if ( is.status() != QTextStream::Ok )
                 return 0;
-        
+
         Rectangle* r = new Rectangle( fig );
         r->setAngle( angle );
 	r->roundedCorners_ = ! (xr < 0);

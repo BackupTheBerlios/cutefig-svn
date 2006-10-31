@@ -27,7 +27,6 @@
 
 #include "resourcekey.h"
 #include "resourceuser.h"
-#include "gradient.h"
 #include "autohash.h"
 
 #include <QColor>
@@ -41,6 +40,8 @@ class QRectF;
 
 class OutputBackend;
 
+class NoStroke;
+
 //! Represents the possibilities of patterns that can used to draw or fill an object.
 /*! So far it can contain a QColor or a Gradient. Pixmaps and vector
  *  patterns are to be implemented. The data is kept in an ResourceUser. 
@@ -49,7 +50,7 @@ class Stroke
 {
 public:
         //! the possible types of a Stroke
-        enum StrokeType { sNone = 0, sColor, sGradient, sPixmap, sComplex };
+        enum StrokeType { sNone = 0, sColor, sGradient, sPixmap, sPattern };
 
         Stroke();
         explicit Stroke( const QColor& color );
@@ -61,12 +62,12 @@ public:
         Stroke& operator= ( const Stroke& other );
                 
 
-        void setNone() { type_ = sNone; }
         void setColor( const QColor& color );
 
-        void setColor( const ResourceKey& key );
-        void setGradient( const ResourceKey& key );
-        void setPixmap( const ResourceKey& key );
+	template<typename SType> void setData( const ResourceKey& key = ResourceKey() );
+//         void setColor( const ResourceKey& key );
+//         void setGradient( const ResourceKey& key );
+//         void setPixmap( const ResourceKey& key );
 
 	bool setData( const QString& typeString, const ResourceKey& key );
         
@@ -79,8 +80,8 @@ public:
 
         void fillPath( const QPainterPath& path, QPainter* painter ) const;
         
-        const QBrush brush( const QRectF& rect ) const;
-        const QBrush brush( const QPainterPath& path ) const;
+        const QBrush brush( const QRectF& rect, const QMatrix& m ) const;
+        const QBrush brush( const QPainterPath& path, const QMatrix& m ) const;
         
         operator bool () const { return type_; }
         
@@ -102,5 +103,24 @@ inline int qHash( const QColor& )
         return 0;
 }
 
+
+
+// Implementation of templated parts:
+
+template<typename SType> Stroke::StrokeType strokeType();
+
+template<typename SType>
+void Stroke::setData( const ResourceKey& key )
+{
+        type_ = strokeType<SType>();
+        delete resourceUser_;
+        
+	ResourceUser<SType>* ru = new ResourceUser<SType>;
+	ru->setResource( key );
+	resourceUser_ = ru;
+}
+
+template<>
+void Stroke::setData<NoStroke>( const ResourceKey& );
 
 #endif

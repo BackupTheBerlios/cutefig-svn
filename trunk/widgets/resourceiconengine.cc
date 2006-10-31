@@ -105,22 +105,6 @@ template<>
 void ResourceIconEngine<ArrowPainter*>::paintForeground( QPainter* p, const QRect& r )
 {
         Arrow a( resource_ );
-
-//         double mw = r.width() * .8;
-//         double mh = r.height() * .8;
-        
-//         if ( a.length() > mw ) {
-//                 double f = a.length() / mw;
-//                 a.setLength( mw );
-//                 a.setWidth( a.width() / f );
-//         }
-
-//         if ( a.width() > mh ){
-//                 double f = a.width() / mh;
-//                 a.setWidth( mh );
-//                 a.setLength( a.length() / f );
-//         }
-
         QPen pen;
         pen.setWidth( 2 );
         
@@ -132,35 +116,3 @@ void ResourceIconEngine<ArrowPainter*>::paintForeground( QPainter* p, const QRec
         a.draw( pos, QPointF(-1,0), p );
         p->drawLine( pos, QPointF( r.width() *.9, r.height() / 2 ) ); 
 }
-
-
-//class Length;
-//class Paper;
-
-#include "length.h"
-#include "paper.h"
-
-// template<>
-// void ResourceIconEngine<Length>::paintForeground( QPainter* p, const QRect& r )
-// {
-// }
-
-// template<>
-// void ResourceIconEngine<Paper>::paintForeground( QPainter* p, const QRect& r )
-// {
-// }
-
-// template<>
-// AbstractResourceIconEngine* IconEngineFactory<Length>::orderEngine( const Length& )
-// {
-//         qDebug() << "orderEngine<Length>";
-        
-//         return 0;
-// }
-
-// template<>
-// AbstractResourceIconEngine* IconEngineFactory<Paper>::orderEngine( const Paper& )
-// {
-//         qDebug() << "orderEngine<Paper>";
-//         return 0;
-// }

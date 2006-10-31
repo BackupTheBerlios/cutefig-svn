@@ -39,7 +39,7 @@ ObjectHandler::ObjectHandler( const QString& kw )
  *  specific data. \param fig is the figure to which the DrawObject
  *  will belong.
  */
-DrawObject* ObjectHandler::getDrawObject( const QString& keyWord, std::istream& is, Figure* fig )
+DrawObject* ObjectHandler::getDrawObject( const QString& keyWord, QTextStream& is, Figure* fig )
 {
         ObjectHandler* h = ohHash_[keyWord];
 

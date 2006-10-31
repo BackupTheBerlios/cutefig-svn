@@ -107,7 +107,7 @@ int Arc::nextPointIndex()
 
 
 template<>
-DrawObject* TObjectHandler<Arc>::parseObject( std::istream& is, Figure* fig )
+DrawObject* TObjectHandler<Arc>::parseObject( QTextStream& is, Figure* fig )
 {
         QSizeF rs;
         double angle;
@@ -115,7 +115,7 @@ DrawObject* TObjectHandler<Arc>::parseObject( std::istream& is, Figure* fig )
 
         is >> rs >> angle >> af >> sf;
 
-        if ( is.fail() )
+        if ( is.status() != QTextStream::Ok )
                 return 0;
 
         Arc* arc = new Arc( fig );

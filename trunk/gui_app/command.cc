@@ -26,9 +26,16 @@
 #include "command.h"
 #include "controler.h"
 
+#include <QCoreApplication>
+
+
 void Command::setControler( Controler* cnt )
 {
         controler_ = cnt;
-        setParent( cnt );
         figure_ = controler_->figure();
+}
+
+QString Command::tr( const char* source )
+{
+        return QCoreApplication::translate( "Command", source );
 }

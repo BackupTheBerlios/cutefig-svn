@@ -68,8 +68,9 @@ ResourceKey ResLib<Paper>::defaultKey()
 }
 
 
-namespace Res
+template<>
+const QString ResLib<Paper>::resourceName()
 {
-        template<> const QString resourceName<Paper>() { return "paper"; } 
-}
+        return "paper";
+} 
 

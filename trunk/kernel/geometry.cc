@@ -23,17 +23,22 @@
 ******************************************************************************/
 
 #include "geometry.h"
+#include "drawobject.h"
 
 #include <QDebug>
 
-qreal Geom::distance( const QPointF& p1, const QPointF& p2 )
+namespace Geom
+{
+
+
+qreal distance( const QPointF& p1, const QPointF& p2 )
 {
         qreal xd = p1.x() - p2.x();
         qreal yd = p1.y() - p2.y();
         return hypot( xd, yd );
 }
 
-double Geom::angle( const QPointF& p1, const QPointF& p2 )
+double angle( const QPointF& p1, const QPointF& p2 )
 {
         return -atan2( p2.y() - p1.y(), p2.x() - p1.x() );
 }
@@ -58,7 +63,7 @@ double Geom::angle( const QPointF& p1, const QPointF& p2 )
  *  This behaviour is documented here in such detail, as it is
  *  mandatory to keep it that way as long as clients rely on it.
  */
-QVector<QPointF> Geom::boundingPoints( const QRectF& r )
+QVector<QPointF> boundingPoints( const QRectF& r )
 {
         QVector<QPointF> pts;
         pts << r.topLeft()
@@ -81,14 +86,14 @@ QVector<QPointF> Geom::boundingPoints( const QRectF& r )
 
 /*! The hardcoded 5 is not nice :(
  */
-bool Geom::isNear( const QPointF& p1, const QPointF& p2 )
+bool isNear( const QPointF& p1, const QPointF& p2 )
 {
         return ( distance( p1, p2 ) < 5 );
 }
 
 /*! Used for example to detect whether the mouse cursor is near a line.
  */
-bool Geom::intersect( const QLineF& l, const QRectF& r ) 
+bool intersect( const QLineF& l, const QRectF& r ) 
 {
         QLineF d1( r.topLeft(), r.bottomRight() );
         QLineF d2( r.topRight(), r.bottomLeft() );
@@ -96,7 +101,7 @@ bool Geom::intersect( const QLineF& l, const QRectF& r )
                ( l.intersect( d2, 0 ) == QLineF::BoundedIntersection );
 }
 
-QRect Geom::centerRect( const QPoint& center, const QSize& size )
+QRect centerRect( const QPoint& center, const QSize& size )
 {
         QRect r;
         r.setSize( size );
@@ -106,9 +111,9 @@ QRect Geom::centerRect( const QPoint& center, const QSize& size )
 }
 
 /*!
- * \overload QRect Geom::centerRect( const QPoint& center, const QSize& size )
+ * \overload QRect centerRect( const QPoint& center, const QSize& size )
  */
-QRectF Geom::centerRect( const QPointF& center, const QSizeF& size )
+QRectF centerRect( const QPointF& center, const QSizeF& size )
 {
         QRectF r;
         r.setSize( size );
@@ -117,22 +122,37 @@ QRectF Geom::centerRect( const QPointF& center, const QSizeF& size )
         return r;
 }
 
-qreal Geom::scalarProduct( const QPointF& p1, const QPointF& p2 )
+qreal scalarProduct( const QPointF& p1, const QPointF& p2 )
 {
         return p1.x()*p2.x() + p1.y()*p2.y();
 }
 
-qreal Geom::pabs( const QPointF& p )
+qreal pabs( const QPointF& p )
 {
         return hypot( p.x(), p.y() );
 }
 
 
-int Geom::qangle( double angle )
+int qangle( double angle )
 {
         int qa = qRound( angle / M_PI * 2880 );
         if ( qa < 0 )
                 qa += 5760;
 
         return qa;
+}
+
+
+
+QRectF boundingRectOf( const ObjectList& obs )
+{
+        QRectF r;
+        foreach ( DrawObject* o, obs ) {
+                r |= o->boundingRect();
+        }
+        
+        return r;
+}
+
+
 }

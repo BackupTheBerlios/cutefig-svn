@@ -39,13 +39,51 @@
 
 
 
-Figure::Figure( QObject *parent ) :
-        QObject( parent ),
-	objectList_(),
-	drawingList_(),
-        metaData_()
+Figure::Figure()
+        : objectList_(),
+          drawingList_(),
+          metaData_()
 {
 }
+
+
+Figure::Figure( const Figure& other )
+        : objectList_(),
+          drawingList_(),
+          metaData_( other.metaData() )
+{
+        foreach ( const DrawObject* o, other.objects() ) {
+                DrawObject* no = o->copy();
+                objectList_ << no;
+                qDebug() <<  __PRETTY_FUNCTION__ << this << o << no;
+                addObjectToDrawingList( no );
+        }
+}
+
+Figure::~Figure()
+{
+        qDebug() << __PRETTY_FUNCTION__ << this;
+        qDeleteAll( objectList_ );
+        qDeleteAll( removedObjects_ );
+}
+
+Figure& Figure::operator= ( const Figure& other )
+{
+        if ( &other == this )
+                return *this;
+        
+        metaData_ = other.metaData_;
+        clear();
+        foreach ( const DrawObject* o, other.objects() ) {
+                DrawObject* no = o->copy();
+                objectList_ << no;
+                qDebug() <<  __PRETTY_FUNCTION__ << this << o << no;
+                addObjectToDrawingList( no );
+        }
+
+        return *this;
+}
+
 
 /*! Then tells them to recalculate. Usually called by a Parser.
  */
@@ -54,7 +92,6 @@ void Figure::takeDrawObjects( const ObjectList& l )
         objectList_ = l;
         foreach ( DrawObject* o, l ) {
                 addObjectToDrawingList( o );
-                o->setParent( this );
                 o->updateEverythingNow();
         }
 
@@ -68,7 +105,7 @@ void Figure::takeDrawObjects( const ObjectList& l )
 void Figure::addDrawObject( DrawObject* o )
 {
         o->reclaimResources();
-        o->setParent( this );
+        removedObjects_.removeAll( o );
         objectList_ << o;
         addObjectToDrawingList( o );
 }
@@ -118,6 +155,7 @@ void Figure::removeDrawObject( DrawObject* o )
 {
         o->releaseResources();
         objectList_.removeAll( o );
+        removedObjects_ << o;
         removeObjectFromDrawingList( o );
 }
 
@@ -162,7 +200,7 @@ DrawObject* Figure::findContainingObject( const QPointF& p ) const
 void Figure::drawElements( QPainter* p ) const
 {
         foreach ( const DrawObject* o, drawingList_ )
-                o->draw( p );        
+                        o->draw( p );
 } 
 
 /*! Outputs the DrawObjects to the OutputBackend ob.
@@ -182,6 +220,9 @@ void Figure::clear()
         qDeleteAll( objectList_ );
         objectList_.clear();
 
+        qDeleteAll( removedObjects_ );
+        removedObjects_.clear();
+        
         drawingList_.clear();
 }
 
@@ -190,11 +231,7 @@ void Figure::clear()
  */
 QRectF Figure::boundingRect() const
 {
-        QRectF r;
-        foreach( DrawObject* o, objectList_ ) 
-                r |= o->boundingRect();
-
-        return r;
+        return Geom::boundingRectOf( objectList_ );
 }
 
 

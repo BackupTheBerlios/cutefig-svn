@@ -61,7 +61,7 @@ public:
 private:
         virtual void passPointFlag_private( Fig::PointFlags ) {}
         virtual void setupWidthAndHeight();
-        virtual void addPath();
+        virtual void addPath( const QRectF& r );
 
         double xCornerRad_;
         double yCornerRad_;

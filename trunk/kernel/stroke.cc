@@ -26,6 +26,7 @@
 #include "stroke.h"
 #include "gradient.h"
 #include "pixmap.h"
+#include "pattern.h"
 #include "resourceuser.h"
 
 #include <QPainter>
@@ -44,6 +45,25 @@ template<> void ResLib<QColor>::init()
 template<> ResourceKey ResLib<QColor>::defaultKey()
 {
         return ResourceKey();
+}
+
+template<>
+const QString ResLib<QColor>::resourceName() { return "color"; }
+
+template<>
+bool TResourceIO<QColor>::parseResource( const QString&, QTextStream& is )
+{
+        is >> resource_;
+        
+        failed_ = is.status() != QTextStream::Ok;
+
+        return false;
+}
+
+template<>
+void TResourceIO<QColor>::outputResourceBody( const QColor& res, QTextStream& stream ) const 
+{
+        stream << res << " ";
 }
 
 
@@ -112,39 +132,6 @@ void Stroke::setColor( const QColor& color )
         static_cast<ResourceUser<QColor>*>( resourceUser_ )->setResource( color );
 }
 
-void Stroke::setColor( const ResourceKey& key )
-{
-        type_ = sColor;
-
-        delete resourceUser_;
-        
-	ResourceUser<QColor>* ru = new ResourceUser<QColor>;
-	ru->setResource( key );
-	resourceUser_ = ru;
-}
-
-void Stroke::setGradient( const ResourceKey& key )
-{
-        type_ = sGradient;
-
-        delete resourceUser_;
-        
-	ResourceUser<Gradient>* ru = new ResourceUser<Gradient>;
-	ru->setResource( key );
-	resourceUser_ = ru;
-}
-
-void Stroke::setPixmap( const ResourceKey& key )
-{
-        type_ = sPixmap;
-        
-        delete resourceUser_;
-
-	ResourceUser<Pixmap>* ru = new ResourceUser<Pixmap>;
-	ru->setResource( key );
-	resourceUser_ = ru;
-}
-
 bool Stroke::setData( const QString& typeString, const ResourceKey& key )
 {
 	return StrokeDataSetter::setData( this, typeString, key );
@@ -177,12 +164,25 @@ void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
             case sPixmap:
                     painter->fillPath( path, QBrush(resourceUser_->resource<Pixmap>().qpixmap()) );
                     break;
+            case sPattern:
+            {
+                    QMatrix mat = painter->worldMatrix();
+//                    QRegion clipreg = painter->clipRegion();
+                    painter->setWorldMatrix( QMatrix() );
+                    QPainterPath pth = mat.map( path );
+//                    painter->setClipPath( path );
+                    QRectF r = path.boundingRect();
+                    painter->fillPath(pth,resourceUser_->resource<Pattern>().brush(r,mat));
+                    painter->setWorldMatrix( mat );
+//                    painter->setClipRegion( clipreg );
+                    break;
+            }
             case sNone:
             default: break;
         }
 }
 
-const QBrush Stroke::brush( const QRectF& rect ) const
+const QBrush Stroke::brush( const QRectF& rect, const QMatrix& m ) const
 {
         QBrush ret;
         
@@ -201,6 +201,9 @@ const QBrush Stroke::brush( const QRectF& rect ) const
             case sPixmap:
                     ret = resourceUser_->resource<Pixmap>().qpixmap();
                     break;
+ 	    case sPattern:
+		    ret = resourceUser_->resource<Pattern>().brush( rect, m );
+		    break;
             case sNone:
             default: break;
         }
@@ -208,14 +211,14 @@ const QBrush Stroke::brush( const QRectF& rect ) const
         return ret;    
 }
 
-const QBrush Stroke::brush( const QPainterPath& path ) const
+const QBrush Stroke::brush( const QPainterPath& path, const QMatrix& m ) const
 {
         QRectF r;
 
         if ( type_ == sGradient )
                 r = path.boundingRect();
 
-        return brush( r );
+        return brush( r, m );
 }
 
 const QString Stroke::typeString() const
@@ -229,6 +232,16 @@ const ResourceKey Stroke::key() const
         return resourceUser_ ? resourceUser_->key() : ResourceKey();
 }
 
+
+
+template<>
+void Stroke::setData<NoStroke>( const ResourceKey& )
+{
+	type_ = sNone;
+
+	delete resourceUser_;
+	resourceUser_ = 0;
+}
 
 
 // StrokeDataSetter
@@ -258,40 +271,24 @@ bool StrokeDataSetter::setData( Stroke* st, const QString& typeString, const Res
 }
 
 
-class ColorDataSetter : public StrokeDataSetter
+template<typename StrokeType>
+class TStrokeDataSetter : public StrokeDataSetter
 {
 public:
-	ColorDataSetter() : StrokeDataSetter( Res::resourceName<QColor>() ) {}
+        TStrokeDataSetter() : StrokeDataSetter( ResLib<StrokeType>::resourceName() ) {}
 
 private:
-	virtual void doSetData( Stroke* st, const ResourceKey& key ) { st->setColor( key ); }
+	virtual void doSetData( Stroke* st, const ResourceKey& key )
+	{
+		st->setData<StrokeType>(key);
+	}
 };
 
-static ColorDataSetter cds;
+static TStrokeDataSetter<QColor> cds;
+static TStrokeDataSetter<Gradient> gds;
+static TStrokeDataSetter<Pixmap> pxds;
+static TStrokeDataSetter<Pattern> ptds;
 
-
-class GradientDataSetter : public StrokeDataSetter
-{
-public:
-	GradientDataSetter() : StrokeDataSetter( Res::resourceName<Gradient>() ) {}
-
-private:
-	virtual void doSetData( Stroke* st, const ResourceKey& key ) { st->setGradient( key ); }
-};
-
-static GradientDataSetter gds;
-
-
-class PixmapDataSetter : public StrokeDataSetter
-{
-public:
-	PixmapDataSetter() : StrokeDataSetter( Res::resourceName<Pixmap>() ) {}
-
-private:
-	virtual void doSetData( Stroke* st, const ResourceKey& key ) { st->setPixmap( key ); }
-};
-
-static PixmapDataSetter pds;
 
 
 
@@ -301,14 +298,17 @@ const AutoHash<Stroke::StrokeType, QString>& Stroke::typeHash()
 	return as;
 }
 
-
-
 template<>
 void AutoHash<Stroke::StrokeType, QString>::init()
 {
-	hash_[Stroke::sColor] = Res::resourceName<QColor>();
-	hash_[Stroke::sGradient] = Res::resourceName<Gradient>();
-	hash_[Stroke::sPixmap] = Res::resourceName<Pixmap>();
+	hash_[Stroke::sColor] = ResLib<QColor>::resourceName();
+	hash_[Stroke::sGradient] = ResLib<Gradient>::resourceName();
+	hash_[Stroke::sPixmap] = ResLib<Pixmap>::resourceName();
+	hash_[Stroke::sPattern] = ResLib<Pattern>::resourceName();
 }
 
 
+template<> Stroke::StrokeType strokeType<QColor>() { return Stroke::sColor; }
+template<> Stroke::StrokeType strokeType<Gradient>() { return Stroke::sGradient; }
+template<> Stroke::StrokeType strokeType<Pixmap>() { return Stroke::sPixmap; }
+template<> Stroke::StrokeType strokeType<Pattern>() { return Stroke::sPattern; }
