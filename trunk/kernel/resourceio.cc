@@ -118,8 +118,6 @@ void ResourceIO::streamToBuffer( QTextStream& ts )
         ts.seek( 0 );
         QString s = ts.readAll();
         if ( !s.isEmpty() )
-                if ( !buffer_.isEmpty() )
-                        buffer_ += "\n";
                 buffer_ += s;
 }
 

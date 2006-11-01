@@ -75,7 +75,7 @@ void ResourceIconEngine<Gradient>::paintForeground( QPainter* p, const QRect& r 
 template<>
 void ResourceIconEngine<Pixmap>::paintForeground( QPainter* p, const QRect& r )
 {
-        p->fillRect( r, resource_.qpixmap() );
+        p->fillRect( r, resource_.image() );
 }
 
 template<>

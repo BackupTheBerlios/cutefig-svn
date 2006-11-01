@@ -351,13 +351,13 @@ void Parser::parseResource( ResourceKey::Flags flags )
                                 neof = readLine();
                         }
                         if ( !neof )
-                                parseError( tr("File ended while parsing resource %1")
+                                parseError( tr("File ended while parsing resource \"%1\".")
                                             .arg( rks ) );
                 }
 
                 resIO->postProcessResource();
                 if ( resIO->failed() )
-                        parseError( tr("Error while parsing resource %1:").arg( rks ) +
+                        parseError( tr("Error while parsing resource \"%1\": ").arg( rks ) +
                                     resIO->errorString() );
                 else
                         resIO->pushResource( ResourceKey( rks, flags ) );

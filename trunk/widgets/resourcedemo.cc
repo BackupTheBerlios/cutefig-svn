@@ -78,13 +78,13 @@ void ResourceDemo<Pixmap>::doPainting( QPainter* p )
         int h9 = h3/3;
         w3 *=2;
 
-        p->setPen( QPen( QBrush( resource_->qpixmap() ), 3.0 ) );
+        p->setPen( QPen( QBrush( resource_->image() ), 3.0 ) );
         p->drawEllipse( w9,h9, w3,h3 );
 
         h9 *= 5;
 
         p->setPen( Qt::NoPen );
-        p->setBrush( resource_->qpixmap() ); 
+        p->setBrush( resource_->image() ); 
         p->drawEllipse( w9,h9, w3,h3 );
 }
 

@@ -111,7 +111,9 @@ void ReslibEditor<Pixmap>::editResource()
 							 QString(), filter );
 
 	Pixmap pm = resLib_[resourceKey_];
-	if ( !fileName.isEmpty() && fileName != pm.fileName() && pm.loadFromFile( fileName ) ) {
+	if ( !fileName.isEmpty() &&
+             fileName != pm.fileName() &&
+             pm.loadFromFile( fileName ).isNull() ) {
 		resLib_.setResource( resourceKey_, pm );
 		resourceDemo_->update();
 	}

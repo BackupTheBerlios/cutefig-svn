@@ -25,41 +25,40 @@
 #ifndef pixmap_h
 #define pixmap_h
 
-#include <QPixmap>
+#include <QImage>
 #include <QString>
 
 class Pixmap;
-int qHash( const Pixmap& pm );
+unsigned int qHash( const Pixmap& pm );
 
-        
+//! Wraps QPixmap to be used in a Stroke
 class Pixmap 
 {
 public:
-        friend int qHash( const Pixmap& pm );
+        friend unsigned int qHash( const Pixmap& pm );
         
 	Pixmap();
-        Pixmap( const Pixmap& other );
-        ~Pixmap();        
+//        Pixmap( const Pixmap& other );
+//        ~Pixmap();        
 
-        Pixmap& operator=( const Pixmap& other );
+        //       Pixmap& operator=( const Pixmap& other );
         
-        void setPixmap( const QPixmap& pm );
-	bool loadFromFile( const QString& filename );
+        void setImage( const QImage& img );
+	const QString loadFromFile( const QString& filename );
 
-	const QPixmap qpixmap() const;
+	const QImage image() const { return image_; }
 	const QString fileName() const { return fileName_; }
 
+        QByteArray format() const { return format_; }
+        void setFormat( const QByteArray& f ) { format_ = f; }
+        
 	bool isFromFile() const;
 
 private:
-        QPixmap& pixmap();
-        
+        QImage image_;
+        QByteArray format_;
 	QString fileName_;
-	QPixmap* pixmap_;
 };
-
-
-int qHash( const Pixmap& pm );
 
 
 #endif

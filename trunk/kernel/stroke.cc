@@ -162,7 +162,7 @@ void Stroke::fillPath( const QPainterPath& path, QPainter* painter ) const
                     break;
             }
             case sPixmap:
-                    painter->fillPath( path, QBrush(resourceUser_->resource<Pixmap>().qpixmap()) );
+                    painter->fillPath( path, QBrush(resourceUser_->resource<Pixmap>().image()) );
                     break;
             case sPattern:
             {
@@ -199,7 +199,7 @@ const QBrush Stroke::brush( const QRectF& rect, const QMatrix& m ) const
                     break;
             }
             case sPixmap:
-                    ret = resourceUser_->resource<Pixmap>().qpixmap();
+                    ret = resourceUser_->resource<Pixmap>().image();
                     break;
  	    case sPattern:
 		    ret = resourceUser_->resource<Pattern>().brush( rect, m );

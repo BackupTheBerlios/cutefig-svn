@@ -73,7 +73,8 @@ const QBrush Pattern::brush( const QRectF& r, const QMatrix& m ) const
         p.setWorldMatrix( QMatrix( m.m11(), m.m12(), m.m21(), m.m22(), .0, .0 ) );
         
         double scale = hypot( m.m11(), m.m12() );
-        QSizeF ps( figure_.boundingRect().size() * scale );
+        QRectF pr = figure_.boundingRect();
+        QSizeF ps = QSizeF( pr.right(), pr.bottom() ) * scale;
         
         for ( double x=0; x < bsize.width(); x += ps.width() )
                 for ( double y=0; y < bsize.height(); y += ps.height() ) {
@@ -119,8 +120,11 @@ bool TResourceIO<Pattern>::parseResource( const QString& itemType_, QTextStream&
                 ResourceKey key;
                 is >> key;
                 resource_.figure_.setUnit( key );
-        } else          
+        } else {
                 streamToBuffer( is );
+                if ( !buffer().isEmpty() )
+                        buffer() += "\n";
+        }
 
         return true;
 }
