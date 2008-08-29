@@ -33,7 +33,7 @@ class Arc : public DrawObject
         DRAW_OBJECT( "arc", "&Arc" );
                 
 public:
-        explicit Arc( Figure* parent );
+        explicit Arc();
         Arc( const Arc* other );
 
         virtual int minPoints() const { return 2; }

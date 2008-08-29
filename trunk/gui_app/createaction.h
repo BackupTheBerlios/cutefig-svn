@@ -89,7 +89,7 @@ public:
         TCreateAction<ObjectType>( Controler* parent );
 
 private:
-        DrawObject* createObject() { return new ObjectType( controler_->figure() ); }
+        DrawObject* createObject() { return new ObjectType(); }
         void init();
         void setInitialStatus_private() {}
         void changeStatusClick() {}

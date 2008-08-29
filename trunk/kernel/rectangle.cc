@@ -23,13 +23,14 @@
 ******************************************************************************/
 
 #include "rectangle.h"
+#include "figure.h"
 #include "outputbackend.h"
 #include "objecthandler.h"
 #include "geometry.h"
 
 
-Rectangle::Rectangle( Figure* parent )
-        : Rectangloid( parent ),
+Rectangle::Rectangle()
+        : Rectangloid(),
           xCornerRad_( -1. ),
           yCornerRad_( -1. ),
 	  roundedCorners_( false ),
@@ -48,13 +49,13 @@ Rectangle::Rectangle( const Rectangle* r )
 
 void Rectangle::setXCornerRad( double r )
 {
-	xCornerRad_ = r * figure()->unit();
+	xCornerRad_ = r;
 	update();
 }
 
 void Rectangle::setYCornerRad( double r )
 {
-	yCornerRad_ = r * figure()->unit();
+	yCornerRad_ = r;
 	update();
 }
 
@@ -63,7 +64,7 @@ double Rectangle::xCornerRad() const
         if ( !roundedCorners_ )
 		return -1.0;
 
-	return xCornerRad_/figure()->unit();
+	return xCornerRad_;
 }
 
 double Rectangle::yCornerRad() const
@@ -72,9 +73,9 @@ double Rectangle::yCornerRad() const
 		return -1.0;
 
 	if ( equalCornerRadii_ )
-		return xCornerRad_/figure()->unit();
+		return xCornerRad_;
 
-	return yCornerRad_/figure()->unit();
+	return yCornerRad_;
 }
 
 double Rectangle::maxXCornerRad() const
@@ -84,7 +85,7 @@ double Rectangle::maxXCornerRad() const
 	if ( equalCornerRadii_ )
 		max = qMin( max, std::fabs( points_[0].y() - points_[1].y() ) );
 
-	return max / figure()->unit() / 2;
+	return max / 2;
 }	
 
 double Rectangle::maxYCornerRad() const
@@ -94,7 +95,7 @@ double Rectangle::maxYCornerRad() const
 	if ( equalCornerRadii_ )
 		max = qMin( max, std::fabs( points_[0].x() - points_[1].x() ) );
 
-	return max / figure()->unit() / 2;
+	return max / 2;
 }
 
 bool Rectangle::hasRoundedCorners() const
@@ -205,7 +206,7 @@ void Rectangle::addPath( const QRectF& rect )
 }
 
 template<>
-DrawObject* TObjectHandler<Rectangle>::parseObject( QTextStream& is, Figure* fig )
+DrawObject* TObjectHandler<Rectangle>::parseObject( QTextStream& is, const Figure* fig )
 {
         double angle, xr, yr;
         is >> angle >> xr >> yr;
@@ -213,7 +214,7 @@ DrawObject* TObjectHandler<Rectangle>::parseObject( QTextStream& is, Figure* fig
         if ( is.status() != QTextStream::Ok )
                 return 0;
 
-        Rectangle* r = new Rectangle( fig );
+        Rectangle* r = new Rectangle();
         r->setAngle( angle );
 	r->roundedCorners_ = ! (xr < 0);
 	r->equalCornerRadii_ = (yr < 0);

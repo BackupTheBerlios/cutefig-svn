@@ -69,7 +69,7 @@ void TextAction::click( const QPoint& p, Fig::PointFlags f, const QMatrix& m )
                 textObject_->setCursorToPoint( point );
                 textNew_ = false;
         } else {
-                textObject_ = new TextObject( controler_->figure() );
+                textObject_ = new TextObject();
                 selection_.setObjectToBeCreated( textObject_ );
                 textObject_->pointSet( point, f );
                 textObject_->setCursorPos( 0 );

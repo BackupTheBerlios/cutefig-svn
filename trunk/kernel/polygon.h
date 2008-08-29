@@ -32,7 +32,7 @@ class Polygon : public Polyline
         Q_OBJECT
         DRAW_OBJECT( "polygon", "&Polygon" );
 public:
-        explicit Polygon( Figure* parent =0 );
+        explicit Polygon();
 
         Polygon( const Polygon* o );
 

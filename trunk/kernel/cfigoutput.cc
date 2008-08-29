@@ -24,6 +24,7 @@
 
 
 #include "cfigoutput.h"
+#include "figure.h"
 #include "allobjects.h"
 #include "keywords.h"
 #include "resourceio.h"

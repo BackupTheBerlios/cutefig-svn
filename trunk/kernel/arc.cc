@@ -23,6 +23,7 @@
 ******************************************************************************/
 
 #include "arc.h"
+#include "figure.h"
 #include "outputbackend.h"
 #include "objecthandler.h"
 #include "geometry.h"
@@ -32,8 +33,8 @@
 
 
 
-Arc::Arc( Figure* parent )
-        : DrawObject( parent ),
+Arc::Arc()
+        : DrawObject(),
           isCircle_( true ),
 	  rectSize_(),
 	  angle_(),
@@ -107,7 +108,7 @@ int Arc::nextPointIndex()
 
 
 template<>
-DrawObject* TObjectHandler<Arc>::parseObject( QTextStream& is, Figure* fig )
+DrawObject* TObjectHandler<Arc>::parseObject( QTextStream& is, const Figure* fig )
 {
         QSizeF rs;
         double angle;
@@ -118,7 +119,7 @@ DrawObject* TObjectHandler<Arc>::parseObject( QTextStream& is, Figure* fig )
         if ( is.status() != QTextStream::Ok )
                 return 0;
 
-        Arc* arc = new Arc( fig );
+        Arc* arc = new Arc();
         arc->setRectSize( rs*2*fig->unit() );
         arc->setAngle( angle );
         arc->setArcFlag( af );

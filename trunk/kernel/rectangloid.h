@@ -33,7 +33,7 @@ class Rectangloid : public DrawObject
 {
         Q_OBJECT
 public:
-        explicit Rectangloid( Figure* parent = 0 );
+        explicit Rectangloid();
         Rectangloid( const Rectangloid* r );
 
         virtual bool canHaveArrows() const { return false; }

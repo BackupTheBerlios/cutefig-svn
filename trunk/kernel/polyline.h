@@ -32,7 +32,7 @@ class Polyline : public DrawObject
         Q_OBJECT
         DRAW_OBJECT( "polyline", "Poly&line"  );
 public:
-        explicit Polyline( Figure * parent =0 );
+        explicit Polyline();
         Polyline( const Polyline* o );
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;

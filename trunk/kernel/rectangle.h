@@ -34,7 +34,7 @@ class Rectangle : public Rectangloid
         Q_OBJECT
         DRAW_OBJECT( "rectangle", "&Rectangle" );
 public:
-        explicit Rectangle( Figure* parent = 0 );
+        explicit Rectangle();
         Rectangle( const Rectangle* r );
 
         double xCornerRad() const;

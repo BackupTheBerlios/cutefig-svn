@@ -81,7 +81,7 @@ class BezierSpline : public DrawObject
         class PathFinder;
         
 public:
-        explicit BezierSpline( Figure* parent );
+        explicit BezierSpline();
         BezierSpline( const BezierSpline* other );
 
         friend class PathFinder;

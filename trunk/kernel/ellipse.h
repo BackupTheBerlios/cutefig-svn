@@ -37,7 +37,7 @@ class Ellipse : public Rectangloid
         DRAW_OBJECT( "ellipse", "&Ellipse" );
         
 public:
-        explicit Ellipse( Figure* parent=0 );
+        explicit Ellipse();
         Ellipse( const Ellipse *o );
 
         virtual bool pointHitsOutline( const QPointF& p, qreal tolerance ) const;

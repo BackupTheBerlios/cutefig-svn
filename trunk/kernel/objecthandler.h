@@ -83,7 +83,7 @@ protected:
 
         
 private:
-        virtual DrawObject* parseObject( QTextStream& is, Figure* fig ) = 0;
+        virtual DrawObject* parseObject( QTextStream& is, const Figure* fig ) = 0;
 
         ObjectHandler( const ObjectHandler& );
 
@@ -107,9 +107,9 @@ public:
                 : ObjectHandler( ObjectType::cuteMetaObject().keyword() )
         {}
 
-        virtual DrawObject* parseObject( QTextStream&, Figure* fig ) 
+        virtual DrawObject* parseObject( QTextStream&, const Figure* ) 
         {
-                return new ObjectType( fig );
+                return new ObjectType();
         }
         
 };

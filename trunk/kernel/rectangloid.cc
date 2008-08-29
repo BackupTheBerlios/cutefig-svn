@@ -26,8 +26,8 @@
 
 #include <QPainter>
 
-Rectangloid::Rectangloid( Figure* parent )
-        : DrawObject( parent ),
+Rectangloid::Rectangloid()
+        : DrawObject(),
 	  center_(),
 	  w_( 0 ), h_( 0 ), w2_( 0 ), h2_( 0 ),
 	  angle_( 0.0 ),

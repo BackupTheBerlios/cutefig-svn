@@ -41,7 +41,7 @@ class Compound : public DrawObject
         Q_OBJECT
         DRAW_OBJECT( "group", "" )
 public:
-        Compound( const ObjectList& l, const Figure* fig );
+        Compound( const ObjectList& l );
         Compound( const Compound* c );
 
         ~Compound();

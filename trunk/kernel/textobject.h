@@ -55,11 +55,11 @@ class TextObject : public DrawObject
         Q_OBJECT
         DRAW_OBJECT( "text", "&Text" );
 public:
-        explicit TextObject( Figure* parent = 0 );
+        explicit TextObject();
         TextObject( const TextObject* o );
 
         //! it is handy to make the parsing function friend.
-        friend DrawObject* TObjectHandler<TextObject>::parseObject( QTextStream&, Figure* fig );
+        friend DrawObject* TObjectHandler<TextObject>::parseObject( QTextStream&, const Figure* );
 
         //! returns the font of the TextObject.
         /*! Note that only font family and size are relevant, as the

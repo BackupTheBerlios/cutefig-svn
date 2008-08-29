@@ -82,8 +82,8 @@ bool BezierSpline::PathFinder::findNext()
         return false;
 }
 
-BezierSpline::BezierSpline( Figure* parent )
-        : DrawObject( parent ),
+BezierSpline::BezierSpline()
+        : DrawObject(),
           finished_( false ),
           oppositeDirective_( 0 )
 {}

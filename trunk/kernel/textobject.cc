@@ -35,8 +35,8 @@
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
 
-TextObject::TextObject( Figure* parent )
-        : DrawObject( parent ),
+TextObject::TextObject()
+        : DrawObject(),
           doc_( this ),
           cursor_( &doc_ ),
           textLayout_(),
@@ -479,7 +479,7 @@ void TextObject::alignBottom()
  *  itself.
  */
 template<>
-DrawObject* TObjectHandler<TextObject>::parseObject( QTextStream& is, Figure* fig )
+DrawObject* TObjectHandler<TextObject>::parseObject( QTextStream& is, const Figure* )
 {
         QString family;
         int pointSize;
@@ -491,7 +491,7 @@ DrawObject* TObjectHandler<TextObject>::parseObject( QTextStream& is, Figure* fi
         if ( is.status() != QTextStream::Ok )
                 return 0;
 
-        TextObject* to = new TextObject( fig );
+        TextObject* to = new TextObject();
         to->setFont( QFont( family, pointSize ) );
         to->alignment_ = Qt::Alignment(alignment);
         to->setText( text );

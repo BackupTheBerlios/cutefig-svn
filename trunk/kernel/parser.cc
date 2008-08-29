@@ -272,7 +272,7 @@ ObjectList Parser::parseLoop( bool parsingCompound )
                 }
                 
                 if ( itemType_ == KWds::compound_begin() ) {
-                        olist << new Compound( parseLoop( true ), figure_ );
+                        olist << new Compound( parseLoop( true ) );
                         continue;
                 }
 

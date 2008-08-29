@@ -39,7 +39,7 @@ GroupAction::GroupAction( Controler* parent )
 
 void GroupAction::handleSelection()
 {
-        Compound* cpd = new Compound( selection_.objects(), controler_->figure() );
+        Compound* cpd = new Compound( selection_.objects() );
         selection_.setObjectToBeCreated( cpd, Selection::Keeping );
         controler_->execAction( new ChangeCommand( selection_ ) );
         selection_.updateBackups();

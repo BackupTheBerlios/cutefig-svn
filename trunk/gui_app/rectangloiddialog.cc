@@ -23,6 +23,7 @@
 ******************************************************************************/
 
 #include "rectangloiddialog.h"
+#include "objectguihandler.h"
 #include "ellipse.h"
 #include "rectangle.h"
 #include "layouter.h"

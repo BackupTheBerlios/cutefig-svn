@@ -36,13 +36,12 @@
 #include <QDebug>
 
 
-DrawObject::DrawObject( const Figure* figure )
+DrawObject::DrawObject()
         : QObject(),
 	  painterPath_(),
           points_(),
           bRect_(),
 	  cRect_(),
-          figure_( figure ),
 	  pen_(),
           stroke_( Qt::black ),
 	  fill_(),
@@ -62,7 +61,6 @@ DrawObject::DrawObject( const DrawObject* o )
           points_( o->points_ ),
 	  bRect_( o->bRect_ ),
 	  cRect_( o->cRect_ ),
-	  figure_( o->figure_ ),
           pen_( o->pen_ ),
           stroke_( o->stroke_ ),
           fill_( o->fill_ ),

@@ -30,8 +30,8 @@
 #include <QPainter>
 #include <QPainter>
 
-Polygon::Polygon( Figure* parent )
-        : Polyline( parent )
+Polygon::Polygon()
+        : Polyline()
 {
 }
 

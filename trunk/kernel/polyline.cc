@@ -34,8 +34,8 @@
 
 #include <QDebug>
 
-Polyline::Polyline( Figure* parent )
-        : DrawObject( parent ),
+Polyline::Polyline()
+        : DrawObject(),
           finished_( false )
 {
 }

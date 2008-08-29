@@ -23,6 +23,7 @@
 ******************************************************************************/
 
 #include "textobjectdialog.h"
+#include "objectguihandler.h"
 #include "textobject.h"
 #include "fontwidget.h"
 #include "strokewidget.h"

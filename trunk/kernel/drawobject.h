@@ -26,7 +26,6 @@
 #define drawobject_h
 
 #include "fig.h"
-#include "figure.h"
 #include "pen.h"
 #include "stroke.h"
 #include "arrow.h"
@@ -157,8 +156,8 @@ class DrawObject : public QObject
 {
 	Q_OBJECT
 public:
-        explicit DrawObject( const Figure* figure );
-        DrawObject( const DrawObject* );
+        explicit DrawObject();
+        DrawObject( const DrawObject* o );
         ~DrawObject() {}
 
 	friend class Compound;
@@ -175,9 +174,6 @@ public:
 
         //! returns the highest Compound the object belongs to or the object itself.
         const DrawObject* ancestor() const;
-
-        //! retrurns a reference to the figure
-        const Figure* figure() const { return figure_; }
 
         //! returns the minimum number of points the objetct need to be defined.
         virtual int minPoints() const { return 2; }
@@ -297,7 +293,6 @@ public:
                 return o1->depth() > o2->depth();
         }
 
-//public slots:
   
 protected:
         //! not meant to be called manually but by #DRAW_OBJECT
@@ -348,9 +343,6 @@ protected:
 
 
 private:
-	//! the Figure containing the DrawObject
-        const Figure* figure_;
-
         //! the Pen of the object
         Pen pen_;
 

@@ -27,32 +27,32 @@
 
 struct KWds
 {
-        static char* CuteFig() { return "CuteFig"; }
-        static char* version() { return "version"; }
+        static const char* CuteFig() { return "CuteFig"; }
+        static const char* version() { return "version"; }
 
-        static char* metaData_end() { return "metaData_end"; }
-        static char* scale() { return "scale"; }
-        static char* paper() { return "paper"; }
-        static char* unit() { return "unit"; }
+        static const char* metaData_end() { return "metaData_end"; }
+        static const char* scale() { return "scale"; }
+        static const char* paper() { return "paper"; }
+        static const char* unit() { return "unit"; }
 
-        static char* paper_orientation() { return "paper_orientation"; }
-        static char* portrait() { return "portrait"; }
-        static char* landscape() { return "landscape"; }
+        static const char* paper_orientation() { return "paper_orientation"; }
+        static const char* portrait() { return "portrait"; }
+        static const char* landscape() { return "landscape"; }
 
-        static char* author() { return "author"; }
-        static char* description() { return "description"; }
+        static const char* author() { return "author"; }
+        static const char* description() { return "description"; }
 
-        static char* created() { return "created"; }
-        static char* last_modified() { return "last_modified"; }
+        static const char* created() { return "created"; }
+        static const char* last_modified() { return "last_modified"; }
         
-        static char* resource() { return "resource"; }
-        static char* resource_end() { return "resource_end"; }
-        static char* no_more_resources() { return "no_more_resources"; }
+        static const char* resource() { return "resource"; }
+        static const char* resource_end() { return "resource_end"; }
+        static const char* no_more_resources() { return "no_more_resources"; }
         
-        static char* object() { return "object"; }
-        static char* compound_begin() { return "compound_begin"; }
-        static char* compound_end() { return "compound_end"; }
-        static char* point() { return "point"; }
+        static const char* object() { return "object"; }
+        static const char* compound_begin() { return "compound_begin"; }
+        static const char* compound_end() { return "compound_end"; }
+        static const char* point() { return "point"; }
 };
 
 

@@ -32,8 +32,8 @@
 #include "outputbackend.h"
 #include "objecthandler.h"
  
-Ellipse::Ellipse( Figure* parent ) 
-        : Rectangloid( parent ),
+Ellipse::Ellipse() 
+        : Rectangloid(),
           specByRadii_( false ),
           circle_( false ),
 	  fp1_(), fp2_(),
@@ -129,7 +129,7 @@ void Ellipse::outputToBackend( OutputBackend* ob ) const
 
 
 template<>
-DrawObject* TObjectHandler<Ellipse>::parseObject( QTextStream& is, Figure* fig )
+DrawObject* TObjectHandler<Ellipse>::parseObject( QTextStream& is, const Figure* )
 {
         int circle, byRadius;
         double angle;
@@ -139,7 +139,7 @@ DrawObject* TObjectHandler<Ellipse>::parseObject( QTextStream& is, Figure* fig )
         if ( is.status() != QTextStream::Ok )
                 return 0;
         
-        Ellipse *e = new Ellipse( fig );
+        Ellipse *e = new Ellipse();
         e->setCircle( circle );
         e->setSpecifiedByRadii( byRadius );
         e->setAngleNew( angle );
